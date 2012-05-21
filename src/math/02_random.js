@@ -9,7 +9,7 @@ ROT.Math.RandomGenerator = function(seed) {
 	this._c = null;
 	this._frac = 2.3283064365386963e-10; // 2^-32
 
-	this.setSeed(seed || 0xEFC8249D);
+	this.setSeed(seed || Date.now());
 };
 
 /**
