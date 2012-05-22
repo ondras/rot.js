@@ -24,7 +24,7 @@ ROT.Display = function(options) {
 }
 
 ROT.Display.prototype.DEBUG = function(x, y, wall) {
-	this.draw(x, y, " ", "", wall ? "#fff" : "#888");
+	this.draw(x, y, null, null, wall ? "#ddd" : "#888");
 }
 
 ROT.Display.prototype.clear = function() {
@@ -60,14 +60,17 @@ ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
 	if (!fg) { fg = this._options.fg; }
 	if (!bg) { bg = this._options.bg; }
 	
+	var id = x+","+y;
+	this._data[id] = [char, fg, bg];
+
 	this._context.fillStyle = bg;
 	this._context.fillRect(left, top, this._charWidth, this._options.fontSize);
+	
+	if (!char) { return; }
 	
 	this._context.fillStyle = fg;
 	this._context.fillText(char.charAt(0), left, top);
 	
-	var id = x+","+y;
-	this._data[id] = [char, fg, bg];
 }
 
 ROT.Display.prototype._redraw = function() {
