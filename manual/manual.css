@@ -1,0 +1,22 @@
+.example {
+}
+
+.example:after {
+	clear: both;
+}
+.example pre, .example textarea {
+	float: left;
+	background-color: #eee;
+	margin: 0 .5em;
+	padding: .5em;
+}
+.example pre {
+	cursor: pointer;
+}
+.example textarea {
+	border: none; 
+	box-shadow: 0px 0px 5px red;
+	
+}
+.example div {
+}

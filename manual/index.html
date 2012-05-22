@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" type="text/css" href="syntax/syntax.css" />
+		<link rel="stylesheet" type="text/css" href="manual.css" />
+	</head>
+	<body>
+		<div class="example">
+var display = new ROT.Display({fontSize:18});
+OUT.appendChild(display.getContainer());
+
+var map = new ROT.Map.Arena();
+map.create(function(x, y, wall) {
+	display.draw(x, y, wall ? "#" : ".");
+});</div>
+
+		<div class="example">
+var display = new ROT.Display({fontSize:6});
+OUT.appendChild(display.getContainer());
+
+new ROT.Map.Arena().create(display.DEBUG);</div>
+		<script src="syntax/syntax.js"></script>
+		<script src="../rot.js"></script>
+		<script src="manual.js"></script>
+	</body>
+</html>
