@@ -171,7 +171,7 @@ ROT.Display = function(options) {
 }
 
 ROT.Display.prototype.DEBUG = function(x, y, wall) {
-	this.draw(x, y, wall ? "█" : ".");
+	this.draw(x, y, " ", "", wall ? "#fff" : "#888");
 }
 
 ROT.Display.prototype.clear = function() {
