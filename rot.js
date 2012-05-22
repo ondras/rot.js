@@ -224,7 +224,7 @@ ROT.Display.prototype._redraw = function() {
 	/* compute char width */
 	var font = this._options.fontSize + "px " + this._options.fontFamily;
 	this._context.font = font;
-	this._charWidth = this._context.measureText("W").width;
+	this._charWidth = Math.ceil(this._context.measureText("W").width);
 	
 	/* adjust size */
 	this._canvas.width = this._options.width * this._charWidth;
