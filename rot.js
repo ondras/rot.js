@@ -1,3 +1,8 @@
+/*
+	This is rot.js, the ROguelike Toolkit in JavaScript.
+	Generated on Tue May 22 20:49:15 CEST 2012 from changeset 28e3589cd2cb+.
+*/
+
 var ROT = {
 	DEFAULT_WIDTH: 80,
 	DEFAULT_HEIGHT: 25,
