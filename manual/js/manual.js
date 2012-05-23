@@ -1,5 +1,6 @@
 var Example = function(node) {
 	this._node = node;
+	
 	this._source = OZ.DOM.elm("pre", {className:"code"});
 	this._source.setAttribute("data-syntax", "js");
 	this._source.addEventListener("click", this);
@@ -60,7 +61,7 @@ Example.prototype._useCode = function(code) {
 	eval(code);
 	var t2 = Date.now();
 	
-	this._time.innerHTML = "(executed in %sms)".format(t2-t1);
+	this._time.innerHTML = "executed in %sms".format(t2-t1);
 }
 
 Example.current = null;

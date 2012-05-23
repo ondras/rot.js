@@ -1,9 +1,9 @@
 @import url(http://fonts.googleapis.com/css?family=Droid+Serif:400,400italic,700,700italic|Droid+Sans+Mono);
 
 body {
-	background-color: #666;
+	background-color: #606060;
 	color: #fff;
-	text-shadow: 0px 1px 2px #000;
+	text-shadow: 0px 1px 0px #000;
 	margin-left: 0px;
 	font-family: droid serif;
 }
@@ -14,6 +14,10 @@ h1 {
 
 a {
 	color: #fff;
+}
+
+pre, code, textarea {
+	font-family: droid sans mono;
 }
 
 #menu {
@@ -58,29 +62,43 @@ a {
 #footer {
 	margin-top: 1em;
 	text-align: center;
-	font-size: small;
+	font-size: smaller;
 }
 
 .example {
 	margin: 0.5em 0;
 	border-bottom: 1px dotted #000;
+	padding-left: 1em;
 }
 
-.example .code, .example .result {
-	font-family: droid sans mono;
-	color: #000;
-	float: left;
-	vertical-align: top;
-	text-shadow: none;
-	margin: 0;
+.example:before {
+	position: absolute;
+	content: "example";
+	text-transform: uppercase;
+	
+	transform-origin: 100% 100%;
+	-o-transform-origin: 100% 100%;
+	-ms-transform-origin: 100% 100%;
+	-moz-transform-origin: 100% 100%;
+	-webkit-transform-origin: 100% 100%;
+	
+	transform: translate(-100%, -100%) rotate(-90deg);
+	-o-transform: translate(-100%, -100%) rotate(-90deg);
+	-ms-transform: translate(-100%, -100%) rotate(-90deg);
+	-moz-transform: translate(-100%, -100%) rotate(-90deg);
+	-webkit-transform: translate(-100%, -100%) rotate(-90deg);
 }
 
 .example .code {
-	min-width: 40%;
-	margin: 0 .5em .5em 0;
+	width: 50%;
+	min-width: 500px;
+	background-color: #777;
+	display: block;
+	margin: 0;
+	border: none;
 	padding: .5em;
-	border-radius: 10px;
-	background-color: #ccc;
+	border-left: 2px dotted #3e3;
+	border-radius: 0 10px 10px 0;
 }
 
 .example pre.code {
@@ -88,11 +106,18 @@ a {
 }
 
 .example textarea.code {
-	border: none; 
-	box-shadow: 0px 0px 4px 2px #88f;
+	color: #fff;
+	text-shadow: 0px 1px 0px #000;
+}
+
+.example .result {
+	border-left: 2px dotted #e33;
+	font-family: droid sans mono;
+	margin: 0;
+	padding: .5em;
 }
 
 .example .time {
-	margin-top: 0;
-	clear: both;
+	text-align: right;
+	font-size: smaller;
 }
