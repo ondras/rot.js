@@ -82,7 +82,7 @@ var Manual = {
 	},
 	
 	_switchTo: function(what) {
-		OZ.Request("pages/" + what + ".html", this._response.bind(this));
+		OZ.Request("pages/" + what + ".html?" + Math.random(), this._response.bind(this));
 		
 		var links = document.querySelectorAll("#menu a");
 		for (var i=0;i<links.length;i++) {
