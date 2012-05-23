@@ -12,4 +12,5 @@ ROT.Map.Arena.prototype.create = function(callback) {
 			callback(i, j, !empty);
 		}
 	}
+	return this;
 }

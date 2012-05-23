@@ -1,6 +1,6 @@
 Array.prototype.random = function() {
 	if (!this.length) { return null; }
-	return this[Math.floor(Math.random() * this.length)];
+	return this[Math.floor(ROT.RNG.getUniform() * this.length)];
 }
 
 Array.prototype.clone = function() {

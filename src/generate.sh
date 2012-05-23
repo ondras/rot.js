@@ -11,6 +11,7 @@ js/function.js
 display/display.js
 map/map.js
 map/arena.js
+map/dividedmaze.js
 "
 
 ID=$(hg id -i)

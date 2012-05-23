@@ -1,22 +1,98 @@
-.example {
+@import url(http://fonts.googleapis.com/css?family=Droid+Serif:400,400italic,700,700italic|Droid+Sans+Mono);
+
+body {
+	background-color: #666;
+	color: #fff;
+	text-shadow: 0px 1px 2px #000;
+	margin-left: 0px;
+	font-family: droid serif;
 }
 
-.example:after {
-	clear: both;
+h1 {
+	text-align: center;
 }
-.example pre, .example textarea {
+
+a {
+	color: #fff;
+}
+
+#menu {
+	position: fixed;
+	left: 0px;
+	top: 80px;
+	width: 180px;
+	margin: 0;
+	padding: 0px;
+	list-style-type: none;
+}
+
+#menu a {
+	display: block;
+	text-decoration: none;
+	padding-left: 10px;
+	background-color: #000;
+	line-height: 200%;
+}
+
+#menu li:first-child a {
+	border-radius: 0 10px 0 0;
+}
+
+#menu li:last-child a {
+	border-radius: 0 0 10px 0;
+}
+
+#menu a.active {
+	background-color: transparent;
+}
+
+#menu a:hover {
+	background-color: #333;
+}
+
+
+#content {
+	margin-left: 200px;
+}
+
+#footer {
+	margin-top: 1em;
+	text-align: center;
+	font-size: small;
+}
+
+.example {
+	margin: 0.5em 0;
+	border-bottom: 1px dotted #000;
+}
+
+.example .code, .example .result {
+	font-family: droid sans mono;
+	color: #000;
 	float: left;
-	background-color: #eee;
-	margin: 0 .5em;
-	padding: .5em;
+	vertical-align: top;
+	text-shadow: none;
+	margin: 0;
 }
-.example pre {
+
+.example .code {
+	min-width: 40%;
+	margin: 0 .5em .5em 0;
+	padding: .5em;
+	border-radius: 10px;
+	background-color: #ccc;
+}
+
+.example pre.code {
 	cursor: pointer;
 }
-.example textarea {
+
+.example textarea.code {
 	border: none; 
-	box-shadow: 0px 0px 5px red;
-	
+	box-shadow: 0px 0px 4px 2px #88f;
 }
-.example div {
+
+.example .time {
+	margin-top: 0;
+	clear: both;
 }

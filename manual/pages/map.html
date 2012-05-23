@@ -1,0 +1,16 @@
+<h2>Map generation</h2>
+
+<div class="example">
+var display = new ROT.Display({fontSize:18});
+SHOW(display.getContainer());
+
+var map = new ROT.Map.Arena();
+map.create(function(x, y, wall) {
+	display.draw(x, y, wall ? "#" : ".");
+});</div>
+
+<div class="example">
+var display = new ROT.Display({fontSize:6});
+SHOW(display.getContainer());
+
+new ROT.Map.Arena().create(display.DEBUG);</div>
