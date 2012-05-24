@@ -13,7 +13,7 @@ var Example = function(node) {
 
 	this._time = OZ.DOM.elm("div", {className:"time"});
 
-	this._useCode(node.innerHTML);
+	this._useCode(node.textContent);
 
 }
 
@@ -25,6 +25,7 @@ Example.prototype.handleEvent = function(e) {
 Example.prototype.open = function() {
 	this.constructor.current = this;
 
+	this._ta.style.width = this._source.offsetWidth + "px";
 	this._ta.style.height = this._source.offsetHeight + "px";
 	this._ta.value = this._source.textContent;
 	this._source.parentNode.replaceChild(this._ta, this._source);
@@ -47,7 +48,7 @@ Example.prototype._useCode = function(code) {
 	Syntax.apply(this._source);
 	
 	var result = this._result;
-	var SHOW = function() { 
+	var show = function() { 
 		for (var i=0;i<arguments.length;i++) {
 			var arg = arguments[i];
 			if (!arg.nodeType) {
@@ -58,10 +59,14 @@ Example.prototype._useCode = function(code) {
 	}
 
 	var t1 = Date.now();
-	eval(code);
+	this._eval(code, show);
 	var t2 = Date.now();
 	
 	this._time.innerHTML = "executed in %sms".format(t2-t1);
+}
+
+Example.prototype._eval = function(code, SHOW) {
+	eval(code);
 }
 
 Example.current = null;

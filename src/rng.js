@@ -1,3 +1,7 @@
+/**
+ * This code is an implementation of Alea algorithm; (C) 2010 Johannes Baagøe.
+ * Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
+ */
 ROT.RNG = {
 	/**
 	 * @returns {number} 

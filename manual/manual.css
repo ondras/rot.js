@@ -75,6 +75,7 @@ pre, code, textarea {
 	position: absolute;
 	content: "example";
 	text-transform: uppercase;
+	text-shadow: -1px 0px 0px #000;
 	
 	transform-origin: 100% 100%;
 	-o-transform-origin: 100% 100%;
@@ -90,10 +91,8 @@ pre, code, textarea {
 }
 
 .example .code {
-	width: 50%;
-	min-width: 500px;
 	background-color: #777;
-	display: block;
+	display: inline-block;
 	margin: 0;
 	border: none;
 	padding: .5em;
