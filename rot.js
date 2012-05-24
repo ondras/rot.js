@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Generated on Wed May 23 15:46:27 CEST 2012 from changeset d0a8be580d55.
+	Generated on Thu May 24 15:09:43 CEST 2012 from changeset 9ed072c5375d+.
 */
 
 var ROT = {
@@ -10,6 +10,10 @@ var ROT = {
 		return !!(document.createElement("canvas").getContext && Function.prototype.bind);
 	}
 };
+/**
+ * This code is an implementation of Alea algorithm; (C) 2010 Johannes Baagøe.
+ * Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
+ */
 ROT.RNG = {
 	/**
 	 * @returns {number} 
@@ -101,55 +105,6 @@ ROT.RNG = {
 }
 
 ROT.RNG.setSeed(Date.now());
-Array.prototype.random = function() {
-	if (!this.length) { return null; }
-	return this[Math.floor(ROT.RNG.getUniform() * this.length)];
-}
-
-Array.prototype.clone = function() {
-	var arr = [];
-	for (var i=0;i<this.length;i++) { arr.push(this[i]); }
-	return arr;
-}
-
-Array.prototype.randomize = function() {
-	var result = [];
-	while (this.length) {
-		var index = this.indexOf(this.random());
-		result.push(this.splice(index, 1)[0]);
-	}
-	return result;
-}
-if (!Date.now) { Date.now = function() { return +(new Date); } }
-Number.prototype.mod = function(n) {
-	return ((this%n)+n)%n;
-}
-String.prototype.capitalize = function() {
-	return this.charAt(0).toUpperCase() + this.substring(1);
-}
-
-String.prototype.format = function() {
-	var args = Array.prototype.slice.call(arguments);
-	var str = this;
-	return str.replace(/%s/g, function(match, index) {
-		if (str.charAt(index-1) == "%") {
-			return match;
-		} else {
-			return args.shift();
-		}
-	});
-}
-if (!Object.create) {  
-	Object.create = function(o) {  
-		var tmp = function() {};
-		tmp.prototype = o;
-		return new tmp();
-	};  
-}  
-Function.prototype.extend = function(parent) {
-	this.prototype = Object.create(parent.prototype);
-	return this;
-}
 /**
  * @class Visual map display
  * @see ROT.Display#configure
@@ -247,6 +202,55 @@ ROT.Display.prototype._redraw = function() {
 		var parts = id.split(",");
 		this.draw(parseInt(parts[0]), parseInt(parts[1]), item[0], item[1], item[2]);
 	}
+}
+Array.prototype.random = function() {
+	if (!this.length) { return null; }
+	return this[Math.floor(ROT.RNG.getUniform() * this.length)];
+}
+
+Array.prototype.clone = function() {
+	var arr = [];
+	for (var i=0;i<this.length;i++) { arr.push(this[i]); }
+	return arr;
+}
+
+Array.prototype.randomize = function() {
+	var result = [];
+	while (this.length) {
+		var index = this.indexOf(this.random());
+		result.push(this.splice(index, 1)[0]);
+	}
+	return result;
+}
+if (!Date.now) { Date.now = function() { return +(new Date); } }
+Number.prototype.mod = function(n) {
+	return ((this%n)+n)%n;
+}
+String.prototype.capitalize = function() {
+	return this.charAt(0).toUpperCase() + this.substring(1);
+}
+
+String.prototype.format = function() {
+	var args = Array.prototype.slice.call(arguments);
+	var str = this;
+	return str.replace(/%s/g, function(match, index) {
+		if (str.charAt(index-1) == "%") {
+			return match;
+		} else {
+			return args.shift();
+		}
+	});
+}
+if (!Object.create) {  
+	Object.create = function(o) {  
+		var tmp = function() {};
+		tmp.prototype = o;
+		return new tmp();
+	};  
+}  
+Function.prototype.extend = function(parent) {
+	this.prototype = Object.create(parent.prototype);
+	return this;
 }
 ROT.Map = function(width, height) {
 	this._width = width || ROT.DEFAULT_WIDTH;
