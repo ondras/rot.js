@@ -9,7 +9,7 @@ ROT.Map.Arena.prototype.create = function(callback) {
 	for (var i=0;i<=w;i++) {
 		for (var j=0;j<=h;j++) {
 			var empty = (i && j && i<w && j<h);
-			callback(i, j, !empty);
+			callback(i, j, empty ? 0 : 1);
 		}
 	}
 	return this;

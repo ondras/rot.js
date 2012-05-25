@@ -14,7 +14,7 @@ ROT.Map.DividedMaze.prototype.create = function(callback) {
 		this._map.push([]);
 		for (var j=0;j<h;j++) {
 			var border = (i == 0 || j == 0 || i+1 == w || j+1 == h);
-			this._map[i].push(border);
+			this._map[i].push(border ? 1 : 0);
 		}
 	}
 	
@@ -60,31 +60,31 @@ ROT.Map.DividedMaze.prototype._partitionRoom = function(room) {
 	var x = availX.random();
 	var y = availY.random();
 	
-	this._map[x][y] = true;
+	this._map[x][y] = 1;
 	
 	var walls = [];
 	
 	var w = []; walls.push(w); /* left part */
 	for (var i=room[0]; i<x; i++) { 
-		this._map[i][y] = true;
+		this._map[i][y] = 1;
 		w.push([i, y]); 
 	}
 	
 	var w = []; walls.push(w); /* right part */
 	for (var i=x+1; i<=room[2]; i++) { 
-		this._map[i][y] = true;
+		this._map[i][y] = 1;
 		w.push([i, y]); 
 	}
 
 	var w = []; walls.push(w); /* top part */
 	for (var j=room[1]; j<y; j++) { 
-		this._map[x][j] = true;
+		this._map[x][j] = 1;
 		w.push([x, j]); 
 	}
 	
 	var w = []; walls.push(w); /* bottom part */
 	for (var j=y+1; j<=room[3]; j++) { 
-		this._map[x][j] = true;
+		this._map[x][j] = 1;
 		w.push([x, j]); 
 	}
 		
@@ -94,7 +94,7 @@ ROT.Map.DividedMaze.prototype._partitionRoom = function(room) {
 		if (w == solid) { continue; }
 		
 		var hole = w.random();
-		this._map[hole[0]][hole[1]] = false;
+		this._map[hole[0]][hole[1]] = 0;
 	}
 
 	this._stack.push([room[0], room[1], x-1, y-1]); /* left top */

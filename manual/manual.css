@@ -68,12 +68,43 @@ pre, code, textarea {
 .example {
 	margin: 0.5em 0;
 	border-bottom: 1px dotted #000;
-	padding-left: 1em;
+	padding-left: 1.1em;
 }
 
-.example:before {
+.example .code {
+	width: 650px;
+	background-color: #777;
+	display: inline-block;
+	margin: 0;
+	border: none;
+	padding: .5em;
+	border-left: 2px dotted #3e3;
+	border-radius: 0 10px 10px 0;
+	min-height: 40px;
+}
+
+.example pre.code {
+	cursor: pointer;
+}
+
+.example textarea.code {
+	color: #000;
+	background-color: #eee;
+	text-shadow: none;
+}
+
+.example .result {
+	border-left: 2px dotted #e33;
+	font-family: droid sans mono;
+	margin: 0;
+	padding: .5em;
+	min-height: 50px;
+	position: relative;
+}
+
+.example .result:before, .example:before {
 	position: absolute;
-	content: "example";
+	font-family: droid serif;
 	text-transform: uppercase;
 	text-shadow: -1px 0px 0px #000;
 	
@@ -90,30 +121,14 @@ pre, code, textarea {
 	-webkit-transform: translate(-100%, -100%) rotate(-90deg);
 }
 
-.example .code {
-	background-color: #777;
-	display: inline-block;
-	margin: 0;
-	border: none;
-	padding: .5em;
-	border-left: 2px dotted #3e3;
-	border-radius: 0 10px 10px 0;
+.example:before {
+	content: "input";
 }
 
-.example pre.code {
-	cursor: pointer;
-}
-
-.example textarea.code {
-	color: #fff;
-	text-shadow: 0px 1px 0px #000;
-}
-
-.example .result {
-	border-left: 2px dotted #e33;
-	font-family: droid sans mono;
-	margin: 0;
-	padding: .5em;
+.example .result:before {
+	content: "output";
+	left: -2px;
+	top: 2px;
 }
 
 .example .time {

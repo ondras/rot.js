@@ -53,6 +53,8 @@ var Syntax = {
 		var code = "";
 		/* IE normalizes innerHTML; need to get text content via nodeValues */
 		for (var i=0;i<node.childNodes.length;i++) { code += node.childNodes[i].nodeValue || ""; }
+		
+		code = code.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 		for (var i=0;i<patterns.length;i++) {
 			var pattern = patterns[i];

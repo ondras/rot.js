@@ -1,6 +1,6 @@
 /**
  * @class Visual map display
- * @see ROT.Display#configure
+ * @see ROT.Display#setOptions
  */
 ROT.Display = function(options) {
 	this._canvas = document.createElement("canvas");
@@ -23,10 +23,14 @@ ROT.Display = function(options) {
 	this.DEBUG = this.DEBUG.bind(this);
 }
 
-ROT.Display.prototype.DEBUG = function(x, y, wall) {
-	this.draw(x, y, null, null, wall ? "#ddd" : "#888");
+ROT.Display.prototype.DEBUG = function(x, y, what) {
+	var colors = [this._options.bg, this._options.fg];
+	this.draw(x, y, null, null, colors[what % colors.length]);
 }
 
+/**
+ * Clear the whole display (cover it with background color)
+ */
 ROT.Display.prototype.clear = function() {
 	this._data = {};
 	this._context.fillStyle = this._options.bg;
@@ -34,10 +38,18 @@ ROT.Display.prototype.clear = function() {
 }
 
 /**
+ * @param {object} [options]
+ * @param {int} [options.width=ROT.DEFAULT_WIDTH]
+ * @param {int} [options.height=ROT.DEFAULT_HEIGHT]
+ * @param {int} [options.fontSize=15]
+ * @param {string} [options.fontFamily="monospace"]
+ * @param {string} [options.fg="#ccc"]
+ * @param {string} [options.bg="#000"]
  */
 ROT.Display.prototype.setOptions = function(options) {
 	for (var p in options) { this._options[p] = options[p]; }
 	if (options.width || options.height || options.fontSize || options.fontFamily) { this._redraw(); }
+	return this;
 }
 
 ROT.Display.prototype.getOptions = function() {
@@ -70,7 +82,23 @@ ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
 	
 	this._context.fillStyle = fg;
 	this._context.fillText(char.charAt(0), left, top);
-	
+}
+
+/**
+ * Draws a text at given position. Optionally wraps at a maximum length.
+ */
+ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
+	var cx = x;
+	var cy = y;
+
+	for (var i=0;i<text.length;i++) {
+		if (i && maxWidth && (i%maxWidth == 0)) {
+			cx = x;
+			cy++;
+		}
+		var ch = text.charAt(i);
+		this.draw(cx++, cy, ch);
+	}
 }
 
 ROT.Display.prototype._redraw = function() {

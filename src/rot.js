@@ -1,3 +1,6 @@
+/**
+ * @namespace
+ */
 var ROT = {
 	DEFAULT_WIDTH: 80,
 	DEFAULT_HEIGHT: 25,

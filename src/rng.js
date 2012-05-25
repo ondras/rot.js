@@ -1,4 +1,5 @@
 /**
+ * @namespace
  * This code is an implementation of Alea algorithm; (C) 2010 Johannes Baagøe.
  * Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
  */
@@ -22,7 +23,7 @@ ROT.RNG = {
 		this._s1 = (seed >>> 0) * this._frac;
 		seed = (seed * 1103515245) + 12345;
 		this._s2 = (seed >>> 0) * this._frac;
-		this.c = 1;
+		this._c = 1;
 
 		return this;
 	},

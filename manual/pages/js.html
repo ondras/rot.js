@@ -7,9 +7,9 @@
 
 <div class="example">
 SHOW(
-	["apples", "oranges", "screwdrivers"].random(),
-	["apples", "oranges", "screwdrivers"].randomize(),
-	["apples", "oranges", "screwdrivers"].clone()
+	["apples", "oranges", "zombies"].random(),
+	["apples", "oranges", "zombies"].randomize(),
+	["apples", "oranges", "zombies"].clone()
 );</div>
 
 <h3>String</h3>
@@ -17,7 +17,9 @@ SHOW(
 <div class="example">
 SHOW(
 	"hello world".capitalize(),
-	"hello %s, this is %s".format("world", "sparta")
+	"hello %s, this is %s".format("world", "sparta"),
+	"7".lpad("0", 3),
+	"123".rpad(".", 6)
 );</div>
 
 <h3>Number</h3>

@@ -12,15 +12,16 @@ js/function.js
 map/map.js
 map/arena.js
 map/dividedmaze.js
+fov/fov.js
+fov/discrete-shadowcasting.js
 "
 
-ID=$(hg id -i)
 TARGET=../rot.js
 rm -f $TARGET
 
 PROLOGUE="/*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Generated on $(date) from changeset $ID.
+	Generated on $(date).
 */
 "
 echo "$PROLOGUE" >> $TARGET
@@ -28,3 +29,7 @@ echo "$PROLOGUE" >> $TARGET
 for FILE in $LIST; do
 	cat $FILE >> $TARGET
 done
+
+# documentation
+cd ..
+jsdoc rot.js -s -a -d=doc/

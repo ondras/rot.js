@@ -1,8 +1,11 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Generated on Thu May 24 15:09:43 CEST 2012 from changeset 9ed072c5375d+.
+	Generated on Fri May 25 14:14:58 CEST 2012.
 */
 
+/**
+ * @namespace
+ */
 var ROT = {
 	DEFAULT_WIDTH: 80,
 	DEFAULT_HEIGHT: 25,
@@ -11,6 +14,7 @@ var ROT = {
 	}
 };
 /**
+ * @namespace
  * This code is an implementation of Alea algorithm; (C) 2010 Johannes Baagøe.
  * Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
  */
@@ -34,7 +38,7 @@ ROT.RNG = {
 		this._s1 = (seed >>> 0) * this._frac;
 		seed = (seed * 1103515245) + 12345;
 		this._s2 = (seed >>> 0) * this._frac;
-		this.c = 1;
+		this._c = 1;
 
 		return this;
 	},
@@ -107,7 +111,7 @@ ROT.RNG = {
 ROT.RNG.setSeed(Date.now());
 /**
  * @class Visual map display
- * @see ROT.Display#configure
+ * @see ROT.Display#setOptions
  */
 ROT.Display = function(options) {
 	this._canvas = document.createElement("canvas");
@@ -130,10 +134,14 @@ ROT.Display = function(options) {
 	this.DEBUG = this.DEBUG.bind(this);
 }
 
-ROT.Display.prototype.DEBUG = function(x, y, wall) {
-	this.draw(x, y, null, null, wall ? "#ddd" : "#888");
+ROT.Display.prototype.DEBUG = function(x, y, what) {
+	var colors = [this._options.bg, this._options.fg];
+	this.draw(x, y, null, null, colors[what % colors.length]);
 }
 
+/**
+ * Clear the whole display (cover it with background color)
+ */
 ROT.Display.prototype.clear = function() {
 	this._data = {};
 	this._context.fillStyle = this._options.bg;
@@ -141,10 +149,18 @@ ROT.Display.prototype.clear = function() {
 }
 
 /**
+ * @param {object} [options]
+ * @param {int} [options.width=ROT.DEFAULT_WIDTH]
+ * @param {int} [options.height=ROT.DEFAULT_HEIGHT]
+ * @param {int} [options.fontSize=15]
+ * @param {string} [options.fontFamily="monospace"]
+ * @param {string} [options.fg="#ccc"]
+ * @param {string} [options.bg="#000"]
  */
 ROT.Display.prototype.setOptions = function(options) {
 	for (var p in options) { this._options[p] = options[p]; }
 	if (options.width || options.height || options.fontSize || options.fontFamily) { this._redraw(); }
+	return this;
 }
 
 ROT.Display.prototype.getOptions = function() {
@@ -177,7 +193,23 @@ ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
 	
 	this._context.fillStyle = fg;
 	this._context.fillText(char.charAt(0), left, top);
-	
+}
+
+/**
+ * Draws a text at given position. Optionally wraps at a maximum length.
+ */
+ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
+	var cx = x;
+	var cy = y;
+
+	for (var i=0;i<text.length;i++) {
+		if (i && maxWidth && (i%maxWidth == 0)) {
+			cx = x;
+			cy++;
+		}
+		var ch = text.charAt(i);
+		this.draw(cx++, cy, ch);
+	}
 }
 
 ROT.Display.prototype._redraw = function() {
@@ -241,6 +273,36 @@ String.prototype.format = function() {
 		}
 	});
 }
+
+/** 
+ * Left pad
+ * @param {string} [character="0"]
+ * @param {int} [count=2]
+ */
+String.prototype.lpad = function(character, count) {
+	var ch = character || "0";
+	var cnt = count || 2;
+
+	var s = "";
+	while (s.length < (cnt - this.length)) { s += ch; }
+	s = s.substring(0, cnt-this.length);
+	return s+this;
+}
+
+/** 
+ * Right pad
+ * @param {string} [character="0"]
+ * @param {int} [count=2]
+ */
+String.prototype.rpad = function(character, count) {
+	var ch = character || "0";
+	var cnt = count || 2;
+
+	var s = "";
+	while (s.length < (cnt - this.length)) { s += ch; }
+	s = s.substring(0, cnt-this.length);
+	return this+s;
+}
 if (!Object.create) {  
 	Object.create = function(o) {  
 		var tmp = function() {};
@@ -269,7 +331,7 @@ ROT.Map.Arena.prototype.create = function(callback) {
 	for (var i=0;i<=w;i++) {
 		for (var j=0;j<=h;j++) {
 			var empty = (i && j && i<w && j<h);
-			callback(i, j, !empty);
+			callback(i, j, empty ? 0 : 1);
 		}
 	}
 	return this;
@@ -290,7 +352,7 @@ ROT.Map.DividedMaze.prototype.create = function(callback) {
 		this._map.push([]);
 		for (var j=0;j<h;j++) {
 			var border = (i == 0 || j == 0 || i+1 == w || j+1 == h);
-			this._map[i].push(border);
+			this._map[i].push(border ? 1 : 0);
 		}
 	}
 	
@@ -336,31 +398,31 @@ ROT.Map.DividedMaze.prototype._partitionRoom = function(room) {
 	var x = availX.random();
 	var y = availY.random();
 	
-	this._map[x][y] = true;
+	this._map[x][y] = 1;
 	
 	var walls = [];
 	
 	var w = []; walls.push(w); /* left part */
 	for (var i=room[0]; i<x; i++) { 
-		this._map[i][y] = true;
+		this._map[i][y] = 1;
 		w.push([i, y]); 
 	}
 	
 	var w = []; walls.push(w); /* right part */
 	for (var i=x+1; i<=room[2]; i++) { 
-		this._map[i][y] = true;
+		this._map[i][y] = 1;
 		w.push([i, y]); 
 	}
 
 	var w = []; walls.push(w); /* top part */
 	for (var j=room[1]; j<y; j++) { 
-		this._map[x][j] = true;
+		this._map[x][j] = 1;
 		w.push([x, j]); 
 	}
 	
 	var w = []; walls.push(w); /* bottom part */
 	for (var j=y+1; j<=room[3]; j++) { 
-		this._map[x][j] = true;
+		this._map[x][j] = 1;
 		w.push([x, j]); 
 	}
 		
@@ -370,11 +432,131 @@ ROT.Map.DividedMaze.prototype._partitionRoom = function(room) {
 		if (w == solid) { continue; }
 		
 		var hole = w.random();
-		this._map[hole[0]][hole[1]] = false;
+		this._map[hole[0]][hole[1]] = 0;
 	}
 
 	this._stack.push([room[0], room[1], x-1, y-1]); /* left top */
 	this._stack.push([x+1, room[1], room[2], y-1]); /* right top */
 	this._stack.push([room[0], y+1, x-1, room[3]]); /* left bottom */
 	this._stack.push([x+1, y+1, room[2], room[3]]); /* right bottom */
+}
+ROT.FOV = function(lightPassesCallback) {
+	this._lightPasses = lightPassesCallback;
+};
+
+ROT.FOV.prototype.compute = function(x, y, R, callback) {}
+ROT.FOV.DiscreteShadowcasting = function(lightPassesCallback) {
+	ROT.FOV.call(this, lightPassesCallback);
+}
+ROT.FOV.DiscreteShadowcasting.extend(ROT.Map);
+
+ROT.FOV.DiscreteShadowcasting.prototype.compute = function(x, y, R, callback) {
+	var center = this._coords;
+	var map = this._map;
+
+	/* this place is always visible */
+	callback(x, y, 0);
+
+	/* standing in a dark place. FIXME is this a good idea?  */
+	if (!this._lightPasses(x, y)) { return; }
+	
+	/* start and end angles */
+	var DATA = [];
+	
+	
+	
+	var cellCount = 0;
+	var A, B, cx, cy, blocks, diff;
+	var diffs = [
+		[ 0, -1],
+		[-1,  0],
+		[ 0,  1],
+		[ 1,  0]
+	];
+
+	
+	/* analyze surrounding cells in concentric rings, starting from the center */
+	for (var r=1; r<=R; r++) {
+		cellCount = 8*r;
+		var angle = 360 / cellCount;
+
+		cx = x+r;
+		cy = y+r;
+
+		for (var i=0;i<cellCount;i++) {
+			A = angle * (i - 0.5);
+			B = A + angle;
+			
+			blocks = !this._lightPasses(cx, cy);
+			if (this._visibleCoords(Math.floor(A), Math.ceil(B), blocks, DATA)) { callback(cx, cy, r); }
+			
+			if (DATA.length == 2 && DATA[0] == 0 && DATA[1] == 360) { return; } /* cutoff? */
+			
+			diff = diffs[Math.floor(i*4/cellCount)];
+			cx += diff[0];
+			cy += diff[1];
+		} /* for all cells in this ring */
+	} /* for all rings */
+}
+
+/**
+ * @param {int} A start angle
+ * @param {int} B end angle
+ * @param {bool} blocks Does current cell block visibility?
+ * @param {int[][]} DATA shadowed angle pairs
+ */
+ROT.FOV.DiscreteShadowcasting.prototype._visibleCoords = function(A, B, blocks, DATA) {
+	if (A < 0) { 
+		var v1 = arguments.callee(0, B, blocks, DATA);
+		var v2 = arguments.callee(360+A, 360, blocks, DATA);
+		return v1 || v2;
+	}
+	
+	var index = 0;
+	while (index < DATA.length && DATA[index] < A) { index++; }
+	
+	if (index == DATA.length) { /* completely new shadow */
+		if (blocks) { DATA.push(A, B); } 
+		return true;
+	}
+	
+	var count = 0;
+	
+	if (index % 2) { /* this shadow starts in an existing shadow, or within its ending boundary */
+		while (index < DATA.length && DATA[index] < B) {
+			index++;
+			count++;
+		}
+		
+		if (count == 0) { return false; }
+		
+		if (blocks) { 
+			if (count % 2) {
+				DATA.splice(index-count, count, B);
+			} else {
+				DATA.splice(index-count, count);
+			}
+		}
+		
+		return true;
+
+	} else { /* this shadow starts outside an existing shadow, or within a starting boundary */
+		while (index < DATA.length && DATA[index] < B) {
+			index++;
+			count++;
+		}
+		
+		/* visible when outside an existing shadow, or when overlapping */
+		if (A == DATA[index-count] && count == 1) { return false; }
+		
+		if (blocks) { 
+			if (count % 2) {
+				DATA.splice(index-count, count, A);
+			} else {
+				DATA.splice(index-count, count, A, B);
+			}
+		}
+			
+		return true;
+	}
 }

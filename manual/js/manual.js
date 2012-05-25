@@ -14,7 +14,6 @@ var Example = function(node) {
 	this._time = OZ.DOM.elm("div", {className:"time"});
 
 	this._useCode(node.textContent);
-
 }
 
 Example.prototype.handleEvent = function(e) {
@@ -25,9 +24,9 @@ Example.prototype.handleEvent = function(e) {
 Example.prototype.open = function() {
 	this.constructor.current = this;
 
-	this._ta.style.width = this._source.offsetWidth + "px";
-	this._ta.style.height = this._source.offsetHeight + "px";
-	this._ta.value = this._source.textContent;
+	var height = OZ.Style.get(this._source, "height");
+	this._ta.style.height = height;
+	this._ta.value = this._source.textContent.trim();
 	this._source.parentNode.replaceChild(this._ta, this._source);
 	this._ta.focus();
 }
@@ -38,13 +37,17 @@ Example.prototype.close = function() {
 	this._useCode(code);
 }
 
+/**
+ * @param {string} code no html entities, plain code
+ */
 Example.prototype._useCode = function(code) {
 	this._node.innerHTML = "";
 	this._result.innerHTML = "";
+	this._source.innerHTML = "";
 	this._node.appendChild(this._source);
 	this._node.appendChild(this._result);
 	this._node.appendChild(this._time);
-	this._source.innerHTML = code;
+	this._source.appendChild(OZ.DOM.text(code));
 	Syntax.apply(this._source);
 	
 	var result = this._result;

@@ -30,17 +30,19 @@ canvas.width = 500;
 canvas.height = 200;
 SHOW(canvas);
 
-var data = {};
 var ctx = canvas.getContext("2d");
 ctx.fillStyle = "#fff";
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 ctx.fillStyle = "#f00";
 
-for (var i=0;i&lt;40000;i++) {
+var data = [];
+for (var i=0;i&lt;40000;i++) {       /* generate histogram */
 	var num = Math.round(ROT.RNG.getNormal(250, 100));
-	if (!(num in data)) { data[num] = 0; } 
-	ctx.fillRect(num, canvas.height-data[num], 1, 1);
-	data[num]++;
+	data[num] = (data[num] || 0) + 1;
+}
+
+for (var i=0;i&lt;data.length;i++) { /* plot histogram */
+	ctx.fillRect(i, canvas.height-data[i], 1, data[i]);
 }
 </div>
 

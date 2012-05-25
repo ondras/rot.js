@@ -13,3 +13,33 @@ String.prototype.format = function() {
 		}
 	});
 }
+
+/** 
+ * Left pad
+ * @param {string} [character="0"]
+ * @param {int} [count=2]
+ */
+String.prototype.lpad = function(character, count) {
+	var ch = character || "0";
+	var cnt = count || 2;
+
+	var s = "";
+	while (s.length < (cnt - this.length)) { s += ch; }
+	s = s.substring(0, cnt-this.length);
+	return s+this;
+}
+
+/** 
+ * Right pad
+ * @param {string} [character="0"]
+ * @param {int} [count=2]
+ */
+String.prototype.rpad = function(character, count) {
+	var ch = character || "0";
+	var cnt = count || 2;
+
+	var s = "";
+	while (s.length < (cnt - this.length)) { s += ch; }
+	s = s.substring(0, cnt-this.length);
+	return this+s;
+}

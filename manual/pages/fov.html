@@ -1,1 +1,27 @@
-TBD
+<div class="example">
+ROT.RNG.setSeed(12345);
+ROT.DEFAULT_WIDTH = 25;
+ROT.DEFAULT_HEIGHT = 15;
+
+var display = new ROT.Display({fontSize:12});
+SHOW(display.getContainer());
+
+var data = {};
+new ROT.Map.DividedMaze(25, 15).create(function(x, y, type) {
+	data[x+","+y] = type;
+	display.DEBUG(x, y, type);
+});
+
+var lightPasses = function(x, y) {
+	var key = x+","+y;
+	if (key in data) { return (data[key] == 0); }
+	return false;
+}
+
+var fov = new ROT.FOV.DiscreteShadowcasting(lightPasses);
+fov.compute(10, 7, 30, function(x, y, r) {
+	var ch = (r ? "" : "@");
+	var color = (data[x+","+y] ? "#aa0": "#660");
+	display.draw(x, y, ch, "#fff", color);
+});
+</div>
