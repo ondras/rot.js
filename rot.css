@@ -1,0 +1,54 @@
+body {
+	background-color: #000;
+	text-align: center;
+}
+
+pre {
+	display: inline-block;
+	text-align: left;
+	font-family: monospace;
+	font-size: 18px;
+}
+
+pre span {
+	opacity: 0.5;
+}
+
+.text, .text a {
+	color: #fff;
+	opacity: 1;
+}
+
+.text:first-child {
+	font-weight: bold;
+}
+
+.wall {
+	color: #888;
+}
+
+.corridor {
+	color: #aaa;
+}
+
+.staircase {
+	color: #aaa;
+}
+
+.door {
+	color: #a60;
+}
+
+.trap {
+	color: #f0f;
+}
+
+.scroll {
+	color: #fff;
+}
+
+.money, .money a {
+	color: #fe0;
+	text-decoration: none;
+	opacity: 1;
+}
