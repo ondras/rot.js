@@ -1,3 +1,5 @@
+@import url(http://fonts.googleapis.com/css?family=Inconsolata);
+
 body {
 	background-color: #000;
 	text-align: center;
@@ -6,53 +8,66 @@ body {
 pre {
 	display: inline-block;
 	text-align: left;
-	font-family: monospace;
-	font-size: 17px;
+	font-family: inconsolata, monospace;
 	margin: 0;
 	line-height: 100%;
+}
+
+pre {
+	font-size: 17px;
+}
+
+@media all and (min-height: 600px) {
+	pre { font-size: 18px; }
+}
+
+@media all and (min-height: 650px) {
+	pre { font-size: 19px; }
+}
+
+@media all and (min-height: 700px) {
+	pre { font-size: 20px; }
+}
+
+@media all and (min-height: 750px) {
+	pre { font-size: 21px; }
+}
+
+@media all and (min-height: 800px) {
+	pre { font-size: 22px; }
 }
 
 pre span {
 	opacity: 0.5;
 }
 
-a:hover {
-	background-color: #444;
-	border-radius: 2px;
+a {
+	color: #fff;
+	text-decoration: none;
+	opacity: 1;
 }
 
-.text, .text a {
-	color: #fff;
+a:hover {
+	background-color: #333;
+}
+
+.text {
+	color: #bbb;
 	opacity: 1;
 }
 
 .text:first-child {
-	font-weight: bold;
-}
-
-.wall {
-	color: #888;
-}
-
-.corridor {
-	color: #aaa;
-}
-
-.staircase {
-	color: #aaa;
-}
-
-.door {
-	color: #a60;
-}
-
-.trap {
-	color: #f0f;
-}
-
-.scroll {
 	color: #fff;
+	text-decoration: underline;
 }
+
+.wall { color: #888; }
+.corridor { color: #aaa; }
+.staircase { color: #aaa; }
+.door { color: #a60; }
+.trap { color: #f0f; }
+.scroll { color: #fff; }
+.water { color: #00f; }
 
 .money, .money a {
 	color: #fe0;
