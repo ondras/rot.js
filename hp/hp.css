@@ -67,10 +67,15 @@ a:hover {
 .door { color: #a60; }
 .trap { color: #f0f; }
 .scroll { color: #fff; }
-.water { color: #00f; }
+.water { color: #33f; }
 
 .money, .money a {
 	color: #fe0;
-	text-decoration: none;
 	opacity: 1;
 }
+
+.player { color:#f00; }
+.kobold { color:#3f3; }
+.orc { color:#3f3; }
+.goblin { color:#00f; }
+.ogre { color:#3a3; }
