@@ -52,7 +52,8 @@ var monsters = {
 	"k": "kobold",
 	"o": "orc",
 	"g": "goblin",
-	"O": "ogre"
+	"O": "ogre",
+	"D": "dragon"
 }
 for (var p in monsters) {
 	var monster = monsters[p];
