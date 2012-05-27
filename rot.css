@@ -7,11 +7,18 @@ pre {
 	display: inline-block;
 	text-align: left;
 	font-family: monospace;
-	font-size: 18px;
+	font-size: 17px;
+	margin: 0;
+	line-height: 100%;
 }
 
 pre span {
 	opacity: 0.5;
+}
+
+a:hover {
+	background-color: #444;
+	border-radius: 2px;
 }
 
 .text, .text a {
