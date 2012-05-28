@@ -43,8 +43,8 @@ ROT.RNG = {
 	},
 
 	/**
-	 * @param {float} mean Mean value
-	 * @param {float} stddev Standard deviation. ~95% of the absolute values will be lower than 2*stddev.
+	 * @param {float} [mean=0] Mean value
+	 * @param {float} [stddev=1] Standard deviation. ~95% of the absolute values will be lower than 2*stddev.
 	 * @returns {float} A normally distributed pseudorandom value
 	 */
 	getNormal: function(mean, stddev) {
@@ -55,7 +55,7 @@ ROT.RNG = {
 		} while (r > 1 || r == 0);
 
 		var gauss = u * Math.sqrt(-2*Math.log(r)/r);
-		return mean + gauss*stddev;
+		return (mean || 0) + gauss*(stddev || 1);
 	},
 
 	/**
@@ -63,16 +63,6 @@ ROT.RNG = {
 	 */
 	getPercentage: function() {
 		return 1 + Math.floor(this.getUniform()*100);
-	},
-	
-	pushState: function() {
-		this._state.push(this.getState());
-		return this;
-	},
-	
-	popState: function() {
-		this.setState(this._state.pop());
-		return this;
 	},
 	
 	getState: function() {
@@ -91,8 +81,7 @@ ROT.RNG = {
 	_s1: 0,
 	_s2: 0,
 	_c: 0,
-	_frac: 2.3283064365386963e-10, // 2^-32
-	_state: []
+	_frac: 2.3283064365386963e-10 /* 2^-32 */
 }
 
 ROT.RNG.setSeed(Date.now());

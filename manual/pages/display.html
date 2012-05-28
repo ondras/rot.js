@@ -1,8 +1,27 @@
-TBD
+<h2>ASCII console display</h2>
+
+<p><code>ROT.Display</code> provides a canvas-based output that resembles a traditional TTY console.</p>
+
+<h3>Creating a display</h3>
 
 <div class="example">
-var display = new ROT.Display();
-SHOW(display.getContainer());
+var display = new ROT.Display({width:20, height:5});
+SHOW(display.getContainer()); /* do not forget to append to page! */
+</div>
 
-display.drawText(5, 5, "Hello world");
+<h3>Configuring the display</h3>
+
+<p>The display is configured using these values:</p>
+<ul>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+</ul>
+<p>You can configure the display by passing a configuration object to the constructor; alternatively, all options can be changed at runtime using the <code>setOptions</code> method.</p>
+
+<div class="example">
+var display = new ROT.Display({width:20, height:5});
+SHOW(display.getContainer());
 </div>

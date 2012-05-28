@@ -59,27 +59,11 @@ ROT.RNG.setState(state);
 SHOW(ROT.RNG.getUniform());
 </div>
 
-<p>RNG can store a set of its internal states on a stack; you do not have to track it.</p>
-
-<div class="example">
-ROT.RNG.pushState();         /* remember */
-SHOW(
-	ROT.RNG.getUniform(),
-	ROT.RNG.getUniform()
-);
-
-ROT.RNG.popState();          /* recall */
-SHOW(
-	ROT.RNG.getUniform(),
-	ROT.RNG.getUniform()
-);
-</div>
-
-<p>Finally, the RNG can be seeded by a given number. Seeding initializes RNG's internal state. 
+<p>The RNG can be seeded by a given number. Seeding initializes RNG's internal state. 
 Retrieving the current seed is not very useful, but might come handy if you want to reproduce a behavior resulting from a random seed.</p>
 
 <div class="example">
-var seed = ROT.RNG.getSeed(); /* not useful */
+var seed = ROT.RNG.getSeed();
 
 ROT.RNG.setSeed(12345);
 SHOW(
