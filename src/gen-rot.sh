@@ -29,7 +29,3 @@ echo "$PROLOGUE" >> $TARGET
 for FILE in $LIST; do
 	cat $FILE >> $TARGET
 done
-
-# documentation
-cd ..
-jsdoc rot.js -s -a -d=doc/
