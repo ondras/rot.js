@@ -12,6 +12,7 @@ ROT.Display = function(options) {
 	var defaultOptions = {
 		width: ROT.DEFAULT_WIDTH,
 		height: ROT.DEFAULT_HEIGHT,
+		layout: "rect",
 		fontSize: 15,
 		fontFamily: "monospace",
 		fg: "#ccc",
@@ -69,6 +70,9 @@ ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
 	var left = x*this._charWidth;
 	var top = y*this._options.fontSize;
 	/*
+	 * 
+	 * a = (h + w/sqrt(4)) / 2
+	 * 
 	if (y % 2) { x += 0.5; }
 	left = x * this._options.fontSize;
 	top = y * this._options.fontSize * Math.SQRT1_2;
