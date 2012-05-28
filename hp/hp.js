@@ -1,9 +1,9 @@
 var pre = document.querySelector("pre");
-var re = /(&gt;)|([a-z-][a-z0-9 \.,:\(\)-]*[a-z0-9\.:])|(#+)|(\.+)|([+/])|(\$+)|(\^)|(\?)|(=+)/ig;
+var re = /(&gt;)|([a-z-][a-z0-9 \.,:\(\)-]*[a-z0-9\.:])|(#+)|(\.+)|([+/])|(\$+)|(\^)|(\?)|(=+)|(!)/ig;
 
 var str = pre.innerHTML;
 str = str.replace(re, function(match) {
-	var types = ["", "staircase", "text", "wall", "corridor", "door", "money", "trap", "scroll", "water"];
+	var types = ["", "staircase", "text", "wall", "corridor", "door", "money", "trap", "scroll", "water", "potion"];
 	for (var i=1; i<arguments.length-1; i++) {
 		if (arguments[i]) { 
 			var type = types[i];
