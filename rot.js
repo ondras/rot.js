@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Generated on Mon May 28 20:34:52 CEST 2012.
+	Generated on Mon May 28 20:38:30 CEST 2012.
 */
 
 /**
@@ -170,7 +170,7 @@ ROT.Display.prototype.getContainer = function() {
 ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
 	var left = x*this._charWidth;
 	var top = y*this._options.fontSize;
-	
+	/*
 	if (y % 2) { x += 0.5; }
 	left = x * this._options.fontSize;
 	top = y * this._options.fontSize * Math.SQRT1_2;
@@ -178,7 +178,7 @@ ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
 	var coef = 0.8;
 	x *= coef;
 	y *= coef;
-	
+	*/
 	if (!fg) { fg = this._options.fg; }
 	if (!bg) { bg = this._options.bg; }
 	
