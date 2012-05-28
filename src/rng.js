@@ -19,17 +19,19 @@ ROT.RNG = {
 
 		this._seed = seed;
 		this._s0 = (seed >>> 0) * this._frac;
-		seed = (seed * 1103515245) + 12345;
-		this._s1 = (seed >>> 0) * this._frac;
-		seed = (seed * 1103515245) + 12345;
-		this._s2 = (seed >>> 0) * this._frac;
-		this._c = 1;
 
+		seed = (seed*69069 + 1) >>> 0;
+		this._s1 = seed * this._frac;
+
+		seed = (seed*69069 + 1) >>> 0;
+		this._s2 = seed * this._frac;
+
+		this._c = 1;
 		return this;
 	},
 
 	/**
-	 * @returns {float} Pseudorandom value (0,1) exclusive, uniformly distributed
+	 * @returns {float} Pseudorandom value [0,1), uniformly distributed
 	 */
 	getUniform: function() {
 		var t = 2091639 * this._s0 + this._c * this._frac;
@@ -60,7 +62,7 @@ ROT.RNG = {
 	 * @returns {int} Pseudorandom value [1,100] inclusive, uniformly distributed
 	 */
 	getPercentage: function() {
-		return Math.ceil(this.getUniform()*100);
+		return 1 + Math.floor(this.getUniform()*100);
 	},
 	
 	pushState: function() {
