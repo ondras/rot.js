@@ -102,6 +102,10 @@ pre, code, textarea {
 	position: relative;
 }
 
+.example .result canvas {
+	margin-right: 5px;
+}
+
 .example:before {
 	content: "example";
 	position: absolute;

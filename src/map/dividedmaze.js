@@ -1,3 +1,7 @@
+/**
+ * @class Recursively divided maze, http://en.wikipedia.org/wiki/Maze_generation_algorithm#Recursive_division_method
+ * @augments ROT.Map
+ */
 ROT.Map.DividedMaze = function(width, height) {
 	ROT.Map.call(this, width, height);
 	this._stack = [];

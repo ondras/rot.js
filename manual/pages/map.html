@@ -1,21 +1,88 @@
 <h2>Map generation</h2>
 
-<div class="example">
-var display = new ROT.Display({fontSize:18});
-SHOW(display.getContainer());
+<p>There are several map generator tools in <code>rot.js</code>; they all share the same usage pattern. You first need to instantialize the proper <code>ROT.Map.*</code> 
+object and pass size (plus any additional relevant options) to its constructor; you can then call the main <code>create</code> method (repeatedly, if you want).</p>
 
-var map = new ROT.Map.Arena();
+<p>This toolkit does not force usage of any particular memory structure to store the map data. Instead, the map creation process is <em>callback-based</em>: 
+you supply a callback function as an argument to the <code>create</code> method; 
+the map creator will call your function repeatedly and pass it the generated map information. Your callback should accept these arguments:</p>
+
+<ul>
+	<li><code>x</code> &ndash; horizontal coordinate of a map's cell</li>
+	<li><code>y</code> &ndash; vertical coordinate of a map's cell</li>
+	<li><code>value</code> &ndash; integer value corresponding to the type of generated cell (different values might be supplied by different map generators)</li>
+</ul>
+
+<p>These examples use the simplest map generator, <code>Arena</code>: a fully dug room.</p>
+
+<div class="example">
+var map = new ROT.Map.Arena(3, 3);
+var userCallback = function(x, y, value) {
+	SHOW("Value %s generated at [%s,%s]".format(value, x, y));
+}
+map.create(userCallback);
+</div>
+
+<p>We can use <code><a href="#display">ROT.Display</a></code> to show the generated map (although it would make more sense to store the generated data as well). For debugging purposes, 
+<code>ROT.Display</code> provides a built-in convenience method <code>DEBUG</code>, which works as a universal debugging callback.</p>
+
+<div class="example">
+var map = new ROT.Map.Arena(10, 5);
+
+var display1 = new ROT.Display({width:10, height:5, fontSize:18});
+SHOW(display1.getContainer());
+
 map.create(function(x, y, wall) {
-	display.draw(x, y, wall ? "#" : ".");
+	display1.draw(x, y, wall ? "#" : ".");
 });
+
+/* debugging with small font */
+var display2 = new ROT.Display({width:10, height:5, fontSize:8});
+SHOW(display2.getContainer());
+map.create(display2.DEBUG);
 </div>
+
+<h2>Maze generators</h2>
+
+<p>This family of algorithms uses the following callback values:</p>
+<ul>
+	<li><code>0</code>: empty space</li>
+	<li><code>1</code>: wall</li>
+</ul>
+
+<h3>DividedMaze</h3>
+
+<p>Based on a <a href="http://en.wikipedia.org/wiki/Maze_generation_algorithm#Recursive_division_method">Recursive division method</a>.</p>
 
 <div class="example">
-var display = new ROT.Display({fontSize:6});
-SHOW(display.getContainer());
-new ROT.Map.Arena().create(display.DEBUG);
+var w = 40, h = 25;
+var dm = new ROT.Map.DividedMaze(w, h);
 
-var display = new ROT.Display({fontSize:6});
-SHOW(display.getContainer());
-new ROT.Map.DividedMaze().create(display.DEBUG);
+for (var i=0;i&lt;4;i++) {
+	var display = new ROT.Display({width:w, height:h, fontSize:6});
+	SHOW(display.getContainer());
+
+	dm.create(display.DEBUG);
+}
 </div>
+
+<h3>Icey's Maze</h3>
+
+<p>Cool mazes with a configurable regularity can be created using this <a href="http://www.roguebasin.roguelikedevelopment.org/index.php?title=Simple_maze#Maze_Generator_in_Visual_Basic_6">algorithm</a>, 
+taken from a Rogue Basin wiki. Regularity is an integer value, specified as a third argument; 0 = most random.</p>
+
+<div class="example">
+var w = 40, h = 25;
+
+for (var i=0;i&lt;4;i++) {
+	var display = new ROT.Display({width:w, height:h, fontSize:6});
+	SHOW(display.getContainer());
+
+	var maze = new ROT.Map.IceyMaze(w, h, 4*i);
+	maze.create(display.DEBUG);
+}
+</div>
+
+<h3>Dungeon generators</h3>
+
+TBD

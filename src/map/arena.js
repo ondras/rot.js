@@ -1,3 +1,7 @@
+/**
+ * @class Simple empty rectangular room
+ * @augments ROT.Map
+ */
 ROT.Map.Arena = function(width, height) {
 	ROT.Map.call(this, width, height);
 }

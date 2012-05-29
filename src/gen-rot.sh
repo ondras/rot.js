@@ -12,6 +12,7 @@ js/function.js
 map/map.js
 map/arena.js
 map/dividedmaze.js
+map/iceymaze.js
 fov/fov.js
 fov/discrete-shadowcasting.js
 "
