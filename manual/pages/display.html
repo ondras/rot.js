@@ -19,6 +19,8 @@ SHOW(display.getContainer()); /* do not forget to append to page! */
 	<li><code>fontFamily</code> &ndash; string, default "monospace"</li>
 	<li><code>fg</code> &ndash; default foreground color; valid CSS color string</li>
 	<li><code>bg</code> &ndash; default background color; valid CSS color string</li>
+	<li><code>spacing</code> &ndash; spacing adjustment coefficient; 1 = normal, &lt;1 tighter, &gt;1 looser</li>
+	<li><code>layout</code> &ndash; what layouting algorithm shall be used; "rect" or "hex"</li>
 </ul>
 
 <p>You can configure the display by passing a configuration object to the constructor; alternatively, all options can be changed at runtime using the <code>setOptions</code> method.</p>
@@ -54,4 +56,19 @@ display.drawText(5,  2, "Hello world");
 
 /* last argument specifies maximum length */
 display.drawText(20, 5, "This line of text is very long.", 16);
+</div>
+
+<h3>Using hexagonal layout</h3>
+
+<div class="example">
+var display = new ROT.Display({width:20, height:20, layout:"hex"});
+SHOW(display.getContainer());
+
+var colors = ["#fff", "#ddd", "#bbb", "#999", "#777", "#555"];
+for (var i=0;i&lt;20;i++) {
+	for (var j=0;j&lt;20;j++) {
+		var color = colors.random();
+		display.draw(i, j, "", "", color);
+	}
+}
 </div>

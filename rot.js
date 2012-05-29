@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Generated on Mon May 28 20:38:30 CEST 2012.
+	Generated on Tue May 29 11:08:21 CEST 2012.
 */
 
 /**
@@ -102,19 +102,32 @@ ROT.RNG = {
 ROT.RNG.setSeed(Date.now());
 /**
  * @class Visual map display
- * @see ROT.Display#setOptions
+ * @param {object} [options]
+ * @param {int} [options.width=ROT.DEFAULT_WIDTH]
+ * @param {int} [options.height=ROT.DEFAULT_HEIGHT]
+ * @param {int} [options.fontSize=15]
+ * @param {string} [options.fontFamily="monospace"]
+ * @param {string} [options.fg="#ccc"]
+ * @param {string} [options.bg="#000"]
+ * @param {float} [options.spacing=1]
+ * @param {string} [options.layout="rect"]
  */
 ROT.Display = function(options) {
 	this._canvas = document.createElement("canvas");
 	this._context = this._canvas.getContext("2d");
 	this._data = {};
 	this._charWidth = 0;
+	this._hexSize = 0;
+	this._hexSpacingX = 0;
+	this._hexSpacingY = 0;
 	this._options = {};
 	
 	var defaultOptions = {
 		width: ROT.DEFAULT_WIDTH,
 		height: ROT.DEFAULT_HEIGHT,
+		layout: "rect",
 		fontSize: 15,
+		spacing: 1,
 		fontFamily: "monospace",
 		fg: "#ccc",
 		bg: "#000"
@@ -140,13 +153,7 @@ ROT.Display.prototype.clear = function() {
 }
 
 /**
- * @param {object} [options]
- * @param {int} [options.width=ROT.DEFAULT_WIDTH]
- * @param {int} [options.height=ROT.DEFAULT_HEIGHT]
- * @param {int} [options.fontSize=15]
- * @param {string} [options.fontFamily="monospace"]
- * @param {string} [options.fg="#ccc"]
- * @param {string} [options.bg="#000"]
+ * @see ROT.Display
  */
 ROT.Display.prototype.setOptions = function(options) {
 	for (var p in options) { this._options[p] = options[p]; }
@@ -168,30 +175,44 @@ ROT.Display.prototype.getContainer = function() {
  * @param {string} char 
  */
 ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
-	var left = x*this._charWidth;
-	var top = y*this._options.fontSize;
-	/*
-	if (y % 2) { x += 0.5; }
-	left = x * this._options.fontSize;
-	top = y * this._options.fontSize * Math.SQRT1_2;
-	
-	var coef = 0.8;
-	x *= coef;
-	y *= coef;
-	*/
 	if (!fg) { fg = this._options.fg; }
 	if (!bg) { bg = this._options.bg; }
 	
 	var id = x+","+y;
 	this._data[id] = [char, fg, bg];
-
+	
 	this._context.fillStyle = bg;
-	this._context.fillRect(left, top, this._charWidth, this._options.fontSize);
+
+	switch (this._options.layout) {
+		case "rect":
+			var cx = (x+0.5) * this._spacingX;
+			var cy = (y+0.5) * this._spacingY;
+			
+			this._context.fillRect(cx-this._spacingX/2, cy-this._spacingY/2, this._spacingX, this._spacingY);
+		break;
+		case "hex":
+			var a = this._hexSize;
+			if (y % 2) { x += 0.5; }
+			var cx = (x+0.5) * this._spacingX;
+			var cy = y * this._spacingY + a;
+			
+			this._context.beginPath();
+			this._context.moveTo(cx, cy-a);
+			this._context.lineTo(cx + this._spacingX/2, cy-a/2);
+			this._context.lineTo(cx + this._spacingX/2, cy+a/2);
+			this._context.lineTo(cx, cy+a);
+			this._context.lineTo(cx - this._spacingX/2, cy+a/2);
+			this._context.lineTo(cx - this._spacingX/2, cy-a/2);
+			this._context.lineTo(cx, cy-a);
+			this._context.fill();
+		break;
+	}
+
 	
 	if (!char) { return; }
 	
 	this._context.fillStyle = fg;
-	this._context.fillText(char.charAt(0), left, top);
+	this._context.fillText(char.charAt(0), cx, cy);
 }
 
 /**
@@ -217,12 +238,25 @@ ROT.Display.prototype._redraw = function() {
 	this._context.font = font;
 	this._charWidth = Math.ceil(this._context.measureText("W").width);
 	
-	/* adjust size */
-	this._canvas.width = this._options.width * this._charWidth;
-	this._canvas.height = this._options.height * this._options.fontSize;
+	switch (this._options.layout) {
+		case "rect":
+			this._spacingX = Math.ceil(this._options.spacing * this._charWidth);
+			this._spacingY = Math.ceil(this._options.spacing * this._options.fontSize);
+			this._canvas.width = this._options.width * this._spacingX;
+			this._canvas.height = this._options.height * this._spacingY;
+		break;
+		case "hex":
+			this._hexSize = Math.floor(this._options.spacing * (this._options.fontSize + this._charWidth/Math.sqrt(3)) / 2);
+			this._spacingX = this._hexSize * Math.sqrt(3);
+			this._spacingY = this._hexSize * 1.5;
+			this._canvas.width = Math.ceil( (this._options.width + 0.5) * this._spacingX );
+			this._canvas.height = Math.ceil( (this._options.height - 1) * this._spacingY + 2*this._hexSize );
+		break;
+	}
+	
 	this._context.font = font;
-	this._context.textAlign = "left";
-	this._context.textBaseline = "top";
+	this._context.textAlign = "center";
+	this._context.textBaseline = "middle";
 	
 	var data = this._data;
 	this.clear();
