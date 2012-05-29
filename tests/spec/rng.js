@@ -31,4 +31,17 @@ describe("RNG", function() {
 		});
 	});
 	
+	describe("state manipulation", function() {
+		it("should return identical values after setting identical states", function() {
+			ROT.RNG.getUniform();
+			
+			var state = ROT.RNG.getState();
+			var val1 = ROT.RNG.getUniform();
+			ROT.RNG.setState(state);
+			var val2 = ROT.RNG.getUniform();
+
+			expect(val1).toEqual(val2);
+		});
+	});
+
 });

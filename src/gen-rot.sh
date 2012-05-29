@@ -3,6 +3,7 @@ LIST="
 rot.js
 rng.js
 display.js
+scheduler.js
 js/array.js
 js/date.js
 js/number.js
@@ -13,6 +14,7 @@ map/map.js
 map/arena.js
 map/dividedmaze.js
 map/iceymaze.js
+map/ellermaze.js
 fov/fov.js
 fov/discrete-shadowcasting.js
 "

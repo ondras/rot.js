@@ -61,8 +61,8 @@ a:hover {
 	text-decoration: underline;
 }
 
-.wall { color: #888; }
-.corridor { color: #aaa; }
+.wall { color: #666; }
+.corridor { color: #ccc; }
 .staircase { color: #aaa; }
 .door { color: #a60; }
 .trap { color: #f0f; }

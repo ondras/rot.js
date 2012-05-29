@@ -55,7 +55,7 @@ map.create(display2.DEBUG);
 <p>Based on a <a href="http://en.wikipedia.org/wiki/Maze_generation_algorithm#Recursive_division_method">Recursive division method</a>.</p>
 
 <div class="example">
-var w = 40, h = 25;
+var w = 39, h = 25;
 var dm = new ROT.Map.DividedMaze(w, h);
 
 for (var i=0;i&lt;4;i++) {
@@ -72,7 +72,7 @@ for (var i=0;i&lt;4;i++) {
 taken from a Rogue Basin wiki. Regularity is an integer value, specified as a third argument; 0 = most random.</p>
 
 <div class="example">
-var w = 40, h = 25;
+var w = 39, h = 25;
 
 for (var i=0;i&lt;4;i++) {
 	var display = new ROT.Display({width:w, height:h, fontSize:6});
@@ -80,6 +80,25 @@ for (var i=0;i&lt;4;i++) {
 
 	var maze = new ROT.Map.IceyMaze(w, h, 4*i);
 	maze.create(display.DEBUG);
+}
+</div>
+
+<h3>Eller's Perfect Maze</h3>
+
+<p>For a full explanation of this wonderful Eller's algorithm, please see 
+<a href="http://homepages.cwi.nl/~tromp/maze.html">http://homepages.cwi.nl/~tromp/maze.html</a>. 
+Not only it generates a <em>Perfect maze</em> (every two cells are connected by exactly one path), 
+but it only requires 2*N memory to generate a maze of N*N size!</p>
+
+<div class="example">
+var w = 39, h = 25;
+var em = new ROT.Map.EllerMaze(w, h);
+
+for (var i=0;i&lt;4;i++) {
+	var display = new ROT.Display({width:w, height:h, fontSize:6});
+	SHOW(display.getContainer());
+
+	em.create(display.DEBUG);
 }
 </div>
 
