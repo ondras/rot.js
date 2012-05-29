@@ -67,7 +67,7 @@ SHOW(display.getContainer());
 var colors = ["#fff", "#ddd", "#bbb", "#999", "#777", "#555"];
 for (var i=0;i&lt;20;i++) {
 	for (var j=0;j&lt;20;j++) {
-		var color = colors.random();
+		var color = colors[(i+j) % colors.length];
 		display.draw(i, j, "", "", color);
 	}
 }
