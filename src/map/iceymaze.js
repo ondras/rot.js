@@ -13,7 +13,7 @@ ROT.Map.IceyMaze.prototype.create = function(callback) {
 	var width = this._width;
 	var height = this._height;
 	
-	var map = this._fillMap(width, height, 1);
+	var map = this._fillMap(1);
 	
 	width -= (width % 2 ? 1 : 2);
 	height -= (height % 2 ? 1 : 2);

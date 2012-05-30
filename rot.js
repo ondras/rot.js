@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Generated on Tue May 29 20:39:50 CEST 2012.
+	Generated on Wed May 30 14:43:32 CEST 2012.
 */
 
 /**
@@ -268,6 +268,68 @@ ROT.Display.prototype._redraw = function() {
 		this.draw(parseInt(parts[0]), parseInt(parts[1]), item[0], item[1], item[2]);
 	}
 }
+/**
+ * @class Speed-based scheduler
+ */
+ROT.Scheduler = function() {
+	this._items = [];
+}
+
+/**
+ * @param {object} item anything with "getSpeed" method
+ */
+ROT.Scheduler.prototype.add = function(item) {
+	var o = {
+		item: item,
+		bucket: 1/item.getSpeed()
+	}
+	this._items.push(o);
+	return this;
+}
+
+ROT.Scheduler.prototype.clear = function() {
+	this._items = [];
+	return this;
+}
+
+ROT.Scheduler.prototype.remove = function(item) {
+	var it = null;
+	for (var i=0;i<this._items.length;i++) {
+		it = this._items[i];
+		if (it.item == item) { 
+			this._items.splice(i, 1); 
+			break;
+		}
+	}
+	return this;
+}
+
+ROT.Scheduler.prototype.next = function() {
+	if (!this._items.length) { return null; }
+
+	var minBucket = Infinity;
+	var minItem = null;
+
+	for (var i=0;i<this._items.length;i++) {
+		var item = this._items[i];
+		if (item.bucket < minBucket) {
+			minBucket = item.bucket;
+			minItem = item;
+		} else if (item.bucket == minBucket && item.item.getSpeed() > minItem.item.getSpeed()) {
+			minItem = item;
+		}
+	}
+	
+	if (minBucket) { /* non-zero value; subtract from all buckets */
+		for (var i=0;i<this._items.length;i++) {
+			var item = this._items[i];
+			item.bucket = Math.max(0, item.bucket - minBucket);
+		}
+	}
+	
+	minItem.bucket += 1/minItem.item.getSpeed();
+	return minItem.item;
+}
 Array.prototype.random = function() {
 	if (!this.length) { return null; }
 	return this[Math.floor(ROT.RNG.getUniform() * this.length)];
@@ -345,8 +407,14 @@ if (!Object.create) {
 }  
 Function.prototype.extend = function(parent) {
 	this.prototype = Object.create(parent.prototype);
+	this.prototype.constructor = this;
 	return this;
 }
+/**
+ * @class Base map generator
+ * @param {int} [width=ROT.DEFAULT_WIDTH]
+ * @param {int} [height=ROT.DEFAULT_HEIGHT]
+ */
 ROT.Map = function(width, height) {
 	this._width = width || ROT.DEFAULT_WIDTH;
 	this._height = height || ROT.DEFAULT_HEIGHT;
@@ -354,11 +422,11 @@ ROT.Map = function(width, height) {
 
 ROT.Map.prototype.create = function(callback) {}
 
-ROT.Map.prototype._fillMap = function(width, height, value) {
+ROT.Map.prototype._fillMap = function(value) {
 	var map = [];
-	for (var i=0;i<width;i++) {
+	for (var i=0;i<this._width;i++) {
 		map.push([]);
-		for (var j=0;j<height;j++) { map[i].push(value); }
+		for (var j=0;j<this._height;j++) { map[i].push(value); }
 	}
 	return map;
 }
@@ -505,7 +573,7 @@ ROT.Map.IceyMaze.prototype.create = function(callback) {
 	var width = this._width;
 	var height = this._height;
 	
-	var map = this._fillMap(width, height, 1);
+	var map = this._fillMap(1);
 	
 	width -= (width % 2 ? 1 : 2);
 	height -= (height % 2 ? 1 : 2);
@@ -602,7 +670,7 @@ ROT.Map.EllerMaze = function(width, height) {
 ROT.Map.EllerMaze.extend(ROT.Map);
 
 ROT.Map.EllerMaze.prototype.create = function(callback) {
-	var map = this._fillMap(this._width, this._height, 1);
+	var map = this._fillMap(1);
 	var w = Math.ceil((this._width-2)/2);
 	
 	var rand = 9/24;
@@ -685,6 +753,119 @@ ROT.Map.EllerMaze.prototype._addToList = function(i, L, R) {
 	L[R[i]] = L[i+1];
 	R[i] = i+1;
 	L[i+1] = i;
+}
+/**
+ * @class Cellular automaton map generator
+ * @augments ROT.Map
+ * @param {int} [width=ROT.DEFAULT_WIDTH]
+ * @param {int} [height=ROT.DEFAULT_HEIGHT]
+ * @param {object} [options] Options
+ * @param {int[]} [options.born] List of neighbor counts for a new cell to be born in empty space
+ * @param {int[]} [options.survive] List of neighbor counts for an existing  cell to survive
+ * @param {int} [options.topology] Topology 4 or 6 or 8
+ */
+ROT.Map.Cellular = function(width, height, options) {
+	ROT.Map.call(this, width, height);
+	this._options = {
+		born: [5, 6, 7, 8],
+		survive: [4, 5, 6, 7, 8],
+		topology: 8
+	};
+	for (var p in options) { this._options[p] = options[p]; }
+	
+	this._diffs = this.constructor.DIFFS[this._options.topology];
+	this._map = this._fillMap(0);
+}
+ROT.Map.Cellular.extend(ROT.Map);
+
+ROT.Map.Cellular.DIFFS = {
+	"4": [
+		[-1,  0],
+		[ 1, -1],
+		[ 1,  0],
+		[ 0, -1],
+		[ 0,  1]
+	],
+	"8": [
+		[-1, -1],
+		[-1,  0],
+		[-1,  1],
+		[ 1, -1],
+		[ 1,  0],
+		[ 1,  1],
+		[ 0, -1],
+		[ 0,  1]
+	],
+	"6": [
+		[-1,  0],
+		[ 1,  0],
+		
+		/* odd rows add +1 to X */
+		[-1, -1],
+		[-1,  1],
+		[ 0, -1],
+		[ 0,  1]
+	]
+};
+
+
+/**
+ * Fill the map with random values
+ * @param {float} probability Probability for a cell to become alive; 0 = all empty, 1 = all full
+ */
+ROT.Map.Cellular.prototype.randomize = function(probability) {
+	for (var i=0;i<this._width;i++) {
+		for (var j=0;j<this._height;j++) {
+			this._map[i][j] = (ROT.RNG.getUniform() < probability ? 1 : 0);
+		}
+	}
+}
+
+ROT.Map.Cellular.prototype.set = function(x, y, value) {
+	this._map[x][y] = value;
+}
+
+ROT.Map.Cellular.prototype.create = function(callback) {
+	var newMap = this._fillMap(0);
+	var born = this._options.born;
+	var survive = this._options.survive;
+	
+	for (var i=0;i<this._width;i++) {
+		for (var j=0;j<this._height;j++) {
+			var cur = this._map[i][j];
+			var ncount = this._getNeighbors(i, j);
+			
+			if (cur && survive.indexOf(ncount) != -1) { /* survive */
+				newMap[i][j] = 1;
+			} else if (!cur && born.indexOf(ncount) != -1) { /* born */
+				newMap[i][j] = 1;
+			}
+			
+			if (callback) { callback(i, j, newMap[i][j]); }
+		}
+	}
+	
+	this._map = newMap;
+}
+
+/**
+ * Get neighbor count at [i,j] in this._map, using this._options.topology
+ */
+ROT.Map.Cellular.prototype._getNeighbors = function(cx, cy) {
+	var result = 0;
+	for (var i=0;i<this._diffs.length;i++) {
+		var diff = this._diffs[i];
+		var x = cx + diff[0];
+		var y = cy + diff[1];
+		
+		/* odd rows are shifted */
+		if (this._options.topology == 6 && (cy % 2) && diff[1]) {  x += 1; }
+		
+		if (x < 0 || x >= this._width || x < 0 || y >= this._width) { continue; }
+		result += (this._map[x][y] == 1 ? 1 : 0);
+	}
+	
+	return result;
 }
 ROT.FOV = function(lightPassesCallback) {
 	this._lightPasses = lightPassesCallback;

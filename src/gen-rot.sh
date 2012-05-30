@@ -15,6 +15,7 @@ map/arena.js
 map/dividedmaze.js
 map/iceymaze.js
 map/ellermaze.js
+map/cellular.js
 fov/fov.js
 fov/discrete-shadowcasting.js
 "

@@ -1,62 +1,62 @@
 /**
  * @class Speed-based scheduler
  */
-RPG.Misc.Scheduler = OZ.Class();
-RPG.Misc.Scheduler.prototype.init = function() {
-	this._actors = [];
+ROT.Scheduler = function() {
+	this._items = [];
 }
 
-RPG.Misc.Scheduler.prototype.addActor = function(actor) {
+/**
+ * @param {object} item anything with "getSpeed" method
+ */
+ROT.Scheduler.prototype.add = function(item) {
 	var o = {
-		actor: actor,
-		bucket: 1/actor.getSpeed()
+		item: item,
+		bucket: 1/item.getSpeed()
 	}
-	this._actors.push(o);
+	this._items.push(o);
 	return this;
 }
 
-RPG.Misc.Scheduler.prototype.clearActors = function() {
-	this._actors = [];
-	this._current = [];
+ROT.Scheduler.prototype.clear = function() {
+	this._items = [];
 	return this;
 }
 
-RPG.Misc.Scheduler.prototype.removeActor = function(actor) {
-	var a = null;
-	for (var i=0;i<this._actors.length;i++) {
-		a = this._actors[i];
-		if (a.actor == actor) { 
-			this._actors.splice(i, 1); 
+ROT.Scheduler.prototype.remove = function(item) {
+	var it = null;
+	for (var i=0;i<this._items.length;i++) {
+		it = this._items[i];
+		if (it.item == item) { 
+			this._items.splice(i, 1); 
 			break;
 		}
 	}
-	
 	return this;
 }
 
-RPG.Misc.Scheduler.prototype.scheduleActor = function() {
-	if (!this._actors.length) { return null; }
+ROT.Scheduler.prototype.next = function() {
+	if (!this._items.length) { return null; }
 
 	var minBucket = Infinity;
-	var minActor = null;
+	var minItem = null;
 
-	for (var i=0;i<this._actors.length;i++) {
-		var actor = this._actors[i];
-		if (actor.bucket < minBucket) {
-			minBucket = actor.bucket;
-			minActor = actor;
-		} else if (actor.bucket == minBucket && actor.actor.getSpeed() > minActor.actor.getSpeed()) {
-			minActor = actor;
+	for (var i=0;i<this._items.length;i++) {
+		var item = this._items[i];
+		if (item.bucket < minBucket) {
+			minBucket = item.bucket;
+			minItem = item;
+		} else if (item.bucket == minBucket && item.item.getSpeed() > minItem.item.getSpeed()) {
+			minItem = item;
 		}
 	}
 	
 	if (minBucket) { /* non-zero value; subtract from all buckets */
-		for (var i=0;i<this._actors.length;i++) {
-			var actor = this._actors[i];
-			actor.bucket = Math.max(0, actor.bucket - minBucket);
+		for (var i=0;i<this._items.length;i++) {
+			var item = this._items[i];
+			item.bucket = Math.max(0, item.bucket - minBucket);
 		}
 	}
 	
-	minActor.bucket += 1/minActor.actor.getSpeed();
-	return minActor.actor;
+	minItem.bucket += 1/minItem.item.getSpeed();
+	return minItem.item;
 }

@@ -9,7 +9,7 @@ ROT.Map.EllerMaze = function(width, height) {
 ROT.Map.EllerMaze.extend(ROT.Map);
 
 ROT.Map.EllerMaze.prototype.create = function(callback) {
-	var map = this._fillMap(this._width, this._height, 1);
+	var map = this._fillMap(1);
 	var w = Math.ceil((this._width-2)/2);
 	
 	var rand = 9/24;
