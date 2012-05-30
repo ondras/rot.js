@@ -1,11 +1,19 @@
 /**
  * @class Random dungeon generator using human-like digging patterns.
  * Heavily based on Mike Anderson's ideas from the "Tyrant" algo, mentioned at 
- * http://www.roguebasin.roguelikedevelopment.org/index.php?title=Dungeon-Building_Algorithm .
+ * http://www.roguebasin.roguelikedevelopment.org/index.php?title=Dungeon-Building_Algorithm.
  * @augments ROT.Map
  */
-ROT.Map.Digger = function(width, height, regularity) {
+ROT.Map.Digger = function(width, height, options) {
 	ROT.Map.call(this, width, height);
+	
+	this._rooms = [];
+	this._options = {
+		roomWidth: [3, 9], /* room minimum and maximum width */
+		roomHeight: [3, 5], /* room minimum and maximum height */
+		corridorLength: [2, 10] /* corridor minimum and maximum length */
+	}
+	for (var p in options) { this._options[p] = options[p]; }
 	
 	this._features = {
 		room: 2,
@@ -29,6 +37,8 @@ ROT.Map.Digger.prototype.create = function(callback) {
 
 	this._freeWalls = []; /* these are available for digging */
 	this._forcedWalls = []; /* these are forced for digging */
+	this._rooms = [];
+	this._dug = 0;
 
 	this._firstRoom();
 	var area = (this._width-2) * (this._height-2);
@@ -40,8 +50,8 @@ ROT.Map.Digger.prototype.create = function(callback) {
 		var featureResult = false;
 		var featureCount = 0;
 		do {
-			/* try adding afeature */
-			featureResult = this._tryFeature(wall);
+			/* try adding a feature */
+			featureResult = this._tryFeature(wall[0], wall[1]);
 			featureCount++;
 			
 			/* feature added, cool */
@@ -50,24 +60,36 @@ ROT.Map.Digger.prototype.create = function(callback) {
 		} while (featureCount < this._featureAttempts);
 	} while (this._dug/area < this._dugPercentage || this._forcedWalls.length);
 	
-	this._freeWalls = [];
-	
 	for (var i=0;i<this._width;i++) {
 		for (var j=0;j<this._height;j++) {
 			callback(i, j, map[i][j]);
 		}
 	}
 	
+	this._freeWalls = [];
 	this._map = null;
+
 	return this;
 }
 
 ROT.Map.Digger.prototype._firstRoom = function() {
-	var corner1 = this._generateCoords(this._minSize);
-	var corner2 = this._generateSecondCorner(corner1, this._minSize, this._maxWidth, this._maxHeight);
+	var paddingX = 1 + this._options.roomWidth[0];
+	var paddingY = 1 + this._options.roomHeight[0];
+	var x1 = 1 + Math.floor(ROT.RNG.getUniform()*(this._width-padding));
+	var y1 = 1 + Math.floor(ROT.RNG.getUniform()*(this._height-padding));
 	
-	this._digRoom(corner1, corner2);
-	this._addSurroundingWalls(corner1, corner2);
+	
+	var availX = this._width - x1 - this._options.roomWidth[0];
+	var availY = this._height - y1 - this._options.roomHeight[0];
+	
+	availX = Math.min(availX, this._options.roomWidth[1] - this._options.roomWidth[0] + 1);
+	availY = Math.min(availY, this._options.roomHeight[1] - this._options.roomHeight[0] + 1);
+	
+	var x2 = x1 + this._options.roomWidth[0] - 1 + Math.floor(ROT.RNG.getUniform()*availX);
+	var y2 = x1 + this._options.roomHeight[0] - 1 + Math.floor(ROT.RNG.getUniform()*availY);
+	
+	this._digRoom(x1, y1, x2, y2);
+	this._addSurroundingWalls(x1, y1, x2, y2);
 }
 
 /**
@@ -76,29 +98,36 @@ ROT.Map.Digger.prototype._firstRoom = function() {
  * @returns {RPG.Misc.Coords}
  */
 ROT.Map.Digger.prototype._findWall = function() {
-	if (this._forcedWalls.length) {
-		var forcedWall = this._forcedWalls.random();
-		var index = this._forcedWalls.indexOf(forcedWall);
-		this._forcedWalls.splice(index, 1);
-		return forcedWall;
-	} else {
-		if (!this._freeWalls.length) { throw new Error("PANIC! No suitable wall found."); }
-		return this._freeWalls.random();
-	}
-
+	var fw = [];
+	for (var id in this._forcedWalls) { fw.push(id); }
 	
+	if (fw.length) {
+		var id = fw.random();
+		delete this._forcedWalls[id];
+		var parts = id.split(",");
+		return [parseInt(parts[0]), parseInt(parts[1])];
+	}
+	
+	var w = [];
+	for (var id in this._freeWalls) { w.push(id); }
+	if (!w.length) { throw new Error("PANIC! No suitable wall found."); }
+	
+	var id = w.random();
+	var parts = id.split(",");
+	/* FIXME should not we delete this wall from this._freeWalls? */
+	return [parseInt(parts[0]), parseInt(parts[1])];
 }
 
 /**
  * Tries adding a feature
  * @returns {bool} was this a successful try?
  */
-ROT.Map.Digger.prototype._tryFeature = function(wall) {
+ROT.Map.Digger.prototype._tryFeature = function(x, y) {
 	var name = this._getFeature();
 	var func = this["_feature" + name.charAt(0).toUpperCase() + name.substring(1)];
 	if (!func) { throw new Error("PANIC! Non-existant feature '"+name+"'."); }
 	
-	return func.call(this, wall);
+	return func.call(this, x, y);
 }
 
 /**
@@ -119,9 +148,9 @@ ROT.Map.Digger.prototype._getFeature = function() {
 /**
  * Room feature
  */
-ROT.Map.Digger.prototype._featureRoom = function(wall) {
+ROT.Map.Digger.prototype._featureRoom = function(startX, startY) {
 	/* corridor vector */
-	var direction = this._emptyDirection(wall);
+	var direction = this._emptyDirection(x, y);
 	var normal = new RPG.Misc.Coords(direction.y, -direction.x);
 
 	var diffX = this._maxWidth - this._minSize + 1;
@@ -204,42 +233,38 @@ ROT.Map.Digger.prototype._featureRoom = function(wall) {
 /**
  * Corridor feature
  */
-ROT.Map.Digger.prototype._featureCorridor = function(wall) {
+ROT.Map.Digger.prototype._featureCorridor = function(startX, startY) {
 	/* corridor vector */
-	var direction = this._emptyDirection(wall);
-	var normal = new RPG.Misc.Coords(direction.y, -direction.x);
-	
-	/* wall length */
-	var availSpace = 0;
-	var c = wall.clone();
-	while (this._isValid(c)) {
-		c.x += direction.x;
-		c.y += direction.y;
-		availSpace++;
-	}
-	availSpace--;
-	
-	/* not enough space */
-	if (availSpace < this._maxLength) { return false; }
+	var direction = this._emptyDirection(startX, startY);
+	var normal = [direction[1], -direction[0]];
 	
 	/* random length */
-	var diff = this._maxLength - this._minLength + 1;
-	var length = Math.floor(ROT.RNG.getUniform() * diff) + this._minLength;
-	length = Math.min(length, availSpace);
+	var diff = this._options.corridorLength[1] - this._options.corridorLength[0] + 1;
+	var length = Math.floor(ROT.RNG.getUniform() * diff) + this._options.corridorLength[0];
 	
-	/* start point */
-	var start = wall.clone();
-	
-	/* end point */
-	var end = start.clone();
-	for (var i=1;i<length;i++) {
-		end.plus(direction);
+	for (var i=1;i<=length;i++) {
+		var x = startX + i*direction[0];
+		var y = startY + i*direction[1];
+		
+		if (!this._map[x][y]) { 
+			length = i-1;
+			break;
+		}
+		
+		if (x < 1 || x+1 == this._width || y < 1 || y+1 == this._height) {
+			length = i-1;
+			break;
+		}
 	}
+	if (length < this._options.corridorLength[0]) { return false; }
 	
-	var left = Math.min(start.x + normal.x, start.x - normal.x, end.x + normal.x, end.x - normal.x);
-	var right = Math.max(start.x + normal.x, start.x - normal.x, end.x + normal.x, end.x - normal.x);
-	var top = Math.min(start.y + normal.y, start.y - normal.y, end.y + normal.y, end.y - normal.y);
-	var bottom = Math.max(start.y + normal.y, start.y - normal.y, end.y + normal.y, end.y - normal.y);
+	var endX = startX + length*direction[0];
+	var endY = startY + length*direction[1];
+	
+	var left   = Math.min(startX + normal[0], startX - normal[0], endX + normal[0], endX - normal[0]);
+	var right  = Math.max(startX + normal[0], startX - normal[0], endX + normal[0], endX - normal[0]);
+	var top    = Math.min(startY + normal[1], startY - normal[1], endY + normal[1], endY - normal[1]);
+	var bottom = Math.max(startY + normal[1], startY - normal[1], endY + normal[1], endY - normal[1]);
 	
 	var corner1 = new RPG.Misc.Coords(left, top);
 	var corner2 = new RPG.Misc.Coords(right, bottom);
@@ -247,7 +272,7 @@ ROT.Map.Digger.prototype._featureCorridor = function(wall) {
 	var ok = this._freeSpace(corner1, corner2);
 	if (!ok) { return false; }
 	
-	/* if the last cell of wall is a corner of a corridor, cancel */
+	/* if the last cell of wall is a corner of a room, cancel */
 	for (var i=0;i<this._rooms.length;i++) {
 		var room = this._rooms[i];
 		var c1 = room.getCorner1();
@@ -298,88 +323,92 @@ ROT.Map.Digger.prototype._featureCorridor = function(wall) {
 /**
  * Adds a new wall to list of available walls
  */
-ROT.Map.Digger.prototype._addFreeWall = function(coords) {
+ROT.Map.Digger.prototype._addFreeWall = function(x, y) {
 	/* remove if already exists */
-	this._removeFreeWall(coords);
+	this._removeFreeWall(x, y);
 	
 	/* is this one ok? */
-	var ok = this._emptyDirection(coords);
+	var ok = this._emptyDirection(x, y);
 	if (!ok) { return; }
 	
 	/* ok, so let's add it */
-	this._freeWalls.push(coords.clone());
+	this._freeWalls[x+","+y] = 1;
 }
 
 /**
  * Adds a new wall to list of forced walls
  */
-ROT.Map.Digger.prototype._addForcedWall = function(coords) {
+ROT.Map.Digger.prototype._addForcedWall = function(x, y) {
 	/* is this one ok? */
-	var ok = this._emptyDirection(coords);
+	var ok = this._emptyDirection(x, y);
 	if (!ok) { return; }
 	
 	/* ok, so let's add it */
-	this._forcedWalls.push(coords.clone());
+	this._forcedWalls[x+","+y] = 1;
 }
 
 /**
  * Removes a wall from list of walls
  */
-ROT.Map.Digger.prototype._removeFreeWall = function(coords) {
-	for (var i=0;i<this._freeWalls.length;i++) {
-		var wall = this._freeWalls[i];
-		if (wall.x == coords.x && wall.y == coords.y) {
-			this._freeWalls.splice(i, 1);
-			return;
-		}
-	}
+ROT.Map.Digger.prototype._removeFreeWall = function(x, y) {
+	var key = x+","+y;
+	delete this._freeWalls[key];
 }
 
 /**
  * Returns vector in "digging" direction, or false, if this does not exist (or is not unique)
  */
-ROT.Map.Digger.prototype._emptyDirection = function(coords) {
-	var c = new RPG.Misc.Coords();
-	var empty = null;
+ROT.Map.Digger.prototype._emptyDirection = function(cx, cy) {
+	var result = null;
 	var deltas = [[-1, 0], [1, 0], [0, -1], [0, 1]];
 	
 	for (var i=0;i<deltas.length;i++) {
-		c.x = coords.x+deltas[i][0];
-		c.y = coords.y+deltas[i][1];
+		var delta = deltas[i];
+		var x = cx + delta[0];
+		var y = cy + delta[1];
 		
-		if (!this._isValid(c)) { return false; }
+		if (x < 0 || y < 0 || x >= this._width || y >= this._width) { return null; }
 		
-		if (!this._map[c.x][c.y]) { 
+		if (!this._map[x][y]) { 
 			/* there already is another empty neighbor! */
-			if (empty) { return false; }
-
-			empty = c.clone();
+			if (result) { return null; }
+			result = delta;
 		}
 	}
 	
 	/* no empty neighbor */
-	if (!empty) { return false; }
+	if (!result) { return null; } /* FIXME can not happen? */
 	
-	return new RPG.Misc.Coords(coords.x - empty.x, coords.y - empty.y);
+	return [-result[0], -result[1]];
 }
 
 /**
  * For a given rectangular area, adds all relevant surrounding walls to list of free walls
  */
-ROT.Map.Digger.prototype._addSurroundingWalls = function(corner1, corner2) {
+ROT.Map.Digger.prototype._addSurroundingWalls = function(x1, y1, x2, y2) {
 	var c = new RPG.Misc.Coords(0, 0);
-	var left = corner1.x-1;
-	var right = corner2.x+1;
-	var top = corner1.y-1;
-	var bottom = corner2.y+1;
+	var left = x1-1;
+	var top = y1-1;
+	var right = x2+1;
+	var bottom = y2+1;
 	
-	for (var i=left;i<=right;i++) {
-		for (var j=top;j<=bottom;j++) {
+	for (var i=left; i<=right; i++) {
+		for (var j=top; j<=bottom; j++) {
 			if (i == left || i == right || j == top || j == bottom) {
-				c.x = i;
-				c.y = j;
-				this._addFreeWall(c);
+				this._addFreeWall(i, j);
 			}
 		}
 	}
+}
+
+RPG.Map.Digger.prototype._digRoom = function(x1, y1, x2, y2) {
+	this._rooms.push([x1, y1, x2, y2]);
+	
+	for (var i=x1;i<=x2;i++) {
+		for (var j=y1;j<=y2;j++) {
+			this._map[i][j] = 0;
+		}
+	}
+	
+	this._dug += (x2-x1+1) * (y2-y1+1);
 }
