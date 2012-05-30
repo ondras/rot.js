@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Generated on Wed May 30 14:43:32 CEST 2012.
+	Generated on Wed May 30 15:41:24 CEST 2012.
 */
 
 /**
@@ -9,6 +9,9 @@
 var ROT = {
 	DEFAULT_WIDTH: 80,
 	DEFAULT_HEIGHT: 25,
+	/**
+	 * @returns {bool} Is rot.js supported by this browser?
+	 */
 	isSupported: function() {
 		return !!(document.createElement("canvas").getContext && Function.prototype.bind);
 	}
@@ -867,11 +870,19 @@ ROT.Map.Cellular.prototype._getNeighbors = function(cx, cy) {
 	
 	return result;
 }
+/**
+ * @class Abstract FOV algorithm
+ * @param {function} lightPassesCallback Does the light pass through x,y?
+ */
 ROT.FOV = function(lightPassesCallback) {
 	this._lightPasses = lightPassesCallback;
 };
 
 ROT.FOV.prototype.compute = function(x, y, R, callback) {}
+/**
+ * @class Discrete shadowcasting algorithm
+ * @augments ROT.FOV
+ */
 ROT.FOV.DiscreteShadowcasting = function(lightPassesCallback) {
 	ROT.FOV.call(this, lightPassesCallback);
 }
@@ -889,8 +900,6 @@ ROT.FOV.DiscreteShadowcasting.prototype.compute = function(x, y, R, callback) {
 	
 	/* start and end angles */
 	var DATA = [];
-	
-	
 	
 	var cellCount = 0;
 	var A, B, cx, cy, blocks, diff;

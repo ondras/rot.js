@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ROT.RNG</title>
+		<title>JsDoc Reference - ROT.Map.Cellular</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -236,16 +236,17 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace ROT.RNG
+				Class ROT.Map.Cellular
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
+				<br />Extends
+					<a href="../symbols/ROT.Map.html">ROT.Map</a>.<br />
 				
 			
-				This code is an implementation of Alea algorithm; (C) 2010 Johannes Baagøe.
-Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
+				Cellular automaton map generator
 				
 				
 					<br /><i>Defined in: </i> &lt;rot.js&gt;.
@@ -254,8 +255,8 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.RNG.">
-				<caption>Namespace Summary</caption>
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Map.Cellular.">
+				<caption>Class Summary</caption>
 				<thead>
 					<tr>
 						<th scope="col">Constructor Attributes</th>
@@ -267,7 +268,7 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROT.RNG.html#constructor">ROT.RNG</a></b>
+								<b><a href="../symbols/ROT.Map.Cellular.html#constructor">ROT.Map.Cellular</a></b>(width, height, options)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -283,7 +284,7 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.RNG.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Map.Cellular.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -294,63 +295,27 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">ROT.RNG.<b><a href="../symbols/ROT.RNG.html#.getNormal">getNormal</a></b>(mean, stddev)
+								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Cellular.html#create">create</a></b>(callback)
 								</div>
 								<div class="description"></div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">ROT.RNG.<b><a href="../symbols/ROT.RNG.html#.getPercentage">getPercentage</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Cellular.html#randomize">randomize</a></b>(probability)
 								</div>
-								<div class="description"></div>
+								<div class="description">Fill the map with random values</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">ROT.RNG.<b><a href="../symbols/ROT.RNG.html#.getSeed">getSeed</a></b>()
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">ROT.RNG.<b><a href="../symbols/ROT.RNG.html#.getState">getState</a></b>()
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">ROT.RNG.<b><a href="../symbols/ROT.RNG.html#.getUniform">getUniform</a></b>()
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">ROT.RNG.<b><a href="../symbols/ROT.RNG.html#.setSeed">setSeed</a></b>(seed)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">ROT.RNG.<b><a href="../symbols/ROT.RNG.html#.setState">setState</a></b>(state)
+								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Cellular.html#set">set</a></b>(x, y, value)
 								</div>
 								<div class="description"></div>
 							</td>
@@ -361,6 +326,10 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 				
 				
 				
+				<dl class="inheritsList">
+				
+				</dl>
+				
 			
 <!-- ============================== events summary ======================== -->
 			
@@ -369,11 +338,11 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 			
 			<div class="details"><a name="constructor"> </a>
 				<div class="sectionTitle">
-					Namespace Detail
+					Class Detail
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROT.RNG</b>
+						<b>ROT.Map.Cellular</b>(width, height, options)
 				</div>
 				
 				<div class="description">
@@ -384,6 +353,47 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 				
 				
 				
+					
+						<dl class="detailList">
+						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								<span class="light fixedFont">{int}</span>  <b>width</b>
+								<i>Optional, Default: ROT.DEFAULT_WIDTH</i>
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								<span class="light fixedFont">{int}</span>  <b>height</b>
+								<i>Optional, Default: ROT.DEFAULT_HEIGHT</i>
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								<span class="light fixedFont">{object}</span>  <b>options</b>
+								<i>Optional</i>
+							</dt>
+								<dd>Options</dd>
+						
+							<dt>
+								<span class="light fixedFont">{int[]}</span>  <b>options.born</b>
+								<i>Optional</i>
+							</dt>
+								<dd>List of neighbor counts for a new cell to be born in empty space</dd>
+						
+							<dt>
+								<span class="light fixedFont">{int[]}</span>  <b>options.survive</b>
+								<i>Optional</i>
+							</dt>
+								<dd>List of neighbor counts for an existing  cell to survive</dd>
+						
+							<dt>
+								<span class="light fixedFont">{int}</span>  <b>options.topology</b>
+								<i>Optional</i>
+							</dt>
+								<dd>Topology 4 or 6 or 8</dd>
+						
+						</dl>
 					
 					
 					
@@ -404,181 +414,11 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 					Method Detail
 				</div>
 				
-					<a name=".getNormal"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{float}</span>
-					<span class="light">ROT.RNG.</span><b>getNormal</b>(mean, stddev)
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
+					<a name="create"> </a>
+					<div class="fixedFont">
 					
 					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{float}</span> <b>mean</b>
-									<i>Optional, Default: 0</i>
-								</dt>
-								<dd>Mean value</dd>
-							
-								<dt>
-									<span class="light fixedFont">{float}</span> <b>stddev</b>
-									<i>Optional, Default: 1</i>
-								</dt>
-								<dd>Standard deviation. ~95% of the absolute values will be lower than 2*stddev.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{float}</span> A normally distributed pseudorandom value</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".getPercentage"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{int}</span>
-					<span class="light">ROT.RNG.</span><b>getPercentage</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{int}</span> Pseudorandom value [1,100] inclusive, uniformly distributed</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".getSeed"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{number}</span>
-					<span class="light">ROT.RNG.</span><b>getSeed</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{number}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".getState"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">ROT.RNG.</span><b>getState</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".getUniform"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{float}</span>
-					<span class="light">ROT.RNG.</span><b>getUniform</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{float}</span> Pseudorandom value [0,1), uniformly distributed</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".setSeed"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">ROT.RNG.</span><b>setSeed</b>(seed)
+					<b>create</b>(callback)
 					
 					</div>
 					<div class="description">
@@ -594,10 +434,10 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>seed</b>
+									<b>callback</b>
 									
 								</dt>
-								<dd>Seed the number generator</dd>
+								<dd></dd>
 							
 							</dl>
 						
@@ -610,11 +450,47 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 
 					<hr />
 				
-					<a name=".setState"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="randomize"> </a>
+					<div class="fixedFont">
 					
 					
-					<span class="light">ROT.RNG.</span><b>setState</b>(state)
+					<b>randomize</b>(probability)
+					
+					</div>
+					<div class="description">
+						Fill the map with random values
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{float}</span> <b>probability</b>
+									
+								</dt>
+								<dd>Probability for a cell to become alive; 0 = all empty, 1 = all full</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="set"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>set</b>(x, y, value)
 					
 					</div>
 					<div class="description">
@@ -630,7 +506,19 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>state</b>
+									<b>x</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>y</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>value</b>
 									
 								</dt>
 								<dd></dd>

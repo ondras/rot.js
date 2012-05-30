@@ -1,3 +1,7 @@
+/**
+ * @class Discrete shadowcasting algorithm
+ * @augments ROT.FOV
+ */
 ROT.FOV.DiscreteShadowcasting = function(lightPassesCallback) {
 	ROT.FOV.call(this, lightPassesCallback);
 }
@@ -15,8 +19,6 @@ ROT.FOV.DiscreteShadowcasting.prototype.compute = function(x, y, R, callback) {
 	
 	/* start and end angles */
 	var DATA = [];
-	
-	
 	
 	var cellCount = 0;
 	var A, B, cx, cy, blocks, diff;
