@@ -25,6 +25,9 @@ pre, code, textarea {
 	left: 0px;
 	top: 80px;
 	width: 180px;
+}
+
+#menu, #menu ul {
 	margin: 0;
 	padding: 0px;
 	list-style-type: none;
@@ -38,11 +41,16 @@ pre, code, textarea {
 	line-height: 200%;
 }
 
-#menu li:first-child a {
+#menu ul a {
+	padding-left: 30px;
+}
+
+
+#menu > li:first-child a {
 	border-radius: 0 10px 0 0;
 }
 
-#menu li:last-child a {
+#menu > li:last-child a {
 	border-radius: 0 0 10px 0;
 }
 

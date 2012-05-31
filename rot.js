@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Generated on Wed May 30 15:41:24 CEST 2012.
+	Generated on Thu May 31 15:43:35 CEST 2012.
 */
 
 /**

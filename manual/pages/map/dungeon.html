@@ -1,0 +1,10 @@
+<h2>Dungeon generators</h2>
+
+<div class="example">
+var w = 80, h = 40;
+var map = new ROT.Map.Digger(w, h);
+
+var display = new ROT.Display({width:w, height:h, fontSize:8});
+SHOW(display.getContainer());
+map.create(display.DEBUG);
+</div>
