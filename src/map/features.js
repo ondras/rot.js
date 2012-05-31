@@ -24,7 +24,7 @@ ROT.Map.Feature.Room.prototype.isValid = function(canBeDugCallback){
 			if (badCount > 1) { return false; } /* one bad (empty) is allowed */
 		}
 	}
-	
+
 	return true;
 }
 
@@ -75,7 +75,7 @@ ROT.Map.Feature.Corridor.prototype.isValid = function(canBeDugCallback){
 	}
 	
 	/**
-	 * We do not want the corridor to end in a corner of a room;
+	 * We do not want the corridor to crash into a corner of a room;
 	 * if any of the ending corners is empty, the N+1th cell of this corridor must be empty too.
 	 * 
 	 * Situation:
@@ -86,8 +86,8 @@ ROT.Map.Feature.Corridor.prototype.isValid = function(canBeDugCallback){
 	 * The corridor was dug from left to rifht.
 	 * 1, 2 - problematic corners, ? = N+1th cell (not dug)
 	 */
-	var firstCornerBad = canBeDugCallback(x + dx + nx, y + dy + ny);
-	var secondCornerBad = canBeDugCallback(x + dx - nx, y + dy - ny);
+	var firstCornerBad = !canBeDugCallback(x + dx + nx, y + dy + ny);
+	var secondCornerBad = !canBeDugCallback(x + dx - nx, y + dy - ny);
 	if (firstCornerBad || secondCornerBad) {
 		if (canBeDugCallback(x + dx, y + dy)) { return false; }
 	}
