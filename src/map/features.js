@@ -45,23 +45,22 @@ ROT.Map.Feature.Room.createRandomAt = function(x, y, dx, dy, options) {
 }
 
 /**
- * Randomly positioned and sized room, within a given boundaries
+ * Room of random size, positioned around center coords
  */
-ROT.Map.Feature.Room.createRandom = function(width, height, options) {
-	var paddingX = 1 + options.roomWidth[0];
-	var paddingY = 1 + options.roomHeight[0];
-	var x1 = 1 + Math.floor(ROT.RNG.getUniform()*(width-paddingX));
-	var y1 = 1 + Math.floor(ROT.RNG.getUniform()*(height-paddingY));
+ROT.Map.Feature.Room.createRandomCenter = function(cx, cy, options) {
+	var min = options.roomWidth[0];
+	var max = options.roomWidth[1];
+	var width = min + Math.floor(ROT.RNG.getUniform()*(max-min+1));
 	
-	var availX = width - x1 - options.roomWidth[0];
-	var availY = height - y1 - options.roomHeight[0];
-	
-	availX = Math.min(availX, options.roomWidth[1] - options.roomWidth[0] + 1);
-	availY = Math.min(availY, options.roomHeight[1] - options.roomHeight[0] + 1);
-	
-	var x2 = x1 + options.roomWidth[0] - 1 + Math.floor(ROT.RNG.getUniform()*availX);
-	var y2 = y1 + options.roomHeight[0] - 1 + Math.floor(ROT.RNG.getUniform()*availY);
-	
+	var min = options.roomHeight[0];
+	var max = options.roomHeight[1];
+	var height = min + Math.floor(ROT.RNG.getUniform()*(max-min+1));
+
+	var x1 = cx - Math.floor(ROT.RNG.getUniform()*width);
+	var y1 = cy - Math.floor(ROT.RNG.getUniform()*height);
+	var x2 = x1 + width - 1;
+	var y2 = y1 + height - 1;
+
 	return new this(x1, y1, x2, y2);
 }
 
@@ -115,6 +114,7 @@ ROT.Map.Feature.Corridor = function(startX, startY, endX, endY) {
 	this._startY = startY;
 	this._endX = endX;
 	this._endY = endY;
+	this._endsWithAWall = true;
 }
 ROT.Map.Feature.Corridor.extend(ROT.Map.Feature);
 
@@ -147,20 +147,27 @@ ROT.Map.Feature.Corridor.prototype.isValid = function(isWallCallback, canBeDugCa
 		var x = sx + i*dx;
 		var y = sy + i*dy;
 
-
-
 		if (!canBeDugCallback(     x,      y)) { ok = false; }
 		if (!isWallCallback  (x + nx, y + ny)) { ok = false; }
 		if (!isWallCallback  (x - nx, y - ny)) { ok = false; }
 		
 		if (!ok) {
-			if (i < 2) { return false; }
-			
+			length = i;
 			this._endX = x-dx;
 			this._endY = y-dy;
 			break;
 		}
 	}
+	
+	/**
+	 * If the length degenerated, this corridor might be invalid
+	 */
+	 
+	/* not supported */
+	if (length == 0) { return false; } 
+	
+	 /* length 1 allowed only if the next space is empty */
+	if (length == 1 && isWallCallback(this._endX + dx, this._endY + dy)) { return false; }
 	
 	/**
 	 * We do not want the corridor to crash into a corner of a room;
@@ -176,9 +183,8 @@ ROT.Map.Feature.Corridor.prototype.isValid = function(isWallCallback, canBeDugCa
 	 */
 	var firstCornerBad = !isWallCallback(this._endX + dx + nx, this._endY + dy + ny);
 	var secondCornerBad = !isWallCallback(this._endX + dx - nx, this._endY + dy - ny);
-	if (firstCornerBad || secondCornerBad) {
-		if (isWallCallback(this._endX + dx, this._endY + dy)) { return false; }
-	}
+	this._endsWithAWall = isWallCallback(this._endX + dx, this._endY + dy);
+	if ((firstCornerBad || secondCornerBad) && this._endsWithAWall) { return false; }
 
 	return true;
 }
@@ -209,9 +215,11 @@ ROT.Map.Feature.Corridor.prototype.create = function(digCallback){
 	}
 	
 	/* end of the wall */
-	digCallback(x + dx, y + dy, 1);
-	digCallback(x + nx, y + ny, 2);
-	digCallback(x - nx, y - ny, 2);
+	if (this._endsWithAWall) {
+		digCallback(x + dx, y + dy, 2);
+		digCallback(x + nx, y + ny, 2);
+		digCallback(x - nx, y - ny, 2);
+	}
 
 	return true;
 }

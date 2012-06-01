@@ -11,7 +11,7 @@ ROT.Map.Digger = function(width, height, options) {
 	this._options = {
 		roomWidth: [3, 9], /* room minimum and maximum width */
 		roomHeight: [3, 5], /* room minimum and maximum height */
-		corridorLength: [2, 10], /* corridor minimum and maximum length */
+		corridorLength: [3, 10], /* corridor minimum and maximum length */
 		dugPercentage: 0.2, /* we stop after this percentage of level area has been dug out */
 		timeLimit: 500, /* we stop after this much time has passed (msec) */
 	}
@@ -19,7 +19,7 @@ ROT.Map.Digger = function(width, height, options) {
 	
 	this._features = {
 		"Room": 4,
-		"Corridor": 6
+		"Corridor": 4
 	}
 	this._featureAttempts = 20; /* how many times do we try to create a feature on a suitable wall */
 	this._walls = {}; /* these are available for digging */
@@ -43,10 +43,7 @@ ROT.Map.Digger.prototype.create = function(callback) {
 	do {
 		var t2 = Date.now();
 
-		if (t2 - t1 > this._options.timeLimit) {
-			console.log("time limit");
-			break;
-		}
+		if (t2 - t1 > this._options.timeLimit) { break; }
 
 		/* find a good wall */
 		var wall = this._findWall();
@@ -64,7 +61,11 @@ ROT.Map.Digger.prototype.create = function(callback) {
 		var featureAttempts = 0;
 		do {
 			featureAttempts++;
-			if (this._tryFeature(x, y, dir[0], dir[1])) { break; }
+			if (this._tryFeature(x, y, dir[0], dir[1])) { 
+				this._removeSurroundingWalls(x, y);
+				this._removeSurroundingWalls(x-dir[0], y-dir[1]);
+				break; 
+			}
 		} while (featureAttempts < this._featureAttempts);
 		
 		var priorityWalls = 0;
@@ -106,8 +107,9 @@ ROT.Map.Digger.prototype._canBeDugCallback = function(x, y) {
 }
 
 ROT.Map.Digger.prototype._firstRoom = function() {
-	var room = ROT.Map.Feature.Room.createRandom(this._width, this._height, this._options);
-	var debug = room.debug();
+	var cx = Math.floor(this._width/2);
+	var cy = Math.floor(this._height/2);
+	var room = ROT.Map.Feature.Room.createRandomCenter(cx, cy, this._options);
 	room.create(this._digCallback, this._wallCallback);
 }
 
@@ -170,6 +172,19 @@ ROT.Map.Digger.prototype._tryFeature = function(x, y, dx, dy) {
 	return true;
 }
 
+ROT.Map.Digger.prototype._removeSurroundingWalls = function(cx, cy) {
+	var deltas = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+	
+	for (var i=0;i<deltas.length;i++) {
+		var delta = deltas[i];
+		var x = cx + delta[0];
+		var y = cy + delta[1];
+		delete this._walls[x+","+y];
+		var x = cx + 2*delta[0];
+		var y = cy + 2*delta[1];
+		delete this._walls[x+","+y];
+	}
+}
 
 /**
  * Returns vector in "digging" direction, or false, if this does not exist (or is not unique)
