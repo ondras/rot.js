@@ -1,7 +1,8 @@
 <h2>Dungeon generators</h2>
 
 <div class="example">
-var w = 80, h = 40;
+ROT.RNG.setSeed(12345);
+var w = 80, h = 50;
 var map = new ROT.Map.Digger(w, h);
 
 var display = new ROT.Display({width:w, height:h, fontSize:8});
