@@ -105,6 +105,8 @@ var Manual = {
 	
 	_response: function(data, status) {
 		if (status != 200) { return; }
+		document.body.scrollTop = 0;
+		document.documentElement.scrollTop = 0;
 		document.querySelector("#content").innerHTML = data;
 
 		var all = document.querySelectorAll("#content .example");
