@@ -1,11 +1,12 @@
 <h2>Dungeon generators</h2>
 
 <div class="example">
-var w = 60, h = 25;
-
+var w = 40, h = 25;
 var map = new ROT.Map.Digger(w, h);
 
-var display = new ROT.Display({width:w, height:h, fontSize:8});
-SHOW(display.getContainer());
-map.create(display.DEBUG);
+for (var i=0; i&lt;4; i++) {
+	var display = new ROT.Display({width:w, height:h, fontSize:6});
+	SHOW(display.getContainer());
+	map.create(display.DEBUG);
+}
 </div>
