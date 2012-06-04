@@ -7,7 +7,7 @@
 ROT.Map.Digger = function(width, height, options) {
 	ROT.Map.call(this, width, height);
 	
-	this._rooms = [];
+	this._rooms = []; /* FIXME not used */
 	this._options = {
 		roomWidth: [3, 9], /* room minimum and maximum width */
 		roomHeight: [3, 5], /* room minimum and maximum height */
@@ -42,7 +42,6 @@ ROT.Map.Digger.prototype.create = function(callback) {
 
 	do {
 		var t2 = Date.now();
-
 		if (t2 - t1 > this._options.timeLimit) { break; }
 
 		/* find a good wall */

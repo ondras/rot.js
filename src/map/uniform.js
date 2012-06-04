@@ -2,24 +2,39 @@
  * @class Dungeon generator which tries to fill the space evenly. Generates independent rooms and tries to connect them.
  * @augments ROT.Map
  */
-ROT.Map.Uniform = function(width, height) {
+ROT.Map.Uniform = function(width, height, options) {
 	ROT.Map.call(this, width, height);
 
-	this._roomAttempts = 10; /* new room is created N-times until is considered as impossible to generate */
+	this._options = {
+		roomWidth: [3, 9], /* room minimum and maximum width */
+		roomHeight: [3, 5], /* room minimum and maximum height */
+		roomDugPercentage: 0.15, /* we stop after this percentage of level area has been dug out by rooms */
+		timeLimit: 500, /* we stop after this much time has passed (msec) */
+	}
+	for (var p in options) { this._options[p] = options[p]; }
+
+	this._roomAttempts = 20; /* new room is created N-times until is considered as impossible to generate */
 	this._corridorAttempts = 50; /* corridors are tried N-times until the level is considered as impossible to connect */
-	this._roomPercentage = 0.1; /* we stop createing rooms after this percentage of level area has been dug out */
-	this._minSize = 3; /* minimum room dimension */
-	this._maxWidth = 9; /* maximum room width */
-	this._maxHeight = 5; /* maximum room height */
-	
+
+	this._rooms = []; /* list of all rooms */
 	this._connected = []; /* list of already connected rooms */
 	this._unconnected = []; /* list of remaining unconnected rooms */
+	
+	this._digCallback = this._digCallback.bind(this);
+	this._canBeDugCallback = this._canBeDugCallback.bind(this);
+	this._isWallCallback = this._isWallCallback.bind(this);
 }
 ROT.Map.Uniform.extend(ROT.Map);
 
 ROT.Map.Uniform.prototype.create = function(callback) {
-	while (1) { /* FIXME infinite loop, not good */
+	var t1 = Date.now();
+	while (1) {
+		var t2 = Date.now();
+		if (t2 - t1 > this._options.timeLimit) { console.log("time limit"); break; /* FIXME */ }
+	
 		this._map = this._fillMap(1);
+		this._dug = 0;
+		this._rooms = [];
 		this._unconnected = [];
 		this._generateRooms();
 		if (this._generateCorridors()) { break; }
@@ -34,23 +49,18 @@ ROT.Map.Uniform.prototype.create = function(callback) {
 	return this;
 }
 
-ROT.Map.Uniform.prototype._digRoom = function(c1, c2) {
-	var room = this.parent(c1, c2);
-	this._unconnected.push(room);
-}
-
 /**
  * Generates a suitable amount of rooms
  */
 ROT.Map.Uniform.prototype._generateRooms = function() {
-	var w = this._size.x-2;
-	var h = this._size.y-2;
+	var w = this._width-2;
+	var h = this._height-2;
 
 	do {
-		var result = this._generateRoom();
-		if (this._dug/(w*h) > this._roomPercentage) { break; } /* achieved requested amount of free space */
-	} while (result);
-	
+		var room = this._generateRoom();
+		if (this._dug/(w*h) > this._options.roomDugPercentage) { break; } /* achieved requested amount of free space */
+	} while (room);
+
 	/* either enough rooms, or not able to generate more of them :) */
 }
 
@@ -62,32 +72,17 @@ ROT.Map.Uniform.prototype._generateRoom = function() {
 	while (count < this._roomAttempts) {
 		count++;
 		
-		/* generate corner */
-		var corner1 = this._generateCoords(this._minSize);
+		var room = ROT.Map.Feature.Room.createRandom(this._width, this._height, this._options);
+		if (!room.isValid(this._isWallCallback, this._canBeDugCallback)) { continue; }
 		
-		/* generate second corner */
-		var corner2 = this._generateSecondCorner(corner1, this._minSize, this._maxWidth, this._maxHeight);
-		
-		/* enlarge for fitting */
-		corner1.x--;
-		corner1.y--;
-		corner2.x++;
-		corner2.y++;
-		
-		/* if not good, skip to next attempt */
-		if (!this._freeSpace(corner1, corner2)) { continue; }
-		
-		/* shrink */
-		corner1.x++;
-		corner1.y++;
-		corner2.x--;
-		corner2.y--;
-		this._digRoom(corner1, corner2);
-		return true;
+		room.create(this._digCallback);
+		this._unconnected.push(room);
+		this._rooms.push(room);
+		return room;
 	} 
 
 	/* no room was generated in a given number of attempts */
-	return false;
+	return null;
 }
 
 /**
@@ -105,8 +100,16 @@ ROT.Map.Uniform.prototype._generateCorridors = function() {
 		
 		var room1 = this._unconnected[0]; /* start with the first unconnected */
 		var center = room1.getCenter();
-		this._connected.sort(function(a,b){ /* find closest connected */
-			return a.getCenter().distance(center) - b.getCenter().distance(center);
+		this._connected.sort(function(a, b){ /* find closest connected */
+			var ac = a.getCenter();
+			var bc = b.getCenter();
+			
+			var adx = ac[0]-center[0];
+			var ady = ac[1]-center[1];
+			var bdx = bc[0]-center[0];
+			var bdy = bc[1]-center[1];
+			
+			return adx*adx+ady*ady - bdx*bdx+bdy*bdy;
 		});
 		var room2 = this._connected[0];
 
@@ -117,112 +120,104 @@ ROT.Map.Uniform.prototype._generateCorridors = function() {
 }
 
 ROT.Map.Uniform.prototype._connectRooms = function(room1, room2) {
+//	console.log("connecting");
+//	room1.debug();
+//	room2.debug();
 	var center1 = room1.getCenter();
 	var center2 = room2.getCenter();
 
-	var diffX = center2.x - center1.x;
-	var diffY = center2.y - center1.y;
-	var prop = "";
+	var diffX = center2[0] - center1[0];
+	var diffY = center2[1] - center1[1];
 
 	if (Math.abs(diffX) < Math.abs(diffY)) { /* first try connecting north-south walls */
-		var wall1 = (diffY > 0 ? RPG.S : RPG.N);
-		var wall2 = (wall1 + 4) % 8;
-		prop = "x";
+		var dirIndex1 = (diffY > 0 ? 2 : 0);
+		var dirIndex2 = (dirIndex1 + 2) % 4;
+		var min = room2.getLeft();
+		var max = room2.getRight();
+		var index = 0;
 	} else { /* first try connecting east-west walls */
-		var wall1 = (diffX > 0 ? RPG.E : RPG.W);
-		var wall2 = (wall1 + 4) % 8;
-		prop = "y";
+		var dirIndex1 = (diffX > 0 ? 1 : 3);
+		var dirIndex2 = (dirIndex1 + 2) % 4;
+		var min = room2.getTop();
+		var max = room2.getBottom();
+		var index = 1;
 	}
 
-	var minorProp = (prop == "x" ? "y" : "x");
-	var min = room2.getCorner1()[prop];
-	var max = room2.getCorner2()[prop];	
-	var start = this._placeInWall(room1, wall1); /* corridor will start here */
+	var start = this._placeInWall(room1, dirIndex1); /* corridor will start here */
 	if (!start) { return; }
 
-	if (start[prop] >= min && start[prop] <= max) { /* possible to connect with straight line */
-
-		var corner = (wall2 == RPG.N || wall2 == RPG.W ? room2.getCorner1() : room2.getCorner2());
-		var x = (prop == "x" ? start[prop] : corner.x);
-		var y = (prop == "y" ? start[prop] : corner.y);
-		var end = new RPG.Misc.Coords(x, y);
+	if (start[index] >= min && start[index] <= max) { /* possible to connect with straight line (I-like) */
+		var end = start.clone();
+		var value = null;
+		switch (dirIndex2) {
+			case 0: value = room2.getTop()-1; break;
+			case 1: value = room2.getRight()+1; break;
+			case 2: value = room2.getBottom()+1; break;
+			case 3: value = room2.getLeft()-1; break;
+		}
+		end[(index+1)%2] = value;
 		return this._digLine([start, end]);
 		
-	} else if (start[prop] < min-1 || start[prop] > max+1) { /* need to switch target wall (L-like) */
-		
-		var diff = start[prop] - center2[prop];
-		switch (wall2) {
-			case RPG.N:
-			case RPG.E:	var rotation = (diff < 0 ? 6 : 2); break;
+	} else if (start[index] < min-1 || start[index] > max+1) { /* need to switch target wall (L-like) */
+
+		var diff = start[index] - center2[index];
+		switch (dirIndex2) {
+			case 0:
+			case 1:	var rotation = (diff < 0 ? 3 : 1); break;
 			break;
-			case RPG.S:
-			case RPG.W:	var rotation = (diff < 0 ? 2 : 6); break;
+			case 2:
+			case 3:	var rotation = (diff < 0 ? 1 : 3); break;
 			break;
 		}
-		wall2 = (wall2 + rotation) % 8;
+		dirIndex2 = (dirIndex2 + rotation) % 4;
 		
-		var end = this._placeInWall(room2, wall2);
+		var end = this._placeInWall(room2, dirIndex2);
 		if (!end) { return; }
-		var mid = new RPG.Misc.Coords(0, 0);
-		mid[prop] = start[prop];
-		mid[minorProp] = end[minorProp];
+
+		var mid = [0, 0];
+		mid[index] = start[index];
+		var index2 = (index+1)%2;
+		mid[index2] = end[index2];
 		return this._digLine([start, mid, end]);
 		
-	} else { /* use current wall pair, but adjust the line in the middle (snake-like) */
+	} else { /* use current wall pair, but adjust the line in the middle (S-like) */
 	
-		var end = this._placeInWall(room2, wall2);
+		var index2 = (index+1)%2;
+		var end = this._placeInWall(room2, dirIndex2);
 		if (!end) { return; }
-		var mid = Math.round((end[minorProp] + start[minorProp])/2);
+		var mid = Math.round((end[index2] + start[index2])/2);
 
-		var mid1 = new RPG.Misc.Coords(0, 0);
-		var mid2 = new RPG.Misc.Coords(0, 0);
-		mid1[prop] = start[prop];
-		mid1[minorProp] = mid;
-		mid2[prop] = end[prop];
-		mid2[minorProp] = mid;
+		var mid1 = [0, 0];
+		var mid2 = [0, 0];
+		mid1[index] = start[index];
+		mid1[index2] = mid;
+		mid2[index] = end[index];
+		mid2[index2] = mid;
 		return this._digLine([start, mid1, mid2, end]);
 
 	}
 }
 
-ROT.Map.Uniform.prototype._placeInWall = function(room, wall) {
-	var prop = "";
-	var c1 = room.getCorner1();
-	var c2 = room.getCorner2();
-	var x = 0;
-	var y = 0;
-	switch (wall) {
-		case RPG.N:
-			y = c1.y-1;
-			x = c1.x + Math.floor(ROT.RNG.getUniform() * (c2.x-c1.x));
-			prop = "x";
-		break;
-		case RPG.S:
-			y = c2.y+1;
-			x = c1.x + Math.floor(ROT.RNG.getUniform() * (c2.x-c1.x));
-			prop = "x";
-		break;
-		case RPG.W:
-			x = c1.x-1;
-			y = c1.y + Math.floor(ROT.RNG.getUniform() * (c2.y-c1.y));
-			prop = "y";
-		break;
-		case RPG.E:
-			x = c2.x+1;
-			y = c1.y + Math.floor(ROT.RNG.getUniform() * (c2.y-c1.y));
-			prop = "y";
-		break;
+ROT.Map.Uniform.prototype._placeInWall = function(room, dirIndex) {
+	var wall = room.getRandomWall(dirIndex);
+	
+	/* must have exactly one free neighbor */
+	var dirs = [
+		[ 0, -1],
+		[ 0,  1],
+		[-1,  0],
+		[ 1,  0]
+	];
+	var emptyCount = 0;
+	for (var i=0;i<dirs.length;i++) {
+		var nx = wall[0] + dirs[i][0];
+		var ny = wall[1] + dirs[i][1];
+		if (nx < 0 || nx >= this._width || ny < 0 || ny >= this._height) { continue; }
+		if (!this._map[nx][ny]) { emptyCount++; }
 	}
 	
-	var result = new RPG.Misc.Coords(x, y);
-	/* check if neighbors are not empty */
-	result[prop] -= 1;
-	if (this._isValid(result) && !this._map[result.x][result.y]) { return null; }
-	result[prop] += 2;
-	if (this._isValid(result) && !this._map[result.x][result.y]) { return null; }
-	result[prop] -= 1;
-
-	return result;
+	if (emptyCount != 1) { return null; }
+	return wall;
 }
 
 /**
@@ -232,27 +227,30 @@ ROT.Map.Uniform.prototype._digLine = function(points) {
 	var todo = [];
 	var rooms = []; /* rooms crossed with this line */
 	
-	var check = function(coords) {
-		todo.push(coords.clone());
-		rooms = rooms.concat(this._roomsWithWall(coords));
+	var check = function(x, y) {
+		todo.push([x, y]);
+		rooms = rooms.concat(this._roomsWithWall(x, y));
 	}
 	
 	/* compute and check all coords on this polyline */
-	var current = points.shift();
+	var x = points[0][0];
+	var y = points[0][1];
+	points.shift();
+
 	while (points.length) {
 		var target = points.shift();
-		var diffX = target.x - current.x;
-		var diffY = target.y - current.y;
+		var diffX = target[0] - x;
+		var diffY = target[1] - y;
 		var length = Math.max(Math.abs(diffX), Math.abs(diffY));
 		var stepX = Math.round(diffX / length);
 		var stepY = Math.round(diffY / length);
 		for (var i=0;i<length;i++) {
-			check.call(this, current);
-			current.x += stepX;
-			current.y += stepY;
+			check.call(this, x, y);
+			x += stepX;
+			y += stepY;
 		}
 	}
-	check.call(this, current);
+	check.call(this, x, y);
 	
 	/* any room violated? */
 	var connected = [];
@@ -260,13 +258,8 @@ ROT.Map.Uniform.prototype._digLine = function(points) {
 		var room = rooms.pop();
 		connected.push(room);
 		var count = 1;
-		for (var i=rooms.length-1; i>=0; i--) {
-			if (rooms[i] == room) {
-				rooms.splice(i, 1);
-				count++;
-			}
-		}
-		if (count > 2) { return; } /* room crossed too many times */
+		var index = rooms.indexOf(room);
+		if (index != -1) { return; }
 	}
 	
 	/* mark encountered rooms as connected */
@@ -281,34 +274,35 @@ ROT.Map.Uniform.prototype._digLine = function(points) {
 	
 	while (todo.length) { /* do actual digging */
 		var coords = todo.pop();
-		this._map[coords.x][coords.y] = 0;
+		this._map[coords[0]][coords[1]] = 0;
 	}
 }
 
 /**
  * Returns a list of rooms which have this wall
  */
-ROT.Map.Uniform.prototype._roomsWithWall = function(coords) {
+ROT.Map.Uniform.prototype._roomsWithWall = function(x, y) {
 	var result = [];
 	for (var i=0;i<this._rooms.length;i++) {
 		var room = this._rooms[i];
-		var ok = false;
-		var c1 = room.getCorner1();
-		var c2 = room.getCorner2();
-		
-		if ( /* one of vertical walls */
-			(coords.x+1 == c1.x || coords.x-1 == c2.x) 
-			&& coords.y+1 >= c1.y 
-			&& coords.y-1 <= c2.y
-		) { ok = true; }
-		
-		if ( /* one of horizontal walls */
-			(coords.y+1 == c1.y || coords.y-1 == c2.y) 
-			&& coords.x+1 >= c1.x 
-			&& coords.x-1 <= c2.x
-		) { ok = true; }
-
-		if (ok) { result.push(room); }		
+		if (room.hasWall(x, y)) { result.push(room); }
 	}
 	return result;
 }
+
+ROT.Map.Uniform.prototype._digCallback = function(x, y, value) {
+	if (value != 0) { return; }
+	this._map[x][y] = 0;
+	this._dug++;
+}
+
+ROT.Map.Uniform.prototype._isWallCallback = function(x, y) {
+	if (x < 0 || y < 0 || x >= this._width || y >= this._height) { return false; }
+	return (this._map[x][y] == 1);
+}
+
+ROT.Map.Uniform.prototype._canBeDugCallback = function(x, y) {
+	if (x < 1 || y < 1 || x+1 >= this._width || y+1 >= this._height) { return false; }
+	return (this._map[x][y] == 1);
+}
+

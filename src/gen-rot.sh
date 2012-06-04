@@ -17,6 +17,7 @@ map/iceymaze.js
 map/ellermaze.js
 map/cellular.js
 map/digger.js
+map/uniform.js
 map/features.js
 fov/fov.js
 fov/discrete-shadowcasting.js

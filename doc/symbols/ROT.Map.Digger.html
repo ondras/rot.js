@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Array</title>
+		<title>JsDoc Reference - ROT.Map.Digger</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -240,20 +240,47 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Built-In Namespace Array
+				Class ROT.Map.Digger
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
+				<br />Extends
+					<a href="../symbols/ROT.Map.html">ROT.Map</a>.<br />
 				
 			
+				Random dungeon generator using human-like digging patterns.
+Heavily based on Mike Anderson's ideas from the "Tyrant" algo, mentioned at 
+http://www.roguebasin.roguelikedevelopment.org/index.php?title=Dungeon-Building_Algorithm.
 				
 				
+					<br /><i>Defined in: </i> &lt;rot.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
+			
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Map.Digger.">
+				<caption>Class Summary</caption>
+				<thead>
+					<tr>
+						<th scope="col">Constructor Attributes</th>
+						<th scope="col">Constructor Name and Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="attributes">&nbsp;</td>
+						<td class="nameDescription" >
+							<div class="fixedFont">
+								<b><a href="../symbols/ROT.Map.Digger.html#constructor">ROT.Map.Digger</a></b>(width, height, options)
+							</div>
+							<div class="description"></div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 			
 
 <!-- ============================== properties summary ===================== -->
@@ -263,7 +290,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Array.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Map.Digger.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -276,25 +303,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Array.html#clone">clone</a></b>()
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Array.html#random">random</a></b>()
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Array.html#randomize">randomize</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Digger.html#create">create</a></b>(callback)
 								</div>
 								<div class="description"></div>
 							</td>
@@ -305,11 +314,65 @@ ul.inheritsList
 				
 				
 				
+				<dl class="inheritsList">
+				
+				</dl>
+				
 			
 <!-- ============================== events summary ======================== -->
 			
 
 <!-- ============================== constructor details ==================== -->		
+			
+			<div class="details"><a name="constructor"> </a>
+				<div class="sectionTitle">
+					Class Detail
+				</div>
+				
+				<div class="fixedFont">
+						<b>ROT.Map.Digger</b>(width, height, options)
+				</div>
+				
+				<div class="description">
+					
+					
+				</div>
+				
+				
+				
+				
+					
+						<dl class="detailList">
+						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								 <b>width</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>height</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>options</b>
+								
+							</dt>
+								<dd></dd>
+						
+						</dl>
+					
+					
+					
+					
+					
+					
+					
+
+			</div>
 			
 
 <!-- ============================== field details ========================== -->		
@@ -321,80 +384,32 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="clone"> </a>
+					<a name="create"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>clone</b>()
+					<b>create</b>(callback)
 					
 					</div>
 					<div class="description">
 						
 						
-							<br />
-							<i>Defined in: </i> &lt;rot.js&gt;.
-						
 						
 					</div>
 					
 					
 					
 						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="random"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>random</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> &lt;rot.js&gt;.
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="randomize"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>randomize</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> &lt;rot.js&gt;.
-						
-						
-					</div>
-					
-					
-					
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>callback</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
 						
 						
 						
@@ -417,7 +432,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Mon Jun 04 2012 12:59:42 GMT+0200 (CEST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Mon Jun 04 2012 12:59:43 GMT+0200 (CEST)
 		</div>
 	</body>
 </html>

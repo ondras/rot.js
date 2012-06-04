@@ -7,7 +7,7 @@ var display = new ROT.Display({fontSize:12});
 SHOW(display.getContainer());
 
 var data = {};
-new ROT.Map.DividedMaze(25, 15).create(function(x, y, type) {
+new ROT.Map.Uniform(25, 15).create(function(x, y, type) {
 	data[x+","+y] = type;
 	display.DEBUG(x, y, type);
 });
@@ -19,7 +19,7 @@ var lightPasses = function(x, y) {
 }
 
 var fov = new ROT.FOV.DiscreteShadowcasting(lightPasses);
-fov.compute(10, 8, 10, function(x, y, r) {
+fov.compute(15, 6, 4, function(x, y, r) {
 	var ch = (r ? "" : "@");
 	var color = (data[x+","+y] ? "#aa0": "#660");
 	display.draw(x, y, ch, "#fff", color);

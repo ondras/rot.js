@@ -1,8 +1,23 @@
 <h2>Dungeon generators</h2>
 
+<h3>Digger</h3>
+
 <div class="example">
 var w = 40, h = 25;
 var map = new ROT.Map.Digger(w, h);
+
+for (var i=0; i&lt;4; i++) {
+	var display = new ROT.Display({width:w, height:h, fontSize:6});
+	SHOW(display.getContainer());
+	map.create(display.DEBUG);
+}
+</div>
+
+<h3>Uniform</h3>
+
+<div class="example">
+var w = 40, h = 25;
+var map = new ROT.Map.Uniform(w, h);
 
 for (var i=0; i&lt;4; i++) {
 	var display = new ROT.Display({width:w, height:h, fontSize:6});

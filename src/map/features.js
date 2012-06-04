@@ -64,6 +64,29 @@ ROT.Map.Feature.Room.createRandomCenter = function(cx, cy, options) {
 	return new this(x1, y1, x2, y2);
 }
 
+/**
+ * Room of random size within a given dimensions
+ */
+ROT.Map.Feature.Room.createRandom = function(availWidth, availHeight, options) {
+	var min = options.roomWidth[0];
+	var max = options.roomWidth[1];
+	var width = min + Math.floor(ROT.RNG.getUniform()*(max-min+1));
+	
+	var min = options.roomHeight[0];
+	var max = options.roomHeight[1];
+	var height = min + Math.floor(ROT.RNG.getUniform()*(max-min+1));
+	
+	var left = availWidth - width - 1;
+	var top = availHeight - height - 1;
+
+	var x1 = 1 + Math.floor(ROT.RNG.getUniform()*left);
+	var y1 = 1 + Math.floor(ROT.RNG.getUniform()*top);
+	var x2 = x1 + width - 1;
+	var y2 = y1 + height - 1;
+
+	return new this(x1, y1, x2, y2);
+}
+
 ROT.Map.Feature.Room.prototype.debug = function() {
 	console.log("room", this._x1, this._y1, this._x2, this._y2);
 }
@@ -106,6 +129,55 @@ ROT.Map.Feature.Room.prototype.create = function(digCallback) {
 	}
 	
 	if (this._doorX !== null && this._doorY !== null) { digCallback(this._doorX, this._doorY, 0); }
+}
+
+ROT.Map.Feature.Room.prototype.getCenter = function() {
+	return [Math.round((this._x1 + this._x2)/2), Math.round((this._y1 + this._y2)/2)];
+}
+
+ROT.Map.Feature.Room.prototype.getLeft = function() {
+	return this._x1;
+}
+
+ROT.Map.Feature.Room.prototype.getRight = function() {
+	return this._x2;
+}
+
+ROT.Map.Feature.Room.prototype.getTop = function() {
+	return this._y1;
+}
+
+ROT.Map.Feature.Room.prototype.getBottom = function() {
+	return this._y2;
+}
+
+ROT.Map.Feature.Room.prototype.hasWall = function(x, y) {
+	if ((x == this._x1-1 || x == this._x2+1) && y >= this._y1 && y <= this._y2) { return true; }
+	if ((y == this._y1-1 || y == this._y2+1) && x >= this._x1 && x <= this._x2) { return true; }
+	return false;
+}
+
+/**
+ * Get random wall cell
+ * @param {int} dirIndex 0=north, CW
+ */
+ROT.Map.Feature.Room.prototype.getRandomWall = function(dirIndex) {
+	var width = this._x2 - this._x1 - 1;
+	var height = this._y2 - this._y1 - 1;
+	switch (dirIndex) {
+		case 0:
+			return [this._x1 + 1 + Math.floor(ROT.RNG.getUniform()*width), this._y1-1];
+		break;
+		case 1:
+			return [this._x2+1, this._y1 + 1 + Math.floor(ROT.RNG.getUniform()*height)];
+		break;
+		case 2:
+			return [this._x1 + 1 + Math.floor(ROT.RNG.getUniform()*width), this._y2+1];
+		break;
+		case 3:
+			return [this._x1-1, this._y1 + 1 + Math.floor(ROT.RNG.getUniform()*height)];
+		break;
+	}
 }
 
 
