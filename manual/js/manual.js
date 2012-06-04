@@ -75,7 +75,7 @@ Example.prototype._eval = function(code, SHOW) {
 Example.current = null;
 document.addEventListener("click", function() {
 	if (Example.current) { Example.current.close(); }
-});
+}, false);
 
 
 var Manual = {
