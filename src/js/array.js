@@ -17,6 +17,7 @@ Array.prototype.clone = function() {
 
 /**
  * @returns {array} New array with randomized items
+ * FIXME destroys this!
  */
 Array.prototype.randomize = function() {
 	var result = [];

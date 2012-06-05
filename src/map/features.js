@@ -151,36 +151,6 @@ ROT.Map.Feature.Room.prototype.getBottom = function() {
 	return this._y2;
 }
 
-ROT.Map.Feature.Room.prototype.hasWall = function(x, y) {
-	if ((x == this._x1-1 || x == this._x2+1) && y >= this._y1 && y <= this._y2) { return true; }
-	if ((y == this._y1-1 || y == this._y2+1) && x >= this._x1 && x <= this._x2) { return true; }
-	return false;
-}
-
-/**
- * Get random wall cell
- * @param {int} dirIndex 0=north, CW
- */
-ROT.Map.Feature.Room.prototype.getRandomWall = function(dirIndex) {
-	var width = this._x2 - this._x1 - 1;
-	var height = this._y2 - this._y1 - 1;
-	switch (dirIndex) {
-		case 0:
-			return [this._x1 + 1 + Math.floor(ROT.RNG.getUniform()*width), this._y1-1];
-		break;
-		case 1:
-			return [this._x2+1, this._y1 + 1 + Math.floor(ROT.RNG.getUniform()*height)];
-		break;
-		case 2:
-			return [this._x1 + 1 + Math.floor(ROT.RNG.getUniform()*width), this._y2+1];
-		break;
-		case 3:
-			return [this._x1-1, this._y1 + 1 + Math.floor(ROT.RNG.getUniform()*height)];
-		break;
-	}
-}
-
-
 ROT.Map.Feature.Corridor = function(startX, startY, endX, endY) {
 	this._startX = startX;
 	this._startY = startY;

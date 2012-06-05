@@ -17,24 +17,28 @@ pre {
 	font-size: 17px;
 }
 
-@media all and (min-height: 620px) {
+@media all and (min-height: 650px) {
 	pre { font-size: 18px; }
 }
 
-@media all and (min-height: 670px) {
+@media all and (min-height: 700px) {
 	pre { font-size: 19px; }
 }
 
-@media all and (min-height: 720px) {
+@media all and (min-height: 750px) {
 	pre { font-size: 20px; }
 }
 
-@media all and (min-height: 770px) {
+@media all and (min-height: 800px) {
 	pre { font-size: 21px; }
 }
 
-@media all and (min-height: 820px) {
+@media all and (min-height: 850px) {
 	pre { font-size: 22px; }
+}
+
+@media all and (min-height: 900px) {
+	pre { font-size: 23px; }
 }
 
 pre span {
