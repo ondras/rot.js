@@ -23,6 +23,7 @@ fov/fov.js
 fov/discrete-shadowcasting.js
 path/path.js
 path/dijkstra.js
+path/astar.js
 "
 
 TARGET=../rot.js
