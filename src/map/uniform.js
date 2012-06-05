@@ -227,6 +227,9 @@ ROT.Map.Uniform.prototype._digLine = function(points) {
 	var todo = [];
 	var rooms = []; /* rooms crossed with this line */
 	
+	/**
+	 * @private
+	 */
 	var check = function(x, y) {
 		todo.push([x, y]);
 		rooms = rooms.concat(this._roomsWithWall(x, y));

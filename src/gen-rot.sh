@@ -21,6 +21,8 @@ map/uniform.js
 map/features.js
 fov/fov.js
 fov/discrete-shadowcasting.js
+path/path.js
+path/dijkstra.js
 "
 
 TARGET=../rot.js

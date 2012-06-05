@@ -17,11 +17,18 @@ ROT.Scheduler.prototype.add = function(item) {
 	return this;
 }
 
+/**
+ * Clear all actors
+ */
 ROT.Scheduler.prototype.clear = function() {
 	this._items = [];
 	return this;
 }
 
+/**
+ * Remove a previously added item
+ * @param {object} item anything with "getSpeed" method
+ */
 ROT.Scheduler.prototype.remove = function(item) {
 	var it = null;
 	for (var i=0;i<this._items.length;i++) {
@@ -34,6 +41,10 @@ ROT.Scheduler.prototype.remove = function(item) {
 	return this;
 }
 
+/**
+ * Schedule next actor
+ * @returns {object}
+ */
 ROT.Scheduler.prototype.next = function() {
 	if (!this._items.length) { return null; }
 

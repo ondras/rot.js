@@ -7,6 +7,9 @@ ROT.FOV.DiscreteShadowcasting = function(lightPassesCallback) {
 }
 ROT.FOV.DiscreteShadowcasting.extend(ROT.Map);
 
+/**
+ * @see ROT.FOV#compute
+ */
 ROT.FOV.DiscreteShadowcasting.prototype.compute = function(x, y, R, callback) {
 	var center = this._coords;
 	var map = this._map;

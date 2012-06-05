@@ -36,6 +36,12 @@ ROT.Display = function(options) {
 	this.DEBUG = this.DEBUG.bind(this);
 }
 
+/**
+ * Debug helper, ideal as a map generator callback. Is always bound to this.
+ * @param {int} x
+ * @param {int} y
+ * @param {int} what
+ */
 ROT.Display.prototype.DEBUG = function(x, y, what) {
 	var colors = [this._options.bg, this._options.fg];
 	this.draw(x, y, null, null, colors[what % colors.length]);
@@ -51,7 +57,7 @@ ROT.Display.prototype.clear = function() {
 }
 
 /**
- * @see ROT.Display
+ * @see ROT.Display#setOptions
  */
 ROT.Display.prototype.setOptions = function(options) {
 	for (var p in options) { this._options[p] = options[p]; }
@@ -59,10 +65,18 @@ ROT.Display.prototype.setOptions = function(options) {
 	return this;
 }
 
+/**
+ * Returns currently set options
+ * @returns {object} Current options object 
+ */
 ROT.Display.prototype.getOptions = function() {
 	return this._options;
 }
 
+/**
+ * Returns the DOM node of this display
+ * @returns {node} DOM node
+ */
 ROT.Display.prototype.getContainer = function() {
 	return this._canvas;
 }
@@ -115,6 +129,10 @@ ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
 
 /**
  * Draws a text at given position. Optionally wraps at a maximum length.
+ * @param {int} x
+ * @param {int} y
+ * @param {string} text
+ * @param {int} [maxWidth] wrap at what width?
  */
 ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 	var cx = x;

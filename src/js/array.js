@@ -1,14 +1,23 @@
+/**
+ * @returns {any} Randomly picked item, null when length=0
+ */
 Array.prototype.random = function() {
 	if (!this.length) { return null; }
 	return this[Math.floor(ROT.RNG.getUniform() * this.length)];
 }
 
+/**
+ * @returns {array} Shallow copy
+ */
 Array.prototype.clone = function() {
 	var arr = [];
 	for (var i=0;i<this.length;i++) { arr.push(this[i]); }
 	return arr;
 }
 
+/**
+ * @returns {array} New array with randomized items
+ */
 Array.prototype.randomize = function() {
 	var result = [];
 	while (this.length) {

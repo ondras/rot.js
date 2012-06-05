@@ -65,10 +65,18 @@ ROT.RNG = {
 		return 1 + Math.floor(this.getUniform()*100);
 	},
 	
+	/**
+	 * Get RNG state. Useful for storing the state and re-setting it via setState.
+	 * @returns {?} Internal state
+	 */
 	getState: function() {
 		return [this._s0, this._s1, this._s2, this._c];
 	},
 
+	/**
+	 * Set a previously retrieved state.
+	 * @param {?} state
+	 */
 	setState: function(state) {
 		this._s0 = state[0];
 		this._s1 = state[1];

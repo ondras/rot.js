@@ -17,41 +17,10 @@ ROT.Map.Cellular = function(width, height, options) {
 	};
 	for (var p in options) { this._options[p] = options[p]; }
 	
-	this._diffs = this.constructor.DIFFS[this._options.topology];
+	this._dirs = ROT.DIRS[this._options.topology];
 	this._map = this._fillMap(0);
 }
 ROT.Map.Cellular.extend(ROT.Map);
-
-ROT.Map.Cellular.DIFFS = {
-	"4": [
-		[-1,  0],
-		[ 1, -1],
-		[ 1,  0],
-		[ 0, -1],
-		[ 0,  1]
-	],
-	"8": [
-		[-1, -1],
-		[-1,  0],
-		[-1,  1],
-		[ 1, -1],
-		[ 1,  0],
-		[ 1,  1],
-		[ 0, -1],
-		[ 0,  1]
-	],
-	"6": [
-		[-1,  0],
-		[ 1,  0],
-		
-		/* odd rows add +1 to X */
-		[-1, -1],
-		[-1,  1],
-		[ 0, -1],
-		[ 0,  1]
-	]
-};
-
 
 /**
  * Fill the map with random values
@@ -97,13 +66,13 @@ ROT.Map.Cellular.prototype.create = function(callback) {
  */
 ROT.Map.Cellular.prototype._getNeighbors = function(cx, cy) {
 	var result = 0;
-	for (var i=0;i<this._diffs.length;i++) {
-		var diff = this._diffs[i];
-		var x = cx + diff[0];
-		var y = cy + diff[1];
+	for (var i=0;i<this._dirs.length;i++) {
+		var dir = this._dirs[i];
+		var x = cx + dir[0];
+		var y = cy + dir[1];
 		
 		/* odd rows are shifted */
-		if (this._options.topology == 6 && (cy % 2) && diff[1]) {  x += 1; }
+		if (this._options.topology == 6 && (cy % 2) && dir[1]) {  x += 1; }
 		
 		if (x < 0 || x >= this._width || x < 0 || y >= this._width) { continue; }
 		result += (this._map[x][y] == 1 ? 1 : 0);

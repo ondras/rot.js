@@ -1,7 +1,13 @@
+/**
+ * @returns {string} First letter capitalized
+ */
 String.prototype.capitalize = function() {
 	return this.charAt(0).toUpperCase() + this.substring(1);
 }
 
+/**
+ * @returns {string} This string with "%s"s replaced with arguments
+ */
 String.prototype.format = function() {
 	var args = Array.prototype.slice.call(arguments);
 	var str = this;

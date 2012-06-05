@@ -1,14 +1,43 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Generated on Mon Jun  4 12:59:36 CEST 2012.
+	Generated on Tue Jun  5 09:47:10 CEST 2012.
 */
 
 /**
- * @namespace
+ * @namespace Top-level ROT namespace
  */
 var ROT = {
 	DEFAULT_WIDTH: 80,
 	DEFAULT_HEIGHT: 25,
+
+	DIRS: {
+		"4": [
+			[ 0, -1],
+			[ 1,  0],
+			[ 0,  1],
+			[-1,  0]
+		],
+		"8": [
+			[ 0, -1],
+			[ 1, -1],
+			[ 1,  0],
+			[ 1,  1],
+			[ 0,  1],
+			[-1,  1],
+			[-1,  0],
+			[-1, -1]
+		],
+		"6": [
+			/* odd rows add +1 to X */
+			[-1, -1],
+			[ 0, -1],
+			[ 1,  0],
+			[ 0,  1],
+			[-1,  1],
+			[-1,  0]
+		]
+	},
+
 	/**
 	 * @returns {bool} Is rot.js supported by this browser?
 	 */
@@ -83,10 +112,18 @@ ROT.RNG = {
 		return 1 + Math.floor(this.getUniform()*100);
 	},
 	
+	/**
+	 * Get RNG state. Useful for storing the state and re-setting it via setState.
+	 * @returns {?} Internal state
+	 */
 	getState: function() {
 		return [this._s0, this._s1, this._s2, this._c];
 	},
 
+	/**
+	 * Set a previously retrieved state.
+	 * @param {?} state
+	 */
 	setState: function(state) {
 		this._s0 = state[0];
 		this._s1 = state[1];
@@ -141,6 +178,12 @@ ROT.Display = function(options) {
 	this.DEBUG = this.DEBUG.bind(this);
 }
 
+/**
+ * Debug helper, ideal as a map generator callback. Is always bound to this.
+ * @param {int} x
+ * @param {int} y
+ * @param {int} what
+ */
 ROT.Display.prototype.DEBUG = function(x, y, what) {
 	var colors = [this._options.bg, this._options.fg];
 	this.draw(x, y, null, null, colors[what % colors.length]);
@@ -156,7 +199,7 @@ ROT.Display.prototype.clear = function() {
 }
 
 /**
- * @see ROT.Display
+ * @see ROT.Display#setOptions
  */
 ROT.Display.prototype.setOptions = function(options) {
 	for (var p in options) { this._options[p] = options[p]; }
@@ -164,10 +207,18 @@ ROT.Display.prototype.setOptions = function(options) {
 	return this;
 }
 
+/**
+ * Returns currently set options
+ * @returns {object} Current options object 
+ */
 ROT.Display.prototype.getOptions = function() {
 	return this._options;
 }
 
+/**
+ * Returns the DOM node of this display
+ * @returns {node} DOM node
+ */
 ROT.Display.prototype.getContainer = function() {
 	return this._canvas;
 }
@@ -220,6 +271,10 @@ ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
 
 /**
  * Draws a text at given position. Optionally wraps at a maximum length.
+ * @param {int} x
+ * @param {int} y
+ * @param {string} text
+ * @param {int} [maxWidth] wrap at what width?
  */
 ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 	var cx = x;
@@ -290,11 +345,18 @@ ROT.Scheduler.prototype.add = function(item) {
 	return this;
 }
 
+/**
+ * Clear all actors
+ */
 ROT.Scheduler.prototype.clear = function() {
 	this._items = [];
 	return this;
 }
 
+/**
+ * Remove a previously added item
+ * @param {object} item anything with "getSpeed" method
+ */
 ROT.Scheduler.prototype.remove = function(item) {
 	var it = null;
 	for (var i=0;i<this._items.length;i++) {
@@ -307,6 +369,10 @@ ROT.Scheduler.prototype.remove = function(item) {
 	return this;
 }
 
+/**
+ * Schedule next actor
+ * @returns {object}
+ */
 ROT.Scheduler.prototype.next = function() {
 	if (!this._items.length) { return null; }
 
@@ -333,17 +399,26 @@ ROT.Scheduler.prototype.next = function() {
 	minItem.bucket += 1/minItem.item.getSpeed();
 	return minItem.item;
 }
+/**
+ * @returns {any} Randomly picked item, null when length=0
+ */
 Array.prototype.random = function() {
 	if (!this.length) { return null; }
 	return this[Math.floor(ROT.RNG.getUniform() * this.length)];
 }
 
+/**
+ * @returns {array} Shallow copy
+ */
 Array.prototype.clone = function() {
 	var arr = [];
 	for (var i=0;i<this.length;i++) { arr.push(this[i]); }
 	return arr;
 }
 
+/**
+ * @returns {array} New array with randomized items
+ */
 Array.prototype.randomize = function() {
 	var result = [];
 	while (this.length) {
@@ -352,14 +427,30 @@ Array.prototype.randomize = function() {
 	}
 	return result;
 }
-if (!Date.now) { Date.now = function() { return +(new Date); } }
+if (!Date.now) { 
+	/**
+	 * @returns {int} Current timestamp (msec)
+	 */
+	Date.now = function() { return +(new Date); } 
+}
+/**
+ * Always positive modulus
+ * @param {int} n Modulus
+ * @returns {int} this modulo n
+ */
 Number.prototype.mod = function(n) {
 	return ((this%n)+n)%n;
 }
+/**
+ * @returns {string} First letter capitalized
+ */
 String.prototype.capitalize = function() {
 	return this.charAt(0).toUpperCase() + this.substring(1);
 }
 
+/**
+ * @returns {string} This string with "%s"s replaced with arguments
+ */
 String.prototype.format = function() {
 	var args = Array.prototype.slice.call(arguments);
 	var str = this;
@@ -402,12 +493,19 @@ String.prototype.rpad = function(character, count) {
 	return this+s;
 }
 if (!Object.create) {  
+	/**
+	 * ES5 Object.create
+	 */
 	Object.create = function(o) {  
 		var tmp = function() {};
 		tmp.prototype = o;
 		return new tmp();
 	};  
 }  
+/**
+ * Sets prototype of this function to an instance of parent function
+ * @param {function} parent
+ */
 Function.prototype.extend = function(parent) {
 	this.prototype = Object.create(parent.prototype);
 	this.prototype.constructor = this;
@@ -776,41 +874,10 @@ ROT.Map.Cellular = function(width, height, options) {
 	};
 	for (var p in options) { this._options[p] = options[p]; }
 	
-	this._diffs = this.constructor.DIFFS[this._options.topology];
+	this._dirs = ROT.DIRS[this._options.topology];
 	this._map = this._fillMap(0);
 }
 ROT.Map.Cellular.extend(ROT.Map);
-
-ROT.Map.Cellular.DIFFS = {
-	"4": [
-		[-1,  0],
-		[ 1, -1],
-		[ 1,  0],
-		[ 0, -1],
-		[ 0,  1]
-	],
-	"8": [
-		[-1, -1],
-		[-1,  0],
-		[-1,  1],
-		[ 1, -1],
-		[ 1,  0],
-		[ 1,  1],
-		[ 0, -1],
-		[ 0,  1]
-	],
-	"6": [
-		[-1,  0],
-		[ 1,  0],
-		
-		/* odd rows add +1 to X */
-		[-1, -1],
-		[-1,  1],
-		[ 0, -1],
-		[ 0,  1]
-	]
-};
-
 
 /**
  * Fill the map with random values
@@ -856,13 +923,13 @@ ROT.Map.Cellular.prototype.create = function(callback) {
  */
 ROT.Map.Cellular.prototype._getNeighbors = function(cx, cy) {
 	var result = 0;
-	for (var i=0;i<this._diffs.length;i++) {
-		var diff = this._diffs[i];
-		var x = cx + diff[0];
-		var y = cy + diff[1];
+	for (var i=0;i<this._dirs.length;i++) {
+		var dir = this._dirs[i];
+		var x = cx + dir[0];
+		var y = cy + dir[1];
 		
 		/* odd rows are shifted */
-		if (this._options.topology == 6 && (cy % 2) && diff[1]) {  x += 1; }
+		if (this._options.topology == 6 && (cy % 2) && dir[1]) {  x += 1; }
 		
 		if (x < 0 || x >= this._width || x < 0 || y >= this._width) { continue; }
 		result += (this._map[x][y] == 1 ? 1 : 0);
@@ -1312,6 +1379,9 @@ ROT.Map.Uniform.prototype._digLine = function(points) {
 	var todo = [];
 	var rooms = []; /* rooms crossed with this line */
 	
+	/**
+	 * @private
+	 */
 	var check = function(x, y) {
 		todo.push([x, y]);
 		rooms = rooms.concat(this._roomsWithWall(x, y));
@@ -1696,6 +1766,13 @@ ROT.FOV = function(lightPassesCallback) {
 	this._lightPasses = lightPassesCallback;
 };
 
+/**
+ * Compute visibility
+ * @param {int} x
+ * @param {int} y
+ * @param {int} R Maximum visibility radius
+ * @param {function} callback
+ */
 ROT.FOV.prototype.compute = function(x, y, R, callback) {}
 /**
  * @class Discrete shadowcasting algorithm
@@ -1706,6 +1783,9 @@ ROT.FOV.DiscreteShadowcasting = function(lightPassesCallback) {
 }
 ROT.FOV.DiscreteShadowcasting.extend(ROT.Map);
 
+/**
+ * @see ROT.FOV#compute
+ */
 ROT.FOV.DiscreteShadowcasting.prototype.compute = function(x, y, R, callback) {
 	var center = this._coords;
 	var map = this._map;
@@ -1813,4 +1893,103 @@ ROT.FOV.DiscreteShadowcasting.prototype._visibleCoords = function(A, B, blocks, 
 			
 		return true;
 	}
+}
+/**
+ * @namespace Pathfinding-related stuff
+ */
+ROT.Path = {};
+/**
+ * @class Simplified Dijkstra's algorithm: all edges have a value of 1
+ * @param {int} toX Target X coord
+ * @param {int} toY Target Y coord
+ * @param {function} passableCallback Callback to determine map passability
+ * @param {object} [options]
+ * @param {int} [options.topology=8]
+ */
+ROT.Path.Dijkstra = function(toX, toY, passableCallback, options) {
+	this._toX = toX;
+	this._toY = toY;
+	this._fromX = null;
+	this._fromY = null;
+	this._passableCallback = passableCallback;
+	this._options = {
+		topology: 8
+	}
+	for (var p in options) { this._options[p] = options[p]; }
+
+	this._dirs = ROT.DIRS[this._options.topology];
+	
+	this._computed = {};
+	this._todo = [];
+	this._add(toX, toY, null);
+}
+
+/**
+ * Compute a path from a given point
+ * @param {int} fromX
+ * @param {int} fromY
+ * @param {function} callback Will be called for every path item with arguments "x" and "y"
+ */
+ROT.Path.Dijkstra.prototype.compute = function(fromX, fromY, callback) {
+	var key = fromX+","+fromY;
+	if (!(key in this._computed)) { this._compute(fromX, fromY); }
+	if (!(key in this._computed)) { return; }
+	
+	var item = this._computed[key];
+	while (item) {
+		callback(item.x, item.y);
+		item = item.prev;
+	}
+}
+
+/**
+ * Compute a non-cached value
+ */
+ROT.Path.Dijkstra.prototype._compute = function(fromX, fromY) {
+	while (this._todo.length) {
+		var item = this._todo.shift();
+		var neighbors = this._getNeighbors(item.x, item.y);
+		var done = false;
+		
+		for (var i=0;i<neighbors.length;i++) {
+			var neighbor = neighbors[i];
+			var x = neighbor[0];
+			var y = neighbor[1];
+			var id = x+","+y;
+			if (id in this._computed) { continue; }
+			
+			this._add(x, y, item); 
+			
+			if (x == fromX && y == fromY) { done = true; }
+		}
+		
+		if (done) { return; }
+	}
+}
+
+ROT.Path.Dijkstra.prototype._getNeighbors = function(cx, cy) {
+	var result = [];
+	for (var i=0;i<this._dirs.length;i++) {
+		var dir = this._dirs[i];
+		var x = cx + dir[0];
+		var y = cy + dir[1];
+		
+		/* odd rows are shifted */
+		if (this._options.topology == 6 && (cy % 2) && dir[1]) {  x += 1; }
+		
+		if (!this._passableCallback(x, y)) { continue; }
+		result.push([x, y]);
+	}
+	
+	return result;
+}
+
+ROT.Path.Dijkstra.prototype._add = function(x, y, prev) {
+	var obj = {
+		x: x,
+		y: y,
+		prev: prev
+	}
+	this._computed[x+","+y] = obj;
+	this._todo.push(obj);
 }

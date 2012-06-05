@@ -1,9 +1,38 @@
 /**
- * @namespace
+ * @namespace Top-level ROT namespace
  */
 var ROT = {
 	DEFAULT_WIDTH: 80,
 	DEFAULT_HEIGHT: 25,
+
+	DIRS: {
+		"4": [
+			[ 0, -1],
+			[ 1,  0],
+			[ 0,  1],
+			[-1,  0]
+		],
+		"8": [
+			[ 0, -1],
+			[ 1, -1],
+			[ 1,  0],
+			[ 1,  1],
+			[ 0,  1],
+			[-1,  1],
+			[-1,  0],
+			[-1, -1]
+		],
+		"6": [
+			/* odd rows add +1 to X */
+			[-1, -1],
+			[ 0, -1],
+			[ 1,  0],
+			[ 0,  1],
+			[-1,  1],
+			[-1,  0]
+		]
+	},
+
 	/**
 	 * @returns {bool} Is rot.js supported by this browser?
 	 */

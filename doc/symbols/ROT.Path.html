@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ROT.Map.Cellular</title>
+		<title>JsDoc Reference - ROT.Path</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -244,17 +244,15 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class ROT.Map.Cellular
+				Namespace ROT.Path
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
-				<br />Extends
-					<a href="../symbols/ROT.Map.html">ROT.Map</a>.<br />
 				
 			
-				Cellular automaton map generator
+				Pathfinding-related stuff
 				
 				
 					<br /><i>Defined in: </i> &lt;rot.js&gt;.
@@ -263,8 +261,8 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Map.Cellular.">
-				<caption>Class Summary</caption>
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Path.">
+				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
 						<th scope="col">Constructor Attributes</th>
@@ -276,7 +274,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROT.Map.Cellular.html#constructor">ROT.Map.Cellular</a></b>(width, height, options)
+								<b><a href="../symbols/ROT.Path.html#constructor">ROT.Path</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -290,55 +288,6 @@ ul.inheritsList
 
 <!-- ============================== methods summary ======================== -->
 			
-				
-				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Map.Cellular.">
-					<caption>Method Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Method Attributes</th>
-							<th scope="col">Method Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Cellular.html#create">create</a></b>(callback)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Cellular.html#randomize">randomize</a></b>(probability)
-								</div>
-								<div class="description">Fill the map with random values</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Cellular.html#set">set</a></b>(x, y, value)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
-				
-				
-				<dl class="inheritsList">
-				
-				</dl>
-				
-			
 <!-- ============================== events summary ======================== -->
 			
 
@@ -346,11 +295,11 @@ ul.inheritsList
 			
 			<div class="details"><a name="constructor"> </a>
 				<div class="sectionTitle">
-					Class Detail
+					Namespace Detail
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROT.Map.Cellular</b>(width, height, options)
+						<b>ROT.Path</b>
 				</div>
 				
 				<div class="description">
@@ -361,47 +310,6 @@ ul.inheritsList
 				
 				
 				
-					
-						<dl class="detailList">
-						<dt class="heading">Parameters:</dt>
-						
-							<dt>
-								<span class="light fixedFont">{int}</span>  <b>width</b>
-								<i>Optional, Default: ROT.DEFAULT_WIDTH</i>
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								<span class="light fixedFont">{int}</span>  <b>height</b>
-								<i>Optional, Default: ROT.DEFAULT_HEIGHT</i>
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								<span class="light fixedFont">{object}</span>  <b>options</b>
-								<i>Optional</i>
-							</dt>
-								<dd>Options</dd>
-						
-							<dt>
-								<span class="light fixedFont">{int[]}</span>  <b>options.born</b>
-								<i>Optional</i>
-							</dt>
-								<dd>List of neighbor counts for a new cell to be born in empty space</dd>
-						
-							<dt>
-								<span class="light fixedFont">{int[]}</span>  <b>options.survive</b>
-								<i>Optional</i>
-							</dt>
-								<dd>List of neighbor counts for an existing  cell to survive</dd>
-						
-							<dt>
-								<span class="light fixedFont">{int}</span>  <b>options.topology</b>
-								<i>Optional</i>
-							</dt>
-								<dd>Topology 4 or 6 or 8</dd>
-						
-						</dl>
 					
 					
 					
@@ -418,131 +326,6 @@ ul.inheritsList
 
 <!-- ============================== method details ========================= -->		
 			
-				<div class="sectionTitle">
-					Method Detail
-				</div>
-				
-					<a name="create"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>create</b>(callback)
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>callback</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="randomize"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>randomize</b>(probability)
-					
-					</div>
-					<div class="description">
-						Fill the map with random values
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{float}</span> <b>probability</b>
-									
-								</dt>
-								<dd>Probability for a cell to become alive; 0 = all empty, 1 = all full</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="set"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>set</b>(x, y, value)
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>x</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>y</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>value</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					
-				
-			
 			
 <!-- ============================== event details ========================= -->		
 			
@@ -554,7 +337,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Tue Jun 05 2012 09:47:15 GMT+0200 (CEST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Tue Jun 05 2012 09:47:16 GMT+0200 (CEST)
 		</div>
 	</body>
 </html>
