@@ -29,9 +29,11 @@ path/astar.js
 TARGET=../rot.js
 rm -f $TARGET
 
+VERSION=$(head -1 < ../VERSION)
+
 PROLOGUE="/*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Generated on $(date).
+	Version $VERSION, generated on $(date).
 */
 "
 echo "$PROLOGUE" >> $TARGET

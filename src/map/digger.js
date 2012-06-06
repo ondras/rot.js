@@ -7,7 +7,7 @@
 ROT.Map.Digger = function(width, height, options) {
 	ROT.Map.call(this, width, height);
 	
-	this._rooms = []; /* FIXME not used */
+	this._rooms = [];
 	this._options = {
 		roomWidth: [3, 9], /* room minimum and maximum width */
 		roomHeight: [3, 5], /* room minimum and maximum height */
@@ -30,6 +30,18 @@ ROT.Map.Digger = function(width, height, options) {
 }
 ROT.Map.Digger.extend(ROT.Map);
 
+/**
+ * Get all generated rooms
+ * @returns {ROT.Map.Feature.Room[]}
+ */
+ROT.Map.Digger.prototype.getRooms = function() {
+	return this._rooms;
+}
+
+/**
+ * Create a map
+ * @see ROT.Map#create
+ */
 ROT.Map.Digger.prototype.create = function(callback) {
 	this._map = this._fillMap(1);
 	this._walls = {};
@@ -165,7 +177,8 @@ ROT.Map.Digger.prototype._tryFeature = function(x, y, dx, dy) {
 		return false;
 	}
 	
-	feature.create(this._digCallback, this._wallCallback)
+	feature.create(this._digCallback, this._wallCallback);
+	if (feature instanceof ROT.Map.Feature.Room) { this._rooms.push(feature); }
 //	feature.debug();
 	
 	return true;

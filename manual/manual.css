@@ -12,12 +12,21 @@ h1 {
 	text-align: center;
 }
 
+h1 span {
+	font-size: 50%;
+	margin-left: 1em;
+}
+
 a {
 	color: #fff;
 }
 
 pre, code, textarea {
 	font-family: inconsolata, monospace;
+}
+
+li {
+	line-height: 150%;
 }
 
 #menu {

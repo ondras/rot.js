@@ -26,6 +26,18 @@ ROT.Map.Uniform = function(width, height, options) {
 }
 ROT.Map.Uniform.extend(ROT.Map);
 
+/**
+ * Get all generated rooms
+ * @returns {ROT.Map.Feature.Room[]}
+ */
+ROT.Map.Uniform.prototype.getRooms = function() {
+	return this._rooms;
+}
+
+/**
+ * Create a map
+ * @see ROT.Map#create
+ */
 ROT.Map.Uniform.prototype.create = function(callback) {
 	var t1 = Date.now();
 	while (1) {

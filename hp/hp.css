@@ -14,7 +14,11 @@ pre {
 }
 
 pre {
-	font-size: 17px;
+	font-size: 16px;
+}
+
+@media all and (min-height: 610px) {
+	pre { font-size: 17px; }
 }
 
 @media all and (min-height: 650px) {

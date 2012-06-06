@@ -114,6 +114,11 @@ var Manual = {
 	},
 	
 	init: function() {
+		OZ.Request("../VERSION", function(data, status) {
+			if (status != 200) { return; }
+			document.querySelector("h1").innerHTML += "<span>v" + data.trim() + "</span>";
+		});
+		
 		OZ.Event.add(window, "hashchange", this._hashChange.bind(this));
 		this._hashChange();
 	}

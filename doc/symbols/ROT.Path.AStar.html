@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ROT.Path</title>
+		<title>JsDoc Reference - ROT.Path.AStar</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -246,15 +246,17 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class ROT.Path
+				Class ROT.Path.AStar
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
+				<br />Extends
+					<a href="../symbols/ROT.Path.html">ROT.Path</a>.<br />
 				
 			
-				Abstract pathfinder
+				Simplified A* algorithm: all edges have a value of 1
 				
 				
 					<br /><i>Defined in: </i> &lt;rot.js&gt;.
@@ -263,7 +265,7 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Path.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Path.AStar.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -276,7 +278,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROT.Path.html#constructor">ROT.Path</a></b>(toX, toY, passableCallback, options)
+								<b><a href="../symbols/ROT.Path.AStar.html#constructor">ROT.Path.AStar</a></b>(toX, toY, passableCallback, options)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -292,7 +294,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Path.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Path.AStar.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -305,7 +307,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Path.html#compute">compute</a></b>(fromX, fromY, callback)
+								<div class="fixedFont"><b><a href="../symbols/ROT.Path.AStar.html#compute">compute</a></b>(fromX, fromY, callback)
 								</div>
 								<div class="description">Compute a path from a given point</div>
 							</td>
@@ -315,6 +317,10 @@ ul.inheritsList
 				</table>
 				
 				
+				
+				<dl class="inheritsList">
+				
+				</dl>
 				
 			
 <!-- ============================== events summary ======================== -->
@@ -328,7 +334,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROT.Path</b>(toX, toY, passableCallback, options)
+						<b>ROT.Path.AStar</b>(toX, toY, passableCallback, options)
 				</div>
 				
 				<div class="description">
@@ -344,32 +350,26 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								<span class="light fixedFont">{int}</span>  <b>toX</b>
+								 <b>toX</b>
 								
-							</dt>
-								<dd>Target X coord</dd>
-						
-							<dt>
-								<span class="light fixedFont">{int}</span>  <b>toY</b>
-								
-							</dt>
-								<dd>Target Y coord</dd>
-						
-							<dt>
-								<span class="light fixedFont">{function}</span>  <b>passableCallback</b>
-								
-							</dt>
-								<dd>Callback to determine map passability</dd>
-						
-							<dt>
-								<span class="light fixedFont">{object}</span>  <b>options</b>
-								<i>Optional</i>
 							</dt>
 								<dd></dd>
 						
 							<dt>
-								<span class="light fixedFont">{int}</span>  <b>options.topology</b>
-								<i>Optional, Default: 8</i>
+								 <b>toY</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>passableCallback</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>options</b>
+								
 							</dt>
 								<dd></dd>
 						
@@ -380,6 +380,13 @@ ul.inheritsList
 					
 					
 					
+					
+						<dl class="detailList">
+						<dt class="heading">See:</dt>
+						
+							<dd><a href="../symbols/ROT.Path.html">ROT.Path</a></dd>
+						
+						</dl>
 					
 
 			</div>
@@ -414,22 +421,22 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{int}</span> <b>fromX</b>
+									<b>fromX</b>
 									
 								</dt>
 								<dd></dd>
 							
 								<dt>
-									<span class="light fixedFont">{int}</span> <b>fromY</b>
+									<b>fromY</b>
 									
 								</dt>
 								<dd></dd>
 							
 								<dt>
-									<span class="light fixedFont">{function}</span> <b>callback</b>
+									<b>callback</b>
 									
 								</dt>
-								<dd>Will be called for every path item with arguments "x" and "y"</dd>
+								<dd></dd>
 							
 							</dl>
 						
@@ -438,6 +445,13 @@ ul.inheritsList
 						
 						
 						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/ROT.Path.html#compute">ROT.Path#compute</a></dd>
+							
+							</dl>
 						
 
 					
