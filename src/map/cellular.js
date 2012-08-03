@@ -71,9 +71,6 @@ ROT.Map.Cellular.prototype._getNeighbors = function(cx, cy) {
 		var x = cx + dir[0];
 		var y = cy + dir[1];
 		
-		/* odd rows are shifted */
-		if (this._options.topology == 6 && (cy % 2) && dir[1]) {  x += 1; }
-		
 		if (x < 0 || x >= this._width || x < 0 || y >= this._width) { continue; }
 		result += (this._map[x][y] == 1 ? 1 : 0);
 	}

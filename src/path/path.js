@@ -36,9 +36,6 @@ ROT.Path.prototype._getNeighbors = function(cx, cy) {
 		var x = cx + dir[0];
 		var y = cy + dir[1];
 		
-		/* odd rows are shifted */
-		if (this._options.topology == 6 && (cy % 2) && dir[1]) {  x += 1; }
-		
 		if (!this._passableCallback(x, y)) { continue; }
 		result.push([x, y]);
 	}

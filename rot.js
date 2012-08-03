@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.1, generated on Wed Jun  6 09:28:13 CEST 2012.
+	Version 0.1, generated on Fri Jun  8 13:57:35 CEST 2012.
 */
 
 /**
@@ -246,17 +246,16 @@ ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
 		break;
 		case "hex":
 			var a = this._hexSize;
-			if (y % 2) { x += 0.5; }
-			var cx = (x+0.5) * this._spacingX;
+			var cx = (x+1) * this._spacingX;
 			var cy = y * this._spacingY + a;
 			
 			this._context.beginPath();
 			this._context.moveTo(cx, cy-a);
-			this._context.lineTo(cx + this._spacingX/2, cy-a/2);
-			this._context.lineTo(cx + this._spacingX/2, cy+a/2);
+			this._context.lineTo(cx + this._spacingX, cy-a/2);
+			this._context.lineTo(cx + this._spacingX, cy+a/2);
 			this._context.lineTo(cx, cy+a);
-			this._context.lineTo(cx - this._spacingX/2, cy+a/2);
-			this._context.lineTo(cx - this._spacingX/2, cy-a/2);
+			this._context.lineTo(cx - this._spacingX, cy+a/2);
+			this._context.lineTo(cx - this._spacingX, cy-a/2);
 			this._context.lineTo(cx, cy-a);
 			this._context.fill();
 		break;
@@ -305,9 +304,9 @@ ROT.Display.prototype._redraw = function() {
 		break;
 		case "hex":
 			this._hexSize = Math.floor(this._options.spacing * (this._options.fontSize + this._charWidth/Math.sqrt(3)) / 2);
-			this._spacingX = this._hexSize * Math.sqrt(3);
+			this._spacingX = this._hexSize * Math.sqrt(3) / 2;
 			this._spacingY = this._hexSize * 1.5;
-			this._canvas.width = Math.ceil( (this._options.width + 0.5) * this._spacingX );
+			this._canvas.width = Math.ceil( (this._options.width + 1) * this._spacingX );
 			this._canvas.height = Math.ceil( (this._options.height - 1) * this._spacingY + 2*this._hexSize );
 		break;
 	}
