@@ -42,9 +42,18 @@ ROT.Map.Cellular.prototype.create = function(callback) {
 	var newMap = this._fillMap(0);
 	var born = this._options.born;
 	var survive = this._options.survive;
-	
-	for (var i=0;i<this._width;i++) {
-		for (var j=0;j<this._height;j++) {
+
+
+	for (var j=0;j<this._height;j++) {
+		var widthStep = 1;
+		var widthStart = 0;
+		if (this._options.topology == 6) { 
+			widthStep = 2;
+			if (j%2) { widthStart = 1; }
+		}
+
+		for (var i=widthStart; i<this._width; i+=widthStep) {
+
 			var cur = this._map[i][j];
 			var ncount = this._getNeighbors(i, j);
 			
@@ -62,7 +71,7 @@ ROT.Map.Cellular.prototype.create = function(callback) {
 }
 
 /**
- * Get neighbor count at [i,j] in this._map, using this._options.topology
+ * Get neighbor count at [i,j] in this._map
  */
 ROT.Map.Cellular.prototype._getNeighbors = function(cx, cy) {
 	var result = 0;

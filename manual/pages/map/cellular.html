@@ -62,7 +62,7 @@ for (var i=49; i&gt;=0; i--) {
 </div>
 
 <div class="example">
-var w = 60, h = 60;
+var w = 100, h = 50;
 /* hexagonal layout */
 var display = new ROT.Display({width:w, height:h, fontSize:10, layout:"hex"});
 SHOW(display.getContainer());
@@ -79,13 +79,13 @@ for (var i=0; i&lt;w; i++) {
 	for (var j=0; j&lt;h; j++) {
 		var dx = i/w - 0.5;
 		var dy = j/h - 0.5;
-		var dist = Math.pow(dx*dx+dy*dy, 0.33);
+		var dist = Math.pow(dx*dx+dy*dy, 0.3);
 		if (ROT.RNG.getUniform() &lt; dist) { map.set(i, j, 1); }
 	}
 }
 
-/* generate six iterations, show the last one */
-for (var i=5; i&gt;=0; i--) {
+/* generate four iterations, show the last one */
+for (var i=4; i&gt;=0; i--) {
 	map.create(i ? null : display.DEBUG);
 }
 </div>

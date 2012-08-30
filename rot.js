@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.1, generated on Fri Jun  8 13:57:35 CEST 2012.
+	Version 0.1, generated on Thu Aug 30 15:27:45 CEST 2012.
 */
 
 /**
@@ -28,13 +28,12 @@ var ROT = {
 			[-1, -1]
 		],
 		"6": [
-			/* odd rows add +1 to X */
 			[-1, -1],
-			[ 0, -1],
-			[ 1,  0],
-			[ 0,  1],
+			[ 1, -1],
+			[ 2,  0],
+			[ 1,  1],
 			[-1,  1],
-			[-1,  0]
+			[-2,  0]
 		]
 	},
 
@@ -899,9 +898,18 @@ ROT.Map.Cellular.prototype.create = function(callback) {
 	var newMap = this._fillMap(0);
 	var born = this._options.born;
 	var survive = this._options.survive;
-	
-	for (var i=0;i<this._width;i++) {
-		for (var j=0;j<this._height;j++) {
+
+
+	for (var j=0;j<this._height;j++) {
+		var widthStep = 1;
+		var widthStart = 0;
+		if (this._options.topology == 6) { 
+			widthStep = 2;
+			if (j%2) { widthStart = 1; }
+		}
+
+		for (var i=widthStart; i<this._width; i+=widthStep) {
+
 			var cur = this._map[i][j];
 			var ncount = this._getNeighbors(i, j);
 			
@@ -919,7 +927,7 @@ ROT.Map.Cellular.prototype.create = function(callback) {
 }
 
 /**
- * Get neighbor count at [i,j] in this._map, using this._options.topology
+ * Get neighbor count at [i,j] in this._map
  */
 ROT.Map.Cellular.prototype._getNeighbors = function(cx, cy) {
 	var result = 0;
@@ -927,9 +935,6 @@ ROT.Map.Cellular.prototype._getNeighbors = function(cx, cy) {
 		var dir = this._dirs[i];
 		var x = cx + dir[0];
 		var y = cy + dir[1];
-		
-		/* odd rows are shifted */
-		if (this._options.topology == 6 && (cy % 2) && dir[1]) {  x += 1; }
 		
 		if (x < 0 || x >= this._width || x < 0 || y >= this._width) { continue; }
 		result += (this._map[x][y] == 1 ? 1 : 0);
@@ -1945,9 +1950,6 @@ ROT.Path.prototype._getNeighbors = function(cx, cy) {
 		var dir = this._dirs[i];
 		var x = cx + dir[0];
 		var y = cy + dir[1];
-		
-		/* odd rows are shifted */
-		if (this._options.topology == 6 && (cy % 2) && dir[1]) {  x += 1; }
 		
 		if (!this._passableCallback(x, y)) { continue; }
 		result.push([x, y]);
