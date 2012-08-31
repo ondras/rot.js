@@ -5,6 +5,7 @@ var ROT = {
 	DEFAULT_WIDTH: 80,
 	DEFAULT_HEIGHT: 25,
 
+	/* Ordering is important! */
 	DIRS: {
 		"4": [
 			[ 0, -1],

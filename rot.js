@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.2, generated on Fri Aug 31 12:53:30 CEST 2012.
+	Version 0.2, generated on Fri Aug 31 13:58:42 CEST 2012.
 */
 
 /**
@@ -10,6 +10,7 @@ var ROT = {
 	DEFAULT_WIDTH: 80,
 	DEFAULT_HEIGHT: 25,
 
+	/* Ordering is important! */
 	DIRS: {
 		"4": [
 			[ 0, -1],
@@ -178,7 +179,7 @@ ROT.Display = function(options) {
 }
 
 /**
- * Debug helper, ideal as a map generator callback. Is always bound to this.
+ * Debug helper, ideal as a map generator callback. Always bound to this.
  * @param {int} x
  * @param {int} y
  * @param {int} what
@@ -268,7 +269,7 @@ ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
 }
 
 /**
- * Draws a text at given position. Optionally wraps at a maximum length.
+ * Draws a text at given position. Optionally wraps at a maximum length. Currently does not work with hex layout.
  * @param {int} x
  * @param {int} y
  * @param {string} text
@@ -1780,9 +1781,15 @@ ROT.Map.Feature.Corridor.prototype.create = function(digCallback){
 /**
  * @class Abstract FOV algorithm
  * @param {function} lightPassesCallback Does the light pass through x,y?
+ * @param {object} [options]
+ * @param {int} [options.topology=8] 6/8
  */
-ROT.FOV = function(lightPassesCallback) {
+ROT.FOV = function(lightPassesCallback, options) {
 	this._lightPasses = lightPassesCallback;
+	this._options = {
+		topology: 8
+	}
+	for (var p in options) { this._options[p] = options[p]; }
 };
 
 /**
@@ -1793,14 +1800,48 @@ ROT.FOV = function(lightPassesCallback) {
  * @param {function} callback
  */
 ROT.FOV.prototype.compute = function(x, y, R, callback) {}
+
+/**
+ * Return all neighbors in a concentric ring
+ * @param {int} cx center-x
+ * @param {int} cy center-y
+ * @param {int} r range
+ */
+ROT.FOV.prototype._getCircle = function(cx, cy, r) {
+	var result = [];
+
+	if (this._options.topology == 8) {
+		var dirs = ROT.DIRS[4];
+		var countFactor = 2;
+	} else {
+		var dirs = ROT.DIRS[6];
+		var countFactor = 1;
+	}
+
+	/* starting neighbor */
+	var x = cx-r;
+	var y = cy+r;
+
+	/* circle */
+	for (var i=0;i<dirs.length;i++) {
+		for (var j=0;j<r*countFactor;j++) {
+			result.push([x, y]);
+			x += dirs[i][0];
+			y += dirs[i][1];
+
+		}
+	}
+
+	return result;
+}
 /**
  * @class Discrete shadowcasting algorithm
  * @augments ROT.FOV
  */
-ROT.FOV.DiscreteShadowcasting = function(lightPassesCallback) {
-	ROT.FOV.call(this, lightPassesCallback);
+ROT.FOV.DiscreteShadowcasting = function(lightPassesCallback, options) {
+	ROT.FOV.call(this, lightPassesCallback, options);
 }
-ROT.FOV.DiscreteShadowcasting.extend(ROT.Map);
+ROT.FOV.DiscreteShadowcasting.extend(ROT.FOV);
 
 /**
  * @see ROT.FOV#compute
@@ -1818,25 +1859,16 @@ ROT.FOV.DiscreteShadowcasting.prototype.compute = function(x, y, R, callback) {
 	/* start and end angles */
 	var DATA = [];
 	
-	var cellCount = 0;
-	var A, B, cx, cy, blocks, diff;
-	var diffs = [
-		[ 0, -1],
-		[-1,  0],
-		[ 0,  1],
-		[ 1,  0]
-	];
+	var A, B, cx, cy, blocks;
 
-	
 	/* analyze surrounding cells in concentric rings, starting from the center */
 	for (var r=1; r<=R; r++) {
-		cellCount = 8*r;
-		var angle = 360 / cellCount;
+		var neighbors = this._getCircle(x, y, r);
+		var angle = 360 / neighbors.length;
 
-		cx = x+r;
-		cy = y+r;
-
-		for (var i=0;i<cellCount;i++) {
+		for (var i=0;i<neighbors.length;i++) {
+			cx = neighbors[i][0];
+			cy = neighbors[i][1];
 			A = angle * (i - 0.5);
 			B = A + angle;
 			
@@ -1844,10 +1876,7 @@ ROT.FOV.DiscreteShadowcasting.prototype.compute = function(x, y, R, callback) {
 			if (this._visibleCoords(Math.floor(A), Math.ceil(B), blocks, DATA)) { callback(cx, cy, r); }
 			
 			if (DATA.length == 2 && DATA[0] == 0 && DATA[1] == 360) { return; } /* cutoff? */
-			
-			diff = diffs[Math.floor(i*4/cellCount)];
-			cx += diff[0];
-			cy += diff[1];
+
 		} /* for all cells in this ring */
 	} /* for all rings */
 }

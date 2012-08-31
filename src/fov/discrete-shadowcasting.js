@@ -2,10 +2,10 @@
  * @class Discrete shadowcasting algorithm
  * @augments ROT.FOV
  */
-ROT.FOV.DiscreteShadowcasting = function(lightPassesCallback) {
-	ROT.FOV.call(this, lightPassesCallback);
+ROT.FOV.DiscreteShadowcasting = function(lightPassesCallback, options) {
+	ROT.FOV.call(this, lightPassesCallback, options);
 }
-ROT.FOV.DiscreteShadowcasting.extend(ROT.Map);
+ROT.FOV.DiscreteShadowcasting.extend(ROT.FOV);
 
 /**
  * @see ROT.FOV#compute
@@ -23,25 +23,16 @@ ROT.FOV.DiscreteShadowcasting.prototype.compute = function(x, y, R, callback) {
 	/* start and end angles */
 	var DATA = [];
 	
-	var cellCount = 0;
-	var A, B, cx, cy, blocks, diff;
-	var diffs = [
-		[ 0, -1],
-		[-1,  0],
-		[ 0,  1],
-		[ 1,  0]
-	];
+	var A, B, cx, cy, blocks;
 
-	
 	/* analyze surrounding cells in concentric rings, starting from the center */
 	for (var r=1; r<=R; r++) {
-		cellCount = 8*r;
-		var angle = 360 / cellCount;
+		var neighbors = this._getCircle(x, y, r);
+		var angle = 360 / neighbors.length;
 
-		cx = x+r;
-		cy = y+r;
-
-		for (var i=0;i<cellCount;i++) {
+		for (var i=0;i<neighbors.length;i++) {
+			cx = neighbors[i][0];
+			cy = neighbors[i][1];
 			A = angle * (i - 0.5);
 			B = A + angle;
 			
@@ -49,10 +40,7 @@ ROT.FOV.DiscreteShadowcasting.prototype.compute = function(x, y, R, callback) {
 			if (this._visibleCoords(Math.floor(A), Math.ceil(B), blocks, DATA)) { callback(cx, cy, r); }
 			
 			if (DATA.length == 2 && DATA[0] == 0 && DATA[1] == 360) { return; } /* cutoff? */
-			
-			diff = diffs[Math.floor(i*4/cellCount)];
-			cx += diff[0];
-			cy += diff[1];
+
 		} /* for all cells in this ring */
 	} /* for all rings */
 }
