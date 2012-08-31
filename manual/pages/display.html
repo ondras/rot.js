@@ -58,19 +58,3 @@ display.drawText(5,  2, "Hello world");
 display.drawText(20, 5, "This line of text is very long.", 16);
 </div>
 
-<h3>Using hexagonal layout</h3>
-
-<div class="example">
-var display = new ROT.Display({width:40, height:20, layout:"hex"});
-SHOW(display.getContainer());
-
-var colors = ["#fff", "#ddd", "#bbb", "#999", "#777", "#555"];
-for (var i=0;i&lt;20;i++) {
-	for (var j=0;j&lt;20;j++) {
-		var x = 2*i + j%2;
-		var y = j;
-		var color = colors[((x+y)/2) % colors.length];
-		display.draw(x, y, "", "", color);
-	}
-}
-</div>

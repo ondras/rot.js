@@ -37,7 +37,7 @@ ROT.Display = function(options) {
 }
 
 /**
- * Debug helper, ideal as a map generator callback. Is always bound to this.
+ * Debug helper, ideal as a map generator callback. Always bound to this.
  * @param {int} x
  * @param {int} y
  * @param {int} what
@@ -57,11 +57,11 @@ ROT.Display.prototype.clear = function() {
 }
 
 /**
- * @see ROT.Display#setOptions
+ * @see ROT.Display
  */
 ROT.Display.prototype.setOptions = function(options) {
 	for (var p in options) { this._options[p] = options[p]; }
-	if (options.width || options.height || options.fontSize || options.fontFamily) { this._redraw(); }
+	if (options.width || options.height || options.fontSize || options.fontFamily || options.spacing) { this._redraw(); }
 	return this;
 }
 
@@ -123,11 +123,11 @@ ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
 	if (!char) { return; }
 	
 	this._context.fillStyle = fg;
-	this._context.fillText(char.charAt(0), cx, cy);
+	this._context.fillText(char, cx, cy);
 }
 
 /**
- * Draws a text at given position. Optionally wraps at a maximum length.
+ * Draws a text at given position. Optionally wraps at a maximum length. Currently does not work with hex layout.
  * @param {int} x
  * @param {int} y
  * @param {string} text

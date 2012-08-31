@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.1, generated on Thu Aug 30 15:27:45 CEST 2012.
+	Version 0.2, generated on Fri Aug 31 12:53:30 CEST 2012.
 */
 
 /**
@@ -198,11 +198,11 @@ ROT.Display.prototype.clear = function() {
 }
 
 /**
- * @see ROT.Display#setOptions
+ * @see ROT.Display
  */
 ROT.Display.prototype.setOptions = function(options) {
 	for (var p in options) { this._options[p] = options[p]; }
-	if (options.width || options.height || options.fontSize || options.fontFamily) { this._redraw(); }
+	if (options.width || options.height || options.fontSize || options.fontFamily || options.spacing) { this._redraw(); }
 	return this;
 }
 
@@ -264,7 +264,7 @@ ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
 	if (!char) { return; }
 	
 	this._context.fillStyle = fg;
-	this._context.fillText(char.charAt(0), cx, cy);
+	this._context.fillText(char, cx, cy);
 }
 
 /**
@@ -905,7 +905,7 @@ ROT.Map.Cellular.prototype.create = function(callback) {
 		var widthStart = 0;
 		if (this._options.topology == 6) { 
 			widthStep = 2;
-			if (j%2) { widthStart = 1; }
+			widthStart = j%2;
 		}
 
 		for (var i=widthStart; i<this._width; i+=widthStep) {
@@ -2092,6 +2092,19 @@ ROT.Path.AStar.prototype._add = function(x, y, prev) {
 }
 
 ROT.Path.AStar.prototype._distance = function(x, y) {
-	/* FIXME topology */
-	return Math.max(Math.abs(x-this._fromX), Math.abs(y-this._fromY));
+	switch (this._options.topology) {
+		case 4:
+			return (Math.abs(x-this._fromX) + Math.abs(y-this._fromY));
+		break;
+
+		case 6:
+			var dx = Math.abs(x - this._fromX);
+			var dy = Math.abs(y - this._fromY);
+			return dy + Math.max(0, (dx-dy)/2);
+		break;
+
+		case 8: 
+			return Math.max(Math.abs(x-this._fromX), Math.abs(y-this._fromY));
+		break;
+	}
 }

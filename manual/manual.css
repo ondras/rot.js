@@ -55,11 +55,11 @@ li {
 }
 
 
-#menu > li:first-child a {
+#menu a.first {
 	border-radius: 0 10px 0 0;
 }
 
-#menu > li:last-child a {
+#menu a.last {
 	border-radius: 0 0 10px 0;
 }
 
@@ -145,4 +145,27 @@ li {
 .example .time {
 	text-align: right;
 	font-size: smaller;
+}
+
+.comparison {
+	padding-left: 1em;
+}
+.comparison li {
+	list-style-type: none;
+}
+.comparison li:before {
+	font-family: monospace;
+	font-size: 150%;
+	content: "• ";
+	font-weight: bold;
+}
+
+.comparison li.good:before {
+	content: "✔ ";
+	color: #0f0;
+}
+
+.comparison li.bad:before {
+	content: "✘ ";
+	color: #f00;
 }

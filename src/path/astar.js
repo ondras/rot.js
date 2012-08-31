@@ -73,6 +73,19 @@ ROT.Path.AStar.prototype._add = function(x, y, prev) {
 }
 
 ROT.Path.AStar.prototype._distance = function(x, y) {
-	/* FIXME topology */
-	return Math.max(Math.abs(x-this._fromX), Math.abs(y-this._fromY));
+	switch (this._options.topology) {
+		case 4:
+			return (Math.abs(x-this._fromX) + Math.abs(y-this._fromY));
+		break;
+
+		case 6:
+			var dx = Math.abs(x - this._fromX);
+			var dy = Math.abs(y - this._fromY);
+			return dy + Math.max(0, (dx-dy)/2);
+		break;
+
+		case 8: 
+			return Math.max(Math.abs(x-this._fromX), Math.abs(y-this._fromY));
+		break;
+	}
 }

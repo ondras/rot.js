@@ -49,7 +49,7 @@ ROT.Map.Cellular.prototype.create = function(callback) {
 		var widthStart = 0;
 		if (this._options.topology == 6) { 
 			widthStep = 2;
-			if (j%2) { widthStart = 1; }
+			widthStart = j%2;
 		}
 
 		for (var i=widthStart; i<this._width; i+=widthStep) {

@@ -1,0 +1,4 @@
+remove FIXME
+implement colors for drawText
+fix drawText on hexes
+drawText alignment?
