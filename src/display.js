@@ -85,6 +85,8 @@ ROT.Display.prototype.getContainer = function() {
  * @param {int} x
  * @param {int} y
  * @param {string} char 
+ * @param {string} [fg] foreground color
+ * @param {string} [bg] background color
  */
 ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
 	if (!fg) { fg = this._options.fg; }
