@@ -4,6 +4,7 @@ rot.js
 rng.js
 display.js
 scheduler.js
+engine.js
 js/array.js
 js/date.js
 js/number.js

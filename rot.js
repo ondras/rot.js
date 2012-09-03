@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.2, generated on Fri Aug 31 14:03:51 CEST 2012.
+	Version 0.2, generated on Mon Sep  3 16:03:57 CEST 2012.
 */
 
 /**
@@ -247,23 +247,12 @@ ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
 			this._context.fillRect(cx-this._spacingX/2, cy-this._spacingY/2, this._spacingX, this._spacingY);
 		break;
 		case "hex":
-			var a = this._hexSize;
 			var cx = (x+1) * this._spacingX;
-			var cy = y * this._spacingY + a;
-			
-			this._context.beginPath();
-			this._context.moveTo(cx, cy-a);
-			this._context.lineTo(cx + this._spacingX, cy-a/2);
-			this._context.lineTo(cx + this._spacingX, cy+a/2);
-			this._context.lineTo(cx, cy+a);
-			this._context.lineTo(cx - this._spacingX, cy+a/2);
-			this._context.lineTo(cx - this._spacingX, cy-a/2);
-			this._context.lineTo(cx, cy-a);
-			this._context.fill();
+			var cy = y * this._spacingY + this._hexSize;
+			this._fillHex(cx, cy);
 		break;
 	}
 
-	
 	if (!char) { return; }
 	
 	this._context.fillStyle = fg;
@@ -289,6 +278,20 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 		var ch = text.charAt(i);
 		this.draw(cx++, cy, ch);
 	}
+}
+
+ROT.Display.prototype._fillHex = function(cx, cy) {
+	var a = this._hexSize;
+	
+	this._context.beginPath();
+	this._context.moveTo(cx, cy-a);
+	this._context.lineTo(cx + this._spacingX, cy-a/2);
+	this._context.lineTo(cx + this._spacingX, cy+a/2);
+	this._context.lineTo(cx, cy+a);
+	this._context.lineTo(cx - this._spacingX, cy+a/2);
+	this._context.lineTo(cx - this._spacingX, cy-a/2);
+	this._context.lineTo(cx, cy-a);
+	this._context.fill();
 }
 
 ROT.Display.prototype._redraw = function() {
@@ -399,6 +402,68 @@ ROT.Scheduler.prototype.next = function() {
 	
 	minItem.bucket += 1/minItem.item.getSpeed();
 	return minItem.item;
+}
+/**
+ * Asynchronous main loop
+ */
+ROT.Engine = function() {
+	this._scheduler = new ROT.Scheduler();
+	this._lock = 1;
+}
+
+/**
+ * @param {object} actor Anything with "getSpeed" and "act" methods
+ */
+ROT.Engine.prototype.addActor = function(actor) {
+	this._scheduler.add(actor);
+	return this;
+}
+
+/**
+ * Remove a previously added actor
+ * @param {object} actor
+ */
+ROT.Engine.prototype.removeActor = function(actor) {
+	this._scheduler.remove(actor);
+	return this;
+}
+
+/**
+ * Remove all actors
+ */
+ROT.Engine.prototype.clear = function() {
+	this._scheduler.clear();
+	return this;
+}
+
+/**
+ * Start the main loop. When this call returns, the loop is locked.
+ */
+ROT.Engine.prototype.start = function() {
+	return this.unlock();
+}
+
+/**
+ * Interrupt the engine by an asynchronous action
+ */
+ROT.Engine.prototype.lock = function() {
+	this._lock++;
+}
+
+/**
+ * Resume execution (paused by a previous lock)
+ */
+ROT.Engine.prototype.unlock = function() {
+	if (!this._lock) { throw new Error("Cannot unlock unlocked engine"); }
+	this._lock--;
+
+	while (!this._lock) {
+		var actor = this._scheduler.next();
+		if (!actor) { return this.lock(); } /* no actors */
+		actor.act();
+	}
+
+	return this;
 }
 /**
  * @returns {any} Randomly picked item, null when length=0

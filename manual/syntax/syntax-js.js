@@ -30,7 +30,7 @@
 		"switch", "this", "throw", "try", "typeof", "var", "void", "while", "with", "__proto__",
 		"true", "false", "null", "NaN", "prototype", "call", "apply", "constructor"];
 
-	var kw = new RegExp("(^|\\s|\\.|\\()("+keywords.join("|")+")(?=\\s|\\.|\\(|\\)|\\[|\\]|;|$|,)","gm");
+	var kw = new RegExp("(^|\\s|\\.|\\(|!)("+keywords.join("|")+")(?=\\s|\\.|\\(|\\)|\\[|\\]|;|$|,)","gm");
 	patterns.push({
 		token: "keyword",
 		re: kw,

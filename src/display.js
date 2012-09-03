@@ -105,23 +105,12 @@ ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
 			this._context.fillRect(cx-this._spacingX/2, cy-this._spacingY/2, this._spacingX, this._spacingY);
 		break;
 		case "hex":
-			var a = this._hexSize;
 			var cx = (x+1) * this._spacingX;
-			var cy = y * this._spacingY + a;
-			
-			this._context.beginPath();
-			this._context.moveTo(cx, cy-a);
-			this._context.lineTo(cx + this._spacingX, cy-a/2);
-			this._context.lineTo(cx + this._spacingX, cy+a/2);
-			this._context.lineTo(cx, cy+a);
-			this._context.lineTo(cx - this._spacingX, cy+a/2);
-			this._context.lineTo(cx - this._spacingX, cy-a/2);
-			this._context.lineTo(cx, cy-a);
-			this._context.fill();
+			var cy = y * this._spacingY + this._hexSize;
+			this._fillHex(cx, cy);
 		break;
 	}
 
-	
 	if (!char) { return; }
 	
 	this._context.fillStyle = fg;
@@ -147,6 +136,20 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 		var ch = text.charAt(i);
 		this.draw(cx++, cy, ch);
 	}
+}
+
+ROT.Display.prototype._fillHex = function(cx, cy) {
+	var a = this._hexSize;
+	
+	this._context.beginPath();
+	this._context.moveTo(cx, cy-a);
+	this._context.lineTo(cx + this._spacingX, cy-a/2);
+	this._context.lineTo(cx + this._spacingX, cy+a/2);
+	this._context.lineTo(cx, cy+a);
+	this._context.lineTo(cx - this._spacingX, cy+a/2);
+	this._context.lineTo(cx - this._spacingX, cy-a/2);
+	this._context.lineTo(cx, cy-a);
+	this._context.fill();
 }
 
 ROT.Display.prototype._redraw = function() {
