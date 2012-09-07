@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ROT.Map.IceyMaze</title>
+		<title>JsDoc Reference - ROT.Noise.Simplex</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -250,18 +250,15 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class ROT.Map.IceyMaze
+				Class ROT.Noise.Simplex
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
-				<br />Extends
-					<a href="../symbols/ROT.Map.html">ROT.Map</a>.<br />
 				
 			
-				Icey's Maze generator
-See http://www.roguebasin.roguelikedevelopment.org/index.php?title=Simple_maze for explanation
+				2D simplex noise generator
 				
 				
 					<br /><i>Defined in: </i> &lt;rot.js&gt;.
@@ -270,7 +267,7 @@ See http://www.roguebasin.roguelikedevelopment.org/index.php?title=Simple_maze f
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Map.IceyMaze.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Noise.Simplex.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -283,7 +280,7 @@ See http://www.roguebasin.roguelikedevelopment.org/index.php?title=Simple_maze f
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROT.Map.IceyMaze.html#constructor">ROT.Map.IceyMaze</a></b>(width, height, regularity)
+								<b><a href="../symbols/ROT.Noise.Simplex.html#constructor">ROT.Noise.Simplex</a></b>(gridSize)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -299,7 +296,7 @@ See http://www.roguebasin.roguelikedevelopment.org/index.php?title=Simple_maze f
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Map.IceyMaze.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Noise.Simplex.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -312,7 +309,7 @@ See http://www.roguebasin.roguelikedevelopment.org/index.php?title=Simple_maze f
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Map.IceyMaze.html#create">create</a></b>(callback)
+								<div class="fixedFont"><b><a href="../symbols/ROT.Noise.Simplex.html#get">get</a></b>(xin, yin)
 								</div>
 								<div class="description"></div>
 							</td>
@@ -322,10 +319,6 @@ See http://www.roguebasin.roguelikedevelopment.org/index.php?title=Simple_maze f
 				</table>
 				
 				
-				
-				<dl class="inheritsList">
-				
-				</dl>
 				
 			
 <!-- ============================== events summary ======================== -->
@@ -339,7 +332,7 @@ See http://www.roguebasin.roguelikedevelopment.org/index.php?title=Simple_maze f
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROT.Map.IceyMaze</b>(width, height, regularity)
+						<b>ROT.Noise.Simplex</b>(gridSize)
 				</div>
 				
 				<div class="description">
@@ -355,22 +348,10 @@ See http://www.roguebasin.roguelikedevelopment.org/index.php?title=Simple_maze f
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								 <b>width</b>
-								
+								<span class="light fixedFont">{int}</span>  <b>gridSize</b>
+								<i>Optional, Default: 16</i>
 							</dt>
-								<dd></dd>
-						
-							<dt>
-								 <b>height</b>
-								
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								 <b>regularity</b>
-								
-							</dt>
-								<dd></dd>
+								<dd>Grid size</dd>
 						
 						</dl>
 					
@@ -393,11 +374,11 @@ See http://www.roguebasin.roguelikedevelopment.org/index.php?title=Simple_maze f
 					Method Detail
 				</div>
 				
-					<a name="create"> </a>
+					<a name="get"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>create</b>(callback)
+					<b>get</b>(xin, yin)
 					
 					</div>
 					<div class="description">
@@ -413,7 +394,13 @@ See http://www.roguebasin.roguelikedevelopment.org/index.php?title=Simple_maze f
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>callback</b>
+									<b>xin</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>yin</b>
 									
 								</dt>
 								<dd></dd>
