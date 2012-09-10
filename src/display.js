@@ -84,16 +84,16 @@ ROT.Display.prototype.getContainer = function() {
 /**
  * @param {int} x
  * @param {int} y
- * @param {string} char 
+ * @param {string} ch 
  * @param {string} [fg] foreground color
  * @param {string} [bg] background color
  */
-ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
+ROT.Display.prototype.draw = function(x, y, ch, fg, bg) {
 	if (!fg) { fg = this._options.fg; }
 	if (!bg) { bg = this._options.bg; }
 	
 	var id = x+","+y;
-	this._data[id] = [char, fg, bg];
+	this._data[id] = [ch, fg, bg];
 	
 	this._context.fillStyle = bg;
 
@@ -111,10 +111,10 @@ ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
 		break;
 	}
 
-	if (!char) { return; }
+	if (!ch) { return; }
 	
 	this._context.fillStyle = fg;
-	this._context.fillText(char, cx, cy);
+	this._context.fillText(ch, cx, cy);
 }
 
 /**

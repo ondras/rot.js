@@ -78,8 +78,8 @@ ROT.Noise.Simplex.prototype.get = function(xin, yin) {
 	var x2 = x0 - 1 + 2 * this._G2; // Offsets for last corner in (x,y) unskewed coords
 	var y2 = y0 - 1 + 2 * this._G2;
 	// Work out the hashed gradient indices of the three simplex corners
-	var ii = i % count;
-	var jj = j % count;
+	var ii = i.mod(count);
+	var jj = j.mod(count);
 	var gi0 = indexes[ii+perms[jj]];
 	var gi1 = indexes[ii+i1+perms[jj+j1]];
 	var gi2 = indexes[ii+1+perms[jj+1]];

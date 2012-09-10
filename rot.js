@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.2, generated on Fri Sep  7 16:08:39 CEST 2012.
+	Version 0.2, generated on Mon Sep 10 15:31:22 CEST 2012.
 */
 
 /**
@@ -226,16 +226,16 @@ ROT.Display.prototype.getContainer = function() {
 /**
  * @param {int} x
  * @param {int} y
- * @param {string} char 
+ * @param {string} ch 
  * @param {string} [fg] foreground color
  * @param {string} [bg] background color
  */
-ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
+ROT.Display.prototype.draw = function(x, y, ch, fg, bg) {
 	if (!fg) { fg = this._options.fg; }
 	if (!bg) { bg = this._options.bg; }
 	
 	var id = x+","+y;
-	this._data[id] = [char, fg, bg];
+	this._data[id] = [ch, fg, bg];
 	
 	this._context.fillStyle = bg;
 
@@ -253,10 +253,10 @@ ROT.Display.prototype.draw = function(x, y, char, fg, bg) {
 		break;
 	}
 
-	if (!char) { return; }
+	if (!ch) { return; }
 	
 	this._context.fillStyle = fg;
-	this._context.fillText(char, cx, cy);
+	this._context.fillText(ch, cx, cy);
 }
 
 /**
@@ -1025,7 +1025,7 @@ ROT.Map.Digger = function(width, height, options) {
 		roomHeight: [3, 5], /* room minimum and maximum height */
 		corridorLength: [3, 10], /* corridor minimum and maximum length */
 		dugPercentage: 0.2, /* we stop after this percentage of level area has been dug out */
-		timeLimit: 1000, /* we stop after this much time has passed (msec) */
+		timeLimit: 1000 /* we stop after this much time has passed (msec) */
 	}
 	for (var p in options) { this._options[p] = options[p]; }
 	
@@ -1247,7 +1247,7 @@ ROT.Map.Uniform = function(width, height, options) {
 		roomWidth: [3, 9], /* room minimum and maximum width */
 		roomHeight: [3, 5], /* room minimum and maximum height */
 		roomDugPercentage: 0.1, /* we stop after this percentage of level area has been dug out by rooms */
-		timeLimit: 1000, /* we stop after this much time has passed (msec) */
+		timeLimit: 1000 /* we stop after this much time has passed (msec) */
 	}
 	for (var p in options) { this._options[p] = options[p]; }
 
@@ -1932,8 +1932,8 @@ ROT.Noise.Simplex.prototype.get = function(xin, yin) {
 	var x2 = x0 - 1 + 2 * this._G2; // Offsets for last corner in (x,y) unskewed coords
 	var y2 = y0 - 1 + 2 * this._G2;
 	// Work out the hashed gradient indices of the three simplex corners
-	var ii = i % count;
-	var jj = j % count;
+	var ii = i.mod(count);
+	var jj = j.mod(count);
 	var gi0 = indexes[ii+perms[jj]];
 	var gi1 = indexes[ii+i1+perms[jj+j1]];
 	var gi2 = indexes[ii+1+perms[jj+1]];
