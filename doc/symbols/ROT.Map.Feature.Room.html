@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ROT.RNG</title>
+		<title>JsDoc Reference - ROT.Map.Feature.Room</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -258,16 +258,17 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace ROT.RNG
+				Class ROT.Map.Feature.Room
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
+				<br />Extends
+					<a href="../symbols/ROT.Map.Feature.html">ROT.Map.Feature</a>.<br />
 				
 			
-				This code is an implementation of Alea algorithm; (C) 2010 Johannes Baagøe.
-Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
+				Room
 				
 				
 					<br /><i>Defined in: </i> &lt;rot.js&gt;.
@@ -276,8 +277,8 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.RNG.">
-				<caption>Namespace Summary</caption>
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Map.Feature.Room.">
+				<caption>Class Summary</caption>
 				<thead>
 					<tr>
 						<th scope="col">Constructor Attributes</th>
@@ -289,7 +290,7 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROT.RNG.html#constructor">ROT.RNG</a></b>
+								<b><a href="../symbols/ROT.Map.Feature.Room.html#constructor">ROT.Map.Feature.Room</a></b>(x1, y1, x2, y2, doorX, doorY)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -305,7 +306,7 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.RNG.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Map.Feature.Room.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -316,9 +317,27 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">ROT.RNG.<b><a href="../symbols/ROT.RNG.html#.getNormal">getNormal</a></b>(mean, stddev)
+								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Feature.Room.html#addDoor">addDoor</a></b>(x, y)
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Feature.Room.html#clearDoors">clearDoors</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Feature.Room.html#create">create</a></b>(digCallback)
 								</div>
 								<div class="description"></div>
 							</td>
@@ -327,54 +346,90 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">ROT.RNG.<b><a href="../symbols/ROT.RNG.html#.getPercentage">getPercentage</a></b>()
+								<div class="fixedFont">ROT.Map.Feature.Room.<b><a href="../symbols/ROT.Map.Feature.Room.html#.createRandom">createRandom</a></b>(availWidth, availHeight, options)
+								</div>
+								<div class="description">Room of random size within a given dimensions</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">ROT.Map.Feature.Room.<b><a href="../symbols/ROT.Map.Feature.Room.html#.createRandomAt">createRandomAt</a></b>(x, y, dx, dy, options)
+								</div>
+								<div class="description">Room of random size, with a given doors and direction</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">ROT.Map.Feature.Room.<b><a href="../symbols/ROT.Map.Feature.Room.html#.createRandomCenter">createRandomCenter</a></b>(cx, cy, options)
+								</div>
+								<div class="description">Room of random size, positioned around center coords</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Feature.Room.html#debug">debug</a></b>()
 								</div>
 								<div class="description"></div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">ROT.RNG.<b><a href="../symbols/ROT.RNG.html#.getSeed">getSeed</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Feature.Room.html#getBottom">getBottom</a></b>()
 								</div>
 								<div class="description"></div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">ROT.RNG.<b><a href="../symbols/ROT.RNG.html#.getState">getState</a></b>()
-								</div>
-								<div class="description">Get RNG state.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">ROT.RNG.<b><a href="../symbols/ROT.RNG.html#.getUniform">getUniform</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Feature.Room.html#getCenter">getCenter</a></b>()
 								</div>
 								<div class="description"></div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">ROT.RNG.<b><a href="../symbols/ROT.RNG.html#.setSeed">setSeed</a></b>(seed)
+								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Feature.Room.html#getLeft">getLeft</a></b>()
 								</div>
 								<div class="description"></div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">ROT.RNG.<b><a href="../symbols/ROT.RNG.html#.setState">setState</a></b>(state)
+								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Feature.Room.html#getRight">getRight</a></b>()
 								</div>
-								<div class="description">Set a previously retrieved state.</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Feature.Room.html#getTop">getTop</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Feature.Room.html#isValid">isValid</a></b>(isWallCallback, canBeDugCallback)
+								</div>
+								<div class="description"></div>
 							</td>
 						</tr>
 					
@@ -382,6 +437,10 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 				</table>
 				
 				
+				
+				<dl class="inheritsList">
+				
+				</dl>
 				
 			
 <!-- ============================== events summary ======================== -->
@@ -391,11 +450,11 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 			
 			<div class="details"><a name="constructor"> </a>
 				<div class="sectionTitle">
-					Namespace Detail
+					Class Detail
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROT.RNG</b>
+						<b>ROT.Map.Feature.Room</b>(x1, y1, x2, y2, doorX, doorY)
 				</div>
 				
 				<div class="description">
@@ -406,6 +465,47 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 				
 				
 				
+					
+						<dl class="detailList">
+						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								<span class="light fixedFont">{int}</span>  <b>x1</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								<span class="light fixedFont">{int}</span>  <b>y1</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								<span class="light fixedFont">{int}</span>  <b>x2</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								<span class="light fixedFont">{int}</span>  <b>y2</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								<span class="light fixedFont">{int}</span>  <b>doorX</b>
+								<i>Optional</i>
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								<span class="light fixedFont">{int}</span>  <b>doorY</b>
+								<i>Optional</i>
+							</dt>
+								<dd></dd>
+						
+						</dl>
 					
 					
 					
@@ -426,188 +526,11 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 					Method Detail
 				</div>
 				
-					<a name=".getNormal"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{float}</span>
-					<span class="light">ROT.RNG.</span><b>getNormal</b>(mean, stddev)
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
+					<a name="addDoor"> </a>
+					<div class="fixedFont">
 					
 					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{float}</span> <b>mean</b>
-									<i>Optional, Default: 0</i>
-								</dt>
-								<dd>Mean value</dd>
-							
-								<dt>
-									<span class="light fixedFont">{float}</span> <b>stddev</b>
-									<i>Optional, Default: 1</i>
-								</dt>
-								<dd>Standard deviation. ~95% of the absolute values will be lower than 2*stddev.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{float}</span> A normally distributed pseudorandom value</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".getPercentage"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{int}</span>
-					<span class="light">ROT.RNG.</span><b>getPercentage</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{int}</span> Pseudorandom value [1,100] inclusive, uniformly distributed</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".getSeed"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{number}</span>
-					<span class="light">ROT.RNG.</span><b>getSeed</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{number}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".getState"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{?}</span>
-					<span class="light">ROT.RNG.</span><b>getState</b>()
-					
-					</div>
-					<div class="description">
-						Get RNG state. Useful for storing the state and re-setting it via setState.
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{?}</span> Internal state</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".getUniform"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{float}</span>
-					<span class="light">ROT.RNG.</span><b>getUniform</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{float}</span> Pseudorandom value [0,1), uniformly distributed</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".setSeed"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">ROT.RNG.</span><b>setSeed</b>(seed)
+					<b>addDoor</b>(x, y)
 					
 					</div>
 					<div class="description">
@@ -623,10 +546,16 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>seed</b>
+									<b>x</b>
 									
 								</dt>
-								<dd>Seed the number generator</dd>
+								<dd></dd>
+							
+								<dt>
+									<b>y</b>
+									
+								</dt>
+								<dd></dd>
 							
 							</dl>
 						
@@ -639,15 +568,40 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 
 					<hr />
 				
-					<a name=".setState"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="clearDoors"> </a>
+					<div class="fixedFont">
 					
 					
-					<span class="light">ROT.RNG.</span><b>setState</b>(state)
+					<b>clearDoors</b>()
 					
 					</div>
 					<div class="description">
-						Set a previously retrieved state.
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="create"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>create</b>(digCallback)
+					
+					</div>
+					<div class="description">
+						
 						
 						
 					</div>
@@ -659,7 +613,355 @@ Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{?}</span> <b>state</b>
+									<span class="light fixedFont">{function}</span> <b>digCallback</b>
+									
+								</dt>
+								<dd>Dig callback with a signature (x, y, value). Values: 0 = empty, 1 = wall, 2 = door. Multiple doors are allowed.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".createRandom"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">ROT.Map.Feature.Room.</span><b>createRandom</b>(availWidth, availHeight, options)
+					
+					</div>
+					<div class="description">
+						Room of random size within a given dimensions
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>availWidth</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>availHeight</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>options</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".createRandomAt"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">ROT.Map.Feature.Room.</span><b>createRandomAt</b>(x, y, dx, dy, options)
+					
+					</div>
+					<div class="description">
+						Room of random size, with a given doors and direction
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>x</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>y</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>dx</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>dy</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>options</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".createRandomCenter"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">ROT.Map.Feature.Room.</span><b>createRandomCenter</b>(cx, cy, options)
+					
+					</div>
+					<div class="description">
+						Room of random size, positioned around center coords
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>cx</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>cy</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>options</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="debug"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>debug</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getBottom"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getBottom</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getCenter"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getCenter</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getLeft"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getLeft</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getRight"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getRight</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getTop"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getTop</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="isValid"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>isValid</b>(isWallCallback, canBeDugCallback)
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>isWallCallback</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>canBeDugCallback</b>
 									
 								</dt>
 								<dd></dd>

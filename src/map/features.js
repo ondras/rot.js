@@ -1,19 +1,36 @@
+/**
+ * @class
+ * Dungeon feature; has own .create() method
+ */
 ROT.Map.Feature = function() {}
 ROT.Map.Feature.prototype.isValid = function(canBeDugCallback) {}
 ROT.Map.Feature.prototype.create = function(digCallback) {}
 ROT.Map.Feature.prototype.debug = function() {}
 ROT.Map.Feature.createRandomAt = function(x, y, dx, dy, options) {}
 
+/**
+ * @class Room
+ * @augments ROT.Map.Feature
+ * @param {int} x1
+ * @param {int} y1
+ * @param {int} x2
+ * @param {int} y2
+ * @param {int} [doorX]
+ * @param {int} [doorY]
+ */
 ROT.Map.Feature.Room = function(x1, y1, x2, y2, doorX, doorY) {
 	this._x1 = x1;
 	this._y1 = y1;
 	this._x2 = x2;
 	this._y2 = y2;
-	this._doorX = (arguments.length > 4 ? doorX : null);
-	this._doorY = (arguments.length > 5 ? doorY : null);
+	this._doors = {};
+	if (arguments.length > 4) { this.addDoor(doorX, doorY); }
 }
 ROT.Map.Feature.Room.extend(ROT.Map.Feature);
 
+/**
+ * Room of random size, with a given doors and direction
+ */
 ROT.Map.Feature.Room.createRandomAt = function(x, y, dx, dy, options) {
 	var min = options.roomWidth[0];
 	var max = options.roomWidth[1];
@@ -87,6 +104,15 @@ ROT.Map.Feature.Room.createRandom = function(availWidth, availHeight, options) {
 	return new this(x1, y1, x2, y2);
 }
 
+ROT.Map.Feature.Room.prototype.addDoor = function(x, y) {
+	this._doors[x+","+y] = 1;
+}
+
+ROT.Map.Feature.Room.prototype.clearDoors = function() {
+	this._doors = {};
+	return this;
+}
+
 ROT.Map.Feature.Room.prototype.debug = function() {
 	console.log("room", this._x1, this._y1, this._x2, this._y2);
 }
@@ -110,6 +136,9 @@ ROT.Map.Feature.Room.prototype.isValid = function(isWallCallback, canBeDugCallba
 	return true;
 }
 
+/**
+ * @param {function} digCallback Dig callback with a signature (x, y, value). Values: 0 = empty, 1 = wall, 2 = door. Multiple doors are allowed.
+ */
 ROT.Map.Feature.Room.prototype.create = function(digCallback) { 
 	var left = this._x1-1;
 	var right = this._x2+1;
@@ -119,7 +148,9 @@ ROT.Map.Feature.Room.prototype.create = function(digCallback) {
 	var value = 0;
 	for (var x=left; x<=right; x++) {
 		for (var y=top; y<=bottom; y++) {
-			if (x == left || x == right || y == top || y == bottom) {
+			if (x+","+y in this._doors) {
+				value = 2;
+			} else if (x == left || x == right || y == top || y == bottom) {
 				value = 1;
 			} else {
 				value = 0;
@@ -127,8 +158,6 @@ ROT.Map.Feature.Room.prototype.create = function(digCallback) {
 			digCallback(x, y, value);
 		}
 	}
-	
-	if (this._doorX !== null && this._doorY !== null) { digCallback(this._doorX, this._doorY, 0); }
 }
 
 ROT.Map.Feature.Room.prototype.getCenter = function() {
@@ -151,10 +180,18 @@ ROT.Map.Feature.Room.prototype.getBottom = function() {
 	return this._y2;
 }
 
+/**
+ * @class Corridor
+ * @augments ROT.Map.Feature
+ * @param {int} startX
+ * @param {int} startY
+ * @param {int} endX
+ * @param {int} endY
+ */
 ROT.Map.Feature.Corridor = function(startX, startY, endX, endY) {
 	this._startX = startX;
 	this._startY = startY;
-	this._endX = endX;
+	this._endX = endX; 
 	this._endY = endY;
 	this._endsWithAWall = true;
 }
@@ -231,7 +268,10 @@ ROT.Map.Feature.Corridor.prototype.isValid = function(isWallCallback, canBeDugCa
 	return true;
 }
 
-ROT.Map.Feature.Corridor.prototype.create = function(digCallback){ 
+/**
+ * @param {function} digCallback Dig callback with a signature (x, y, value). Values: 0 = empty.
+ */
+ROT.Map.Feature.Corridor.prototype.create = function(digCallback) { 
 	var sx = this._startX;
 	var sy = this._startY;
 	var dx = this._endX-sx;
@@ -247,21 +287,25 @@ ROT.Map.Feature.Corridor.prototype.create = function(digCallback){
 		var x = sx + i*dx;
 		var y = sy + i*dy;
 		digCallback(x, y, 0);
-		/*
-		if (i && 0) {
-			var priority = (i+1 == length ? 2 : 1);
-			digCallback(x + nx, y + ny, priority);
-			digCallback(x - nx, y - ny, priority);
-		}
-		*/
 	}
 	
-	/* end of the wall */
-	if (this._endsWithAWall) {
-		digCallback(x + dx, y + dy, 2);
-		digCallback(x + nx, y + ny, 2);
-		digCallback(x - nx, y - ny, 2);
-	}
-
 	return true;
+}
+
+ROT.Map.Feature.Corridor.prototype.createPriorityWalls = function(priorityWallCallback) {
+	if (!this._endsWithAWall) { return; }
+
+	var sx = this._startX;
+	var sy = this._startY;
+
+	var dx = this._endX-sx;
+	var dy = this._endY-sy;
+	if (dx) { dx = dx/Math.abs(dx); }
+	if (dy) { dy = dy/Math.abs(dy); }
+	var nx = dy;
+	var ny = -dx;
+
+	priorityWallCallback(this._endX + dx, this._endY + dy);
+	priorityWallCallback(this._endX + nx, this._endY + ny);
+	priorityWallCallback(this._endX - nx, this._endY - ny);
 }

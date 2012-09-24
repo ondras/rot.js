@@ -1,9 +1,9 @@
 /**
  * @class Dungeon generator which tries to fill the space evenly. Generates independent rooms and tries to connect them.
- * @augments ROT.Map
+ * @augments ROT.Map.Dungeon
  */
 ROT.Map.Uniform = function(width, height, options) {
-	ROT.Map.call(this, width, height);
+	ROT.Map.Dungeon.call(this, width, height);
 
 	this._options = {
 		roomWidth: [3, 9], /* room minimum and maximum width */
@@ -16,7 +16,6 @@ ROT.Map.Uniform = function(width, height, options) {
 	this._roomAttempts = 20; /* new room is created N-times until is considered as impossible to generate */
 	this._corridorAttempts = 20; /* corridors are tried N-times until the level is considered as impossible to connect */
 
-	this._rooms = []; /* list of all rooms */
 	this._connected = []; /* list of already connected rooms */
 	this._unconnected = []; /* list of remaining unconnected rooms */
 	
@@ -24,25 +23,17 @@ ROT.Map.Uniform = function(width, height, options) {
 	this._canBeDugCallback = this._canBeDugCallback.bind(this);
 	this._isWallCallback = this._isWallCallback.bind(this);
 }
-ROT.Map.Uniform.extend(ROT.Map);
+ROT.Map.Uniform.extend(ROT.Map.Dungeon);
 
 /**
- * Get all generated rooms
- * @returns {ROT.Map.Feature.Room[]}
- */
-ROT.Map.Uniform.prototype.getRooms = function() {
-	return this._rooms;
-}
-
-/**
- * Create a map
+ * Create a map. If the time limit has been hit, returns null.
  * @see ROT.Map#create
  */
 ROT.Map.Uniform.prototype.create = function(callback) {
 	var t1 = Date.now();
 	while (1) {
 		var t2 = Date.now();
-		if (t2 - t1 > this._options.timeLimit) { console.log("time limit"); break; /* FIXME */ }
+		if (t2 - t1 > this._options.timeLimit) { return null; } /* time limit! */
 	
 		this._map = this._fillMap(1);
 		this._dug = 0;
@@ -52,9 +43,11 @@ ROT.Map.Uniform.prototype.create = function(callback) {
 		if (this._generateCorridors()) { break; }
 	}
 	
-	for (var i=0;i<this._width;i++) {
-		for (var j=0;j<this._height;j++) {
-			callback(i, j, this._map[i][j]);
+	if (callback) {
+		for (var i=0;i<this._width;i++) {
+			for (var j=0;j<this._height;j++) {
+				callback(i, j, this._map[i][j]);
+			}
 		}
 	}
 	
@@ -104,9 +97,15 @@ ROT.Map.Uniform.prototype._generateCorridors = function() {
 	var cnt = 0;
 	while (cnt < this._corridorAttempts) {
 		cnt++;
+		this._corridors = [];
+
 		/* dig rooms into a clear map */
 		this._map = this._fillMap(1);
-		for (var i=0;i<this._rooms.length;i++) { this._rooms[i].create(this._digCallback); }
+		for (var i=0;i<this._rooms.length;i++) { 
+			var room = this._rooms[i];
+			room.clearDoors();
+			room.create(this._digCallback); 
+		}
 
 		this._unconnected = this._rooms.clone().randomize();
 		this._connected = [];
@@ -231,6 +230,9 @@ ROT.Map.Uniform.prototype._connectRooms = function(room1, room2) {
 		mid2[index2] = mid;
 		this._digLine([start, mid1, mid2, end]);
 	}
+
+	room1.addDoor(start[0], start[1]);
+	room2.addDoor(end[0], end[1]);
 	
 	var index = this._unconnected.indexOf(room1);
 	if (index != -1) {
@@ -299,35 +301,21 @@ ROT.Map.Uniform.prototype._placeInWall = function(room, dirIndex) {
 }
 
 /**
- * Try to dig a polyline. Stop if it crosses any room more than two times.
+ * Dig a polyline.
  */
 ROT.Map.Uniform.prototype._digLine = function(points) {
-	var x = points[0][0];
-	var y = points[0][1];
-	points.shift();
-
-	while (points.length) {
-		var target = points.shift();
-		var diffX = target[0] - x;
-		var diffY = target[1] - y;
-		var length = Math.max(Math.abs(diffX), Math.abs(diffY));
-		var stepX = Math.round(diffX / length);
-		var stepY = Math.round(diffY / length);
-		for (var i=0;i<length;i++) {
-			this._map[x][y] = 0;
-			x += stepX;
-			y += stepY;
-		}
+	for (var i=1;i<points.length;i++) {
+		var start = points[i-1];
+		var end = points[i];
+		var corridor = new ROT.Map.Feature.Corridor(start[0], start[1], end[0], end[1]);
+		corridor.create(this._digCallback);
+		this._corridors.push(corridor);
 	}
-	this._map[x][y] = 0;
-	
-	return true;
 }
 
 ROT.Map.Uniform.prototype._digCallback = function(x, y, value) {
-	if (value != 0) { return; }
-	this._map[x][y] = 0;
-	this._dug++;
+	this._map[x][y] = value;
+	if (value == 0) { this._dug++; }
 }
 
 ROT.Map.Uniform.prototype._isWallCallback = function(x, y) {

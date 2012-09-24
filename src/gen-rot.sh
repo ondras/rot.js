@@ -17,6 +17,7 @@ map/dividedmaze.js
 map/iceymaze.js
 map/ellermaze.js
 map/cellular.js
+map/dungeon.js
 map/digger.js
 map/uniform.js
 map/features.js

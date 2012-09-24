@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ROT.Noise.Simplex</title>
+		<title>JsDoc Reference - ROT.Map.Feature.Corridor</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -258,15 +258,17 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class ROT.Noise.Simplex
+				Class ROT.Map.Feature.Corridor
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
+				<br />Extends
+					<a href="../symbols/ROT.Map.Feature.html">ROT.Map.Feature</a>.<br />
 				
 			
-				2D simplex noise generator
+				Corridor
 				
 				
 					<br /><i>Defined in: </i> &lt;rot.js&gt;.
@@ -275,7 +277,7 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Noise.Simplex.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Map.Feature.Corridor.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -288,7 +290,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROT.Noise.Simplex.html#constructor">ROT.Noise.Simplex</a></b>(gradients)
+								<b><a href="../symbols/ROT.Map.Feature.Corridor.html#constructor">ROT.Map.Feature.Corridor</a></b>(startX, startY, endX, endY)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -304,7 +306,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Noise.Simplex.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Map.Feature.Corridor.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -317,7 +319,43 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Noise.Simplex.html#get">get</a></b>(xin, yin)
+								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Feature.Corridor.html#create">create</a></b>(digCallback)
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Feature.Corridor.html#createPriorityWalls">createPriorityWalls</a></b>(priorityWallCallback)
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">ROT.Map.Feature.Corridor.<b><a href="../symbols/ROT.Map.Feature.Corridor.html#.createRandomAt">createRandomAt</a></b>(x, y, dx, dy, options)
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Feature.Corridor.html#debug">debug</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Feature.Corridor.html#isValid">isValid</a></b>(isWallCallback, canBeDugCallback)
 								</div>
 								<div class="description"></div>
 							</td>
@@ -327,6 +365,10 @@ ul.inheritsList
 				</table>
 				
 				
+				
+				<dl class="inheritsList">
+				
+				</dl>
 				
 			
 <!-- ============================== events summary ======================== -->
@@ -340,7 +382,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROT.Noise.Simplex</b>(gradients)
+						<b>ROT.Map.Feature.Corridor</b>(startX, startY, endX, endY)
 				</div>
 				
 				<div class="description">
@@ -356,10 +398,28 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								<span class="light fixedFont">{int}</span>  <b>gradients</b>
-								<i>Optional, Default: 256</i>
+								<span class="light fixedFont">{int}</span>  <b>startX</b>
+								
 							</dt>
-								<dd>Random gradients</dd>
+								<dd></dd>
+						
+							<dt>
+								<span class="light fixedFont">{int}</span>  <b>startY</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								<span class="light fixedFont">{int}</span>  <b>endX</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								<span class="light fixedFont">{int}</span>  <b>endY</b>
+								
+							</dt>
+								<dd></dd>
 						
 						</dl>
 					
@@ -382,11 +442,11 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="get"> </a>
+					<a name="create"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>get</b>(xin, yin)
+					<b>create</b>(digCallback)
 					
 					</div>
 					<div class="description">
@@ -402,13 +462,170 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>xin</b>
+									<span class="light fixedFont">{function}</span> <b>digCallback</b>
+									
+								</dt>
+								<dd>Dig callback with a signature (x, y, value). Values: 0 = empty.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="createPriorityWalls"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>createPriorityWalls</b>(priorityWallCallback)
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>priorityWallCallback</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".createRandomAt"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">ROT.Map.Feature.Corridor.</span><b>createRandomAt</b>(x, y, dx, dy, options)
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>x</b>
 									
 								</dt>
 								<dd></dd>
 							
 								<dt>
-									<b>yin</b>
+									<b>y</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>dx</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>dy</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>options</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="debug"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>debug</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="isValid"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>isValid</b>(isWallCallback, canBeDugCallback)
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>isWallCallback</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>canBeDugCallback</b>
 									
 								</dt>
 								<dd></dd>
