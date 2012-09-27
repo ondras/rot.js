@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.3dev, generated on Mon Sep 24 16:48:30 CEST 2012.
+	Version 0.3dev, generated on Thu Sep 27 09:12:44 CEST 2012.
 */
 
 /**
@@ -265,19 +265,24 @@ ROT.Display.prototype.draw = function(x, y, ch, fg, bg) {
  * @param {int} y
  * @param {string} text
  * @param {int} [maxWidth] wrap at what width?
+ * @returns {int} lines drawn
  */
 ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 	var cx = x;
 	var cy = y;
+	var lines = 1;
 
 	for (var i=0;i<text.length;i++) {
 		if (i && maxWidth && (i%maxWidth == 0)) {
 			cx = x;
 			cy++;
+			lines++;
 		}
 		var ch = text.charAt(i);
 		this.draw(cx++, cy, ch);
 	}
+
+	return lines;
 }
 
 ROT.Display.prototype._fillHex = function(cx, cy) {
