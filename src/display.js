@@ -121,23 +121,45 @@ ROT.Display.prototype.draw = function(x, y, ch, fg, bg) {
  * Draws a text at given position. Optionally wraps at a maximum length. Currently does not work with hex layout.
  * @param {int} x
  * @param {int} y
- * @param {string} text
+ * @param {string} text May contain color/background format specifiers, %c{name}/%b{name}, both optional. %c{}/%b{} resets to default.
  * @param {int} [maxWidth] wrap at what width?
  * @returns {int} lines drawn
  */
 ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
+	var data = [];
+	var offset = 0;
+
+	/* prepare color changes */
+	text = text.replace(/%([bc]){([^}]*)}/g, function(match, type, name, index) {
+		data.push({
+			type: type,
+			name: name.trim(),
+			index: index-offset
+		});
+		offset += match.length;
+		return "";
+	});
+
+	var fg = null;
+	var bg = null;
 	var cx = x;
 	var cy = y;
 	var lines = 1;
 
 	for (var i=0;i<text.length;i++) {
+		if (data.length && data[0].index == i) { /* time to change fg/bg? */
+			var item = data.shift();
+			if (item.type == "c") { fg = item.name || null; }
+			if (item.type == "b") { bg = item.name || null; }
+		}
+
 		if (i && maxWidth && (i%maxWidth == 0)) {
 			cx = x;
 			cy++;
 			lines++;
 		}
 		var ch = text.charAt(i);
-		this.draw(cx++, cy, ch);
+		this.draw(cx++, cy, ch, fg, bg);
 	}
 
 	return lines;

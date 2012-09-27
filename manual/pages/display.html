@@ -58,3 +58,14 @@ display.drawText(5,  2, "Hello world");
 display.drawText(20, 5, "This line of text is very long.", 16);
 </div>
 
+<h3>Specifying foreground/background color in strings</h3>
+
+<p>Colors can be changed using a trivial syntax, <code>%c{ foreground }</code> and <code>%b{ background }</code>. Empty color name switches to default.</p>
+<div class="example">
+var display = new ROT.Display({width:40, height:5});
+SHOW(display.getContainer());
+
+var str = "Goodbye %c{red}cr%b{blue}u%b{}el %c{}world"
+display.drawText(5,  2, str);
+</div>
+
