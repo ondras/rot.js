@@ -3,4 +3,4 @@
 hg bookmark -f master
 hg bookmark -f gh-pages
 hg push github
-hg push -B master -B hg pages
+hg push -B master -B hg gh-pages
