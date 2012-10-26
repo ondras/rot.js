@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.3dev, generated on Fri Oct 26 15:14:04 CEST 2012.
+	Version 0.3dev, generated on Fri Oct 26 15:30:20 CEST 2012.
 */
 
 /**
@@ -242,17 +242,17 @@ ROT.Display.prototype.draw = function(x, y, ch, fg, bg) {
 			var cx = (x+0.5) * this._spacingX;
 			var cy = (y+0.5) * this._spacingY;
 			
-			if (bg != "transparent") { 
+			if (bg != "transparent") {
 				this._context.fillStyle = bg;
-				this._context.fillRect(cx-this._spacingX/2, cy-this._spacingY/2, this._spacingX, this._spacingY); 
+				this._context.fillRect(cx-this._spacingX/2, cy-this._spacingY/2, this._spacingX, this._spacingY);
 			}
 		break;
 		case "hex":
 			var cx = (x+1) * this._spacingX;
 			var cy = y * this._spacingY + this._hexSize;
-			if (bg != "transparent") { 
+			if (bg != "transparent") {
 				this._context.fillStyle = bg;
-				this._fillHex(cx, cy); 
+				this._fillHex(cx, cy);
 			}
 		break;
 	}
