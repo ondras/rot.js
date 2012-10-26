@@ -95,19 +95,23 @@ ROT.Display.prototype.draw = function(x, y, ch, fg, bg) {
 	var id = x+","+y;
 	this._data[id] = [ch, fg, bg];
 	
-	this._context.fillStyle = bg;
-
 	switch (this._options.layout) {
 		case "rect":
 			var cx = (x+0.5) * this._spacingX;
 			var cy = (y+0.5) * this._spacingY;
 			
-			this._context.fillRect(cx-this._spacingX/2, cy-this._spacingY/2, this._spacingX, this._spacingY);
+			if (bg != "transparent") {
+				this._context.fillStyle = bg;
+				this._context.fillRect(cx-this._spacingX/2, cy-this._spacingY/2, this._spacingX, this._spacingY);
+			}
 		break;
 		case "hex":
 			var cx = (x+1) * this._spacingX;
 			var cy = y * this._spacingY + this._hexSize;
-			this._fillHex(cx, cy);
+			if (bg != "transparent") {
+				this._context.fillStyle = bg;
+				this._fillHex(cx, cy);
+			}
 		break;
 	}
 
