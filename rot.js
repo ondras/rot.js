@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.3dev, generated on Fri Oct 26 15:30:20 CEST 2012.
+	Version 0.3dev, generated on Sun Oct 28 13:25:35 CET 2012.
 */
 
 /**
@@ -149,6 +149,7 @@ ROT.RNG.setSeed(Date.now());
  * @param {string} [options.fontFamily="monospace"]
  * @param {string} [options.fg="#ccc"]
  * @param {string} [options.bg="#000"]
+ * @param {int} [options.fps=25]
  * @param {float} [options.spacing=1]
  * @param {string} [options.layout="rect"]
  */
@@ -156,6 +157,7 @@ ROT.Display = function(options) {
 	this._canvas = document.createElement("canvas");
 	this._context = this._canvas.getContext("2d");
 	this._data = {};
+	this._dirty = false; /* false = nothing, true = all, object = dirty cells */
 	this._charWidth = 0;
 	this._hexSize = 0;
 	this._hexSpacingX = 0;
@@ -167,6 +169,7 @@ ROT.Display = function(options) {
 		height: ROT.DEFAULT_HEIGHT,
 		layout: "rect",
 		fontSize: 15,
+		fps: 25,
 		spacing: 1,
 		fontFamily: "monospace",
 		fg: "#ccc",
@@ -174,8 +177,9 @@ ROT.Display = function(options) {
 	};
 	for (var p in options) { defaultOptions[p] = options[p]; }
 	this.setOptions(defaultOptions);
-	
 	this.DEBUG = this.DEBUG.bind(this);
+	
+	this._interval = setInterval(this._tick.bind(this), 1000/this._options.fps);
 }
 
 /**
@@ -194,8 +198,7 @@ ROT.Display.prototype.DEBUG = function(x, y, what) {
  */
 ROT.Display.prototype.clear = function() {
 	this._data = {};
-	this._context.fillStyle = this._options.bg;
-	this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
+	this._dirty = true;
 }
 
 /**
@@ -203,7 +206,10 @@ ROT.Display.prototype.clear = function() {
  */
 ROT.Display.prototype.setOptions = function(options) {
 	for (var p in options) { this._options[p] = options[p]; }
-	if (options.width || options.height || options.fontSize || options.fontFamily || options.spacing) { this._redraw(); }
+	if (options.width || options.height || options.fontSize || options.fontFamily || options.spacing) { 
+		this._compute();
+		this._dirty = true;
+	}
 	return this;
 }
 
@@ -233,34 +239,11 @@ ROT.Display.prototype.getContainer = function() {
 ROT.Display.prototype.draw = function(x, y, ch, fg, bg) {
 	if (!fg) { fg = this._options.fg; }
 	if (!bg) { bg = this._options.bg; }
+	this._data[x+","+y] = [x, y, ch, fg, bg];
 	
-	var id = x+","+y;
-	this._data[id] = [ch, fg, bg];
-	
-	switch (this._options.layout) {
-		case "rect":
-			var cx = (x+0.5) * this._spacingX;
-			var cy = (y+0.5) * this._spacingY;
-			
-			if (bg != "transparent") {
-				this._context.fillStyle = bg;
-				this._context.fillRect(cx-this._spacingX/2, cy-this._spacingY/2, this._spacingX, this._spacingY);
-			}
-		break;
-		case "hex":
-			var cx = (x+1) * this._spacingX;
-			var cy = y * this._spacingY + this._hexSize;
-			if (bg != "transparent") {
-				this._context.fillStyle = bg;
-				this._fillHex(cx, cy);
-			}
-		break;
-	}
-
-	if (!ch) { return; }
-	
-	this._context.fillStyle = fg;
-	this._context.fillText(ch, cx, cy);
+	if (this._dirty === true) { return; } /* will already redraw everything */
+	if (!this._dirty) { this._dirty = {}; } /* first! */
+	this._dirty[x+","+y] = true;
 }
 
 /**
@@ -311,6 +294,67 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 	return lines;
 }
 
+/**
+ * Timer tick: update dirty parts
+ */
+ROT.Display.prototype._tick = function() {
+	if (!this._dirty) { return; }
+
+	if (this._dirty === true) { /* draw all */
+		this._context.fillStyle = this._options.bg;
+		this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
+
+		for (var id in this._data) { /* redraw cached data */
+			this._draw(id, false);
+		}
+
+	} else { /* draw only dirty */
+		for (var key in this._dirty) {
+			this._draw(key, true);
+		}
+	}
+
+	this._dirty = false;
+}
+
+/**
+ * @param {string} key What to draw
+ * @param {bool} clearBefore Is it necessary to clean before?
+ */
+ROT.Display.prototype._draw = function(key, clearBefore) {
+	var data = this._data[key];
+	var x = data[0];
+	var y = data[1];
+	var ch = data[2];
+	var fg = data[3];
+	var bg = data[4];
+
+	switch (this._options.layout) {
+		case "rect":
+			var cx = (x+0.5) * this._spacingX;
+			var cy = (y+0.5) * this._spacingY;
+			
+			if (clearBefore || bg != this._options.bg) {
+				this._context.fillStyle = bg;
+				this._context.fillRect(cx-this._spacingX/2, cy-this._spacingY/2, this._spacingX, this._spacingY);
+			}
+		break;
+		case "hex":
+			var cx = (x+1) * this._spacingX;
+			var cy = y * this._spacingY + this._hexSize;
+			if (clearBefore || bg != this._options.bg) {
+				this._context.fillStyle = bg;
+				this._fillHex(cx, cy);
+			}
+		break;
+	}
+
+	if (!ch) { return; }
+	
+	this._context.fillStyle = fg;
+	this._context.fillText(ch, cx, cy);
+}
+
 ROT.Display.prototype._fillHex = function(cx, cy) {
 	var a = this._hexSize;
 	
@@ -323,20 +367,6 @@ ROT.Display.prototype._fillHex = function(cx, cy) {
 	this._context.lineTo(cx - this._spacingX, cy-a/2);
 	this._context.lineTo(cx, cy-a);
 	this._context.fill();
-}
-
-ROT.Display.prototype._redraw = function() {
-	this._compute();
-	
-	var data = this._data;
-	this.clear();
-	
-	/* redraw cached data */
-	for (var id in data) {
-		var item = data[id];
-		var parts = id.split(",");
-		this.draw(parseInt(parts[0]), parseInt(parts[1]), item[0], item[1], item[2]);
-	}
 }
 
 /**
@@ -367,7 +397,8 @@ ROT.Display.prototype._compute = function() {
 	this._context.font = font;
 	this._context.textAlign = "center";
 	this._context.textBaseline = "middle";
-}/**
+}
+/**
  * @class Speed-based scheduler
  */
 ROT.Scheduler = function() {
