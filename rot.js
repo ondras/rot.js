@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.3dev, generated on Sun Oct 28 13:25:35 CET 2012.
+	Version 0.3dev, generated on Mon Oct 29 09:46:46 CET 2012.
 */
 
 /**
@@ -282,16 +282,50 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 			if (item.type == "b") { bg = item.name || null; }
 		}
 
-		if (i && maxWidth && (i%maxWidth == 0)) {
+		var ch = text.charAt(i);
+
+		var forcedBreak = (ch == "\n");
+		var lengthBreak = (maxWidth && (cx-x == maxWidth));
+
+		if (forcedBreak || lengthBreak) {
 			cx = x;
 			cy++;
 			lines++;
 		}
-		var ch = text.charAt(i);
-		this.draw(cx++, cy, ch, fg, bg);
+
+		if (!forcedBreak) { this.draw(cx++, cy, ch, fg, bg); }
 	}
 
 	return lines;
+}
+
+/**
+ * Computes a width and height of a wrapped block of text.
+ * FIXME implement a better wrapping algo
+ * @param {string} text
+ * @param {int} [maxWidth] wrap at what width?
+ * @returns {object} with "width" and "height"
+ */
+ROT.Display.prototype.measureText = function(text, maxWidth) {
+	if (!maxWidth) { maxWidth = 1/0; }
+
+	var result = {
+		width: 0,
+		height: 0
+	}
+	var parts = text.split("\n");
+	while (parts.length) {
+		var part = parts.pop();
+		if (part.length < maxWidth) {
+			result.width = Math.max(result.width, part.length);
+			result.height += 1;
+		} else {
+			result.width = Math.max(result.width, maxWidth);
+			result.height += Math.ceil(part.length / maxWidth);
+		}
+	}
+
+	return result;
 }
 
 /**
