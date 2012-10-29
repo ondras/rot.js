@@ -1,7 +1,6 @@
 #!/bin/sh
 LIST="
 rot.js
-rng.js
 display.js
 scheduler.js
 engine.js
@@ -11,6 +10,7 @@ js/number.js
 js/string.js
 js/object.js
 js/function.js
+rng.js
 map/map.js
 map/arena.js
 map/dividedmaze.js
