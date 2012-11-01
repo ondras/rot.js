@@ -113,45 +113,38 @@ ROT.Display.prototype.draw = function(x, y, ch, fg, bg) {
  * @returns {int} lines drawn
  */
 ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
-	var data = [];
-	var offset = 0;
-
-	/* prepare color changes */
-	text = text.replace(/%([bc]){([^}]*)}/g, function(match, type, name, index) {
-		data.push({
-			type: type,
-			name: name.trim(),
-			index: index-offset
-		});
-		offset += match.length;
-		return "";
-	});
-
 	var fg = null;
 	var bg = null;
 	var cx = x;
 	var cy = y;
 	var lines = 1;
 
-	for (var i=0;i<text.length;i++) {
-		if (data.length && data[0].index == i) { /* time to change fg/bg? */
-			var item = data.shift();
-			if (item.type == "c") { fg = item.name || null; }
-			if (item.type == "b") { bg = item.name || null; }
+	var tokens = ROT.Text.tokenize(text, maxWidth);
+
+	while (tokens.length) { /* interpret tokenized opcode stream */
+		var token = tokens.shift();
+		switch (token.type) {
+			case ROT.Text.TYPE_TEXT:
+				for (var i=0;i<token.value.length;i++) {
+					this.draw(cx++, cy, token.value.charAt(i), fg, bg);
+				}
+			break;
+
+			case ROT.Text.TYPE_FG:
+				fg = token.value || null;
+			break;
+
+			case ROT.Text.TYPE_BG:
+				bg = token.value || null;
+			break;
+
+			case ROT.Text.TYPE_NEWLINE:
+				cx = x;
+				cy++;
+				lines++
+			break;
+
 		}
-
-		var ch = text.charAt(i);
-
-		var forcedBreak = (ch == "\n");
-		var lengthBreak = (maxWidth && (cx-x == maxWidth));
-
-		if (forcedBreak || lengthBreak) {
-			cx = x;
-			cy++;
-			lines++;
-		}
-
-		if (!forcedBreak) { this.draw(cx++, cy, ch, fg, bg); }
 	}
 
 	return lines;
@@ -159,31 +152,12 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 
 /**
  * Computes a width and height of a wrapped block of text.
- * FIXME implement a better wrapping algo
  * @param {string} text
  * @param {int} [maxWidth] wrap at what width?
  * @returns {object} with "width" and "height"
  */
 ROT.Display.prototype.measureText = function(text, maxWidth) {
-	if (!maxWidth) { maxWidth = 1/0; }
-
-	var result = {
-		width: 0,
-		height: 0
-	}
-	var parts = text.split("\n");
-	while (parts.length) {
-		var part = parts.pop();
-		if (part.length < maxWidth) {
-			result.width = Math.max(result.width, part.length);
-			result.height += 1;
-		} else {
-			result.width = Math.max(result.width, maxWidth);
-			result.height += Math.ceil(part.length / maxWidth);
-		}
-	}
-
-	return result;
+	return ROT.Text.measure(text, maxWidth);
 }
 
 /**
