@@ -50,13 +50,21 @@ display.draw(25, 4, "#", "#f00", "#009");  /* and background color */
 <h3>Drawing strings</h3>
 
 <div class="example">
-var display = new ROT.Display({width:40, height:9});
+var display = new ROT.Display({width:40, height:20});
 SHOW(display.getContainer());
 
 display.drawText(5,  2, "Hello world");
 
 /* last argument specifies maximum length */
 display.drawText(20, 5, "This line of text is very long.", 16);
+
+/* lines are broken at word boundaries; lines are trimmed */
+var words = ["lorem", "ipsum", "dolor", "sit", "amet"];
+var long = [];
+for (var i=0;i&lt;30;i++) { long.push(words.random()); }
+long = long.join(" ");
+
+display.drawText(1, 10, long, 38);
 </div>
 
 <h3>Specifying foreground/background color in strings</h3>
