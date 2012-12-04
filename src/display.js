@@ -5,6 +5,7 @@
  * @param {int} [options.height=ROT.DEFAULT_HEIGHT]
  * @param {int} [options.fontSize=15]
  * @param {string} [options.fontFamily="monospace"]
+ * @param {string} [options.fontStyle=""] bold/italic/none/both
  * @param {string} [options.fg="#ccc"]
  * @param {string} [options.bg="#000"]
  * @param {int} [options.fps=25]
@@ -30,6 +31,7 @@ ROT.Display = function(options) {
 		fps: 25,
 		spacing: 1,
 		fontFamily: "monospace",
+		fontStyle: "",
 		fg: "#ccc",
 		bg: "#000"
 	};
@@ -240,7 +242,7 @@ ROT.Display.prototype._fillHex = function(cx, cy) {
  */
 ROT.Display.prototype._compute = function() {
 	/* compute char width */
-	var font = this._options.fontSize + "px " + this._options.fontFamily;
+	var font = (this._options.fontStyle ? this._options.fontStyle + " " : "") + this._options.fontSize + "px " + this._options.fontFamily;
 	this._context.font = font;
 	this._charWidth = Math.ceil(this._context.measureText("W").width);
 	
