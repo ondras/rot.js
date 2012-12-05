@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ROT.FOV</title>
+		<title>JsDoc Reference - ROT.Text</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -260,7 +260,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class ROT.FOV
+				Namespace ROT.Text
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -268,7 +268,7 @@ ul.inheritsList
 				
 				
 			
-				Abstract FOV algorithm
+				Contains text tokenization and breaking routines
 				
 				
 					<br /><i>Defined in: </i> &lt;rot.js&gt;.
@@ -277,8 +277,8 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.FOV.">
-				<caption>Class Summary</caption>
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Text.">
+				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
 						<th scope="col">Constructor Attributes</th>
@@ -290,7 +290,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROT.FOV.html#constructor">ROT.FOV</a></b>(lightPassesCallback, options)
+								<b><a href="../symbols/ROT.Text.html#constructor">ROT.Text</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -306,7 +306,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.FOV.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Text.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -317,11 +317,20 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.FOV.html#compute">compute</a></b>(x, y, R, callback)
+								<div class="fixedFont">ROT.Text.<b><a href="../symbols/ROT.Text.html#.measure">measure</a></b>(str, maxWidth)
 								</div>
-								<div class="description">Compute visibility</div>
+								<div class="description">Measure size of a resulting text block</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">ROT.Text.<b><a href="../symbols/ROT.Text.html#.tokenize">tokenize</a></b>(str, maxWidth)
+								</div>
+								<div class="description">Convert string to a series of a formatting commands</div>
 							</td>
 						</tr>
 					
@@ -338,11 +347,11 @@ ul.inheritsList
 			
 			<div class="details"><a name="constructor"> </a>
 				<div class="sectionTitle">
-					Class Detail
+					Namespace Detail
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROT.FOV</b>(lightPassesCallback, options)
+						<b>ROT.Text</b>
 				</div>
 				
 				<div class="description">
@@ -353,29 +362,6 @@ ul.inheritsList
 				
 				
 				
-					
-						<dl class="detailList">
-						<dt class="heading">Parameters:</dt>
-						
-							<dt>
-								<span class="light fixedFont">{function}</span>  <b>lightPassesCallback</b>
-								
-							</dt>
-								<dd>Does the light pass through x,y?</dd>
-						
-							<dt>
-								<span class="light fixedFont">{object}</span>  <b>options</b>
-								<i>Optional</i>
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								<span class="light fixedFont">{int}</span>  <b>options.topology</b>
-								<i>Optional, Default: 8</i>
-							</dt>
-								<dd>6/8</dd>
-						
-						</dl>
 					
 					
 					
@@ -396,15 +382,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="compute"> </a>
-					<div class="fixedFont">
+					<a name=".measure"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<b>compute</b>(x, y, R, callback)
+					<span class="light">ROT.Text.</span><b>measure</b>(str, maxWidth)
 					
 					</div>
 					<div class="description">
-						Compute visibility
+						Measure size of a resulting text block
 						
 						
 					</div>
@@ -416,25 +402,55 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{int}</span> <b>x</b>
+									<b>str</b>
 									
 								</dt>
 								<dd></dd>
 							
 								<dt>
-									<span class="light fixedFont">{int}</span> <b>y</b>
+									<b>maxWidth</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".tokenize"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">ROT.Text.</span><b>tokenize</b>(str, maxWidth)
+					
+					</div>
+					<div class="description">
+						Convert string to a series of a formatting commands
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>str</b>
 									
 								</dt>
 								<dd></dd>
 							
 								<dt>
-									<span class="light fixedFont">{int}</span> <b>R</b>
-									
-								</dt>
-								<dd>Maximum visibility radius</dd>
-							
-								<dt>
-									<span class="light fixedFont">{function}</span> <b>callback</b>
+									<b>maxWidth</b>
 									
 								</dt>
 								<dd></dd>
@@ -462,7 +478,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Dec 05 2012 10:11:22 GMT+0100 (CET)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Dec 05 2012 10:11:23 GMT+0100 (CET)
 		</div>
 	</body>
 </html>
