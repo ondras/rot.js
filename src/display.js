@@ -62,6 +62,24 @@ ROT.Display.prototype.clear = function() {
 }
 
 /**
+ * Clear a specified region of the display.
+ * 
+ * @param {int} x
+ * @param {int} y
+ * @param {int} w
+ * @param {int} h
+ */
+ROT.Display.prototype.clearRect = function(x, y, w, h) {
+	for (var dx=x; dx <= (x + w); dx++) {
+		for (var dy=y; dy <= (y + h); dy++) {
+			delete this._data[dx+","+dy];
+			if (!this._dirty) { this._dirty = {}; } /* first! */
+			this._dirty[dx+","+dy] = [dx, dy];
+		}
+	}
+}
+
+/**
  * @see ROT.Display
  */
 ROT.Display.prototype.setOptions = function(options) {
@@ -178,7 +196,29 @@ ROT.Display.prototype._tick = function() {
 
 	} else { /* draw only dirty */
 		for (var key in this._dirty) {
-			this._draw(key, true);
+			var dirtyState = this._dirty[key];
+			if (dirtyState === true) { // regular redraw
+				this._draw(key, true);
+			} else { // cleared re-draw		
+				var x = dirtyState[0];
+				var y = dirtyState[1];
+				
+				switch (this._options.layout) {
+					case "rect":
+						var cx = (x+0.5) * this._spacingX;
+						var cy = (y+0.5) * this._spacingY;
+						
+						this._context.fillStyle = this._options.bg;
+						this._context.fillRect(cx-this._spacingX/2, cy-this._spacingY/2, this._spacingX, this._spacingY);
+					break;
+					case "hex":
+						var cx = (x+1) * this._spacingX;
+						var cy = y * this._spacingY + this._hexSize;
+						this._context.fillStyle = this._option.bg;
+						this._fillHex(cx, cy);
+					break;
+				}
+			}
 		}
 	}
 
