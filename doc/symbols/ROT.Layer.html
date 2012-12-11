@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ROT.Text</title>
+		<title>JsDoc Reference - ROT.Layer</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -262,7 +262,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace ROT.Text
+				Class ROT.Layer
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -270,7 +270,7 @@ ul.inheritsList
 				
 				
 			
-				Contains text tokenization and breaking routines
+				Layer which may be drawn to.
 				
 				
 					<br /><i>Defined in: </i> &lt;rot.js&gt;.
@@ -279,8 +279,8 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Text.">
-				<caption>Namespace Summary</caption>
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Layer.">
+				<caption>Class Summary</caption>
 				<thead>
 					<tr>
 						<th scope="col">Constructor Attributes</th>
@@ -292,7 +292,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROT.Text.html#constructor">ROT.Text</a></b>
+								<b><a href="../symbols/ROT.Layer.html#constructor">ROT.Layer</a></b>(display)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -308,7 +308,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Text.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Layer.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -319,20 +319,47 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">ROT.Text.<b><a href="../symbols/ROT.Text.html#.measure">measure</a></b>(str, maxWidth)
+								<div class="fixedFont"><b><a href="../symbols/ROT.Layer.html#clear">clear</a></b>()
 								</div>
-								<div class="description">Measure size of a resulting text block</div>
+								<div class="description">Clear the whole layer (cover it with background color)</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">ROT.Text.<b><a href="../symbols/ROT.Text.html#.tokenize">tokenize</a></b>(str, maxWidth)
+								<div class="fixedFont"><b><a href="../symbols/ROT.Layer.html#clearRect">clearRect</a></b>(x, y, w, h)
 								</div>
-								<div class="description">Convert string to a series of a formatting commands</div>
+								<div class="description">Clear a specified region of the layer.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Layer.html#draw">draw</a></b>(x, y, ch, fg, bg)
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Layer.html#drawText">drawText</a></b>(x, y, text, maxWidth)
+								</div>
+								<div class="description">Draws a text at given position.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Layer.html#remove">remove</a></b>()
+								</div>
+								<div class="description">Delete this layer.</div>
 							</td>
 						</tr>
 					
@@ -349,11 +376,11 @@ ul.inheritsList
 			
 			<div class="details"><a name="constructor"> </a>
 				<div class="sectionTitle">
-					Namespace Detail
+					Class Detail
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROT.Text</b>
+						<b>ROT.Layer</b>(display)
 				</div>
 				
 				<div class="description">
@@ -364,6 +391,17 @@ ul.inheritsList
 				
 				
 				
+					
+						<dl class="detailList">
+						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								 <b>display</b>
+								
+							</dt>
+								<dd></dd>
+						
+						</dl>
 					
 					
 					
@@ -384,15 +422,40 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".measure"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="clear"> </a>
+					<div class="fixedFont">
 					
 					
-					<span class="light">ROT.Text.</span><b>measure</b>(str, maxWidth)
+					<b>clear</b>()
 					
 					</div>
 					<div class="description">
-						Measure size of a resulting text block
+						Clear the whole layer (cover it with background color)
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="clearRect"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>clearRect</b>(x, y, w, h)
+					
+					</div>
+					<div class="description">
+						Clear a specified region of the layer.
 						
 						
 					</div>
@@ -404,13 +467,25 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>str</b>
+									<span class="light fixedFont">{int}</span> <b>x</b>
 									
 								</dt>
 								<dd></dd>
 							
 								<dt>
-									<b>maxWidth</b>
+									<span class="light fixedFont">{int}</span> <b>y</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>w</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>h</b>
 									
 								</dt>
 								<dd></dd>
@@ -426,15 +501,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".tokenize"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="draw"> </a>
+					<div class="fixedFont">
 					
 					
-					<span class="light">ROT.Text.</span><b>tokenize</b>(str, maxWidth)
+					<b>draw</b>(x, y, ch, fg, bg)
 					
 					</div>
 					<div class="description">
-						Convert string to a series of a formatting commands
+						
 						
 						
 					</div>
@@ -446,18 +521,122 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>str</b>
+									<span class="light fixedFont">{int}</span> <b>x</b>
 									
 								</dt>
 								<dd></dd>
 							
 								<dt>
-									<b>maxWidth</b>
+									<span class="light fixedFont">{int}</span> <b>y</b>
 									
 								</dt>
 								<dd></dd>
 							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>ch</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>fg</b>
+									<i>Optional</i>
+								</dt>
+								<dd>foreground color</dd>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>bg</b>
+									<i>Optional</i>
+								</dt>
+								<dd>background color</dd>
+							
 							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="drawText"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{int}</span>
+					<b>drawText</b>(x, y, text, maxWidth)
+					
+					</div>
+					<div class="description">
+						Draws a text at given position. Optionally wraps at a maximum length. Currently does not work with hex layout.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>x</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>y</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>text</b>
+									
+								</dt>
+								<dd>May contain color/background format specifiers, %c{name}/%b{name}, both optional. %c{}/%b{} resets to default.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>maxWidth</b>
+									<i>Optional</i>
+								</dt>
+								<dd>wrap at what width?</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{int}</span> lines drawn</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="remove"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>remove</b>()
+					
+					</div>
+					<div class="description">
+						Delete this layer.
+						
+						
+					</div>
+					
+					
+					
 						
 						
 						
@@ -480,7 +659,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Mon Dec 10 2012 20:02:43 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Mon Dec 10 2012 20:02:42 GMT-0500 (EST)
 		</div>
 	</body>
 </html>
