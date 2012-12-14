@@ -27,12 +27,15 @@ pre, code, textarea {
 
 li {
 	line-height: 150%;
+	-webkit-transition: all 1s;
+	-moz-transition: all 1s;
+	transition: all 1s;
 }
 
 #menu {
 	position: fixed;
 	left: 0px;
-	top: 80px;
+	top: 40px;
 	width: 180px;
 }
 
@@ -42,7 +45,7 @@ li {
 	list-style-type: none;
 }
 
-#menu a {
+#menu a, #menu h2 {
 	display: block;
 	text-decoration: none;
 	padding-left: 10px;
@@ -50,25 +53,57 @@ li {
 	line-height: 175%;
 }
 
+#menu h2 {
+	margin: 0;
+	text-align: center;
+	text-transform: uppercase;
+	padding-right: 10px;
+}
+
 #menu ul a {
 	padding-left: 30px;
 }
 
-
-#menu a.first {
-	border-radius: 0 10px 0 0;
+#menu .first {
+	border-radius: 10px 10px 0 0;
 }
 
-#menu a.last {
+#menu .last {
 	border-radius: 0 0 10px 0;
 }
 
-#menu a.active {
+#menu .active {
 	background-color: transparent;
 }
 
 #menu a:hover {
 	background-color: #333;
+}
+
+#menu > li:not(:first-child) {
+	-webkit-transform: translate(-100%, 0);
+	-moz-transform: translate(-100%, 0);
+	-ms-transform: translate(-100%, 0);
+	transform: translate(-100%, 0);
+}
+
+#menu > li:first-child {
+	-webkit-transform-origin: 0 100%;
+	-moz-transform-origin: 0 100%;
+	-ms-transform-origin: 0 100%;
+	-webkit-transform-origin: 0 100%;
+
+	-webkit-transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+	-ms-transform: rotate(90deg);
+	transform: rotate(90deg);
+}
+
+#menu:hover * {
+	-webkit-transform: none !important;
+	-moz-transform: none !important;
+	-ms-transform: none !important;
+	transform: none !important;
 }
 
 
