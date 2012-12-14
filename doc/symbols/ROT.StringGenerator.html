@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Number</title>
+		<title>JsDoc Reference - ROT.StringGenerator</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -262,7 +262,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Built-In Namespace Number
+				Class ROT.StringGenerator
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -270,12 +270,37 @@ ul.inheritsList
 				
 				
 			
+				(Markov process)-based string generator. 
+Copied from a <a href="http://www.roguebasin.roguelikedevelopment.org/index.php?title=Names_from_a_high_order_Markov_Process_and_a_simplified_Katz_back-off_scheme">RogueBasin article</a>. 
+Offers configurable order and prior.
 				
 				
+					<br /><i>Defined in: </i> &lt;rot.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
+			
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.StringGenerator.">
+				<caption>Class Summary</caption>
+				<thead>
+					<tr>
+						<th scope="col">Constructor Attributes</th>
+						<th scope="col">Constructor Name and Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="attributes">&nbsp;</td>
+						<td class="nameDescription" >
+							<div class="fixedFont">
+								<b><a href="../symbols/ROT.StringGenerator.html#constructor">ROT.StringGenerator</a></b>(order, prior)
+							</div>
+							<div class="description"></div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 			
 
 <!-- ============================== properties summary ===================== -->
@@ -285,7 +310,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Number.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.StringGenerator.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -298,9 +323,27 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Number.html#mod">mod</a></b>(n)
+								<div class="fixedFont"><b><a href="../symbols/ROT.StringGenerator.html#clear">clear</a></b>()
 								</div>
-								<div class="description">Always positive modulus</div>
+								<div class="description">Remove all learning data</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.StringGenerator.html#generate">generate</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.StringGenerator.html#observe">observe</a></b>(string)
+								</div>
+								<div class="description">Observe (learn) a string from a training set</div>
 							</td>
 						</tr>
 					
@@ -315,6 +358,50 @@ ul.inheritsList
 
 <!-- ============================== constructor details ==================== -->		
 			
+			<div class="details"><a name="constructor"> </a>
+				<div class="sectionTitle">
+					Class Detail
+				</div>
+				
+				<div class="fixedFont">
+						<b>ROT.StringGenerator</b>(order, prior)
+				</div>
+				
+				<div class="description">
+					
+					
+				</div>
+				
+				
+				
+				
+					
+						<dl class="detailList">
+						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								<span class="light fixedFont">{int}</span>  <b>order</b>
+								<i>Optional, Default: 3</i>
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								<span class="light fixedFont">{float}</span>  <b>prior</b>
+								<i>Optional, Default: 0.001</i>
+							</dt>
+								<dd></dd>
+						
+						</dl>
+					
+					
+					
+					
+					
+					
+					
+
+			</div>
+			
 
 <!-- ============================== field details ========================== -->		
 			
@@ -325,18 +412,72 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="mod"> </a>
+					<a name="clear"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{int}</span>
-					<b>mod</b>(n)
+					
+					<b>clear</b>()
 					
 					</div>
 					<div class="description">
-						Always positive modulus
+						Remove all learning data
 						
-							<br />
-							<i>Defined in: </i> &lt;rot.js&gt;.
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="generate"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{string}</span>
+					<b>generate</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{string}</span> Generated string</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="observe"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>observe</b>(string)
+					
+					</div>
+					<div class="description">
+						Observe (learn) a string from a training set
 						
 						
 					</div>
@@ -348,23 +489,16 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{int}</span> <b>n</b>
+									<b>string</b>
 									
 								</dt>
-								<dd>Modulus</dd>
+								<dd></dd>
 							
 							</dl>
 						
 						
 						
 						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{int}</span> this modulo n</dd>
-							
-							</dl>
 						
 						
 						

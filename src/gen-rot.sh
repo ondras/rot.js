@@ -12,6 +12,7 @@ js/string.js
 js/object.js
 js/function.js
 rng.js
+stringgenerator.js
 map/map.js
 map/arena.js
 map/dividedmaze.js

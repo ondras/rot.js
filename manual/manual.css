@@ -47,7 +47,7 @@ li {
 	text-decoration: none;
 	padding-left: 10px;
 	background-color: #000;
-	line-height: 200%;
+	line-height: 175%;
 }
 
 #menu ul a {
@@ -73,7 +73,7 @@ li {
 
 
 #content {
-	margin-left: 200px;
+	margin: 0 200px;
 }
 
 #footer {
