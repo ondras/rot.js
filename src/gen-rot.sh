@@ -27,6 +27,7 @@ noise/noise.js
 noise/simplex.js
 fov/fov.js
 fov/discrete-shadowcasting.js
+fov/precise-shadowcasting.js
 path/path.js
 path/dijkstra.js
 path/astar.js

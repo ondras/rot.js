@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ROT.Map.Digger</title>
+		<title>JsDoc Reference - ROT.FOV.PreciseShadowcasting</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -264,19 +264,17 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class ROT.Map.Digger
+				Class ROT.FOV.PreciseShadowcasting
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
 				<br />Extends
-					<a href="../symbols/ROT.Map.Dungeon.html">ROT.Map.Dungeon</a>.<br />
+					<a href="../symbols/ROT.FOV.html">ROT.FOV</a>.<br />
 				
 			
-				Random dungeon generator using human-like digging patterns.
-Heavily based on Mike Anderson's ideas from the "Tyrant" algo, mentioned at 
-http://www.roguebasin.roguelikedevelopment.org/index.php?title=Dungeon-Building_Algorithm.
+				Precise shadowcasting algorithm
 				
 				
 					<br /><i>Defined in: </i> &lt;rot.js&gt;.
@@ -285,7 +283,7 @@ http://www.roguebasin.roguelikedevelopment.org/index.php?title=Dungeon-Building_
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Map.Digger.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.FOV.PreciseShadowcasting.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -298,7 +296,7 @@ http://www.roguebasin.roguelikedevelopment.org/index.php?title=Dungeon-Building_
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROT.Map.Digger.html#constructor">ROT.Map.Digger</a></b>(width, height, options)
+								<b><a href="../symbols/ROT.FOV.PreciseShadowcasting.html#constructor">ROT.FOV.PreciseShadowcasting</a></b>(lightPassesCallback, options)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -314,7 +312,7 @@ http://www.roguebasin.roguelikedevelopment.org/index.php?title=Dungeon-Building_
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Map.Digger.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.FOV.PreciseShadowcasting.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -327,9 +325,9 @@ http://www.roguebasin.roguelikedevelopment.org/index.php?title=Dungeon-Building_
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Map.Digger.html#create">create</a></b>(callback)
+								<div class="fixedFont"><b><a href="../symbols/ROT.FOV.PreciseShadowcasting.html#compute">compute</a></b>(x, y, R, callback)
 								</div>
-								<div class="description">Create a map</div>
+								<div class="description"></div>
 							</td>
 						</tr>
 					
@@ -339,7 +337,7 @@ http://www.roguebasin.roguelikedevelopment.org/index.php?title=Dungeon-Building_
 				
 				
 				<dl class="inheritsList">
-				<dt>Methods borrowed from class <a href="../symbols/ROT.Map.Dungeon.html">ROT.Map.Dungeon</a>: </dt><dd><a href="../symbols/ROT.Map.Dungeon.html#getCorridors">getCorridors</a>, <a href="../symbols/ROT.Map.Dungeon.html#getRooms">getRooms</a></dd>
+				
 				</dl>
 				
 			
@@ -354,7 +352,7 @@ http://www.roguebasin.roguelikedevelopment.org/index.php?title=Dungeon-Building_
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROT.Map.Digger</b>(width, height, options)
+						<b>ROT.FOV.PreciseShadowcasting</b>(lightPassesCallback, options)
 				</div>
 				
 				<div class="description">
@@ -370,13 +368,7 @@ http://www.roguebasin.roguelikedevelopment.org/index.php?title=Dungeon-Building_
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								 <b>width</b>
-								
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								 <b>height</b>
+								 <b>lightPassesCallback</b>
 								
 							</dt>
 								<dd></dd>
@@ -408,15 +400,15 @@ http://www.roguebasin.roguelikedevelopment.org/index.php?title=Dungeon-Building_
 					Method Detail
 				</div>
 				
-					<a name="create"> </a>
+					<a name="compute"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>create</b>(callback)
+					<b>compute</b>(x, y, R, callback)
 					
 					</div>
 					<div class="description">
-						Create a map
+						
 						
 						
 					</div>
@@ -426,6 +418,24 @@ http://www.roguebasin.roguelikedevelopment.org/index.php?title=Dungeon-Building_
 						
 							<dl class="detailList">
 							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>x</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>y</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>R</b>
+									
+								</dt>
+								<dd></dd>
 							
 								<dt>
 									<b>callback</b>
@@ -444,7 +454,7 @@ http://www.roguebasin.roguelikedevelopment.org/index.php?title=Dungeon-Building_
 							<dl class="detailList">
 							<dt class="heading">See:</dt>
 							
-								<dd><a href="../symbols/ROT.Map.html#create">ROT.Map#create</a></dd>
+								<dd><a href="../symbols/ROT.FOV.html#compute">ROT.FOV#compute</a></dd>
 							
 							</dl>
 						
