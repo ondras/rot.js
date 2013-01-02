@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.3~dev, generated on Wed Jan  2 16:10:47 CET 2013.
+	Version 0.3~dev, generated on Wed Jan  2 16:26:51 CET 2013.
 */
 
 /**
@@ -2637,7 +2637,15 @@ ROT.FOV.DiscreteShadowcasting.prototype._visibleCoords = function(A, B, blocks, 
 		return true;
 	}
 }
-var L = function() { return console.log.apply(console, arguments); }
+var L = function() { 
+	return;
+	var args = [];
+	for (var i=0;i<arguments.length;i++) {
+		var a = arguments[i];
+		args.push(a instanceof Array ? a.join(",") : a);
+	}
+	return console.log.apply(console, args); 
+}
 
 /**
  * @class Precise shadowcasting algorithm
@@ -2677,7 +2685,7 @@ ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback) {
 			
 			blocks = !this._lightPasses(cx, cy);
 			if (this._visibleCoords(arc, blocks, SHADOWS)) { callback(cx, cy, r); }
-
+			L("current shadows:", SHADOWS);
 			if (SHADOWS.length == 1 && SHADOWS[0][0] == 0 && SHADOWS[0][2] == SHADOWS[0][3]) { L("cutoff at", SHADOWS); return; } /* cutoff? */
 
 		} /* for all cells in this ring */
@@ -2751,7 +2759,6 @@ ROT.FOV.PreciseShadowcasting.prototype._visibleCoords = function(arc, blocks, SH
 			return true;
 		}
 
-		index++;
 	}
 	
 	/* this is a new shadow, add it to our list */
