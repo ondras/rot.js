@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.3~dev, generated on Thu Jan  3 11:16:49 CET 2013.
+	Version 0.3~dev, generated on Thu Jan  3 13:53:44 CET 2013.
 */
 
 /**
@@ -2704,66 +2704,66 @@ ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback) {
 ROT.FOV.PreciseShadowcasting.prototype._checkVisibility = function(A1, A2, blocks, SHADOWS) {
 	L("checking arc", A1, A2, "whose blocking is", blocks);
 
-	if (A1[0] > A2[0]) {
+	if (A1[0] > A2[0]) { /* split into two sub-arcs */
 		L("zero encountered - splitting into two");
 		var v1 = arguments.callee(A1, [A1[1], A1[1]], blocks, SHADOWS);
 		var v2 = arguments.callee([0, 1], A2, blocks, SHADOWS);
 		return (v1 || v2);
 	}
 
-	/* find indices of shadows which are >= our new arc */
-	var index1 = -1, index2 = -1, index = 0;
-	while (index < SHADOWS.length) {
-		var old = SHADOWS[index];
-		if (index1 == -1 && old[0]*A1[1] >= A1[0]*old[1]) { index1 = index; }
-		if (index2 == -1 && old[0]*A2[1] >= A2[0]*old[1]) { index2 = index; break; }
-		index++;
+	/* index1: first shadow >= A1 */
+	var index1 = 0, edge1 = false;
+	while (index1 < SHADOWS.length) {
+		var old = SHADOWS[index1];
+		var diff = old[0]*A1[1] - A1[0]*old[1];
+		if (diff >= 0) { /* old >= A1 */
+			if (diff == 0 && !(index1 % 2)) { edge1 = true; }
+			break;
+		}
+		index1++;
 	}
 
-	L("index1", index1);
-	L("index2", index2);
-
-	if (index1 == -1) { index1 = SHADOWS.length; } /* append */
-	if (index2 == -1) { /* append */
-		index2 = SHADOWS.length; 
-	} else if (!(index2 % 2)) { /* special case: equals to starting edge => shift to next one */
-		old = SHADOWS[index2];
-		if (old[0]*A2[1] == A2[0]*old[1]) { index2++; }
+	/* index2: last shadow <= A2 */
+	var index2 = SHADOWS.length, edge2 = false;
+	while (index2--) {
+		var old = SHADOWS[index2];
+		var diff = A2[0]*old[1] - old[0]*A2[1];
+		if (diff >= 0) { /* old <= A2 */
+			if (diff == 0 && (index2 % 2)) { edge2 = true; }
+			break;
+		}
 	}
 
-	if (index2 % 2) { /* we end WITHIN an existing shadow */
-		var remove = index2-index1; /* we will remove this many shadows */
-
-		/* special cases */
-		if (!remove) { return false; } /* complete subset of an existing shadow or second edge match */
-		if (remove == 1) { /* subset, first edge match */
-			old = SHADOWS[index1];
-			if (old[0]*A1[1] == A1[0]*old[1]) { return false; }
-		}
-
-		if (blocks) { /* adjust */
-			if (remove % 2) { /* remove and insert */
-				SHADOWS.splice(index1, remove, A1);
-			} else { /* just remove */
-				SHADOWS.splice(index1, remove);
-			}
-		}
-
-		return true;
-
-	} else { /* we end OUTSIDE of an existing shadow */
-
-		if (blocks) { /* adjust */
-			var remove = index2-index1;
-			if (remove % 2) { /* remove and insert second */
-				SHADOWS.splice(index1, remove, A2);
-			} else { /* remove and insert both (append when remove=0) */
-				SHADOWS.splice(index1, remove, A1, A2);
-			}
-		}
-
-		return true;
+	var visible = true;
+	if (index1 == index2 && (edge1 || edge2)) {  /* subset of existing shadow, one of the edges match */
+		visible = false; 
+	} else if (edge1 && edge2 && index1+1==index2 && (index2 % 2)) { /* completely equivalent with existing shadow */
+		visible = false;
+	} else if (index1 > index2 && (index1 % 2)) { /* subset of existing shadow, not touching */
+		visible = false;
 	}
+
+	L("index1", index1, "index2", index2, "edge1", edge1, "edge2", edge2);
+	L("visible", visible);
+
+	if (!visible || !blocks) { return visible; } /* fast case: either it is not visible or we do not need to adjust blocking */
+	/* adjust list of shadows (implies visibility) */
+	var remove = index2-index1+1;
+	if (remove % 2) {
+		if (index1 % 2) { /* first edge within existing shadow, second outside */
+			SHADOWS.splice(index1, remove, A2);
+		} else { /* second edge within existing shadow, first outside */
+			SHADOWS.splice(index1, remove, A1);
+		}
+	} else {
+		if (index1 % 2) { /* both edges within existing shadows */
+			SHADOWS.splice(index1, remove);
+		} else { /* both edges outside existing shadows */
+			SHADOWS.splice(index1, remove, A1, A2);
+		}
+	}
+
+	return true;
 }
 /**
  * @class Abstract pathfinder
