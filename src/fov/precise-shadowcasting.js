@@ -1,4 +1,5 @@
 var L = function() { 
+	return;
 	var args = [];
 	for (var i=0;i<arguments.length;i++) {
 		var a = arguments[i];
@@ -46,7 +47,7 @@ ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback) {
 			L("new arc", A1, A2);
 			
 			blocks = !this._lightPasses(cx, cy);
-			if (this._visibleCoords(A1, A2, blocks, SHADOWS)) { callback(cx, cy, r); }
+			if (this._checkVisibility(A1, A2, blocks, SHADOWS)) { callback(cx, cy, r); }
 
 			L("current shadows:", SHADOWS);
 			if (SHADOWS.length == 2 && SHADOWS[0][0] == 0 && SHADOWS[1][0] == SHADOWS[1][1]) { L("cutoff at", SHADOWS); return; } /* cutoff? */
@@ -58,10 +59,10 @@ ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback) {
 /**
  * @param {int[2]} A1 arc start
  * @param {int[2]} A2 arc end
- * @param {bool} blocks Does current cell block visibility?
+ * @param {bool} blocks Does current arc block visibility?
  * @param {int[][]} SHADOWS list of active shadows
  */
-ROT.FOV.PreciseShadowcasting.prototype._visibleCoords = function(A1, A2, blocks, SHADOWS) {
+ROT.FOV.PreciseShadowcasting.prototype._checkVisibility = function(A1, A2, blocks, SHADOWS) {
 	L("checking arc", A1, A2, "whose blocking is", blocks);
 
 	if (A1[0] > A2[0]) {
@@ -76,18 +77,30 @@ ROT.FOV.PreciseShadowcasting.prototype._visibleCoords = function(A1, A2, blocks,
 	while (index < SHADOWS.length) {
 		var old = SHADOWS[index];
 		if (index1 == -1 && old[0]*A1[1] >= A1[0]*old[1]) { index1 = index; }
-		if (index2 == -1 && old[0]*A2[1] > A2[0]*old[1]) { index2 = index; break; } /* important! we check GREATER (not greater-or-equal) for the second point! */
+		if (index2 == -1 && old[0]*A2[1] >= A2[0]*old[1]) { index2 = index; break; }
 		index++;
 	}
 
 	L("index1", index1);
 	L("index2", index2);
-	if (index2 == -1) { index2 = SHADOWS.length; }
-	if (index1 == -1) { index1 = SHADOWS.length; }
+
+	if (index1 == -1) { index1 = SHADOWS.length; } /* append */
+	if (index2 == -1) { /* append */
+		index2 = SHADOWS.length; 
+	} else if (!(index2 % 2)) { /* special case: equals to starting edge => shift to next one */
+		old = SHADOWS[index2];
+		if (old[0]*A2[1] == A2[0]*old[1]) { index2++; }
+	}
 
 	if (index2 % 2) { /* we end WITHIN an existing shadow */
 		var remove = index2-index1; /* we will remove this many shadows */
-		if (!remove) { return false; } /* subset of an existing shadow */
+
+		/* special cases */
+		if (!remove) { return false; } /* complete subset of an existing shadow or second edge match */
+		if (remove == 1) { /* subset, first edge match */
+			old = SHADOWS[index1];
+			if (old[0]*A1[1] == A1[0]*old[1]) { return false; }
+		}
 
 		if (blocks) { /* adjust */
 			if (remove % 2) { /* remove and insert */
@@ -109,9 +122,6 @@ ROT.FOV.PreciseShadowcasting.prototype._visibleCoords = function(A1, A2, blocks,
 				SHADOWS.splice(index1, remove, A1, A2);
 			}
 		}
-
-		/* check for special case when the new arc is a subset of an existing, sharing the second edge */
-		
 
 		return true;
 	}
