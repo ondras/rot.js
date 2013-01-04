@@ -21,9 +21,9 @@ the meaning is that "the place at [x,y] is visible with a distance of r".</p>
 	<li><code>callback</code> &ndash; output callback function</li>
 </ol>
 
-<h3>Discrete shadowcasting</h3>
+<h3>Precise shadowcasting</h3>
 
-<p>For now, there is only one FOV algorithm available: the <a href="http://code.google.com/p/js-like/wiki/DiscreteShadowcasting">Discrete Shadowcasting</a>.</p>
+<p>For now, there is only one FOV algorithm available: the <a href="http://www.roguebasin.roguelikedevelopment.org/index.php?title=Precise_Shadowcasting_in_JavaScript">Precise Shadowcasting</a>.</p>
 
 <div class="example">
 ROT.RNG.setSeed(12345);
@@ -47,10 +47,10 @@ var lightPasses = function(x, y) {
 	return false;
 }
 
-var fov = new ROT.FOV.DiscreteShadowcasting(lightPasses);
+var fov = new ROT.FOV.PreciseShadowcasting(lightPasses);
 
 /* output callback */
-fov.compute(50, 22, 6, function(x, y, r) {
+fov.compute(50, 22, 10, function(x, y, r) {
 	var ch = (r ? "" : "@");
 	var color = (data[x+","+y] ? "#aa0": "#660");
 	display.draw(x, y, ch, "#fff", color);

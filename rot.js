@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.3~dev, generated on Thu Jan  3 13:53:44 CET 2013.
+	Version 0.3~dev, generated on Fri Jan  4 08:04:41 CET 2013.
 */
 
 /**
@@ -2504,18 +2504,36 @@ ROT.FOV.prototype.compute = function(x, y, R, callback) {}
  */
 ROT.FOV.prototype._getCircle = function(cx, cy, r) {
 	var result = [];
+	var dirs, countFactor, startOffset;
 
-	if (this._options.topology == 8) {
-		var dirs = ROT.DIRS[4];
-		var countFactor = 2;
-	} else {
-		var dirs = ROT.DIRS[6];
-		var countFactor = 1;
+	switch (this._options.topology) {
+		case 4:
+			countFactor = 1;
+			startOffset = [0, 1];
+			dirs = [
+				ROT.DIRS[8][7],
+				ROT.DIRS[8][1],
+				ROT.DIRS[8][3],
+				ROT.DIRS[8][5]
+			]
+		break;
+
+		case 6:
+			dirs = ROT.DIRS[6];
+			countFactor = 1;
+			startOffset = [-1, 1];
+		break;
+
+		case 8:
+			dirs = ROT.DIRS[4];
+			countFactor = 2;
+			startOffset = [-1, 1];
+		break;
 	}
 
 	/* starting neighbor */
-	var x = cx-r;
-	var y = cy+r;
+	var x = cx + startOffset[0]*r;
+	var y = cy + startOffset[1]*r;
 
 	/* circle */
 	for (var i=0;i<dirs.length;i++) {
@@ -2637,16 +2655,6 @@ ROT.FOV.DiscreteShadowcasting.prototype._visibleCoords = function(A, B, blocks, 
 		return true;
 	}
 }
-var L = function() { 
-	return;
-	var args = [];
-	for (var i=0;i<arguments.length;i++) {
-		var a = arguments[i];
-		args.push(a instanceof Array ? a.join(",") : a);
-	}
-	return console.log.apply(console, args); 
-}
-
 /**
  * @class Precise shadowcasting algorithm
  * @augments ROT.FOV
@@ -2673,7 +2681,6 @@ ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback) {
 
 	/* analyze surrounding cells in concentric rings, starting from the center */
 	for (var r=1; r<=R; r++) {
-		L("circle at r=", r);
 		var neighbors = this._getCircle(x, y, r);
 		var neighborCount = neighbors.length;
 
@@ -2683,13 +2690,11 @@ ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback) {
 			/* shift half-an-angle backwards to maintain consistency of 0-th cells */
 			A1 = [i ? 2*i-1 : 2*neighborCount-1, 2*neighborCount];
 			A2 = [2*i+1, 2*neighborCount]; 
-			L("new arc", A1, A2);
 			
 			blocks = !this._lightPasses(cx, cy);
 			if (this._checkVisibility(A1, A2, blocks, SHADOWS)) { callback(cx, cy, r); }
 
-			L("current shadows:", SHADOWS);
-			if (SHADOWS.length == 2 && SHADOWS[0][0] == 0 && SHADOWS[1][0] == SHADOWS[1][1]) { L("cutoff at", SHADOWS); return; } /* cutoff? */
+			if (SHADOWS.length == 2 && SHADOWS[0][0] == 0 && SHADOWS[1][0] == SHADOWS[1][1]) { return; } /* cutoff? */
 
 		} /* for all cells in this ring */
 	} /* for all rings */
@@ -2702,10 +2707,7 @@ ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback) {
  * @param {int[][]} SHADOWS list of active shadows
  */
 ROT.FOV.PreciseShadowcasting.prototype._checkVisibility = function(A1, A2, blocks, SHADOWS) {
-	L("checking arc", A1, A2, "whose blocking is", blocks);
-
 	if (A1[0] > A2[0]) { /* split into two sub-arcs */
-		L("zero encountered - splitting into two");
 		var v1 = arguments.callee(A1, [A1[1], A1[1]], blocks, SHADOWS);
 		var v2 = arguments.callee([0, 1], A2, blocks, SHADOWS);
 		return (v1 || v2);
@@ -2743,10 +2745,8 @@ ROT.FOV.PreciseShadowcasting.prototype._checkVisibility = function(A1, A2, block
 		visible = false;
 	}
 
-	L("index1", index1, "index2", index2, "edge1", edge1, "edge2", edge2);
-	L("visible", visible);
-
 	if (!visible || !blocks) { return visible; } /* fast case: either it is not visible or we do not need to adjust blocking */
+
 	/* adjust list of shadows (implies visibility) */
 	var remove = index2-index1+1;
 	if (remove % 2) {

@@ -114,7 +114,7 @@ display.draw(120, 64, "", "", "#f33");
 
 <h3>Field of View</h3>
 
-<p>Discrete Shadowcasting works in hexagonal topology as well.</p>
+<p>Precise Shadowcasting works in hexagonal topology as well.</p>
 
 <div class="example">
 ROT.RNG.setSeed(12345);
@@ -145,7 +145,7 @@ var lightPasses = function(x, y) {
 	return false;
 }
 
-var fov = new ROT.FOV.DiscreteShadowcasting(lightPasses, {topology:6});
+var fov = new ROT.FOV.PreciseShadowcasting(lightPasses, {topology:6});
 
 /* output callback */
 fov.compute(20, 14, 6, function(x, y, r) {

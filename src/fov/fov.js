@@ -29,18 +29,36 @@ ROT.FOV.prototype.compute = function(x, y, R, callback) {}
  */
 ROT.FOV.prototype._getCircle = function(cx, cy, r) {
 	var result = [];
+	var dirs, countFactor, startOffset;
 
-	if (this._options.topology == 8) {
-		var dirs = ROT.DIRS[4];
-		var countFactor = 2;
-	} else {
-		var dirs = ROT.DIRS[6];
-		var countFactor = 1;
+	switch (this._options.topology) {
+		case 4:
+			countFactor = 1;
+			startOffset = [0, 1];
+			dirs = [
+				ROT.DIRS[8][7],
+				ROT.DIRS[8][1],
+				ROT.DIRS[8][3],
+				ROT.DIRS[8][5]
+			]
+		break;
+
+		case 6:
+			dirs = ROT.DIRS[6];
+			countFactor = 1;
+			startOffset = [-1, 1];
+		break;
+
+		case 8:
+			dirs = ROT.DIRS[4];
+			countFactor = 2;
+			startOffset = [-1, 1];
+		break;
 	}
 
 	/* starting neighbor */
-	var x = cx-r;
-	var y = cy+r;
+	var x = cx + startOffset[0]*r;
+	var y = cy + startOffset[1]*r;
 
 	/* circle */
 	for (var i=0;i<dirs.length;i++) {
