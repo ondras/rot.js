@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ROT.Path.AStar</title>
+		<title>JsDoc Reference - ROT.Lighting</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -266,17 +266,15 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class ROT.Path.AStar
+				Class ROT.Lighting
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
-				<br />Extends
-					<a href="../symbols/ROT.Path.html">ROT.Path</a>.<br />
 				
 			
-				Simplified A* algorithm: all edges have a value of 1
+				Lighting computation, based on a traditional FOV for multiple light sources and multiple passes.
 				
 				
 					<br /><i>Defined in: </i> &lt;rot.js&gt;.
@@ -285,7 +283,7 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Path.AStar.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Lighting.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -298,7 +296,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROT.Path.AStar.html#constructor">ROT.Path.AStar</a></b>(toX, toY, passableCallback, options)
+								<b><a href="../symbols/ROT.Lighting.html#constructor">ROT.Lighting</a></b>(reflectivityCallback, options)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -314,7 +312,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Path.AStar.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Lighting.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -327,9 +325,45 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Path.AStar.html#compute">compute</a></b>(fromX, fromY, callback)
+								<div class="fixedFont"><b><a href="../symbols/ROT.Lighting.html#addLight">addLight</a></b>(x, y, color, range)
 								</div>
-								<div class="description">Compute a path from a given point</div>
+								<div class="description">Define a new light source</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Lighting.html#compute">compute</a></b>(lightingCallback)
+								</div>
+								<div class="description">Compute the lighting</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Lighting.html#removeLight">removeLight</a></b>(x, y)
+								</div>
+								<div class="description">Remove an existing light source</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Lighting.html#reset">reset</a></b>()
+								</div>
+								<div class="description">Reset the pre-computed topology values.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Lighting.html#setFOV">setFOV</a></b>(fov)
+								</div>
+								<div class="description">Set the used Field-Of-View algo</div>
 							</td>
 						</tr>
 					
@@ -337,10 +371,6 @@ ul.inheritsList
 				</table>
 				
 				
-				
-				<dl class="inheritsList">
-				
-				</dl>
 				
 			
 <!-- ============================== events summary ======================== -->
@@ -354,7 +384,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROT.Path.AStar</b>(toX, toY, passableCallback, options)
+						<b>ROT.Lighting</b>(reflectivityCallback, options)
 				</div>
 				
 				<div class="description">
@@ -370,28 +400,22 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								 <b>toX</b>
+								<span class="light fixedFont">{function}</span>  <b>reflectivityCallback</b>
 								
+							</dt>
+								<dd>Callback to retrieve cell reflectivity (0..1)</dd>
+						
+							<dt>
+								<span class="light fixedFont">{object}</span>  <b>options</b>
+								<i>Optional</i>
 							</dt>
 								<dd></dd>
 						
 							<dt>
-								 <b>toY</b>
-								
+								<span class="light fixedFont">{int}</span>  <b>options.passes</b>
+								<i>Optional, Default: 1</i>
 							</dt>
-								<dd></dd>
-						
-							<dt>
-								 <b>passableCallback</b>
-								
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								 <b>options</b>
-								
-							</dt>
-								<dd></dd>
+								<dd>Number of passes. 1 equals to simple FOV of all light sources, >1 means a simplified radiosity algorithm.</dd>
 						
 						</dl>
 					
@@ -400,13 +424,6 @@ ul.inheritsList
 					
 					
 					
-					
-						<dl class="detailList">
-						<dt class="heading">See:</dt>
-						
-							<dd><a href="../symbols/ROT.Path.html">ROT.Path</a></dd>
-						
-						</dl>
 					
 
 			</div>
@@ -421,15 +438,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="compute"> </a>
+					<a name="addLight"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>compute</b>(fromX, fromY, callback)
+					<b>addLight</b>(x, y, color, range)
 					
 					</div>
 					<div class="description">
-						Compute a path from a given point
+						Define a new light source
 						
 						
 					</div>
@@ -441,19 +458,25 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>fromX</b>
+									<span class="light fixedFont">{int}</span> <b>x</b>
 									
 								</dt>
 								<dd></dd>
 							
 								<dt>
-									<b>fromY</b>
+									<span class="light fixedFont">{int}</span> <b>y</b>
 									
 								</dt>
 								<dd></dd>
 							
 								<dt>
-									<b>callback</b>
+									<span class="light fixedFont">{int[3]}</span> <b>color</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>range</b>
 									
 								</dt>
 								<dd></dd>
@@ -465,13 +488,145 @@ ul.inheritsList
 						
 						
 						
+						
+
+					<hr />
+				
+					<a name="compute"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>compute</b>(lightingCallback)
+					
+					</div>
+					<div class="description">
+						Compute the lighting
+						
+						
+					</div>
+					
+					
+					
 						
 							<dl class="detailList">
-							<dt class="heading">See:</dt>
+							<dt class="heading">Parameters:</dt>
 							
-								<dd><a href="../symbols/ROT.Path.html#compute">ROT.Path#compute</a></dd>
+								<dt>
+									<span class="light fixedFont">{function}</span> <b>lightingCallback</b>
+									
+								</dt>
+								<dd>Will be called with (x, y, color, intensity) for every lit cell and light source lighting that cell</dd>
 							
 							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="removeLight"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>removeLight</b>(x, y)
+					
+					</div>
+					<div class="description">
+						Remove an existing light source
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>x</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>y</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="reset"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>reset</b>()
+					
+					</div>
+					<div class="description">
+						Reset the pre-computed topology values. Call whenever the underlying map changes its light-passability.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="setFOV"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setFOV</b>(fov)
+					
+					</div>
+					<div class="description">
+						Set the used Field-Of-View algo
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/ROT.FOV.html">ROT.FOV</a>}</span> <b>fov</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
 						
 
 					
