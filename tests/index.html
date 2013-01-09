@@ -20,6 +20,14 @@
 				}
 			}
 		};
+		if (!String.prototype.trim) {
+			/**
+			 * ES5 String.prototype.trim for rhino
+			 */
+			String.prototype.trim = function() {
+				return this.replace(/^\s+|\s+$/g, "");
+			}
+		};
 	</script>
 
 	<script src="lib/jasmine-1.2.0/jasmine.js"></script>
@@ -39,7 +47,6 @@
 	<script type="text/javascript">
 		(function() {
 			var jasmineEnv = jasmine.getEnv();
-			jasmineEnv.updateInterval = 1000;
 
 			jasmineEnv.addReporter(new jasmine.ConsoleReporter());
 
@@ -53,16 +60,9 @@
 			var currentWindowOnload = window.onload;
 
 			window.onload = function() {
-				if (currentWindowOnload) {
-					currentWindowOnload();
-				}
-				execJasmine();
-			};
-
-			function execJasmine() {
+				if (currentWindowOnload) { currentWindowOnload(); }
 				jasmineEnv.execute();
-			}
-
+			};
 		})();
 	</script>
 </head>
