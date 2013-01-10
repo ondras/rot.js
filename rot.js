@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.3~dev, generated on Wed Jan  9 15:07:16 CET 2013.
+	Version 0.3~dev, generated on Thu Jan 10 21:34:35 CET 2013.
 */
 
 /**
@@ -2715,7 +2715,7 @@ ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback) {
 	/* list of all shadows */
 	var SHADOWS = [];
 	
-	var cx, cy, blocks, A1, A2;
+	var cx, cy, blocks, A1, A2, visibility;
 
 	/* analyze surrounding cells in concentric rings, starting from the center */
 	for (var r=1; r<=R; r++) {
@@ -2730,7 +2730,8 @@ ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback) {
 			A2 = [2*i+1, 2*neighborCount]; 
 			
 			blocks = !this._lightPasses(cx, cy);
-			if (this._checkVisibility(A1, A2, blocks, SHADOWS)) { callback(cx, cy, r); }
+			visibility = this._checkVisibility(A1, A2, blocks, SHADOWS);
+			if (visibility) { callback(cx, cy, r, visibility); }
 
 			if (SHADOWS.length == 2 && SHADOWS[0][0] == 0 && SHADOWS[1][0] == SHADOWS[1][1]) { return; } /* cutoff? */
 
@@ -2746,9 +2747,9 @@ ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback) {
  */
 ROT.FOV.PreciseShadowcasting.prototype._checkVisibility = function(A1, A2, blocks, SHADOWS) {
 	if (A1[0] > A2[0]) { /* split into two sub-arcs */
-		var v1 = arguments.callee(A1, [A1[1], A1[1]], blocks, SHADOWS);
-		var v2 = arguments.callee([0, 1], A2, blocks, SHADOWS);
-		return (v1 || v2);
+		var v1 = this._checkVisibility(A1, [A1[1], A1[1]], blocks, SHADOWS);
+		var v2 = this._checkVisibility([0, 1], A2, blocks, SHADOWS);
+		return v1+v2;
 	}
 
 	/* index1: first shadow >= A1 */
@@ -2782,43 +2783,61 @@ ROT.FOV.PreciseShadowcasting.prototype._checkVisibility = function(A1, A2, block
 	} else if (index1 > index2 && (index1 % 2)) { /* subset of existing shadow, not touching */
 		visible = false;
 	}
+	
+	if (!visible) { return 0; } /* fast case: not visible */
+	
+	var visibleLength, P;
 
-	if (!visible || !blocks) { return visible; } /* fast case: either it is not visible or we do not need to adjust blocking */
-
-	/* adjust list of shadows (implies visibility) */
+	/* compute the length of visible arc, adjust list of shadows (if blocking) */
 	var remove = index2-index1+1;
 	if (remove % 2) {
 		if (index1 % 2) { /* first edge within existing shadow, second outside */
-			SHADOWS.splice(index1, remove, A2);
+			var P = SHADOWS[index1];
+			visibleLength = (A2[0]*P[1] - P[0]*A2[1]) / (P[1] * A2[1]);
+			if (blocks) { SHADOWS.splice(index1, remove, A2); }
 		} else { /* second edge within existing shadow, first outside */
-			SHADOWS.splice(index1, remove, A1);
+			var P = SHADOWS[index2];
+			visibleLength = (P[0]*A1[1] - A1[0]*P[1]) / (A1[1] * P[1]);
+			if (blocks) { SHADOWS.splice(index1, remove, A1); }
 		}
 	} else {
 		if (index1 % 2) { /* both edges within existing shadows */
-			SHADOWS.splice(index1, remove);
+			var P1 = SHADOWS[index1];
+			var P2 = SHADOWS[index2];
+			visibleLength = (P2[0]*P1[1] - P1[0]*P2[1]) / (P1[1] * P2[1]);
+			if (blocks) { SHADOWS.splice(index1, remove); }
 		} else { /* both edges outside existing shadows */
-			SHADOWS.splice(index1, remove, A1, A2);
+			if (blocks) { SHADOWS.splice(index1, remove, A1, A2); }
+			return 1; /* whole arc visible! */
 		}
 	}
 
-	return true;
+	var arcLength = (A2[0]*A1[1] - A1[0]*A2[1]) / (A1[1] * A2[1]);
+
+	return visibleLength/arcLength;
 }
 /**
  * @class Lighting computation, based on a traditional FOV for multiple light sources and multiple passes.
  * @param {function} reflectivityCallback Callback to retrieve cell reflectivity (0..1)
  * @param {object} [options]
  * @param {int} [options.passes=1] Number of passes. 1 equals to simple FOV of all light sources, >1 means a simplified radiosity algorithm.
+ * @param {int} [options.emissionThreshold=0.2] Cells with emissivity > threshold will be treated in light source in the next pass.
  */
 ROT.Lighting = function(reflectivityCallback, options) {
 	this._reflectivityCallback = reflectivityCallback;
 	this._options = {
-		passes: 1
+		passes: 1,
+		emissionThreshold: 0.2
 	};
 	for (var p in options) {
 		this._options[p] = options[p];
 	}
 	this._fov = null;
 
+	this._range = 10; /* FIXME */
+	this._lights = {};
+	this._reflectivityCache = {};
+	this._fovCache = {};
 }
 
 /**
@@ -2827,6 +2846,7 @@ ROT.Lighting = function(reflectivityCallback, options) {
  */
 ROT.Lighting.prototype.setFOV = function(fov) {
 	this._fov = fov;
+	this._fovCache = {};
 	return this;
 }
 
@@ -2835,9 +2855,9 @@ ROT.Lighting.prototype.setFOV = function(fov) {
  * @param {int} x
  * @param {int} y
  * @param {int[3]} color
- * @param {int} range
  */
-ROT.Lighting.prototype.addLight = function(x, y, color, range) {
+ROT.Lighting.prototype.addLight = function(x, y, color) {
+	this._lights[x+","+y] = color;
 	return this;
 }
 
@@ -2847,6 +2867,7 @@ ROT.Lighting.prototype.addLight = function(x, y, color, range) {
  * @param {int} y
  */
 ROT.Lighting.prototype.removeLight = function(x, y) {
+	delete this._lights[x+","+y];
 	return this;
 }
 
@@ -2854,8 +2875,10 @@ ROT.Lighting.prototype.removeLight = function(x, y) {
  * Reset the pre-computed topology values. Call whenever the underlying map changes its light-passability.
  */
 ROT.Lighting.prototype.reset = function() {
+	this._reflectivityCache = {};
+	this._fovCache = {};
+
 	return this;
-	
 }
 
 /**
@@ -2863,7 +2886,95 @@ ROT.Lighting.prototype.reset = function() {
  * @param {function} lightingCallback Will be called with (x, y, color, intensity) for every lit cell and light source lighting that cell
  */
 ROT.Lighting.prototype.compute = function(lightingCallback) {
+	for (var key in this._lights) { /* compute all lights independently */
+
+		var parts = key.split(",");
+		var x = parseInt(parts[0]);
+		var y = parseInt(parts[1]);
+
+		var litCells = {};
+		var emittingCells = {};
+		emittingCells[key] = 1;
+
+		for (var i=0;i<this._options.passes;i++) { /* emit as long as requested */
+			this._emitLight(emittingCells, litCells);
+		}
+
+		for (var litKey in litCells) { /* let the user know what and how is lit */
+			var parts = litKey.split(",");
+			var x = parseInt(parts[0]);
+			var y = parseInt(parts[1]);
+			var intensity = litCells[litKey];
+			/* FIXME intensity threshold */
+			lightingCallback(x, y, this._lights[key], intensity);
+		}
+
+	}
+
 	return this;
+}
+
+/**
+ * Compute one iteration from all emitting cells
+ */
+ROT.Lighting.prototype._emitLight = function(emittingCells, litCells) {
+	/* first, emit from all cells */
+	for (var key in emittingCells) {
+		var parts = key.split(",");
+		var x = parseInt(parts[0]);
+		var y = parseInt(parts[1]);
+		this._emitLightFromCell(x, y, emittingCells[key], litCells);
+		delete emittingCells[key];
+	}
+
+	/* second, mark "strong" lit cells as emitters for further iterations */
+	for (var key in litCells) {
+		if (!(key in this._reflectivityCache)) { 
+			var parts = key.split(",");
+			var x = parseInt(parts[0]);
+			var y = parseInt(parts[1]);
+			this._reflectivityCache[key] = this._reflectivityCallback(x, y);
+		}
+		var emissionIntensity = litCells[key] * this._reflectivityCache[key];
+		if (emissionIntensity > this._options.emissionThreshold) { emittingCells[key] = emissionIntensity; }
+	}
+}
+
+/**
+ * Compute one iteration from one cell
+ * @param {int} x
+ * @param {int} y
+ * @param {?} ?
+ * @param {object} litCells Cell data to by updated
+ */
+ROT.Lighting.prototype._emitLightFromCell = function(x, y, intensity, litCells) {
+	var key = x+","+y;
+	if (!(key in this._fovCache)) { this._updateFOV(x, y); }
+	var fov = this._fovCache[key];
+
+	for (var fovKey in fov) {
+		var formFactor = fov[fovKey];
+		/* FIXME form factor threshold? */
+		if (!(fovKey in litCells)) { litCells[fovKey] = 0; }
+		litCells[fovKey] += intensity*formFactor;
+	}
+}
+
+/**
+ * Compute FOV ("form factor") for a potential light source at [x,y]
+ * @param {int} x
+ * @param {int} y
+ */
+ROT.Lighting.prototype._updateFOV = function(x, y) {
+	var key1 = x+","+y;
+	var cache = {};
+	this._fovCache[key1] = cache;
+	var cb = function(x, y, r) {
+		var key2 = x+","+y;
+		cache[key2] = 1/(r+1);
+	}
+	this._fov.compute(x, y, this._range, cb.bind(this));
+	/* FIXME normalize to a constant vaue? */
 }
 /**
  * @class Abstract pathfinder

@@ -20,7 +20,7 @@ ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback) {
 	/* list of all shadows */
 	var SHADOWS = [];
 	
-	var cx, cy, blocks, A1, A2;
+	var cx, cy, blocks, A1, A2, visibility;
 
 	/* analyze surrounding cells in concentric rings, starting from the center */
 	for (var r=1; r<=R; r++) {
@@ -35,7 +35,8 @@ ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback) {
 			A2 = [2*i+1, 2*neighborCount]; 
 			
 			blocks = !this._lightPasses(cx, cy);
-			if (this._checkVisibility(A1, A2, blocks, SHADOWS)) { callback(cx, cy, r); }
+			visibility = this._checkVisibility(A1, A2, blocks, SHADOWS);
+			if (visibility) { callback(cx, cy, r, visibility); }
 
 			if (SHADOWS.length == 2 && SHADOWS[0][0] == 0 && SHADOWS[1][0] == SHADOWS[1][1]) { return; } /* cutoff? */
 
@@ -51,9 +52,9 @@ ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback) {
  */
 ROT.FOV.PreciseShadowcasting.prototype._checkVisibility = function(A1, A2, blocks, SHADOWS) {
 	if (A1[0] > A2[0]) { /* split into two sub-arcs */
-		var v1 = arguments.callee(A1, [A1[1], A1[1]], blocks, SHADOWS);
-		var v2 = arguments.callee([0, 1], A2, blocks, SHADOWS);
-		return (v1 || v2);
+		var v1 = this._checkVisibility(A1, [A1[1], A1[1]], blocks, SHADOWS);
+		var v2 = this._checkVisibility([0, 1], A2, blocks, SHADOWS);
+		return v1+v2;
 	}
 
 	/* index1: first shadow >= A1 */
@@ -87,24 +88,36 @@ ROT.FOV.PreciseShadowcasting.prototype._checkVisibility = function(A1, A2, block
 	} else if (index1 > index2 && (index1 % 2)) { /* subset of existing shadow, not touching */
 		visible = false;
 	}
+	
+	if (!visible) { return 0; } /* fast case: not visible */
+	
+	var visibleLength, P;
 
-	if (!visible || !blocks) { return visible; } /* fast case: either it is not visible or we do not need to adjust blocking */
-
-	/* adjust list of shadows (implies visibility) */
+	/* compute the length of visible arc, adjust list of shadows (if blocking) */
 	var remove = index2-index1+1;
 	if (remove % 2) {
 		if (index1 % 2) { /* first edge within existing shadow, second outside */
-			SHADOWS.splice(index1, remove, A2);
+			var P = SHADOWS[index1];
+			visibleLength = (A2[0]*P[1] - P[0]*A2[1]) / (P[1] * A2[1]);
+			if (blocks) { SHADOWS.splice(index1, remove, A2); }
 		} else { /* second edge within existing shadow, first outside */
-			SHADOWS.splice(index1, remove, A1);
+			var P = SHADOWS[index2];
+			visibleLength = (P[0]*A1[1] - A1[0]*P[1]) / (A1[1] * P[1]);
+			if (blocks) { SHADOWS.splice(index1, remove, A1); }
 		}
 	} else {
 		if (index1 % 2) { /* both edges within existing shadows */
-			SHADOWS.splice(index1, remove);
+			var P1 = SHADOWS[index1];
+			var P2 = SHADOWS[index2];
+			visibleLength = (P2[0]*P1[1] - P1[0]*P2[1]) / (P1[1] * P2[1]);
+			if (blocks) { SHADOWS.splice(index1, remove); }
 		} else { /* both edges outside existing shadows */
-			SHADOWS.splice(index1, remove, A1, A2);
+			if (blocks) { SHADOWS.splice(index1, remove, A1, A2); }
+			return 1; /* whole arc visible! */
 		}
 	}
 
-	return true;
+	var arcLength = (A2[0]*A1[1] - A1[0]*A2[1]) / (A1[1] * A2[1]);
+
+	return visibleLength/arcLength;
 }
