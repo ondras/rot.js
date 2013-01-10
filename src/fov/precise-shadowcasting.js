@@ -54,7 +54,7 @@ ROT.FOV.PreciseShadowcasting.prototype._checkVisibility = function(A1, A2, block
 	if (A1[0] > A2[0]) { /* split into two sub-arcs */
 		var v1 = this._checkVisibility(A1, [A1[1], A1[1]], blocks, SHADOWS);
 		var v2 = this._checkVisibility([0, 1], A2, blocks, SHADOWS);
-		return v1+v2;
+		return (v1+v2)/2;
 	}
 
 	/* index1: first shadow >= A1 */
