@@ -12,7 +12,7 @@ ROT.FOV.PreciseShadowcasting.extend(ROT.FOV);
  */
 ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback) {
 	/* this place is always visible */
-	callback(x, y, 0);
+	callback(x, y, 0, 1);
 
 	/* standing in a dark place. FIXME is this a good idea?  */
 	if (!this._lightPasses(x, y)) { return; }
