@@ -9,7 +9,8 @@ ROT.Lighting = function(reflectivityCallback, options) {
 	this._reflectivityCallback = reflectivityCallback;
 	this._options = {
 		passes: 1,
-		emissionThreshold: 0.2
+		emissionThreshold: 0.2,
+		intensityThreshold: 0.01
 	};
 	for (var p in options) {
 		this._options[p] = options[p];
@@ -87,8 +88,9 @@ ROT.Lighting.prototype.compute = function(lightingCallback) {
 			var x = parseInt(parts[0]);
 			var y = parseInt(parts[1]);
 			var intensity = litCells[litKey];
-			/* FIXME intensity threshold */
-			lightingCallback(x, y, this._lights[key], intensity);
+			if (intensity > this._options.intensityThreshold) {
+				lightingCallback(x, y, this._lights[key], intensity);
+			}
 		}
 
 	}
@@ -151,10 +153,16 @@ ROT.Lighting.prototype._updateFOV = function(x, y) {
 	var key1 = x+","+y;
 	var cache = {};
 	this._fovCache[key1] = cache;
-	var cb = function(x, y, r) {
+	var sum = 0;
+	var cb = function(x, y, r, vis) {
 		var key2 = x+","+y;
-		cache[key2] = 1/(r+1);
+		cache[key2] = vis/(r+1);
+		cache[key2] = vis * (1-r/10);
+		sum += cache[key2];
 	}
 	this._fov.compute(x, y, this._range, cb.bind(this));
-	/* FIXME normalize to a constant vaue? */
+
+	/* normalize to a constant vaue FIXME 15? */
+	sum /= 15;
+	for (var key2 in cache) { cache[key2] /= sum; }
 }
