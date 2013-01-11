@@ -21,6 +21,7 @@ ROT.Lighting = function(reflectivityCallback, options) {
 	this._lights = {};
 	this._reflectivityCache = {};
 	this._fovCache = {};
+	this._fovSum = {};
 }
 
 /**
@@ -156,13 +157,13 @@ ROT.Lighting.prototype._updateFOV = function(x, y) {
 	var sum = 0;
 	var cb = function(x, y, r, vis) {
 		var key2 = x+","+y;
-		cache[key2] = vis/(r+1);
-		cache[key2] = vis * (1-r/10);
+		cache[key2] = vis * (1-r/this._range);
 		sum += cache[key2];
 	}
 	this._fov.compute(x, y, this._range, cb.bind(this));
+	this._fovSum[key1] = sum;
 
-	/* normalize to a constant vaue FIXME 15? */
-	sum /= 15;
-	for (var key2 in cache) { cache[key2] /= sum; }
+	for (var key2 in cache) {
+		cache[key2] /= sum;
+	}
 }
