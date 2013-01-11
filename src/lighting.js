@@ -2,15 +2,14 @@
  * @class Lighting computation, based on a traditional FOV for multiple light sources and multiple passes.
  * @param {function} reflectivityCallback Callback to retrieve cell reflectivity (0..1)
  * @param {object} [options]
- * @param {int} [options.passes=1] Number of passes. 1 equals to simple FOV of all light sources, >1 means a simplified radiosity algorithm.
- * @param {int} [options.emissionThreshold=0.2] Cells with emissivity > threshold will be treated in light source in the next pass.
+ * @param {int} [options.passes=1] Number of passes. 1 equals to simple FOV of all light sources, >1 means a *highly simplified* radiosity algorithm.
+ * @param {int} [options.emissionThreshold=0.2] Cells with emissivity > threshold will be treated as light source in the next pass.
  */
 ROT.Lighting = function(reflectivityCallback, options) {
 	this._reflectivityCallback = reflectivityCallback;
 	this._options = {
 		passes: 1,
-		emissionThreshold: 0.2,
-		intensityThreshold: 0.01
+		emissionThreshold: 0.2
 	};
 	for (var p in options) {
 		this._options[p] = options[p];
@@ -21,7 +20,6 @@ ROT.Lighting = function(reflectivityCallback, options) {
 	this._lights = {};
 	this._reflectivityCache = {};
 	this._fovCache = {};
-	this._fovSum = {};
 }
 
 /**
@@ -89,9 +87,7 @@ ROT.Lighting.prototype.compute = function(lightingCallback) {
 			var x = parseInt(parts[0]);
 			var y = parseInt(parts[1]);
 			var intensity = litCells[litKey];
-			if (intensity > this._options.intensityThreshold) {
-				lightingCallback(x, y, this._lights[key], intensity);
-			}
+			lightingCallback(x, y, this._lights[key], intensity);
 		}
 
 	}
@@ -129,17 +125,18 @@ ROT.Lighting.prototype._emitLight = function(emittingCells, litCells) {
  * Compute one iteration from one cell
  * @param {int} x
  * @param {int} y
- * @param {?} ?
+ * @param {float} intensity
  * @param {object} litCells Cell data to by updated
  */
 ROT.Lighting.prototype._emitLightFromCell = function(x, y, intensity, litCells) {
 	var key = x+","+y;
 	if (!(key in this._fovCache)) { this._updateFOV(x, y); }
 	var fov = this._fovCache[key];
+	
+	intensity /= fov[key]; /* adjust intensity: center cell shall receive 1 if the intensity is 1 */
 
 	for (var fovKey in fov) {
 		var formFactor = fov[fovKey];
-		/* FIXME form factor threshold? */
 		if (!(fovKey in litCells)) { litCells[fovKey] = 0; }
 		litCells[fovKey] += intensity*formFactor;
 	}
@@ -161,9 +158,5 @@ ROT.Lighting.prototype._updateFOV = function(x, y) {
 		sum += cache[key2];
 	}
 	this._fov.compute(x, y, this._range, cb.bind(this));
-	this._fovSum[key1] = sum;
-
-	for (var key2 in cache) {
-		cache[key2] /= sum;
-	}
+	for (var key2 in cache) { cache[key2] /= sum; } /* normalize the FF to 1 */
 }
