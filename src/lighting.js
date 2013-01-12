@@ -75,11 +75,12 @@ ROT.Lighting.prototype.compute = function(lightingCallback) {
 		var y = parseInt(parts[1]);
 
 		var litCells = {};
+		var doneCells = {};
 		var emittingCells = {};
 		emittingCells[key] = 1;
 
 		for (var i=0;i<this._options.passes;i++) { /* emit as long as requested */
-			this._emitLight(emittingCells, litCells);
+			this._emitLight(emittingCells, litCells, doneCells);
 		}
 
 		for (var litKey in litCells) { /* let the user know what and how is lit */
@@ -98,18 +99,20 @@ ROT.Lighting.prototype.compute = function(lightingCallback) {
 /**
  * Compute one iteration from all emitting cells
  */
-ROT.Lighting.prototype._emitLight = function(emittingCells, litCells) {
+ROT.Lighting.prototype._emitLight = function(emittingCells, litCells, doneCells) {
 	/* first, emit from all cells */
 	for (var key in emittingCells) {
 		var parts = key.split(",");
 		var x = parseInt(parts[0]);
 		var y = parseInt(parts[1]);
 		this._emitLightFromCell(x, y, emittingCells[key], litCells);
+		doneCells[key] = 1;
 		delete emittingCells[key];
 	}
 
 	/* second, mark "strong" lit cells as emitters for further iterations */
 	for (var key in litCells) {
+		if (key in doneCells) { continue; } /* already emitted */
 		if (!(key in this._reflectivityCache)) { 
 			var parts = key.split(",");
 			var x = parseInt(parts[0]);

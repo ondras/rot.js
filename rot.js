@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.3~dev, generated on Fri Jan 11 12:28:53 CET 2013.
+	Version 0.3~dev, generated on Sat Jan 12 20:56:48 CET 2013.
 */
 
 /**
@@ -2820,15 +2820,14 @@ ROT.FOV.PreciseShadowcasting.prototype._checkVisibility = function(A1, A2, block
  * @class Lighting computation, based on a traditional FOV for multiple light sources and multiple passes.
  * @param {function} reflectivityCallback Callback to retrieve cell reflectivity (0..1)
  * @param {object} [options]
- * @param {int} [options.passes=1] Number of passes. 1 equals to simple FOV of all light sources, >1 means a simplified radiosity algorithm.
- * @param {int} [options.emissionThreshold=0.2] Cells with emissivity > threshold will be treated in light source in the next pass.
+ * @param {int} [options.passes=1] Number of passes. 1 equals to simple FOV of all light sources, >1 means a *highly simplified* radiosity algorithm.
+ * @param {int} [options.emissionThreshold=0.2] Cells with emissivity > threshold will be treated as light source in the next pass.
  */
 ROT.Lighting = function(reflectivityCallback, options) {
 	this._reflectivityCallback = reflectivityCallback;
 	this._options = {
 		passes: 1,
-		emissionThreshold: 0.2,
-		intensityThreshold: 0.01
+		emissionThreshold: 0.2
 	};
 	for (var p in options) {
 		this._options[p] = options[p];
@@ -2894,11 +2893,12 @@ ROT.Lighting.prototype.compute = function(lightingCallback) {
 		var y = parseInt(parts[1]);
 
 		var litCells = {};
+		var doneCells = {};
 		var emittingCells = {};
 		emittingCells[key] = 1;
 
 		for (var i=0;i<this._options.passes;i++) { /* emit as long as requested */
-			this._emitLight(emittingCells, litCells);
+			this._emitLight(emittingCells, litCells, doneCells);
 		}
 
 		for (var litKey in litCells) { /* let the user know what and how is lit */
@@ -2906,9 +2906,7 @@ ROT.Lighting.prototype.compute = function(lightingCallback) {
 			var x = parseInt(parts[0]);
 			var y = parseInt(parts[1]);
 			var intensity = litCells[litKey];
-			if (intensity > this._options.intensityThreshold) {
-				lightingCallback(x, y, this._lights[key], intensity);
-			}
+			lightingCallback(x, y, this._lights[key], intensity);
 		}
 
 	}
@@ -2919,18 +2917,20 @@ ROT.Lighting.prototype.compute = function(lightingCallback) {
 /**
  * Compute one iteration from all emitting cells
  */
-ROT.Lighting.prototype._emitLight = function(emittingCells, litCells) {
+ROT.Lighting.prototype._emitLight = function(emittingCells, litCells, doneCells) {
 	/* first, emit from all cells */
 	for (var key in emittingCells) {
 		var parts = key.split(",");
 		var x = parseInt(parts[0]);
 		var y = parseInt(parts[1]);
 		this._emitLightFromCell(x, y, emittingCells[key], litCells);
+		doneCells[key] = 1;
 		delete emittingCells[key];
 	}
 
 	/* second, mark "strong" lit cells as emitters for further iterations */
 	for (var key in litCells) {
+		if (key in doneCells) { continue; } /* already emitted */
 		if (!(key in this._reflectivityCache)) { 
 			var parts = key.split(",");
 			var x = parseInt(parts[0]);
@@ -2946,17 +2946,18 @@ ROT.Lighting.prototype._emitLight = function(emittingCells, litCells) {
  * Compute one iteration from one cell
  * @param {int} x
  * @param {int} y
- * @param {?} ?
+ * @param {float} intensity
  * @param {object} litCells Cell data to by updated
  */
 ROT.Lighting.prototype._emitLightFromCell = function(x, y, intensity, litCells) {
 	var key = x+","+y;
 	if (!(key in this._fovCache)) { this._updateFOV(x, y); }
 	var fov = this._fovCache[key];
+	
+	intensity /= fov[key]; /* adjust intensity: center cell shall receive 1 if the intensity is 1 */
 
 	for (var fovKey in fov) {
 		var formFactor = fov[fovKey];
-		/* FIXME form factor threshold? */
 		if (!(fovKey in litCells)) { litCells[fovKey] = 0; }
 		litCells[fovKey] += intensity*formFactor;
 	}
@@ -2974,15 +2975,11 @@ ROT.Lighting.prototype._updateFOV = function(x, y) {
 	var sum = 0;
 	var cb = function(x, y, r, vis) {
 		var key2 = x+","+y;
-		cache[key2] = vis/(r+1);
-		cache[key2] = vis * (1-r/10);
+		cache[key2] = vis * (1-r/this._range);
 		sum += cache[key2];
 	}
 	this._fov.compute(x, y, this._range, cb.bind(this));
-
-	/* normalize to a constant vaue FIXME 15? */
-	sum /= 15;
-	for (var key2 in cache) { cache[key2] /= sum; }
+	for (var key2 in cache) { cache[key2] /= sum; } /* normalize the FF to 1 */
 }
 /**
  * @class Abstract pathfinder
