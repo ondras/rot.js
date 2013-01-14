@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.3~dev, generated on Sat Jan 12 20:56:48 CET 2013.
+	Version 0.3~dev, generated on Mon Jan 14 15:30:53 CET 2013.
 */
 
 /**
@@ -2820,21 +2820,22 @@ ROT.FOV.PreciseShadowcasting.prototype._checkVisibility = function(A1, A2, block
  * @class Lighting computation, based on a traditional FOV for multiple light sources and multiple passes.
  * @param {function} reflectivityCallback Callback to retrieve cell reflectivity (0..1)
  * @param {object} [options]
- * @param {int} [options.passes=1] Number of passes. 1 equals to simple FOV of all light sources, >1 means a *highly simplified* radiosity algorithm.
- * @param {int} [options.emissionThreshold=0.2] Cells with emissivity > threshold will be treated as light source in the next pass.
+ * @param {int} [options.passes=1] Number of passes. 1 equals to simple FOV of all light sources, >1 means a *highly simplified* radiosity-like algorithm.
+ * @param {int} [options.emissionThreshold=0.15] Cells with emissivity > threshold will be treated as light source in the next pass.
+ * @param {int} [options.range=10] Max light range
  */
 ROT.Lighting = function(reflectivityCallback, options) {
 	this._reflectivityCallback = reflectivityCallback;
 	this._options = {
 		passes: 1,
-		emissionThreshold: 0.2
+		emissionThreshold: 0.15,
+		range: 10
 	};
 	for (var p in options) {
 		this._options[p] = options[p];
 	}
 	this._fov = null;
 
-	this._range = 10; /* FIXME */
 	this._lights = {};
 	this._reflectivityCache = {};
 	this._fovCache = {};
@@ -2854,7 +2855,7 @@ ROT.Lighting.prototype.setFOV = function(fov) {
  * Define a new light source
  * @param {int} x
  * @param {int} y
- * @param {int[3]} color
+ * @param {number[3]} color
  */
 ROT.Lighting.prototype.addLight = function(x, y, color) {
 	this._lights[x+","+y] = color;
@@ -2883,32 +2884,32 @@ ROT.Lighting.prototype.reset = function() {
 
 /**
  * Compute the lighting
- * @param {function} lightingCallback Will be called with (x, y, color, intensity) for every lit cell and light source lighting that cell
+ * @param {function} lightingCallback Will be called with (x, y, color) for every lit cell
  */
 ROT.Lighting.prototype.compute = function(lightingCallback) {
-	for (var key in this._lights) { /* compute all lights independently */
+	var doneCells = {};
+	var emittingCells = {};
+	var litCells = {};
 
-		var parts = key.split(",");
+	for (var key in this._lights) { /* prepare emitters for first pass */
+		var light = this._lights[key];
+		if (!(key in emittingCells)) { emittingCells[key] = [0, 0, 0]; }
+
+		var result = emittingCells[key];
+		for (var i=0;i<3;i++) { result[i] += light[i]; }
+	}
+
+	for (var i=0;i<this._options.passes;i++) { /* main loop */
+		this._emitLight(emittingCells, litCells, doneCells);
+		if (i+1 == this._options.passes) { continue; } /* not for the last pass */
+		emittingCells = this._computeEmitters(litCells, doneCells);
+	}
+
+	for (var litKey in litCells) { /* let the user know what and how is lit */
+		var parts = litKey.split(",");
 		var x = parseInt(parts[0]);
 		var y = parseInt(parts[1]);
-
-		var litCells = {};
-		var doneCells = {};
-		var emittingCells = {};
-		emittingCells[key] = 1;
-
-		for (var i=0;i<this._options.passes;i++) { /* emit as long as requested */
-			this._emitLight(emittingCells, litCells, doneCells);
-		}
-
-		for (var litKey in litCells) { /* let the user know what and how is lit */
-			var parts = litKey.split(",");
-			var x = parseInt(parts[0]);
-			var y = parseInt(parts[1]);
-			var intensity = litCells[litKey];
-			lightingCallback(x, y, this._lights[key], intensity);
-		}
-
+		lightingCallback(x, y, litCells[litKey]);
 	}
 
 	return this;
@@ -2916,70 +2917,117 @@ ROT.Lighting.prototype.compute = function(lightingCallback) {
 
 /**
  * Compute one iteration from all emitting cells
+ * @param {object} emittingCells These emit light
+ * @param {object} litCells Add projected light to these
+ * @param {object} doneCells These already emitted, forbid them from further calculations
  */
 ROT.Lighting.prototype._emitLight = function(emittingCells, litCells, doneCells) {
-	/* first, emit from all cells */
 	for (var key in emittingCells) {
 		var parts = key.split(",");
 		var x = parseInt(parts[0]);
 		var y = parseInt(parts[1]);
 		this._emitLightFromCell(x, y, emittingCells[key], litCells);
 		doneCells[key] = 1;
-		delete emittingCells[key];
 	}
+	return this;
+}
 
-	/* second, mark "strong" lit cells as emitters for further iterations */
+/**
+ * Prepare a list of emitters for next pass
+ * @param {object} litCells
+ * @param {object} doneCells
+ * @returns {object}
+ */
+ROT.Lighting.prototype._computeEmitters = function(litCells, doneCells) {
+	var result = {};
+
 	for (var key in litCells) {
 		if (key in doneCells) { continue; } /* already emitted */
-		if (!(key in this._reflectivityCache)) { 
+
+		var color = litCells[key];
+
+		if (key in this._reflectivityCache) {
+			var reflectivity = this._reflectivityCache[key];
+		} else {
 			var parts = key.split(",");
 			var x = parseInt(parts[0]);
 			var y = parseInt(parts[1]);
-			this._reflectivityCache[key] = this._reflectivityCallback(x, y);
+			var reflectivity = this._reflectivityCallback(x, y);
+			this._reflectivityCache[key] = reflectivity;
 		}
-		var emissionIntensity = litCells[key] * this._reflectivityCache[key];
-		if (emissionIntensity > this._options.emissionThreshold) { emittingCells[key] = emissionIntensity; }
+
+		if (reflectivity == 0) { continue; } /* will not reflect at all */
+
+		/* compute emission color */
+		var emission = [];
+		var intensity = 0;
+		for (var i=0;i<3;i++) {
+			var part = color[i]*reflectivity;
+			emission[i] = part;
+			intensity += part;
+		}
+		if (intensity/(3*255) > this._options.emissionThreshold) { result[key] = emission; }
 	}
+
+	return result;
 }
 
 /**
  * Compute one iteration from one cell
  * @param {int} x
  * @param {int} y
- * @param {float} intensity
+ * @param {number[]} color
  * @param {object} litCells Cell data to by updated
  */
-ROT.Lighting.prototype._emitLightFromCell = function(x, y, intensity, litCells) {
+ROT.Lighting.prototype._emitLightFromCell = function(x, y, color, litCells) {
 	var key = x+","+y;
-	if (!(key in this._fovCache)) { this._updateFOV(x, y); }
-	var fov = this._fovCache[key];
-	
-	intensity /= fov[key]; /* adjust intensity: center cell shall receive 1 if the intensity is 1 */
+	if (key in this._fovCache) {
+		var fov = this._fovCache[key];
+	} else {
+		var fov = this._updateFOV(x, y);
+	}
 
+	var centerIntensity = fov[key]; /* adjust intensity: center cell shall receive 1 if the intensity is 1 */
+	
 	for (var fovKey in fov) {
 		var formFactor = fov[fovKey];
-		if (!(fovKey in litCells)) { litCells[fovKey] = 0; }
-		litCells[fovKey] += intensity*formFactor;
+
+		if (fovKey in litCells) { /* already lit */
+			var result = litCells[fovKey];
+		} else { /* newly lit */
+			var result = [0, 0, 0];
+			litCells[fovKey] = result;
+		}
+
+		for (var i=0;i<3;i++) { result[i] += color[i]*formFactor/centerIntensity; } /* add light color */
 	}
+
+	return this;
 }
 
 /**
  * Compute FOV ("form factor") for a potential light source at [x,y]
  * @param {int} x
  * @param {int} y
+ * @returns {object}
  */
 ROT.Lighting.prototype._updateFOV = function(x, y) {
 	var key1 = x+","+y;
 	var cache = {};
 	this._fovCache[key1] = cache;
 	var sum = 0;
+	var range = this._options.range;
 	var cb = function(x, y, r, vis) {
 		var key2 = x+","+y;
-		cache[key2] = vis * (1-r/this._range);
+		var formFactor = vis * (1-r/range);
+		if (formFactor == 0) { return; }
+		cache[key2] = formFactor;
 		sum += cache[key2];
 	}
-	this._fov.compute(x, y, this._range, cb.bind(this));
+	this._fov.compute(x, y, range, cb.bind(this));
 	for (var key2 in cache) { cache[key2] /= sum; } /* normalize the FF to 1 */
+
+	return cache;
 }
 /**
  * @class Abstract pathfinder
