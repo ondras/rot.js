@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.3~dev, generated on Mon Jan 14 15:30:53 CET 2013.
+	Version 0.3~dev, generated on Tue Jan 15 10:07:23 CET 2013.
 */
 
 /**
@@ -2987,8 +2987,6 @@ ROT.Lighting.prototype._emitLightFromCell = function(x, y, color, litCells) {
 		var fov = this._updateFOV(x, y);
 	}
 
-	var centerIntensity = fov[key]; /* adjust intensity: center cell shall receive 1 if the intensity is 1 */
-	
 	for (var fovKey in fov) {
 		var formFactor = fov[fovKey];
 
@@ -2999,7 +2997,7 @@ ROT.Lighting.prototype._emitLightFromCell = function(x, y, color, litCells) {
 			litCells[fovKey] = result;
 		}
 
-		for (var i=0;i<3;i++) { result[i] += color[i]*formFactor/centerIntensity; } /* add light color */
+		for (var i=0;i<3;i++) { result[i] += color[i]*formFactor; } /* add light color */
 	}
 
 	return this;
@@ -3015,17 +3013,14 @@ ROT.Lighting.prototype._updateFOV = function(x, y) {
 	var key1 = x+","+y;
 	var cache = {};
 	this._fovCache[key1] = cache;
-	var sum = 0;
 	var range = this._options.range;
 	var cb = function(x, y, r, vis) {
 		var key2 = x+","+y;
 		var formFactor = vis * (1-r/range);
 		if (formFactor == 0) { return; }
 		cache[key2] = formFactor;
-		sum += cache[key2];
 	}
 	this._fov.compute(x, y, range, cb.bind(this));
-	for (var key2 in cache) { cache[key2] /= sum; } /* normalize the FF to 1 */
 
 	return cache;
 }
