@@ -9,8 +9,8 @@ as <a href="#map">Map generators</a> do: using a user-supplied callback function
 </ul>
 
 <p>Input callback is called by the FOV algorithm to retrieve visibility information for a given coordinate pair. This callback must return <code>true</code> (light passes) 
-or <code>false</code> (light does nto pass). Output callback is called with three arguments: <code>x</code>, <code>y</code> and <code>r</code>: 
-the meaning is that "the place at [x,y] is visible with a distance of r".</p>
+or <code>false</code> (light does nto pass). Output callback is called with these arguments: <code>x</code>, <code>y</code>, <code>r</code> and <code>visibility</code>: 
+the meaning is that "the place at [x,y] is visible with a distance of r". The last argument specifies the amount of visibility (0..1).</p>
 
 <p>FOV computation is initiated by calling the <code>compute</code> method with the following arguments:</p>
 
@@ -50,7 +50,7 @@ var lightPasses = function(x, y) {
 var fov = new ROT.FOV.PreciseShadowcasting(lightPasses);
 
 /* output callback */
-fov.compute(50, 22, 10, function(x, y, r) {
+fov.compute(50, 22, 10, function(x, y, r, visibility) {
 	var ch = (r ? "" : "@");
 	var color = (data[x+","+y] ? "#aa0": "#660");
 	display.draw(x, y, ch, "#fff", color);

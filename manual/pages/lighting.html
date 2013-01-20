@@ -1,0 +1,46 @@
+<h2>Global lighting</h2>
+
+
+<div class="example">
+ROT.RNG.setSeed(12345);
+ROT.DEFAULT_WIDTH = 60;
+ROT.DEFAULT_HEIGHT = 40;
+
+var display = new ROT.Display({fontSize:8});
+SHOW(display.getContainer());
+
+/* create a map */
+var data = {};
+var map = new ROT.Map.Cellular().randomize(0.5);
+var createCallback = function(x, y, value) {
+	data[x+","+y] = value;
+	display.DEBUG(x, y, value);
+}
+
+for (var i=0; i&lt;4; i++) { 
+	map.create(createCallback);
+}
+
+var lightPasses = function(x, y) { 
+	return (data[x+","+y] == 1);
+}
+
+var reflectivity = function(x, y) {
+	return (data[x+","+y] == 1 ? 0.4 : 0);
+}
+
+var lighting = new ROT.Lighting(reflectivity, {range:20, passes:1});
+var fov = new ROT.FOV.PreciseShadowcasting(lightPasses, {topology:4});
+lighting.setFOV(fov);
+lighting.addLight(12, 12, [240, 240, 30]);
+
+var lightingCallback = function(x, y, color) {
+	for (var i=0;i&lt;3;i++) { color[i] = Math.round(color[i]); }
+	display.draw(x, y, null, null, "rgb(" + color.clamp(0, 255) + ")");
+}
+
+lighting.compute(lightingCallback);
+
+
+
+</div>

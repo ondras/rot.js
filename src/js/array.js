@@ -27,3 +27,20 @@ Array.prototype.randomize = function() {
 	}
 	return result;
 }
+
+/**
+ * Modifies array values so they fit within a range
+ * @param {number} min
+ * @param {number} max
+ */
+Array.prototype.clamp = function(min, max) {
+	for (var i=0;i<this.length;i++) {
+		var val = this[i];
+		if (val < min) {
+			this[i] = min;
+		} else if (val > max) {
+			this[i] = max;
+		}
+	}
+	return this;
+}

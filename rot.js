@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.3~dev, generated on Tue Jan 15 10:07:23 CET 2013.
+	Version 0.3~dev, generated on Sun Jan 20 14:38:38 CET 2013.
 */
 
 /**
@@ -708,6 +708,23 @@ Array.prototype.randomize = function() {
 		result.push(this.splice(index, 1)[0]);
 	}
 	return result;
+}
+
+/**
+ * Modifies array values so they fit within a range
+ * @param {number} min
+ * @param {number} max
+ */
+Array.prototype.clamp = function(min, max) {
+	for (var i=0;i<this.length;i++) {
+		var val = this[i];
+		if (val < min) {
+			this[i] = min;
+		} else if (val > max) {
+			this[i] = max;
+		}
+	}
+	return this;
 }
 if (!Date.now) { 
 	/**
@@ -1438,6 +1455,7 @@ ROT.Map.Cellular.prototype.randomize = function(probability) {
 			this._map[i][j] = (ROT.RNG.getUniform() < probability ? 1 : 0);
 		}
 	}
+	return this;
 }
 
 ROT.Map.Cellular.prototype.set = function(x, y, value) {

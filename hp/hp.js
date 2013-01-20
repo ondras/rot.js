@@ -15,6 +15,7 @@ str = str.replace(re, function(match) {
 	}
 	return match;
 });
+str = str.replace("YYYY", new Date().getFullYear());
 pre.innerHTML = str;
 
 var links = {
@@ -69,16 +70,21 @@ for (var p in monsters) {
 			sum2 -= random; /* sum2 = index of dot in corridors[i] */
 			var span = corridors[i];
 			if (sum2) {
-				var tmp = OZ.DOM.elm("span", {className:span.className});
+				var tmp = document.createElement("span");
+				tmp.className = span.className;
 				tmp.innerHTML = span.innerHTML.substring(0, sum2);
 				span.parentNode.insertBefore(tmp, span);
 			}
 			
-			var node = OZ.DOM.elm("span", {className:monster, innerHTML:p, title:monster});
+			var node = document.createElement("span");
+			node.className = monster;
+			node.title = monster;
+			node.innerHTML = p;
 			span.parentNode.insertBefore(node, span);
 			
 			if (sum2 < span.innerHTML.length-1) {
-				var tmp = OZ.DOM.elm("span", {className:span.className});
+				var tmp = document.createElement("span");
+				tmp.className = span.className;
 				tmp.innerHTML = span.innerHTML.substring(sum2+1, span.innerHTML.length);
 				span.parentNode.insertBefore(tmp, span);
 			}

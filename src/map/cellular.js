@@ -32,6 +32,7 @@ ROT.Map.Cellular.prototype.randomize = function(probability) {
 			this._map[i][j] = (ROT.RNG.getUniform() < probability ? 1 : 0);
 		}
 	}
+	return this;
 }
 
 ROT.Map.Cellular.prototype.set = function(x, y, value) {
