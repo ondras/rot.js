@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ROT.Display</title>
+		<title>JsDoc Reference - ROT.Color</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -268,7 +268,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class ROT.Display
+				Namespace ROT.Color
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -276,7 +276,7 @@ ul.inheritsList
 				
 				
 			
-				Visual map display
+				Color operations
 				
 				
 					<br /><i>Defined in: </i> &lt;rot.js&gt;.
@@ -285,8 +285,8 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Display.">
-				<caption>Class Summary</caption>
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Color.">
+				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
 						<th scope="col">Constructor Attributes</th>
@@ -298,7 +298,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROT.Display.html#constructor">ROT.Display</a></b>(options)
+								<b><a href="../symbols/ROT.Color.html#constructor">ROT.Color</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -314,7 +314,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Display.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Color.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -325,90 +325,63 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Display.html#clear">clear</a></b>()
-								</div>
-								<div class="description">Clear the whole display (cover it with background color)</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Display.html#computeFontSize">computeFontSize</a></b>(availWidth, availHeight)
-								</div>
-								<div class="description">Compute the maximum font size to fit into a set of given constraints</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Display.html#computeSize">computeSize</a></b>(availWidth, availHeight)
-								</div>
-								<div class="description">Compute the maximum width/height to fit into a set of given constraints</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Display.html#DEBUG">DEBUG</a></b>(x, y, what)
-								</div>
-								<div class="description">Debug helper, ideal as a map generator callback.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Display.html#draw">draw</a></b>(x, y, ch, fg, bg)
+								<div class="fixedFont">ROT.Color.<b><a href="../symbols/ROT.Color.html#.add">add</a></b>(color1, color2)
 								</div>
 								<div class="description"></div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Display.html#drawText">drawText</a></b>(x, y, text, maxWidth)
+								<div class="fixedFont">ROT.Color.<b><a href="../symbols/ROT.Color.html#.fromString">fromString</a></b>(str)
 								</div>
-								<div class="description">Draws a text at given position.</div>
+								<div class="description"></div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Display.html#getContainer">getContainer</a></b>()
+								<div class="fixedFont">ROT.Color.<b><a href="../symbols/ROT.Color.html#.mix">mix</a></b>(color1, color2, factor)
 								</div>
-								<div class="description">Returns the DOM node of this display</div>
+								<div class="description"></div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Display.html#getOptions">getOptions</a></b>()
+								<div class="fixedFont">ROT.Color.<b><a href="../symbols/ROT.Color.html#.multiply">multiply</a></b>(color1, color2)
 								</div>
-								<div class="description">Returns currently set options</div>
+								<div class="description"></div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Display.html#measureText">measureText</a></b>(text, maxWidth)
+								<div class="fixedFont">ROT.Color.<b><a href="../symbols/ROT.Color.html#.randomize">randomize</a></b>(color, diff)
 								</div>
-								<div class="description">Computes a width and height of a wrapped block of text.</div>
+								<div class="description"></div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Display.html#setOptions">setOptions</a></b>(options)
+								<div class="fixedFont">ROT.Color.<b><a href="../symbols/ROT.Color.html#.toHex">toHex</a></b>(color)
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">ROT.Color.<b><a href="../symbols/ROT.Color.html#.toRGB">toRGB</a></b>(color)
 								</div>
 								<div class="description"></div>
 							</td>
@@ -427,11 +400,11 @@ ul.inheritsList
 			
 			<div class="details"><a name="constructor"> </a>
 				<div class="sectionTitle">
-					Class Detail
+					Namespace Detail
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROT.Display</b>(options)
+						<b>ROT.Color</b>
 				</div>
 				
 				<div class="description">
@@ -442,77 +415,6 @@ ul.inheritsList
 				
 				
 				
-					
-						<dl class="detailList">
-						<dt class="heading">Parameters:</dt>
-						
-							<dt>
-								<span class="light fixedFont">{object}</span>  <b>options</b>
-								<i>Optional</i>
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								<span class="light fixedFont">{int}</span>  <b>options.width</b>
-								<i>Optional, Default: ROT.DEFAULT_WIDTH</i>
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								<span class="light fixedFont">{int}</span>  <b>options.height</b>
-								<i>Optional, Default: ROT.DEFAULT_HEIGHT</i>
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								<span class="light fixedFont">{int}</span>  <b>options.fontSize</b>
-								<i>Optional, Default: 15</i>
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								<span class="light fixedFont">{string}</span>  <b>options.fontFamily</b>
-								<i>Optional, Default: "monospace"</i>
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								<span class="light fixedFont">{string}</span>  <b>options.fontStyle</b>
-								<i>Optional, Default: ""</i>
-							</dt>
-								<dd>bold/italic/none/both</dd>
-						
-							<dt>
-								<span class="light fixedFont">{string}</span>  <b>options.fg</b>
-								<i>Optional, Default: "#ccc"</i>
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								<span class="light fixedFont">{string}</span>  <b>options.bg</b>
-								<i>Optional, Default: "#000"</i>
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								<span class="light fixedFont">{int}</span>  <b>options.fps</b>
-								<i>Optional, Default: 25</i>
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								<span class="light fixedFont">{float}</span>  <b>options.spacing</b>
-								<i>Optional, Default: 1</i>
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								<span class="light fixedFont">{string}</span>  <b>options.layout</b>
-								<i>Optional, Default: "rect"</i>
-							</dt>
-								<dd></dd>
-						
-						</dl>
 					
 					
 					
@@ -533,184 +435,11 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="clear"> </a>
-					<div class="fixedFont">
+					<a name=".add"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<b>clear</b>()
-					
-					</div>
-					<div class="description">
-						Clear the whole display (cover it with background color)
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="computeFontSize"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{int}</span>
-					<b>computeFontSize</b>(availWidth, availHeight)
-					
-					</div>
-					<div class="description">
-						Compute the maximum font size to fit into a set of given constraints
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{int}</span> <b>availWidth</b>
-									
-								</dt>
-								<dd>Maximum allowed pixel width</dd>
-							
-								<dt>
-									<span class="light fixedFont">{int}</span> <b>availHeight</b>
-									
-								</dt>
-								<dd>Maximum allowed pixel height</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{int}</span> fontSize
-FIXME hex layout</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="computeSize"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{int[2]}</span>
-					<b>computeSize</b>(availWidth, availHeight)
-					
-					</div>
-					<div class="description">
-						Compute the maximum width/height to fit into a set of given constraints
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{int}</span> <b>availWidth</b>
-									
-								</dt>
-								<dd>Maximum allowed pixel width</dd>
-							
-								<dt>
-									<span class="light fixedFont">{int}</span> <b>availHeight</b>
-									
-								</dt>
-								<dd>Maximum allowed pixel height</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{int[2]}</span> cellWidth,cellHeight
-FIXME hex layout</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="DEBUG"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>DEBUG</b>(x, y, what)
-					
-					</div>
-					<div class="description">
-						Debug helper, ideal as a map generator callback. Always bound to this.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{int}</span> <b>x</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<span class="light fixedFont">{int}</span> <b>y</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<span class="light fixedFont">{int}</span> <b>what</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="draw"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>draw</b>(x, y, ch, fg, bg)
+					<span class="light">ROT.Color.</span><b>add</b>(color1, color2)
 					
 					</div>
 					<div class="description">
@@ -726,34 +455,16 @@ FIXME hex layout</dd>
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{int}</span> <b>x</b>
+									<b>color1</b>
 									
 								</dt>
 								<dd></dd>
 							
 								<dt>
-									<span class="light fixedFont">{int}</span> <b>y</b>
+									<b>color2</b>
 									
 								</dt>
 								<dd></dd>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>ch</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>fg</b>
-									<i>Optional</i>
-								</dt>
-								<dd>foreground color</dd>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>bg</b>
-									<i>Optional</i>
-								</dt>
-								<dd>background color</dd>
 							
 							</dl>
 						
@@ -766,185 +477,11 @@ FIXME hex layout</dd>
 
 					<hr />
 				
-					<a name="drawText"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{int}</span>
-					<b>drawText</b>(x, y, text, maxWidth)
-					
-					</div>
-					<div class="description">
-						Draws a text at given position. Optionally wraps at a maximum length. Currently does not work with hex layout.
-						
-						
-					</div>
+					<a name=".fromString"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{int}</span> <b>x</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<span class="light fixedFont">{int}</span> <b>y</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>text</b>
-									
-								</dt>
-								<dd>May contain color/background format specifiers, %c{name}/%b{name}, both optional. %c{}/%b{} resets to default.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{int}</span> <b>maxWidth</b>
-									<i>Optional</i>
-								</dt>
-								<dd>wrap at what width?</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{int}</span> lines drawn</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="getContainer"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{node}</span>
-					<b>getContainer</b>()
-					
-					</div>
-					<div class="description">
-						Returns the DOM node of this display
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{node}</span> DOM node</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="getOptions"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{object}</span>
-					<b>getOptions</b>()
-					
-					</div>
-					<div class="description">
-						Returns currently set options
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{object}</span> Current options object</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="measureText"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{object}</span>
-					<b>measureText</b>(text, maxWidth)
-					
-					</div>
-					<div class="description">
-						Computes a width and height of a wrapped block of text.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>text</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<span class="light fixedFont">{int}</span> <b>maxWidth</b>
-									<i>Optional</i>
-								</dt>
-								<dd>wrap at what width?</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{object}</span> with "width" and "height"</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="setOptions"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>setOptions</b>(options)
+					<span class="light">ROT.Color.</span><b>fromString</b>(str)
 					
 					</div>
 					<div class="description">
@@ -960,7 +497,7 @@ FIXME hex layout</dd>
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>options</b>
+									<b>str</b>
 									
 								</dt>
 								<dd></dd>
@@ -973,12 +510,209 @@ FIXME hex layout</dd>
 						
 						
 						
+
+					<hr />
+				
+					<a name=".mix"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">ROT.Color.</span><b>mix</b>(color1, color2, factor)
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
 							<dl class="detailList">
-							<dt class="heading">See:</dt>
+							<dt class="heading">Parameters:</dt>
 							
-								<dd><a href="../symbols/ROT.Display.html">ROT.Display</a></dd>
+								<dt>
+									<b>color1</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>color2</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>factor</b>
+									
+								</dt>
+								<dd></dd>
 							
 							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".multiply"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">ROT.Color.</span><b>multiply</b>(color1, color2)
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>color1</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>color2</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".randomize"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">ROT.Color.</span><b>randomize</b>(color, diff)
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>color</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>diff</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".toHex"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">ROT.Color.</span><b>toHex</b>(color)
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>color</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".toRGB"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">ROT.Color.</span><b>toRGB</b>(color)
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>color</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
 						
 
 					

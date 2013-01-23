@@ -3,14 +3,14 @@
  * @param {function} reflectivityCallback Callback to retrieve cell reflectivity (0..1)
  * @param {object} [options]
  * @param {int} [options.passes=1] Number of passes. 1 equals to simple FOV of all light sources, >1 means a *highly simplified* radiosity-like algorithm.
- * @param {int} [options.emissionThreshold=0.15] Cells with emissivity > threshold will be treated as light source in the next pass.
+ * @param {int} [options.emissionThreshold=100] Cells with emissivity > threshold will be treated as light source in the next pass.
  * @param {int} [options.range=10] Max light range
  */
 ROT.Lighting = function(reflectivityCallback, options) {
 	this._reflectivityCallback = reflectivityCallback;
 	this._options = {
 		passes: 1,
-		emissionThreshold: 0.15,
+		emissionThreshold: 100,
 		range: 10
 	};
 	for (var p in options) {
@@ -144,11 +144,11 @@ ROT.Lighting.prototype._computeEmitters = function(litCells, doneCells) {
 		var emission = [];
 		var intensity = 0;
 		for (var i=0;i<3;i++) {
-			var part = color[i]*reflectivity;
+			var part = Math.round(color[i]*reflectivity);
 			emission[i] = part;
 			intensity += part;
 		}
-		if (intensity/(3*255) > this._options.emissionThreshold) { result[key] = emission; }
+		if (intensity > this._options.emissionThreshold) { result[key] = emission; }
 	}
 
 	return result;
@@ -179,7 +179,7 @@ ROT.Lighting.prototype._emitLightFromCell = function(x, y, color, litCells) {
 			litCells[fovKey] = result;
 		}
 
-		for (var i=0;i<3;i++) { result[i] += color[i]*formFactor; } /* add light color */
+		for (var i=0;i<3;i++) { result[i] += Math.round(color[i]*formFactor); } /* add light color */
 	}
 
 	return this;
