@@ -40,7 +40,7 @@ ROT.Lighting.prototype.setFOV = function(fov) {
  * @param {number[3]} color
  */
 ROT.Lighting.prototype.addLight = function(x, y, color) {
-	this._lights[x+","+y] = color;
+	this._lights[x+","+y] = (typeof(color) == "string" ? ROT.Color.fromString(color) : color);
 	return this;
 }
 
