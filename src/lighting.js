@@ -77,8 +77,7 @@ ROT.Lighting.prototype.compute = function(lightingCallback) {
 		var light = this._lights[key];
 		if (!(key in emittingCells)) { emittingCells[key] = [0, 0, 0]; }
 
-		var result = emittingCells[key];
-		for (var i=0;i<3;i++) { result[i] += light[i]; }
+		ROT.Color.add_(emittingCells[key], light);
 	}
 
 	for (var i=0;i<this._options.passes;i++) { /* main loop */

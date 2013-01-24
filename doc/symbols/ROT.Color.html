@@ -329,7 +329,16 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont">ROT.Color.<b><a href="../symbols/ROT.Color.html#.add">add</a></b>(color1, color2)
 								</div>
-								<div class="description"></div>
+								<div class="description">Add two or more colors</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">ROT.Color.<b><a href="../symbols/ROT.Color.html#.add_">add_</a></b>(color1, color2)
+								</div>
+								<div class="description">Add two or more colors, MODIFIES FIRST ARGUMENT</div>
 							</td>
 						</tr>
 					
@@ -345,9 +354,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">ROT.Color.<b><a href="../symbols/ROT.Color.html#.mix">mix</a></b>(color1, color2, factor)
+								<div class="fixedFont">ROT.Color.<b><a href="../symbols/ROT.Color.html#.interpolate">interpolate</a></b>(color1, color2, factor)
 								</div>
-								<div class="description"></div>
+								<div class="description">Interpolate (blend) two colors with a given factor</div>
 							</td>
 						</tr>
 					
@@ -356,7 +365,16 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont">ROT.Color.<b><a href="../symbols/ROT.Color.html#.multiply">multiply</a></b>(color1, color2)
 								</div>
-								<div class="description"></div>
+								<div class="description">Multiply (mix) two or more colors</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">ROT.Color.<b><a href="../symbols/ROT.Color.html#.multiply_">multiply_</a></b>(color1, color2)
+								</div>
+								<div class="description">Multiply (mix) two or more colors, MODIFIES FIRST ARGUMENT</div>
 							</td>
 						</tr>
 					
@@ -438,12 +456,12 @@ ul.inheritsList
 					<a name=".add"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					
+					<span class="light">{number[]}</span>
 					<span class="light">ROT.Color.</span><b>add</b>(color1, color2)
 					
 					</div>
 					<div class="description">
-						
+						Add two or more colors
 						
 						
 					</div>
@@ -455,13 +473,13 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>color1</b>
+									<span class="light fixedFont">{number[]}</span> <b>color1</b>
 									
 								</dt>
 								<dd></dd>
 							
 								<dt>
-									<b>color2</b>
+									<span class="light fixedFont">{number[]}</span> <b>color2</b>
 									
 								</dt>
 								<dd></dd>
@@ -471,6 +489,62 @@ ul.inheritsList
 						
 						
 						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{number[]}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".add_"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{number[]}</span>
+					<span class="light">ROT.Color.</span><b>add_</b>(color1, color2)
+					
+					</div>
+					<div class="description">
+						Add two or more colors, MODIFIES FIRST ARGUMENT
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number[]}</span> <b>color1</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{number[]}</span> <b>color2</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{number[]}</span> </dd>
+							
+							</dl>
 						
 						
 						
@@ -513,15 +587,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".mix"> </a>
+					<a name=".interpolate"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					
-					<span class="light">ROT.Color.</span><b>mix</b>(color1, color2, factor)
+					<span class="light">{number[]}</span>
+					<span class="light">ROT.Color.</span><b>interpolate</b>(color1, color2, factor)
 					
 					</div>
 					<div class="description">
-						
+						Interpolate (blend) two colors with a given factor
 						
 						
 					</div>
@@ -533,28 +607,35 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>color1</b>
+									<span class="light fixedFont">{number[]}</span> <b>color1</b>
 									
 								</dt>
 								<dd></dd>
 							
 								<dt>
-									<b>color2</b>
+									<span class="light fixedFont">{number[]}</span> <b>color2</b>
 									
 								</dt>
 								<dd></dd>
 							
 								<dt>
-									<b>factor</b>
-									
+									<span class="light fixedFont">{float}</span> <b>factor</b>
+									<i>Optional, Default: 0.5</i>
 								</dt>
-								<dd></dd>
+								<dd>0..1</dd>
 							
 							</dl>
 						
 						
 						
 						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{number[]}</span> </dd>
+							
+							</dl>
 						
 						
 						
@@ -564,12 +645,12 @@ ul.inheritsList
 					<a name=".multiply"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					
+					<span class="light">{number[]}</span>
 					<span class="light">ROT.Color.</span><b>multiply</b>(color1, color2)
 					
 					</div>
 					<div class="description">
-						
+						Multiply (mix) two or more colors
 						
 						
 					</div>
@@ -581,13 +662,13 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>color1</b>
+									<span class="light fixedFont">{number[]}</span> <b>color1</b>
 									
 								</dt>
 								<dd></dd>
 							
 								<dt>
-									<b>color2</b>
+									<span class="light fixedFont">{number[]}</span> <b>color2</b>
 									
 								</dt>
 								<dd></dd>
@@ -597,6 +678,62 @@ ul.inheritsList
 						
 						
 						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{number[]}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".multiply_"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{number[]}</span>
+					<span class="light">ROT.Color.</span><b>multiply_</b>(color1, color2)
+					
+					</div>
+					<div class="description">
+						Multiply (mix) two or more colors, MODIFIES FIRST ARGUMENT
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number[]}</span> <b>color1</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{number[]}</span> <b>color2</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{number[]}</span> </dd>
+							
+							</dl>
 						
 						
 						
@@ -729,7 +866,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Jan 23 2013 16:18:14 GMT+0100 (CET)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Jan 24 2013 10:06:03 GMT+0100 (CET)
 		</div>
 	</body>
 </html>

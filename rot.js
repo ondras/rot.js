@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.3~dev, generated on Thu Jan 24 09:40:02 CET 2013.
+	Version 0.3~dev, generated on Thu Jan 24 10:05:56 CET 2013.
 */
 
 /**
@@ -3044,8 +3044,7 @@ ROT.Lighting.prototype.compute = function(lightingCallback) {
 		var light = this._lights[key];
 		if (!(key in emittingCells)) { emittingCells[key] = [0, 0, 0]; }
 
-		var result = emittingCells[key];
-		for (var i=0;i<3;i++) { result[i] += light[i]; }
+		ROT.Color.add_(emittingCells[key], light);
 	}
 
 	for (var i=0;i<this._options.passes;i++) { /* main loop */
