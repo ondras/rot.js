@@ -120,8 +120,18 @@ ROT.Color = {
 		return result;
 	},
 
+	/**
+	 * Create a new random color based on this one
+	 * @param {number[]} color
+	 * @param {number[]} diff Set of standard deviations
+	 * @returns {number[]}
+	 */
 	randomize: function(color, diff) {
-
+		var result = color.clone();
+		for (var i=0;i<3;i++) {
+			result[i] += Math.round(ROT.RNG.getNormal(0, diff[i]));
+		}
+		return result;
 	},
 
 	toRGB: function(color) {
