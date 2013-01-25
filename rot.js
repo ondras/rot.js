@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.3~dev, generated on Thu Jan 24 13:39:09 CET 2013.
+	Version 0.4~dev, generated on Fri Jan 25 12:15:13 CET 2013.
 */
 
 /**
@@ -2938,9 +2938,10 @@ ROT.Color = {
 	 * @returns {number[]}
 	 */
 	randomize: function(color, diff) {
+		if (!(diff instanceof Array)) { diff = ROT.RNG.getNormal(0, diff); }
 		var result = color.clone();
 		for (var i=0;i<3;i++) {
-			result[i] += Math.round(ROT.RNG.getNormal(0, diff[i]));
+			result[i] += (diff instanceof Array ? Math.round(ROT.RNG.getNormal(0, diff[i])) : diff);
 		}
 		return result;
 	},

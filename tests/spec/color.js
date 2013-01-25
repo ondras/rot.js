@@ -138,4 +138,12 @@ describe("Color", function() {
 			expect(ROT.Color.interpolate([10, 20, 40], [20, 30, 40])).toEqual([15, 25, 40]);
 		});
 	});
+
+	describe("randomize", function() {
+		it("should maintain constant diff when a number is used", function() {
+			var c = ROT.Color.randomize([100, 100, 100], 100);
+			expect(c[0]).toBe(c[1]);
+			expect(c[1]).toBe(c[2]);
+		});
+	});
 });

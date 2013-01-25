@@ -119,9 +119,10 @@ ROT.Color = {
 	 * @returns {number[]}
 	 */
 	randomize: function(color, diff) {
+		if (!(diff instanceof Array)) { diff = ROT.RNG.getNormal(0, diff); }
 		var result = color.clone();
 		for (var i=0;i<3;i++) {
-			result[i] += Math.round(ROT.RNG.getNormal(0, diff[i]));
+			result[i] += (diff instanceof Array ? Math.round(ROT.RNG.getNormal(0, diff[i])) : diff);
 		}
 		return result;
 	},
