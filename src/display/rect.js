@@ -19,13 +19,35 @@ ROT.Display.Rect.prototype.compute = function(options) {
 }
 
 ROT.Display.Rect.prototype.clear = function(x, y) {
-	var cx = (x+0.5) * this._spacingX;
-	var cy = (y+0.5) * this._spacingY;
-	this._context.fillRect(cx-this._spacingX/2, cy-this._spacingY/2, this._spacingX, this._spacingY);
+	this._context.fillRect(x*this._spacingX, y*this._spacingY, this._spacingX, this._spacingY);
 }
 
 ROT.Display.Rect.prototype.draw = function(x, y, ch) {
 	var cx = (x+0.5) * this._spacingX;
 	var cy = (y+0.5) * this._spacingY;
 	this._context.fillText(ch, cx, cy);
+}
+
+ROT.Display.Rect.prototype.computeSize = function(availWidth, availHeight, options) {
+	var width = Math.floor(availWidth / this._spacingX);
+	var height = Math.floor(availHeight / this._spacingY);
+	return [width, height]
+}
+
+ROT.Display.Rect.prototype.computeFontSize = function(availWidth, availHeight, options) {
+	var boxWidth = Math.floor(availWidth / options.width);
+	var boxHeight = Math.floor(availHeight / options.height);
+
+	/* compute char ratio */
+	var oldFont = this._context.font;
+	this._context.font = "100px " + options.fontFamily;
+	var width = Math.ceil(this._context.measureText("W").width);
+	this._context.font = oldFont;
+	var ratio = width / 100;
+		
+	var widthFraction = ratio * boxHeight / boxWidth;
+	if (widthFraction > 1) { /* too wide with current aspect ratio */
+		boxHeight = Math.floor(boxHeight / widthFraction);
+	}
+	return Math.floor(boxHeight / options.spacing);
 }

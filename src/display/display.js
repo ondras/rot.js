@@ -100,13 +100,9 @@ ROT.Display.prototype.getContainer = function() {
  * @param {int} availWidth Maximum allowed pixel width
  * @param {int} availHeight Maximum allowed pixel height
  * @returns {int[2]} cellWidth,cellHeight
- * FIXME hex layout
- * FIXME backend
  */
 ROT.Display.prototype.computeSize = function(availWidth, availHeight) {
-	var width = Math.floor(availWidth / this._spacingX);
-	var height = Math.floor(availHeight / this._spacingY);
-	return [width, height]
+	return this._backend.computeSize(availWidth, availHeight, this._options);
 }
 
 /**
@@ -114,25 +110,9 @@ ROT.Display.prototype.computeSize = function(availWidth, availHeight) {
  * @param {int} availWidth Maximum allowed pixel width
  * @param {int} availHeight Maximum allowed pixel height
  * @returns {int} fontSize
- * FIXME hex layout
- * FIXME backend
  */
 ROT.Display.prototype.computeFontSize = function(availWidth, availHeight) {
-	var boxWidth = Math.floor(availWidth / this._options.width);
-	var boxHeight = Math.floor(availHeight / this._options.height);
-
-	/* compute char ratio */
-	var oldFont = this._context.font;
-	this._context.font = "100px " + this._options.fontFamily;
-	var width = Math.ceil(this._context.measureText("W").width);
-	this._context.font = oldFont;
-	var ratio = width / 100;
-		
-	var widthFraction = ratio * boxHeight / boxWidth;
-	if (widthFraction > 1) { /* too wide with current aspect ratio */
-		boxHeight = Math.floor(boxHeight / widthFraction);
-	}
-	return Math.floor(boxHeight / this._options.spacing);
+	return this._backend.computeFontSize(availWidth, availHeight, this._options);
 }
 
 /**

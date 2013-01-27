@@ -32,6 +32,15 @@ ROT.Display.Hex.prototype.draw = function(x, y, ch) {
 	this._context.fillText(ch, cx, cy);
 }
 
+
+ROT.Display.Hex.prototype.computeSize = function(availWidth, availHeight, options) {
+	/* FIXME */
+}
+
+ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight, options) {
+	/* FIXME */
+}
+
 ROT.Display.Hex.prototype._fill = function(cx, cy) {
 	var a = this._hexSize;
 	
