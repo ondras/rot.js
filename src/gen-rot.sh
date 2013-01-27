@@ -1,7 +1,6 @@
 #!/bin/sh
 LIST="
 rot.js
-display.js
 text.js
 scheduler.js
 engine.js
@@ -11,6 +10,10 @@ js/number.js
 js/string.js
 js/object.js
 js/function.js
+display/display.js
+display/backend.js
+display/rect.js
+display/hex.js
 rng.js
 stringgenerator.js
 map/map.js

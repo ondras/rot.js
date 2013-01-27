@@ -13,15 +13,12 @@
  * @param {string} [options.layout="rect"]
  */
 ROT.Display = function(options) {
-	this._canvas = document.createElement("canvas");
-	this._context = this._canvas.getContext("2d");
+	var canvas = document.createElement("canvas");
+	this._context = canvas.getContext("2d");
 	this._data = {};
 	this._dirty = false; /* false = nothing, true = all, object = dirty cells */
-	this._charWidth = 0;
-	this._hexSize = 0;
-	this._hexSpacingX = 0;
-	this._hexSpacingY = 0;
 	this._options = {};
+	this._backend = null;
 	
 	var defaultOptions = {
 		width: ROT.DEFAULT_WIDTH,
@@ -66,8 +63,17 @@ ROT.Display.prototype.clear = function() {
  */
 ROT.Display.prototype.setOptions = function(options) {
 	for (var p in options) { this._options[p] = options[p]; }
-	if (options.width || options.height || options.fontSize || options.fontFamily || options.spacing) { 
-		this._compute();
+	if (options.width || options.height || options.fontSize || options.fontFamily || options.spacing || options.layout) {
+		if (options.layout) { 
+			this._backend = new ROT.Display[options.layout.capitalize()](this._context);
+		}
+
+		var font = (this._options.fontStyle ? this._options.fontStyle + " " : "") + this._options.fontSize + "px " + this._options.fontFamily;
+		this._context.font = font;
+		this._backend.compute(this._options);
+		this._context.font = font;
+		this._context.textAlign = "center";
+		this._context.textBaseline = "middle";
 		this._dirty = true;
 	}
 	return this;
@@ -86,7 +92,7 @@ ROT.Display.prototype.getOptions = function() {
  * @returns {node} DOM node
  */
 ROT.Display.prototype.getContainer = function() {
-	return this._canvas;
+	return this._context.canvas;
 }
 
 /**
@@ -95,6 +101,7 @@ ROT.Display.prototype.getContainer = function() {
  * @param {int} availHeight Maximum allowed pixel height
  * @returns {int[2]} cellWidth,cellHeight
  * FIXME hex layout
+ * FIXME backend
  */
 ROT.Display.prototype.computeSize = function(availWidth, availHeight) {
 	var width = Math.floor(availWidth / this._spacingX);
@@ -108,6 +115,7 @@ ROT.Display.prototype.computeSize = function(availWidth, availHeight) {
  * @param {int} availHeight Maximum allowed pixel height
  * @returns {int} fontSize
  * FIXME hex layout
+ * FIXME backend
  */
 ROT.Display.prototype.computeFontSize = function(availWidth, availHeight) {
 	var boxWidth = Math.floor(availWidth / this._options.width);
@@ -158,6 +166,7 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 	var cx = x;
 	var cy = y;
 	var lines = 1;
+	if (!maxWidth) { maxWidth = this._options.width-x; }
 
 	var tokens = ROT.Text.tokenize(text, maxWidth);
 
@@ -183,21 +192,10 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 				cy++;
 				lines++
 			break;
-
 		}
 	}
 
 	return lines;
-}
-
-/**
- * Computes a width and height of a wrapped block of text.
- * @param {string} text
- * @param {int} [maxWidth] wrap at what width?
- * @returns {object} with "width" and "height"
- */
-ROT.Display.prototype.measureText = function(text, maxWidth) {
-	return ROT.Text.measure(text, maxWidth);
 }
 
 /**
@@ -208,7 +206,7 @@ ROT.Display.prototype._tick = function() {
 
 	if (this._dirty === true) { /* draw all */
 		this._context.fillStyle = this._options.bg;
-		this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
+		this._context.fillRect(0, 0, this._context.canvas.width, this._context.canvas.height);
 
 		for (var id in this._data) { /* redraw cached data */
 			this._draw(id, false);
@@ -235,72 +233,13 @@ ROT.Display.prototype._draw = function(key, clearBefore) {
 	var fg = data[3];
 	var bg = data[4];
 
-	switch (this._options.layout) {
-		case "rect":
-			var cx = (x+0.5) * this._spacingX;
-			var cy = (y+0.5) * this._spacingY;
-			
-			if (clearBefore || bg != this._options.bg) {
-				this._context.fillStyle = bg;
-				this._context.fillRect(cx-this._spacingX/2, cy-this._spacingY/2, this._spacingX, this._spacingY);
-			}
-		break;
-		case "hex":
-			var cx = (x+1) * this._spacingX;
-			var cy = y * this._spacingY + this._hexSize;
-			if (clearBefore || bg != this._options.bg) {
-				this._context.fillStyle = bg;
-				this._fillHex(cx, cy);
-			}
-		break;
+	if (clearBefore || bg != this._options.bg) { 
+		this._context.fillStyle = bg;
+		this._backend.clear(x, y); 
 	}
-
+	
 	if (!ch) { return; }
-	
+
 	this._context.fillStyle = fg;
-	this._context.fillText(ch, cx, cy);
-}
-
-ROT.Display.prototype._fillHex = function(cx, cy) {
-	var a = this._hexSize;
-	
-	this._context.beginPath();
-	this._context.moveTo(cx, cy-a);
-	this._context.lineTo(cx + this._spacingX, cy-a/2);
-	this._context.lineTo(cx + this._spacingX, cy+a/2);
-	this._context.lineTo(cx, cy+a);
-	this._context.lineTo(cx - this._spacingX, cy+a/2);
-	this._context.lineTo(cx - this._spacingX, cy-a/2);
-	this._context.lineTo(cx, cy-a);
-	this._context.fill();
-}
-
-/**
- * Re-compute internal sizing variables, based on current options
- */
-ROT.Display.prototype._compute = function() {
-	/* compute char width */
-	var font = (this._options.fontStyle ? this._options.fontStyle + " " : "") + this._options.fontSize + "px " + this._options.fontFamily;
-	this._context.font = font;
-	this._charWidth = Math.ceil(this._context.measureText("W").width);
-	
-	switch (this._options.layout) {
-		case "rect":
-			this._spacingX = Math.ceil(this._options.spacing * this._charWidth);
-			this._spacingY = Math.ceil(this._options.spacing * this._options.fontSize);
-			this._canvas.width = this._options.width * this._spacingX;
-			this._canvas.height = this._options.height * this._spacingY;
-		break;
-		case "hex":
-			this._hexSize = Math.floor(this._options.spacing * (this._options.fontSize + this._charWidth/Math.sqrt(3)) / 2);
-			this._spacingX = this._hexSize * Math.sqrt(3) / 2;
-			this._spacingY = this._hexSize * 1.5;
-			this._canvas.width = Math.ceil( (this._options.width + 1) * this._spacingX );
-			this._canvas.height = Math.ceil( (this._options.height - 1) * this._spacingY + 2*this._hexSize );
-		break;
-	}
-	
-	this._context.font = font;
-	this._context.textAlign = "center";
-	this._context.textBaseline = "middle";
+	this._backend.draw(x, y, ch);
 }

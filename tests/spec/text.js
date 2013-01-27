@@ -102,5 +102,5 @@ describe("Text", function() {
 			expect(size.width).toEqual(4);
 			expect(size.height).toEqual(2);
 		});
-	})
+	});
 });
