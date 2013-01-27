@@ -9,10 +9,7 @@ ROT.Display.Backend = function(context) {
 ROT.Display.Backend.prototype.compute = function(options) {
 }
 
-ROT.Display.Backend.prototype.clear = function(x, y) {
-}
-
-ROT.Display.Backend.prototype.draw = function(x, y, ch) {
+ROT.Display.Backend.prototype.draw = function(data, clearBefore) {
 }
 
 ROT.Display.Backend.prototype.computeSize = function(availWidth, availHeight, options) {

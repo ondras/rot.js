@@ -207,19 +207,7 @@ ROT.Display.prototype._tick = function() {
  */
 ROT.Display.prototype._draw = function(key, clearBefore) {
 	var data = this._data[key];
-	var x = data[0];
-	var y = data[1];
-	var ch = data[2];
-	var fg = data[3];
-	var bg = data[4];
+	if (data[4] != this._options.bg) { clearBefore = true; }
 
-	if (clearBefore || bg != this._options.bg) { 
-		this._context.fillStyle = bg;
-		this._backend.clear(x, y); 
-	}
-	
-	if (!ch) { return; }
-
-	this._context.fillStyle = fg;
-	this._backend.draw(x, y, ch);
+	this._backend.draw(data, clearBefore);
 }

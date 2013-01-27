@@ -7,10 +7,15 @@ ROT.Display.Rect = function(context) {
 	
 	this._spacingX = 0;
 	this._spacingY = 0;
+	this._canvasCache = {};
 }
 ROT.Display.Rect.extend(ROT.Display.Backend);
 
+ROT.Display.Rect.cache = false;
+
 ROT.Display.Rect.prototype.compute = function(options) {
+	this._canvasCache = {};
+
 	var charWidth = Math.ceil(this._context.measureText("W").width);
 	this._spacingX = Math.ceil(options.spacing * charWidth);
 	this._spacingY = Math.ceil(options.spacing * options.fontSize);
@@ -18,14 +23,61 @@ ROT.Display.Rect.prototype.compute = function(options) {
 	this._context.canvas.height = options.height * this._spacingY;
 }
 
-ROT.Display.Rect.prototype.clear = function(x, y) {
-	this._context.fillRect(x*this._spacingX, y*this._spacingY, this._spacingX, this._spacingY);
+ROT.Display.Rect.prototype.draw = function(data, clearBefore) {
+	if (this.constructor.cache) {
+		this._drawWithCache(data, clearBefore);
+	} else {
+		this._drawNoCache(data, clearBefore);
+	}
 }
 
-ROT.Display.Rect.prototype.draw = function(x, y, ch) {
-	var cx = (x+0.5) * this._spacingX;
-	var cy = (y+0.5) * this._spacingY;
-	this._context.fillText(ch, cx, cy);
+ROT.Display.Rect.prototype._drawWithCache = function(data, clearBefore) {
+	var x = data[0];
+	var y = data[1];
+	var ch = data[2];
+	var fg = data[3];
+	var bg = data[4];
+
+	var hash = ""+ch+fg+bg;
+	if (hash in this._canvasCache) {
+		var canvas = this._canvasCache[hash];
+	} else {
+		var canvas = document.createElement("canvas");
+		var ctx = canvas.getContext("2d");
+		canvas.width = this._spacingX;
+		canvas.height = this._spacingY;
+		ctx.fillStyle = bg;
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		
+		if (ch) {
+			ctx.fillStyle = fg;
+			ctx.font = this._context.font;
+			ctx.textAlign = "center";
+			ctx.textBaseline = "middle";
+			ctx.fillText(ch, this._spacingX/2, this._spacingY/2);
+		}
+		this._canvasCache[hash] = canvas;
+	}
+	
+	this._context.drawImage(canvas, x*this._spacingX, y*this._spacingY);
+}
+
+ROT.Display.Rect.prototype._drawNoCache = function(data, clearBefore) {
+	var x = data[0];
+	var y = data[1];
+	var ch = data[2];
+	var fg = data[3];
+	var bg = data[4];
+
+	if (clearBefore) { 
+		this._context.fillStyle = bg;
+		this._context.fillRect(x*this._spacingX, y*this._spacingY, this._spacingX, this._spacingY);
+	}
+	
+	if (!ch) { return; }
+
+	this._context.fillStyle = fg;
+	this._context.fillText(ch, (x+0.5) * this._spacingX, (y+0.5) * this._spacingY);
 }
 
 ROT.Display.Rect.prototype.computeSize = function(availWidth, availHeight, options) {

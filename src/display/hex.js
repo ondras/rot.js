@@ -20,15 +20,24 @@ ROT.Display.Hex.prototype.compute = function(options) {
 	this._context.canvas.height = Math.ceil( (options.height - 1) * this._spacingY + 2*this._hexSize );
 }
 
-ROT.Display.Hex.prototype.clear = function(x, y) {
-	var cx = (x+1) * this._spacingX;
-	var cy = y * this._spacingY + this._hexSize;
-	this._fill(cx, cy);
-}
+ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
+	var x = data[0];
+	var y = data[1];
+	var ch = data[2];
+	var fg = data[3];
+	var bg = data[4];
 
-ROT.Display.Hex.prototype.draw = function(x, y, ch) {
 	var cx = (x+1) * this._spacingX;
 	var cy = y * this._spacingY + this._hexSize;
+
+	if (clearBefore) { 
+		this._context.fillStyle = bg;
+		this._fill(cx, cy);
+	}
+	
+	if (!ch) { return; }
+
+	this._context.fillStyle = fg;
 	this._context.fillText(ch, cx, cy);
 }
 
