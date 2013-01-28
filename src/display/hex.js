@@ -42,11 +42,11 @@ ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
 }
 
 
-ROT.Display.Hex.prototype.computeSize = function(availWidth, availHeight, options) {
+ROT.Display.Hex.prototype.computeSize = function(availWidth, availHeight) {
 	/* FIXME */
 }
 
-ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight, options) {
+ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
 	/* FIXME */
 }
 

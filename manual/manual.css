@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Droid+Serif:400,400italic,700,700italic|Inconsolata|Droid+Sans+Mono);
+@import url(http://fonts.googleapis.com/css?family=Droid+Serif:400,400italic,700,700italic|Inconsolata);
 
 body {
 	background-color: #606060;
@@ -35,7 +35,7 @@ li {
 #menu {
 	position: fixed;
 	left: 0px;
-	top: 40px;
+	top: 10px;
 	width: 180px;
 }
 
@@ -203,4 +203,8 @@ li {
 .comparison li.bad:before {
 	content: "✘ ";
 	color: #f00;
+}
+
+.performance li {
+	margin-bottom: 1em;
 }

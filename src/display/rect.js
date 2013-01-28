@@ -8,6 +8,7 @@ ROT.Display.Rect = function(context) {
 	this._spacingX = 0;
 	this._spacingY = 0;
 	this._canvasCache = {};
+	this._options = {};
 }
 ROT.Display.Rect.extend(ROT.Display.Backend);
 
@@ -15,6 +16,7 @@ ROT.Display.Rect.cache = false;
 
 ROT.Display.Rect.prototype.compute = function(options) {
 	this._canvasCache = {};
+	this._options = options;
 
 	var charWidth = Math.ceil(this._context.measureText("W").width);
 	this._spacingX = Math.ceil(options.spacing * charWidth);
@@ -80,19 +82,19 @@ ROT.Display.Rect.prototype._drawNoCache = function(data, clearBefore) {
 	this._context.fillText(ch, (x+0.5) * this._spacingX, (y+0.5) * this._spacingY);
 }
 
-ROT.Display.Rect.prototype.computeSize = function(availWidth, availHeight, options) {
+ROT.Display.Rect.prototype.computeSize = function(availWidth, availHeight) {
 	var width = Math.floor(availWidth / this._spacingX);
 	var height = Math.floor(availHeight / this._spacingY);
-	return [width, height]
+	return [width, height];
 }
 
-ROT.Display.Rect.prototype.computeFontSize = function(availWidth, availHeight, options) {
-	var boxWidth = Math.floor(availWidth / options.width);
-	var boxHeight = Math.floor(availHeight / options.height);
+ROT.Display.Rect.prototype.computeFontSize = function(availWidth, availHeight) {
+	var boxWidth = Math.floor(availWidth / this._options.width);
+	var boxHeight = Math.floor(availHeight / this._options.height);
 
 	/* compute char ratio */
 	var oldFont = this._context.font;
-	this._context.font = "100px " + options.fontFamily;
+	this._context.font = "100px " + this._options.fontFamily;
 	var width = Math.ceil(this._context.measureText("W").width);
 	this._context.font = oldFont;
 	var ratio = width / 100;
@@ -101,5 +103,5 @@ ROT.Display.Rect.prototype.computeFontSize = function(availWidth, availHeight, o
 	if (widthFraction > 1) { /* too wide with current aspect ratio */
 		boxHeight = Math.floor(boxHeight / widthFraction);
 	}
-	return Math.floor(boxHeight / options.spacing);
+	return Math.floor(boxHeight / this._options.spacing);
 }
