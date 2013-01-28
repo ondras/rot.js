@@ -97,6 +97,10 @@ var Manual = {
 			var link = links[i];
 			if (link.href.lastIndexOf(what) == link.href.length - what.length) {
 				OZ.DOM.addClass(link, "active");
+				var parent = link.parentNode.parentNode.parentNode;
+				if (parent.nodeName.toLowerCase() == "li") {
+					OZ.DOM.addClass(parent.querySelector("a"), "active");
+				}
 			} else {
 				OZ.DOM.removeClass(link, "active");
 			}
