@@ -1,5 +1,5 @@
 /**
- * Asynchronous main loop
+ * @class Asynchronous main loop
  */
 ROT.Engine = function() {
 	this._scheduler = new ROT.Scheduler();
