@@ -17,7 +17,7 @@
 	text-decoration: none;
 	padding-left: 16px;
 	background-color: #000;
-	line-height: 175%;
+	line-height: 200%;
 }
 
 #menu h2 {
@@ -41,12 +41,12 @@
 	top: 0;
 }
 
-#menu li {
-	position: relative;
+#menu a:not(:last-child) {
+	border-right: 3px solid #fff;
 }
 
-#menu li:hover > a {
-	background-color: #333;
+#menu li {
+	position: relative;
 }
 
 #menu li:first-child > * {
@@ -64,12 +64,15 @@
 	z-index: 0;
 }
 
-#menu li:hover ul {
-	display: block;
+/* item hovers */
+
+#menu li:hover > a {
+	background-color: #333;
 }
 
 /* main menu transitions */
-#menu li {
+
+#menu li, #menu h2 {
 	-webkit-transition: all 1s;
 	-moz-transition: all 1s;
 	transition: all 1s;
@@ -101,15 +104,22 @@
 	transform: none !important;
 }
 
+#menu:hover h2 {
+	border-top-left-radius: 0px;
+}
 
 /* submenu transitions */
-
-#menu li:hover ul {
-	left: 180px;
-}
 
 #menu li ul {
 	-webkit-transition: all 0.5s;
 	-moz-transition: all 0.5s;
 	transition: all 0.5s;
+}
+
+#menu li:hover ul {
+	display: block;
+}
+
+#menu li:hover ul {
+	left: 180px;
 }

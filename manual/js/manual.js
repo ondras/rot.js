@@ -118,6 +118,9 @@ var Manual = {
 	},
 	
 	init: function() {
+		var year = new Date().getFullYear();
+		document.querySelector("#year").innerHTML = year;
+
 		OZ.Request("../VERSION", function(data, status) {
 			if (status != 200) { return; }
 			document.querySelector("h1").innerHTML += "<span>v" + data.trim() + "</span>";
