@@ -86,12 +86,6 @@ var ROT = {
 	VK_RIGHT: 39, 
 	/** Down arrow. */
 	VK_DOWN: 40, 
-	/***/
-	VK_SELECT: 41,
-	/***/
-	VK_PRINT: 42,
-	/***/
-	VK_EXECUTE: 43,
 	/** Print Screen key. */
 	VK_PRINTSCREEN: 44, 
 	/** Ins(ert) key. */

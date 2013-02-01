@@ -50,9 +50,9 @@ var reflectivity = function(x, y) {
 }
 var lighting = new ROT.Lighting(reflectivity, {range:12, passes:2});
 lighting.setFOV(fov);
-lighting.addLight(12, 12, [240, 240, 30]);
-lighting.addLight(20, 20, [240, 60, 60]);
-lighting.addLight(45, 25, [200, 200, 200]);
+lighting.setLight(12, 12, [240, 240, 30]);
+lighting.setLight(20, 20, [240, 60, 60]);
+lighting.setLight(45, 25, [200, 200, 200]);
 
 var lightingCallback = function(x, y, color) {
 	lightData[x+","+y] = color;

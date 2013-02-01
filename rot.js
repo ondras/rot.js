@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.4~dev, generated on Tue Jan 29 12:43:02 CET 2013.
+	Version 0.4~dev, generated on Fri Feb  1 15:42:01 CET 2013.
 */
 
 /**
@@ -91,12 +91,6 @@ var ROT = {
 	VK_RIGHT: 39, 
 	/** Down arrow. */
 	VK_DOWN: 40, 
-	/***/
-	VK_SELECT: 41,
-	/***/
-	VK_PRINT: 42,
-	/***/
-	VK_EXECUTE: 43,
 	/** Print Screen key. */
 	VK_PRINTSCREEN: 44, 
 	/** Ins(ert) key. */
@@ -3568,23 +3562,19 @@ ROT.Lighting.prototype.setFOV = function(fov) {
 }
 
 /**
- * Define a new light source
+ * Set (or remove) a light source
  * @param {int} x
  * @param {int} y
- * @param {number[3]} color
+ * @param {null || string || number[3]} color
  */
-ROT.Lighting.prototype.addLight = function(x, y, color) {
-	this._lights[x+","+y] = (typeof(color) == "string" ? ROT.Color.fromString(color) : color);
-	return this;
-}
+ROT.Lighting.prototype.setLight = function(x, y, color) {
+	var key = x+","+y;
 
-/**
- * Remove an existing light source
- * @param {int} x
- * @param {int} y
- */
-ROT.Lighting.prototype.removeLight = function(x, y) {
-	delete this._lights[x+","+y];
+	if (color) {
+		this._lights[key] = (typeof(color) == "string" ? ROT.Color.fromString(color) : color);
+	} else {
+		delete this._lights[key];
+	}
 	return this;
 }
 

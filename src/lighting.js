@@ -34,23 +34,19 @@ ROT.Lighting.prototype.setFOV = function(fov) {
 }
 
 /**
- * Define a new light source
+ * Set (or remove) a light source
  * @param {int} x
  * @param {int} y
- * @param {number[3]} color
+ * @param {null || string || number[3]} color
  */
-ROT.Lighting.prototype.addLight = function(x, y, color) {
-	this._lights[x+","+y] = (typeof(color) == "string" ? ROT.Color.fromString(color) : color);
-	return this;
-}
+ROT.Lighting.prototype.setLight = function(x, y, color) {
+	var key = x+","+y;
 
-/**
- * Remove an existing light source
- * @param {int} x
- * @param {int} y
- */
-ROT.Lighting.prototype.removeLight = function(x, y) {
-	delete this._lights[x+","+y];
+	if (color) {
+		this._lights[key] = (typeof(color) == "string" ? ROT.Color.fromString(color) : color);
+	} else {
+		delete this._lights[key];
+	}
 	return this;
 }
 
