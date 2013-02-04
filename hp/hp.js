@@ -26,6 +26,7 @@ var links = {
 	"ondrej zara": "http://ondras.zarovi.cz/",
 	"libtcod": "http://doryen.eptalys.net/libtcod/",
 	"tests": "../tests/",
+	"tutorial": "http://www.roguebasin.roguelikedevelopment.org/index.php?title=Rot.js_tutorial",
 	"$$$": "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7WXVKF3ZJ9FZE"
 };
 var spans = document.querySelectorAll("span");
