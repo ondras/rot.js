@@ -8,10 +8,13 @@ ROT.Display.Hex = function(context) {
 	this._spacingX = 0;
 	this._spacingY = 0;
 	this._hexSize = 0;
+	this._options = {};
 }
 ROT.Display.Hex.extend(ROT.Display.Backend);
 
 ROT.Display.Hex.prototype.compute = function(options) {
+	this._options = options;
+
 	var charWidth = Math.ceil(this._context.measureText("W").width);
 	this._hexSize = Math.floor(options.spacing * (options.fontSize + charWidth/Math.sqrt(3)) / 2);
 	this._spacingX = this._hexSize * Math.sqrt(3) / 2;
@@ -43,11 +46,25 @@ ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
 
 
 ROT.Display.Hex.prototype.computeSize = function(availWidth, availHeight) {
-	/* FIXME */
+	var width = Math.floor(availWidth / this._spacingX) - 1;
+	var height = Math.floor((availHeight - 2*this._hexSize) / this._spacingY + 1);
+	return [width, height];
 }
 
 ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
-	/* FIXME */
+	var hexSizeWidth = 2*availWidth / ((this._options.width+1) * Math.sqrt(3)) - 1;
+	var hexSizeHeight = availHeight / (2 + 1.5*(this._options.height-1));
+	var hexSize = Math.min(hexSizeWidth, hexSizeHeight);
+
+	/* compute char ratio */
+	var oldFont = this._context.font;
+	this._context.font = "100px " + this._options.fontFamily;
+	var width = Math.ceil(this._context.measureText("W").width);
+	this._context.font = oldFont;
+	var ratio = width / 100;
+
+	var fontSize = 2*hexSize / (this._options.spacing * (1 + ratio / Math.sqrt(3)));
+	return Math.ceil(fontSize);
 }
 
 ROT.Display.Hex.prototype._fill = function(cx, cy) {
