@@ -146,4 +146,23 @@ describe("Color", function() {
 			expect(c[1]).toBe(c[2]);
 		});
 	});
+
+	describe("rgb2hsl and hsl2rgb", function() {
+		it("should correctly convert to HSL and back", function() {
+			var rgb = [
+				[255, 255, 255],
+				[0, 0, 0],
+				[255, 0, 0],
+				[30, 30, 30],
+				[100, 120, 140]
+			]
+
+			while (rgb.length) {
+				var color = rgb.pop();
+				var hsl = ROT.Color.rgb2hsl(color);
+				var rgb2 = ROT.Color.hsl2rgb(hsl);
+				expect(rgb2).toEqual(color);
+			}
+		});
+	});
 });

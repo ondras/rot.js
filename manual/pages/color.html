@@ -20,6 +20,14 @@ SHOW(
 	ROT.Color.toHex([10, 128, 230])
 );</div>
 
+<h3>Converting between RGB and HSL</h3>
+
+<div class="example">
+SHOW(
+	ROT.Color.rgb2hsl([51, 102, 51]),
+	ROT.Color.hsl2rgb([0.333, 0.333, 0.3])
+);</div>
+
 <h3>Adding and mixing colors</h3>
 
 <p>These methods accept a variable number of arguments. Methods whose names end with an underscore <strong>modify</strong> their first argument instead of returning a new array. Note that color values are not clamped to 0..255; this happens only when serializing to a string.</p>
