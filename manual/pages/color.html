@@ -49,7 +49,11 @@ SHOW( /* multiplication = darkening */
 
 <div class="example">
 SHOW(
-	ROT.Color.interpolate([10, 128, 230], [30, 255, 255], 0.3)
+	/* computed in RGB space */
+	ROT.Color.interpolate([10, 128, 230], [30, 255, 255], 0.3),
+
+	/* computed in HSL space */
+	ROT.Color.interpolateHSL([10, 128, 230], [30, 255, 255], 0.3)
 );</div>
 
 <h3>Creating random variants</h3>
