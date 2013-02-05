@@ -113,6 +113,23 @@ ROT.Color = {
 	},
 
 	/**
+	 * Interpolate (blend) two colors with a given factor in HSL mode
+	 * @param {number[]} color1
+	 * @param {number[]} color2
+	 * @param {float} [factor=0.5] 0..1
+	 * @returns {number[]}
+	 */
+	interpolateHSL: function(color1, color2, factor) {
+		if (arguments.length < 3) { factor = 0.5; }
+		var hsl1 = this.rgb2hsl(color1);
+		var hsl2 = this.rgb2hsl(color2);
+		for (var i=0;i<3;i++) {
+			hsl1[i] += factor*(hsl2[i]-hsl1[i]);
+		}
+		return this.hsl2rgb(hsl1);
+	},
+
+	/**
 	 * Create a new random color based on this one
 	 * @param {number[]} color
 	 * @param {number[]} diff Set of standard deviations

@@ -139,6 +139,12 @@ describe("Color", function() {
 		});
 	});
 
+	describe("interpolateHSL", function() {
+		it("should intepolate two colors", function() {
+			expect(ROT.Color.interpolateHSL([10, 20, 40], [100, 200, 300], 0.1)).toEqual([12, 33, 73]);
+		});
+	});
+
 	describe("randomize", function() {
 		it("should maintain constant diff when a number is used", function() {
 			var c = ROT.Color.randomize([100, 100, 100], 100);

@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.4~dev, generated on Tue Feb  5 15:22:29 CET 2013.
+	Version 0.4~dev, generated on Tue Feb  5 15:38:32 CET 2013.
 */
 
 /**
@@ -3338,6 +3338,23 @@ ROT.Color = {
 			result[i] = Math.round(result[i] + factor*(color2[i]-color1[i]));
 		}
 		return result;
+	},
+
+	/**
+	 * Interpolate (blend) two colors with a given factor in HSL mode
+	 * @param {number[]} color1
+	 * @param {number[]} color2
+	 * @param {float} [factor=0.5] 0..1
+	 * @returns {number[]}
+	 */
+	interpolateHSL: function(color1, color2, factor) {
+		if (arguments.length < 3) { factor = 0.5; }
+		var hsl1 = this.rgb2hsl(color1);
+		var hsl2 = this.rgb2hsl(color2);
+		for (var i=0;i<3;i++) {
+			hsl1[i] += factor*(hsl2[i]-hsl1[i]);
+		}
+		return this.hsl2rgb(hsl1);
 	},
 
 	/**
