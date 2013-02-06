@@ -63,8 +63,12 @@ ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
 	this._context.font = oldFont;
 	var ratio = width / 100;
 
+	hexSize = Math.floor(hexSize)+1; /* closest larger hexSize */
+
 	var fontSize = 2*hexSize / (this._options.spacing * (1 + ratio / Math.sqrt(3)));
-	return Math.ceil(fontSize);
+
+	/* closest smaller fontSize */
+	return Math.ceil(fontSize)-1;
 }
 
 ROT.Display.Hex.prototype._fill = function(cx, cy) {

@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.4~dev, generated on Tue Feb  5 22:06:47 CET 2013.
+	Version 0.4~dev, generated on Wed Feb  6 08:55:10 CET 2013.
 */
 
 /**
@@ -1202,8 +1202,12 @@ ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
 	this._context.font = oldFont;
 	var ratio = width / 100;
 
+	hexSize = Math.floor(hexSize)+1; /* closest larger hexSize */
+
 	var fontSize = 2*hexSize / (this._options.spacing * (1 + ratio / Math.sqrt(3)));
-	return Math.ceil(fontSize);
+
+	/* closest smaller fontSize */
+	return Math.ceil(fontSize)-1;
 }
 
 ROT.Display.Hex.prototype._fill = function(cx, cy) {
