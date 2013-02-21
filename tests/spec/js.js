@@ -33,6 +33,8 @@ describe("JS", function() {
 
 			it("should use braces", function() {
 				expect(String.format("%{s}ss", "b")).toBe("bss");
+				expect(String.format("%s}ss", "b")).toBe("b}ss");
+				expect(String.format("%{s ss", "b")).toBe("%{s ss");
 			});
 
 			it("should capitalize when requested", function() {
@@ -50,6 +52,16 @@ describe("JS", function() {
 					test2:function() { return "bar"; },
 				}
 				expect(String.format("%s %S %x %xxx %Xxx %XXX", obj, obj, obj, obj, obj)).toBe("foo Foo %x bar Bar Bar");
+				String.format.map = oldMap;
+			});
+
+			it("should pass params", function() {
+				var oldMap = String.format.map;
+				String.format.map = { foo: "foo" };
+				var obj = {
+					foo:function($) { return $+$; }
+				}
+				expect(String.format("%{foo,bar}", obj)).toBe("barbar");
 				String.format.map = oldMap;
 			});
 		});
