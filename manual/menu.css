@@ -64,6 +64,20 @@
 	z-index: 0;
 }
 
+/* submenu offset */
+
+#menu li li:not(:first-child) a {
+	margin-left: 3px;
+}
+
+#menu li li:first-child a {
+	padding-left: 19px;
+}
+
+#menu li li:first-child a.active:before {
+	left: 5px;
+}
+
 /* item hovers */
 
 #menu li:hover > a {

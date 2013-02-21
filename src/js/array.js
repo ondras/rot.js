@@ -7,15 +7,6 @@ Array.prototype.random = function() {
 }
 
 /**
- * @returns {array} Shallow copy
- */
-Array.prototype.clone = function() {
-	var arr = [];
-	for (var i=0;i<this.length;i++) { arr.push(this[i]); }
-	return arr;
-}
-
-/**
  * @returns {array} New array with randomized items
  * FIXME destroys this!
  */

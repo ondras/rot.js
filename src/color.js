@@ -29,7 +29,7 @@ ROT.Color = {
 			this._cache[str] = cached;
 		}
 
-		return cached.clone();
+		return cached.slice();
 	},
 
 	/**
@@ -39,7 +39,7 @@ ROT.Color = {
 	 * @returns {number[]}
 	 */
 	add: function(color1, color2) {
-		var result = color1.clone();
+		var result = color1.slice();
 		for (var i=0;i<3;i++) {
 			for (var j=1;j<arguments.length;j++) {
 				result[i] += arguments[j][i];
@@ -70,7 +70,7 @@ ROT.Color = {
 	 * @returns {number[]}
 	 */
 	multiply: function(color1, color2) {
-		var result = color1.clone();
+		var result = color1.slice();
 		for (var i=0;i<3;i++) {
 			for (var j=1;j<arguments.length;j++) {
 				result[i] *= arguments[j][i] / 255;
@@ -105,7 +105,7 @@ ROT.Color = {
 	 */
 	interpolate: function(color1, color2, factor) {
 		if (arguments.length < 3) { factor = 0.5; }
-		var result = color1.clone();
+		var result = color1.slice();
 		for (var i=0;i<3;i++) {
 			result[i] = Math.round(result[i] + factor*(color2[i]-color1[i]));
 		}
@@ -137,7 +137,7 @@ ROT.Color = {
 	 */
 	randomize: function(color, diff) {
 		if (!(diff instanceof Array)) { diff = ROT.RNG.getNormal(0, diff); }
-		var result = color.clone();
+		var result = color.slice();
 		for (var i=0;i<3;i++) {
 			result[i] += (diff instanceof Array ? Math.round(ROT.RNG.getNormal(0, diff[i])) : diff);
 		}

@@ -1,15 +1,4 @@
 describe("JS", function() {
-	describe("Array", function() {
-		describe("clone", function() {
-			it("should clone an array", function() {
-				expect([1, 2, 3].clone()).toEqual([1, 2, 3]);
-			});
-			it("should return a new array", function() {
-				expect([1, 2, 3].clone()).not.toBe([1, 2, 3]);
-			});
-		});
-	});
-
 	describe("String", function() {
 		describe("capitalize", function() {
 			it("should capitalize first letter", function() {

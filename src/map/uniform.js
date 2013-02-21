@@ -107,7 +107,7 @@ ROT.Map.Uniform.prototype._generateCorridors = function() {
 			room.create(this._digCallback); 
 		}
 
-		this._unconnected = this._rooms.clone().randomize();
+		this._unconnected = this._rooms.slice().randomize();
 		this._connected = [];
 		if (this._unconnected.length) { this._connected.push(this._unconnected.pop()); } /* first one is always connected */
 		
@@ -184,7 +184,7 @@ ROT.Map.Uniform.prototype._connectRooms = function(room1, room2) {
 	if (!start) { return false; }
 
 	if (start[index] >= min && start[index] <= max) { /* possible to connect with straight line (I-like) */
-		var end = start.clone();
+		var end = start.slice();
 		var value = null;
 		switch (dirIndex2) {
 			case 0: value = room2.getTop()-1; break;
