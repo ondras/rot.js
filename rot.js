@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.4~dev, generated on Thu Feb 21 09:40:47 CET 2013.
+	Version 0.4~dev, generated on Thu Feb 21 11:39:05 CET 2013.
 */
 
 /**
@@ -726,21 +726,6 @@ String.prototype.capitalize = function() {
 	return this.charAt(0).toUpperCase() + this.substring(1);
 }
 
-/**
- * @returns {string} This string with "%s"s replaced with arguments
- */
-String.prototype.format = function() {
-	var args = Array.prototype.slice.call(arguments);
-	var str = this;
-	return str.replace(/%s/g, function(match, index) {
-		if (str.charAt(index-1) == "%") {
-			return match;
-		} else {
-			return args.shift();
-		}
-	});
-}
-
 /** 
  * Left pad
  * @param {string} [character="0"]
@@ -770,6 +755,45 @@ String.prototype.rpad = function(character, count) {
 	s = s.substring(0, cnt-this.length);
 	return this+s;
 }
+
+/**
+ * Format a string in a flexible way. Scans for %s strings and replaces them with arguments. List of patterns is modifiable via String.format.map.
+ * @param {string} template
+ * @param {any} [argv]
+ */
+String.format = function(template) {
+	var map = String.format.map;
+	var args = Array.slice(arguments, 1);
+
+	var replacer = function(match, name, index) {
+		if (template.charAt(index-1) == "%" || !args.length) { return match; }
+
+		var method = map[name.toLowerCase()];
+		if (!method) { return match; }
+
+		var replaced = args.shift()[method]();
+
+		var first = name.charAt(0);
+		if (first != first.toLowerCase()) { replaced = replaced.capitalize(); }
+
+		return replaced;
+	}
+	return template.replace(/%{?([a-zA-Z]+)}?/g, replacer);
+}
+
+String.format.map = {
+	"s": "toString"
+}
+
+/**
+ * Convenience shortcut to String.format(this)
+ */
+String.prototype.format = function() {
+	var args = Array.slice(arguments);
+	args.unshift(this);
+	return String.format.apply(String, args);
+}
+
 if (!Object.create) {  
 	/**
 	 * ES5 Object.create
