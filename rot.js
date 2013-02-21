@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.4~dev, generated on Thu Feb 21 11:39:05 CET 2013.
+	Version 0.4~dev, generated on Thu Feb 21 11:45:11 CET 2013.
 */
 
 /**
@@ -3654,14 +3654,24 @@ ROT.Lighting = function(reflectivityCallback, options) {
 		emissionThreshold: 100,
 		range: 10
 	};
-	for (var p in options) {
-		this._options[p] = options[p];
-	}
 	this._fov = null;
 
 	this._lights = {};
 	this._reflectivityCache = {};
 	this._fovCache = {};
+
+	this.setOptions(options);
+}
+
+/**
+ * Adjust options at runtime
+ * @see ROT.Lighting
+ * @param {object} [options]
+ */
+ROT.Lighting.prototype.setOptions = function(options) {
+	for (var p in options) { this._options[p] = options[p]; }
+	if (options.range) { this.reset(); }
+	return this;
 }
 
 /**
