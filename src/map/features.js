@@ -108,6 +108,16 @@ ROT.Map.Feature.Room.prototype.addDoor = function(x, y) {
 	this._doors[x+","+y] = 1;
 }
 
+/**
+ * @param {function}
+ */
+ROT.Map.Feature.Room.prototype.getDoors = function(callback) {
+	for (var key in this._doors) {
+		var parts = key.split(",");
+		callback(parseInt(parts[0]), parseInt(parts[1]));
+	}
+}
+
 ROT.Map.Feature.Room.prototype.clearDoors = function() {
 	this._doors = {};
 	return this;

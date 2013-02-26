@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.4~dev, generated on Thu Feb 21 21:50:00 CET 2013.
+	Version 0.4~dev, generated on Tue Feb 26 11:06:00 CET 2013.
 */
 
 /**
@@ -2637,6 +2637,16 @@ ROT.Map.Feature.Room.createRandom = function(availWidth, availHeight, options) {
 
 ROT.Map.Feature.Room.prototype.addDoor = function(x, y) {
 	this._doors[x+","+y] = 1;
+}
+
+/**
+ * @param {function}
+ */
+ROT.Map.Feature.Room.prototype.getDoors = function(callback) {
+	for (var key in this._doors) {
+		var parts = key.split(",");
+		callback(parseInt(parts[0]), parseInt(parts[1]));
+	}
 }
 
 ROT.Map.Feature.Room.prototype.clearDoors = function() {
