@@ -66,6 +66,28 @@ ROT.RNG = {
 	},
 	
 	/**
+	 * @param {object} data key=whatever, value=weight (relative probability)
+	 * @returns {string} whatever
+	 */
+	getWeightedValue: function(data) {
+		var avail = [];
+		var total = 0;
+		
+		for (var id in data) {
+			total += data[id];
+		}
+		var random = Math.floor(this.getUniform()*total);
+		
+		var part = 0;
+		for (var id in data) {
+			part += data[id];
+			if (random < part) { return id; }
+		}
+		
+		return null;
+	},
+
+	/**
 	 * Get RNG state. Useful for storing the state and re-setting it via setState.
 	 * @returns {?} Internal state
 	 */

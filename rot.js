@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.4~dev, generated on Tue Feb 26 11:06:00 CET 2013.
+	Version 0.4~dev, generated on Tue Feb 26 20:39:16 CET 2013.
 */
 
 /**
@@ -1310,6 +1310,28 @@ ROT.RNG = {
 		return 1 + Math.floor(this.getUniform()*100);
 	},
 	
+	/**
+	 * @param {object} data key=whatever, value=weight (relative probability)
+	 * @returns {string} whatever
+	 */
+	getWeightedValue: function(data) {
+		var avail = [];
+		var total = 0;
+		
+		for (var id in data) {
+			total += data[id];
+		}
+		var random = Math.floor(this.getUniform()*total);
+		
+		var part = 0;
+		for (var id in data) {
+			part += data[id];
+			if (random < part) { return id; }
+		}
+		
+		return null;
+	},
+
 	/**
 	 * Get RNG state. Useful for storing the state and re-setting it via setState.
 	 * @returns {?} Internal state
