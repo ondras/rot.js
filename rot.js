@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.4~dev, generated on Tue Feb 26 20:39:16 CET 2013.
+	Version 0.4~dev, generated on Thu Feb 28 14:59:00 CET 2013.
 */
 
 /**
@@ -767,11 +767,11 @@ String.format = function(template) {
 
 	var replacer = function(match, group1, group2, index) {
 		if (template.charAt(index-1) == "%" || !args.length) { return match; }
+		var obj = args[0];
 
 		var group = group1 || group2;
 		var parts = group.split(",");
 		var name = parts.shift();
-		
 		var method = map[name.toLowerCase()];
 		if (!method) { return match; }
 
@@ -783,7 +783,7 @@ String.format = function(template) {
 
 		return replaced;
 	}
-	return template.replace(/%(?:([\w,]+)|(?:{([\w,]+)}))/g, replacer);
+	return template.replace(/%(?:([a-z]+)|(?:{([^}]+)}))/gi, replacer);
 }
 
 String.format.map = {

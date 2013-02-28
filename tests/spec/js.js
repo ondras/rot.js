@@ -20,7 +20,7 @@ describe("JS", function() {
 			});
 
 			it("should replace multiple arguments", function() {
-				expect(String.format("a %s %s", "b", "c")).toBe("a b c");
+				expect(String.format("a %s,%s,x", "b", "c")).toBe("a b,c,x");
 			});
 
 			it("should ignore remaining arguments", function() {

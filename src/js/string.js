@@ -46,11 +46,11 @@ String.format = function(template) {
 
 	var replacer = function(match, group1, group2, index) {
 		if (template.charAt(index-1) == "%" || !args.length) { return match; }
+		var obj = args[0];
 
 		var group = group1 || group2;
 		var parts = group.split(",");
 		var name = parts.shift();
-		
 		var method = map[name.toLowerCase()];
 		if (!method) { return match; }
 
@@ -62,7 +62,7 @@ String.format = function(template) {
 
 		return replaced;
 	}
-	return template.replace(/%(?:([\w,]+)|(?:{([\w,]+)}))/g, replacer);
+	return template.replace(/%(?:([a-z]+)|(?:{([^}]+)}))/gi, replacer);
 }
 
 String.format.map = {
