@@ -73,14 +73,15 @@ ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
 
 ROT.Display.Hex.prototype._fill = function(cx, cy) {
 	var a = this._hexSize;
+	var b = this._options.border;
 	
 	this._context.beginPath();
-	this._context.moveTo(cx, cy-a);
-	this._context.lineTo(cx + this._spacingX, cy-a/2);
-	this._context.lineTo(cx + this._spacingX, cy+a/2);
-	this._context.lineTo(cx, cy+a);
-	this._context.lineTo(cx - this._spacingX, cy+a/2);
-	this._context.lineTo(cx - this._spacingX, cy-a/2);
-	this._context.lineTo(cx, cy-a);
+	this._context.moveTo(cx, cy-a+b);
+	this._context.lineTo(cx + this._spacingX - b, cy-a/2+b);
+	this._context.lineTo(cx + this._spacingX - b, cy+a/2-b);
+	this._context.lineTo(cx, cy+a-b);
+	this._context.lineTo(cx - this._spacingX + b, cy+a/2-b);
+	this._context.lineTo(cx - this._spacingX + b, cy-a/2+b);
+	this._context.lineTo(cx, cy-a+b);
 	this._context.fill();
 }

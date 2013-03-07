@@ -44,12 +44,13 @@ ROT.Display.Rect.prototype._drawWithCache = function(data, clearBefore) {
 	if (hash in this._canvasCache) {
 		var canvas = this._canvasCache[hash];
 	} else {
+		var b = this._options.border;
 		var canvas = document.createElement("canvas");
 		var ctx = canvas.getContext("2d");
 		canvas.width = this._spacingX;
 		canvas.height = this._spacingY;
 		ctx.fillStyle = bg;
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		ctx.fillRect(b, b, canvas.width-b, canvas.height-b);
 		
 		if (ch) {
 			ctx.fillStyle = fg;
@@ -72,8 +73,9 @@ ROT.Display.Rect.prototype._drawNoCache = function(data, clearBefore) {
 	var bg = data[4];
 
 	if (clearBefore) { 
+		var b = this._options.border;
 		this._context.fillStyle = bg;
-		this._context.fillRect(x*this._spacingX, y*this._spacingY, this._spacingX, this._spacingY);
+		this._context.fillRect(x*this._spacingX + b, y*this._spacingY + b, this._spacingX - b, this._spacingY - b);
 	}
 	
 	if (!ch) { return; }

@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.4~dev, generated on Thu Feb 28 14:59:00 CET 2013.
+	Version 0.4~dev, generated on Thu Mar  7 15:40:56 CET 2013.
 */
 
 /**
@@ -830,6 +830,7 @@ Function.prototype.extend = function(parent) {
  * @param {string} [options.bg="#000"]
  * @param {int} [options.fps=25]
  * @param {float} [options.spacing=1]
+ * @param {float} [options.border=0]
  * @param {string} [options.layout="rect"]
  */
 ROT.Display = function(options) {
@@ -847,6 +848,7 @@ ROT.Display = function(options) {
 		fontSize: 15,
 		fps: 25,
 		spacing: 1,
+		border: 0,
 		fontFamily: "monospace",
 		fontStyle: "",
 		fg: "#ccc",
@@ -1096,12 +1098,13 @@ ROT.Display.Rect.prototype._drawWithCache = function(data, clearBefore) {
 	if (hash in this._canvasCache) {
 		var canvas = this._canvasCache[hash];
 	} else {
+		var b = this._options.border;
 		var canvas = document.createElement("canvas");
 		var ctx = canvas.getContext("2d");
 		canvas.width = this._spacingX;
 		canvas.height = this._spacingY;
 		ctx.fillStyle = bg;
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		ctx.fillRect(b, b, canvas.width-b, canvas.height-b);
 		
 		if (ch) {
 			ctx.fillStyle = fg;
@@ -1124,8 +1127,9 @@ ROT.Display.Rect.prototype._drawNoCache = function(data, clearBefore) {
 	var bg = data[4];
 
 	if (clearBefore) { 
+		var b = this._options.border;
 		this._context.fillStyle = bg;
-		this._context.fillRect(x*this._spacingX, y*this._spacingY, this._spacingX, this._spacingY);
+		this._context.fillRect(x*this._spacingX + b, y*this._spacingY + b, this._spacingX - b, this._spacingY - b);
 	}
 	
 	if (!ch) { return; }
@@ -1232,15 +1236,16 @@ ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
 
 ROT.Display.Hex.prototype._fill = function(cx, cy) {
 	var a = this._hexSize;
+	var b = this._options.border;
 	
 	this._context.beginPath();
-	this._context.moveTo(cx, cy-a);
-	this._context.lineTo(cx + this._spacingX, cy-a/2);
-	this._context.lineTo(cx + this._spacingX, cy+a/2);
-	this._context.lineTo(cx, cy+a);
-	this._context.lineTo(cx - this._spacingX, cy+a/2);
-	this._context.lineTo(cx - this._spacingX, cy-a/2);
-	this._context.lineTo(cx, cy-a);
+	this._context.moveTo(cx, cy-a+b);
+	this._context.lineTo(cx + this._spacingX - b, cy-a/2+b);
+	this._context.lineTo(cx + this._spacingX - b, cy+a/2-b);
+	this._context.lineTo(cx, cy+a-b);
+	this._context.lineTo(cx - this._spacingX + b, cy+a/2-b);
+	this._context.lineTo(cx - this._spacingX + b, cy-a/2+b);
+	this._context.lineTo(cx, cy-a+b);
 	this._context.fill();
 }
 /**

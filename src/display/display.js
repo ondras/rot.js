@@ -10,6 +10,7 @@
  * @param {string} [options.bg="#000"]
  * @param {int} [options.fps=25]
  * @param {float} [options.spacing=1]
+ * @param {float} [options.border=0]
  * @param {string} [options.layout="rect"]
  */
 ROT.Display = function(options) {
@@ -27,6 +28,7 @@ ROT.Display = function(options) {
 		fontSize: 15,
 		fps: 25,
 		spacing: 1,
+		border: 0,
 		fontFamily: "monospace",
 		fontStyle: "",
 		fg: "#ccc",
