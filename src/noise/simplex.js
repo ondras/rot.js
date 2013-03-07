@@ -54,8 +54,8 @@ ROT.Noise.Simplex.prototype.get = function(xin, yin) {
 
 	// Skew the input space to determine which simplex cell we're in
 	var s = (xin + yin) * this._F2; // Hairy factor for 2D
-	var i = ~~(xin + s);
-	var j = ~~(yin + s);
+	var i = Math.floor(xin + s);
+	var j = Math.floor(yin + s);
 	var t = (i + j) * G2;
 	var X0 = i - t; // Unskew the cell origin back to (x,y) space
 	var Y0 = j - t;
