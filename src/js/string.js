@@ -45,7 +45,8 @@ String.format = function(template) {
 	var args = Array.prototype.slice.call(arguments, 1);
 
 	var replacer = function(match, group1, group2, index) {
-		if (template.charAt(index-1) == "%" || !args.length) { return match; }
+		if (template.charAt(index-1) == "%") { return match.substring(1); }
+		if (!args.length) { return match; }
 		var obj = args[0];
 
 		var group = group1 || group2;

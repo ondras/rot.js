@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.4~dev, generated on Thu Mar  7 23:01:14 CET 2013.
+	Version 0.4~dev, generated on Fri Mar  8 10:50:46 CET 2013.
 */
 
 /**
@@ -766,7 +766,8 @@ String.format = function(template) {
 	var args = Array.prototype.slice.call(arguments, 1);
 
 	var replacer = function(match, group1, group2, index) {
-		if (template.charAt(index-1) == "%" || !args.length) { return match; }
+		if (template.charAt(index-1) == "%") { return match.substring(1); }
+		if (!args.length) { return match; }
 		var obj = args[0];
 
 		var group = group1 || group2;

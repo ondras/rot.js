@@ -12,7 +12,7 @@ describe("JS", function() {
 			});
 
 			it("should ignore double-percents", function() {
-				expect(String.format("%%s")).toBe("%%s");
+				expect(String.format("%%s")).toBe("%s");
 			});
 
 			it("should replace %s by default", function() {
@@ -70,7 +70,7 @@ describe("JS", function() {
 				expect("%s %s".format(1, 2, 3)).toBe("1 2");
 			});
 			it("should ignore double-percents", function() {
-				expect("%%s".format(1, 2, 3)).toBe("%%s");
+				expect("%%s".format(1, 2, 3)).toBe("%s");
 			});
 		});
 		describe("::lpad", function() {

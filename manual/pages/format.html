@@ -43,3 +43,22 @@ var template = "You eat %a. %The was delicious.";
 SHOW( template.format(apple, apple) );
 SHOW( template.format(banana, banana) );
 </div>
+
+<p>It is possible to pass additional arguments to the formatting function, using the <em>{,}</em> notation.</p>
+
+<div class="example">
+var Animal = function(name) {
+	this._name = name;
+}
+
+Animal.prototype.adjective = function(x) {
+	return x + " " + this._name;
+}
+
+String.format.map.adjective = "adjective";
+
+var cat = new Animal("cat");
+var template = "You see a %{adjective,black}.";
+
+SHOW( template.format(cat) );
+</div>
