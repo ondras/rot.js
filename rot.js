@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.4~dev, generated on Fri Mar  8 11:07:22 CET 2013.
+	Version 0.4~dev, generated on Sun Mar 17 11:43:41 CET 2013.
 */
 
 /**
@@ -939,6 +939,34 @@ ROT.Display.prototype.computeFontSize = function(availWidth, availHeight) {
 }
 
 /**
+ * Convert a DOM event (mouse or touch) to map coordinates. Uses first touch for multi-touch.
+ * @param {Event} e event
+ * @returns {int[2]} -1 for values outside of the canvas
+ */
+ROT.Display.prototype.eventToPosition = function(e) {
+	if (e.touches) {
+		var x = e.touches[0].clientX;
+		var y = e.touches[0].clientY;
+	} else {
+		var x = e.clientX;
+		var y = e.clientY;
+	}
+	x += (document.documentElement.scrollLeft);
+	y += (document.documentElement.scrollTop);
+	
+	var node = this._context.canvas;
+	while (node) {
+		x -= node.offsetLeft;
+		y -= node.offsetTop;
+		node = node.offsetParent;
+	}
+	
+	if (x < 0 || y < 0 || x >= this._context.canvas.width || y >= this._context.canvas.height) { return [-1, -1]; }
+
+	return this._backend.eventToPosition(x, y);
+}
+
+/**
  * @param {int} x
  * @param {int} y
  * @param {string} ch 
@@ -1053,6 +1081,9 @@ ROT.Display.Backend.prototype.computeSize = function(availWidth, availHeight) {
 
 ROT.Display.Backend.prototype.computeFontSize = function(availWidth, availHeight) {
 }
+
+ROT.Display.Backend.prototype.eventToPosition = function(x, y) {
+}
 /**
  * @class Rectangular backend
  * @private
@@ -1162,6 +1193,10 @@ ROT.Display.Rect.prototype.computeFontSize = function(availWidth, availHeight) {
 	}
 	return Math.floor(boxHeight / this._options.spacing);
 }
+
+ROT.Display.Rect.prototype.eventToPosition = function(x, y) {
+	return [Math.floor(x/this._spacingX), Math.floor(y/this._spacingY)];
+}
 /**
  * @class Hexagonal backend
  * @private
@@ -1233,6 +1268,20 @@ ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
 
 	/* closest smaller fontSize */
 	return Math.ceil(fontSize)-1;
+}
+
+ROT.Display.Hex.prototype.eventToPosition = function(x, y) {
+	var height = this._context.canvas.height / this._options.height;
+	y = Math.floor(y/height);
+	
+	if (y.mod(2)) { /* odd row */
+		x -= this._spacingX;
+		x = 1 + 2*Math.floor(x/(2*this._spacingX));
+	} else {
+		x = 2*Math.floor(x/(2*this._spacingX));
+	}
+	
+	return [x, y];
 }
 
 ROT.Display.Hex.prototype._fill = function(cx, cy) {

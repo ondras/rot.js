@@ -71,6 +71,20 @@ ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
 	return Math.ceil(fontSize)-1;
 }
 
+ROT.Display.Hex.prototype.eventToPosition = function(x, y) {
+	var height = this._context.canvas.height / this._options.height;
+	y = Math.floor(y/height);
+	
+	if (y.mod(2)) { /* odd row */
+		x -= this._spacingX;
+		x = 1 + 2*Math.floor(x/(2*this._spacingX));
+	} else {
+		x = 2*Math.floor(x/(2*this._spacingX));
+	}
+	
+	return [x, y];
+}
+
 ROT.Display.Hex.prototype._fill = function(cx, cy) {
 	var a = this._hexSize;
 	var b = this._options.border;

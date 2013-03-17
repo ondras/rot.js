@@ -17,3 +17,6 @@ ROT.Display.Backend.prototype.computeSize = function(availWidth, availHeight) {
 
 ROT.Display.Backend.prototype.computeFontSize = function(availWidth, availHeight) {
 }
+
+ROT.Display.Backend.prototype.eventToPosition = function(x, y) {
+}

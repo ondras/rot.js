@@ -107,3 +107,7 @@ ROT.Display.Rect.prototype.computeFontSize = function(availWidth, availHeight) {
 	}
 	return Math.floor(boxHeight / this._options.spacing);
 }
+
+ROT.Display.Rect.prototype.eventToPosition = function(x, y) {
+	return [Math.floor(x/this._spacingX), Math.floor(y/this._spacingY)];
+}

@@ -118,6 +118,34 @@ ROT.Display.prototype.computeFontSize = function(availWidth, availHeight) {
 }
 
 /**
+ * Convert a DOM event (mouse or touch) to map coordinates. Uses first touch for multi-touch.
+ * @param {Event} e event
+ * @returns {int[2]} -1 for values outside of the canvas
+ */
+ROT.Display.prototype.eventToPosition = function(e) {
+	if (e.touches) {
+		var x = e.touches[0].clientX;
+		var y = e.touches[0].clientY;
+	} else {
+		var x = e.clientX;
+		var y = e.clientY;
+	}
+	x += (document.documentElement.scrollLeft);
+	y += (document.documentElement.scrollTop);
+	
+	var node = this._context.canvas;
+	while (node) {
+		x -= node.offsetLeft;
+		y -= node.offsetTop;
+		node = node.offsetParent;
+	}
+	
+	if (x < 0 || y < 0 || x >= this._context.canvas.width || y >= this._context.canvas.height) { return [-1, -1]; }
+
+	return this._backend.eventToPosition(x, y);
+}
+
+/**
  * @param {int} x
  * @param {int} y
  * @param {string} ch 
