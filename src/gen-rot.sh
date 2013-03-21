@@ -25,6 +25,7 @@ map/cellular.js
 map/dungeon.js
 map/digger.js
 map/uniform.js
+map/rogue.js
 map/features.js
 noise/noise.js
 noise/simplex.js
