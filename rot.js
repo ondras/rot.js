@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.4~dev, generated on Thu Mar 21 15:06:09 CET 2013.
+	Version 0.4~dev, generated on Tue Mar 26 13:54:12 CET 2013.
 */
 
 /**
@@ -2640,15 +2640,6 @@ ROT.Map.Rogue = function(width, height, options) {
 		this._options["roomHeight"] = this._calculateRoomSize(height, this._options["cellHeight"]);
 	}
 	
-	this.dir = {}; // already exists - ROT.DIR[8][x] - although it is reversed in the y direction from mine here. 
-	this.dir[0] = [0,1];
-	this.dir[1] = [1,1];
-	this.dir[2] = [1,0];
-	this.dir[3] = [1,-1];
-	this.dir[4] = [0, -1];
-	this.dir[5] = [-1,-1];
-	this.dir[6] = [-1,0];
-	this.dir[7] = [-1,-1];
 }
 
 ROT.Map.Rogue.extend(ROT.Map); 
@@ -2657,11 +2648,10 @@ ROT.Map.Rogue.extend(ROT.Map);
  * @see ROT.Map#create
  */
 ROT.Map.Rogue.prototype.create = function(callback) {
-	this.map = [];
+	this.map = this._fillMap(1);
 	this.rooms = [];
 	this.connectedCells = [];
 	
-	this._setupMap();
 	this._initRooms();
 	this._connectRooms();
 	this._connectUnconnectedRooms();
@@ -2690,16 +2680,6 @@ ROT.Map.Rogue.prototype._calculateRoomSize = function(size, cell) {
 	if (min < 2) min = 2;
 	if (max < 2) max = 2;
 	return [min, max];
-}
-
-ROT.Map.Rogue.prototype._setupMap = function() {
-	// create map
-	for (var i = 0; i < this._width; i++) {
-		this.map.push([]);
-		for (var j = 0; j < this._height; j++) {
-			this.map[i].push(1);
-		}
-	}
 }
 
 ROT.Map.Rogue.prototype._initRooms = function () { 
@@ -2737,8 +2717,8 @@ ROT.Map.Rogue.prototype._connectRooms = function() {
 			idx = dirToCheck.pop();
 			
 			
-			ncgx = cgx + this.dir[idx][0];
-			ncgy = cgy + this.dir[idx][1];
+			ncgx = cgx + ROT.DIRS[8][idx][0];
+			ncgy = cgy + ROT.DIRS[8][idx][1];
 			
 			if(ncgx < 0 || ncgx >= this._options.cellWidth) continue;
 			if(ncgy < 0 || ncgy >= this._options.cellHeight) continue;
@@ -2785,7 +2765,7 @@ ROT.Map.Rogue.prototype._connectUnconnectedRooms = function() {
 	var validRoom;
 	
 	for (var i = 0; i < this._options.cellWidth; i++) {
-		for (var j = 0; j < this._options.cellHeight; j++) 	{
+		for (var j = 0; j < this._options.cellHeight; j++)  {
 				
 			room = this.rooms[i][j];
 			
@@ -2798,8 +2778,8 @@ ROT.Map.Rogue.prototype._connectUnconnectedRooms = function() {
 				do {
 					
 					var dirIdx = directions.pop();
-					var newI = i + this.dir[dirIdx][0];
-					var newJ = j + this.dir[dirIdx][1];
+					var newI = i + ROT.DIRS[8][dirIdx][0];
+					var newJ = j + ROT.DIRS[8][dirIdx][1];
 					
 					if (newI < 0 || newI >= cw || 
 					newJ < 0 || newJ >= ch) {
@@ -2957,47 +2937,66 @@ ROT.Map.Rogue.prototype._getWallPosition = function(aRoom, aDirection) {
 	return [rx, ry];
 }
 
-ROT.Map.Rogue.prototype._drawCorridore = function(startPosition, endPosition) {
+/***
+* @param startPosition a 2 element array
+* @param endPosition a 2 element array
+*/
+ROT.Map.Rogue.prototype._drawCorridore = function (startPosition, endPosition) {
 	var xOffset = endPosition[0] - startPosition[0];
 	var yOffset = endPosition[1] - startPosition[1];
 	
-	var xCount = 0;
-	var yCount = 0;
+	var xpos = startPosition[0];
+	var ypos = startPosition[1];
 	
-	var counter = 0;
+	var tempDist;
+	var xDir;
+	var yDir;
 	
-	var tx;
-	var ty;
+	var move; // 2 element array, element 0 is the direction, element 1 is the total value to move. 
+	var moves = []; // a list of 2 element arrays
 	
-	var path = [];
+	var xAbs = Math.abs(xOffset);
+	var yAbs = Math.abs(yOffset);
 	
-	if (xOffset != 0) { xCount = xOffset > 0 ? 1 : -1; }
-		
-	if (yOffset != 0) { yCount = yOffset > 0 ? 1 : -1; }
+	var percent = ROT.RNG.getUniform(); // used to split the move at different places along the long axis
+	var firstHalf = percent;
+	var secondHalf = 1 - percent;
 	
-	this.map[startPosition[0]][startPosition[1]] = 0;
-	this.map[endPosition[0]][endPosition[1]] = 0;
+	xDir = xOffset > 0 ? 2 : 6;
+	yDir = yOffset > 0 ? 4 : 0;
 	
-	while (xOffset != 0 || yOffset != 0) {
-		if (xOffset != 0 && counter == 0) {
-			counter = 1;
-			xOffset -= xCount;
-		} else if (yOffset != 0 && counter == 1) {
-			counter = 0;
-			yOffset -= yCount;
-		}
-		
-		if (xOffset == 0) { counter = 1; } 
-		if (yOffset == 0) { counter = 0; }
-		
-		tx = endPosition[0] - xOffset;
-		ty = endPosition[1] - yOffset;
-		
-		this.map[tx][ty] = 0;
+	if (xAbs < yAbs) {
+		// move firstHalf of the y offset
+		tempDist = Math.ceil(yAbs * firstHalf);
+		moves.push([yDir, tempDist]);
+		// move all the x offset
+		moves.push([xDir, xAbs]);
+		// move sendHalf of the  y offset
+		tempDist = Math.floor(yAbs * secondHalf);
+		moves.push([yDir, tempDist]);
+	} else {
+		//  move firstHalf of the x offset
+		tempDist = Math.ceil(xAbs * firstHalf);
+		moves.push([xDir, tempDist]);
+		// move all the y offset
+		moves.push([yDir, yAbs]);
+		// move secondHalf of the x offset.
+		tempDist = Math.floor(xAbs * secondHalf);
+		moves.push([xDir, tempDist]);  
 	}
-
+	
+	this.map[xpos][ypos] = 0;
+	
+	while (moves.length > 0) {
+		move = moves.pop();
+		while (move[1] > 0) {
+			xpos += ROT.DIRS[8][move[0]][0];
+			ypos += ROT.DIRS[8][move[0]][1];
+			this.map[xpos][ypos] = 0;
+			move[1] = move[1] - 1;
+		}
+	}
 }
-
 
 ROT.Map.Rogue.prototype._createCorridors = function () {
 	// Draw Corridors between connected rooms
