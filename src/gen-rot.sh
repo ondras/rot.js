@@ -39,10 +39,20 @@ path/dijkstra.js
 path/astar.js
 "
 
+star() {
+	echo -n "\033[1;${1}m * \033[0m"
+}
+
 TARGET=../rot.js
+MTARGET=../rot.min.js
+star 31
+echo "Removing old ${TARGET} and ${MTARGET}"
 rm -f $TARGET
+rm -f $MTARGET
 
 VERSION=$(head -1 < ../VERSION)
+star 33
+echo "Current version is ${VERSION}"
 
 PROLOGUE="/*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
@@ -54,3 +64,14 @@ echo "$PROLOGUE" >> $TARGET
 for FILE in $LIST; do
 	cat $FILE >> $TARGET
 done
+
+# closure compiler
+star 32
+echo "Calling closure compiler's REST API, this might take a while"
+curl -s \
+	-d compilation_level=SIMPLE_OPTIMIZATIONS \
+	-d output_format=text \
+	-d output_info=compiled_code \
+	-d charset=utf-8 \
+	--data-urlencode "js_code@-" \
+	http://closure-compiler.appspot.com/compile < $TARGET > $MTARGET
