@@ -2,6 +2,7 @@
 LIST="
 rot.js
 text.js
+eventqueue.js
 scheduler.js
 engine.js
 js/array.js

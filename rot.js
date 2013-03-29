@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.4~dev, generated on Thu Mar 28 09:36:35 CET 2013.
+	Version 0.4~dev, generated on Thu Mar 28 14:40:18 CET 2013.
 */
 
 /**
@@ -551,21 +551,97 @@ ROT.Text = {
 	}
 }
 /**
+ * @class Generic event queue: stores events and retrieves them based on their time
+ */
+ROT.EventQueue = function() {
+	this._time = 0;
+	this._events = [];
+	this._eventTimes = [];
+}
+
+/**
+ * @returns {number} Elapsed time
+ */
+ROT.EventQueue.prototype.getTime = function() {
+	return this._time;
+}
+
+/**
+ * Clear all scheduled events
+ */
+ROT.EventQueue.prototype.clear = function() {
+	this._events = [];
+	this._eventTimes = [];
+	return this;
+}
+
+/**
+ * @param {?} event
+ * @param {number} time
+ */
+ROT.EventQueue.prototype.add = function(event, time) {
+	var index = this._events.length;
+	for (var i=0;i<this._eventTimes.length;i++) {
+		if (this._eventTimes[i] > time) {
+			index = i;
+			break;
+		}
+	}
+
+	this._events.splice(index, 0, event);
+	this._eventTimes.splice(index, 0, time);
+}
+
+/**
+ * Locates the nearest event, advances time if necessary. Returns that event and removes it from the queue.
+ * @returns {? || null} The event previously added by addEvent, null if no event available
+ */
+ROT.EventQueue.prototype.get = function() {
+	if (!this._events.length) { return null; }
+
+	var time = this._eventTimes.splice(0, 1)[0];
+	if (time > 0) { /* advance */
+		this._time += time;
+		for (var i=0;i<this._eventTimes.length;i++) { this._eventTimes[i] -= time; }
+	}
+
+	return this._events.splice(0, 1)[0];
+}
+
+/**
+ * Remove an event from the queue
+ * @param {?} event
+ */
+ROT.EventQueue.prototype.remove = function(event) {
+	var index = this._events.indexOf(event);
+	if (index == -1) { throw new Error("Cannot remove event " + event + ", not found"); }
+	this._remove(index);
+	return this;
+}
+
+/**
+ * Remove an event from the queue
+ * @param {int} index
+ */
+ROT.EventQueue.prototype._remove = function(index) {
+	this._events.splice(index, 1);
+	this._eventTimes.splice(index, 1);
+}
+/**
  * @class Speed-based scheduler
  */
 ROT.Scheduler = function() {
 	this._items = [];
+	this._queue = new ROT.EventQueue();
 }
 
 /**
  * @param {object} item anything with "getSpeed" method
  */
 ROT.Scheduler.prototype.add = function(item) {
-	var o = {
-		item: item,
-		bucket: 1/item.getSpeed()
-	}
-	this._items.push(o);
+	this._items.push(item);
+	this._queue.add(item, 1/item.getSpeed());
+
 	return this;
 }
 
@@ -574,6 +650,7 @@ ROT.Scheduler.prototype.add = function(item) {
  */
 ROT.Scheduler.prototype.clear = function() {
 	this._items = [];
+	this._queue.clear();
 	return this;
 }
 
@@ -582,14 +659,10 @@ ROT.Scheduler.prototype.clear = function() {
  * @param {object} item anything with "getSpeed" method
  */
 ROT.Scheduler.prototype.remove = function(item) {
-	var it = null;
-	for (var i=0;i<this._items.length;i++) {
-		it = this._items[i];
-		if (it.item == item) { 
-			this._items.splice(i, 1); 
-			break;
-		}
-	}
+	this._queue.remove(item);
+	var index = this._items.indexOf(item);
+	this._items.splice(index, 1);
+
 	return this;
 }
 
@@ -600,28 +673,10 @@ ROT.Scheduler.prototype.remove = function(item) {
 ROT.Scheduler.prototype.next = function() {
 	if (!this._items.length) { return null; }
 
-	var minBucket = Infinity;
-	var minItem = null;
+	var item = this._queue.get();
+	this._queue.add(item, 1/item.getSpeed());
 
-	for (var i=0;i<this._items.length;i++) {
-		var item = this._items[i];
-		if (item.bucket < minBucket) {
-			minBucket = item.bucket;
-			minItem = item;
-		} else if (item.bucket == minBucket && item.item.getSpeed() > minItem.item.getSpeed()) {
-			minItem = item;
-		}
-	}
-	
-	if (minBucket) { /* non-zero value; subtract from all buckets */
-		for (var i=0;i<this._items.length;i++) {
-			var item = this._items[i];
-			item.bucket = Math.max(0, item.bucket - minBucket);
-		}
-	}
-	
-	minItem.bucket += 1/minItem.item.getSpeed();
-	return minItem.item;
+	return item;
 }
 /**
  * @class Asynchronous main loop

@@ -3,17 +3,16 @@
  */
 ROT.Scheduler = function() {
 	this._items = [];
+	this._queue = new ROT.EventQueue();
 }
 
 /**
  * @param {object} item anything with "getSpeed" method
  */
 ROT.Scheduler.prototype.add = function(item) {
-	var o = {
-		item: item,
-		bucket: 1/item.getSpeed()
-	}
-	this._items.push(o);
+	this._items.push(item);
+	this._queue.add(item, 1/item.getSpeed());
+
 	return this;
 }
 
@@ -22,6 +21,7 @@ ROT.Scheduler.prototype.add = function(item) {
  */
 ROT.Scheduler.prototype.clear = function() {
 	this._items = [];
+	this._queue.clear();
 	return this;
 }
 
@@ -30,14 +30,10 @@ ROT.Scheduler.prototype.clear = function() {
  * @param {object} item anything with "getSpeed" method
  */
 ROT.Scheduler.prototype.remove = function(item) {
-	var it = null;
-	for (var i=0;i<this._items.length;i++) {
-		it = this._items[i];
-		if (it.item == item) { 
-			this._items.splice(i, 1); 
-			break;
-		}
-	}
+	this._queue.remove(item);
+	var index = this._items.indexOf(item);
+	this._items.splice(index, 1);
+
 	return this;
 }
 
@@ -48,26 +44,8 @@ ROT.Scheduler.prototype.remove = function(item) {
 ROT.Scheduler.prototype.next = function() {
 	if (!this._items.length) { return null; }
 
-	var minBucket = Infinity;
-	var minItem = null;
+	var item = this._queue.get();
+	this._queue.add(item, 1/item.getSpeed());
 
-	for (var i=0;i<this._items.length;i++) {
-		var item = this._items[i];
-		if (item.bucket < minBucket) {
-			minBucket = item.bucket;
-			minItem = item;
-		} else if (item.bucket == minBucket && item.item.getSpeed() > minItem.item.getSpeed()) {
-			minItem = item;
-		}
-	}
-	
-	if (minBucket) { /* non-zero value; subtract from all buckets */
-		for (var i=0;i<this._items.length;i++) {
-			var item = this._items[i];
-			item.bucket = Math.max(0, item.bucket - minBucket);
-		}
-	}
-	
-	minItem.bucket += 1/minItem.item.getSpeed();
-	return minItem.item;
+	return item;
 }

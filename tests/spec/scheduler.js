@@ -32,8 +32,7 @@ describe("Scheduler", function() {
 		s.add(A200);
 		var result = [];
 		for (var i=0;i<7;i++) { result.push(s.next()); }
-
-		expect(result).toSchedule([A200, A200, A100a, A200, A50, A200, A100a]);
+		expect(result).toSchedule([A200, A100a, A200, A200, A50, A100a, A200]);
 	});
 
 });
