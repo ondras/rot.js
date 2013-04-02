@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.4~dev, generated on Thu Mar 28 14:40:18 CET 2013.
+	Version 0.5~dev, generated on Tue Apr  2 16:13:41 CEST 2013.
 */
 
 /**
@@ -549,196 +549,6 @@ ROT.Text = {
 		tokens.splice(tokenIndex+1, 0, newBreakToken, newTextToken);
 		return tokens[tokenIndex].value.substring(0, breakIndex);
 	}
-}
-/**
- * @class Generic event queue: stores events and retrieves them based on their time
- */
-ROT.EventQueue = function() {
-	this._time = 0;
-	this._events = [];
-	this._eventTimes = [];
-}
-
-/**
- * @returns {number} Elapsed time
- */
-ROT.EventQueue.prototype.getTime = function() {
-	return this._time;
-}
-
-/**
- * Clear all scheduled events
- */
-ROT.EventQueue.prototype.clear = function() {
-	this._events = [];
-	this._eventTimes = [];
-	return this;
-}
-
-/**
- * @param {?} event
- * @param {number} time
- */
-ROT.EventQueue.prototype.add = function(event, time) {
-	var index = this._events.length;
-	for (var i=0;i<this._eventTimes.length;i++) {
-		if (this._eventTimes[i] > time) {
-			index = i;
-			break;
-		}
-	}
-
-	this._events.splice(index, 0, event);
-	this._eventTimes.splice(index, 0, time);
-}
-
-/**
- * Locates the nearest event, advances time if necessary. Returns that event and removes it from the queue.
- * @returns {? || null} The event previously added by addEvent, null if no event available
- */
-ROT.EventQueue.prototype.get = function() {
-	if (!this._events.length) { return null; }
-
-	var time = this._eventTimes.splice(0, 1)[0];
-	if (time > 0) { /* advance */
-		this._time += time;
-		for (var i=0;i<this._eventTimes.length;i++) { this._eventTimes[i] -= time; }
-	}
-
-	return this._events.splice(0, 1)[0];
-}
-
-/**
- * Remove an event from the queue
- * @param {?} event
- */
-ROT.EventQueue.prototype.remove = function(event) {
-	var index = this._events.indexOf(event);
-	if (index == -1) { throw new Error("Cannot remove event " + event + ", not found"); }
-	this._remove(index);
-	return this;
-}
-
-/**
- * Remove an event from the queue
- * @param {int} index
- */
-ROT.EventQueue.prototype._remove = function(index) {
-	this._events.splice(index, 1);
-	this._eventTimes.splice(index, 1);
-}
-/**
- * @class Speed-based scheduler
- */
-ROT.Scheduler = function() {
-	this._items = [];
-	this._queue = new ROT.EventQueue();
-}
-
-/**
- * @param {object} item anything with "getSpeed" method
- */
-ROT.Scheduler.prototype.add = function(item) {
-	this._items.push(item);
-	this._queue.add(item, 1/item.getSpeed());
-
-	return this;
-}
-
-/**
- * Clear all actors
- */
-ROT.Scheduler.prototype.clear = function() {
-	this._items = [];
-	this._queue.clear();
-	return this;
-}
-
-/**
- * Remove a previously added item
- * @param {object} item anything with "getSpeed" method
- */
-ROT.Scheduler.prototype.remove = function(item) {
-	this._queue.remove(item);
-	var index = this._items.indexOf(item);
-	this._items.splice(index, 1);
-
-	return this;
-}
-
-/**
- * Schedule next actor
- * @returns {object}
- */
-ROT.Scheduler.prototype.next = function() {
-	if (!this._items.length) { return null; }
-
-	var item = this._queue.get();
-	this._queue.add(item, 1/item.getSpeed());
-
-	return item;
-}
-/**
- * @class Asynchronous main loop
- */
-ROT.Engine = function() {
-	this._scheduler = new ROT.Scheduler();
-	this._lock = 1;
-}
-
-/**
- * @param {object} actor Anything with "getSpeed" and "act" methods
- */
-ROT.Engine.prototype.addActor = function(actor) {
-	this._scheduler.add(actor);
-	return this;
-}
-
-/**
- * Remove a previously added actor
- * @param {object} actor
- */
-ROT.Engine.prototype.removeActor = function(actor) {
-	this._scheduler.remove(actor);
-	return this;
-}
-
-/**
- * Remove all actors
- */
-ROT.Engine.prototype.clear = function() {
-	this._scheduler.clear();
-	return this;
-}
-
-/**
- * Start the main loop. When this call returns, the loop is locked.
- */
-ROT.Engine.prototype.start = function() {
-	return this.unlock();
-}
-
-/**
- * Interrupt the engine by an asynchronous action
- */
-ROT.Engine.prototype.lock = function() {
-	this._lock++;
-}
-
-/**
- * Resume execution (paused by a previous lock)
- */
-ROT.Engine.prototype.unlock = function() {
-	if (!this._lock) { throw new Error("Cannot unlock unlocked engine"); }
-	this._lock--;
-
-	while (!this._lock) {
-		var actor = this._scheduler.next();
-		if (!actor) { return this.lock(); } /* no actors */
-		actor.act();
-	}
-
-	return this;
 }
 /**
  * @returns {any} Randomly picked item, null when length=0
@@ -1641,6 +1451,287 @@ ROT.StringGenerator.prototype._pickRandom = function(data) {
 		part += data[id];
 		if (random < part) { return id; }
 	}
+}
+/**
+ * @class Generic event queue: stores events and retrieves them based on their time
+ */
+ROT.EventQueue = function() {
+	this._time = 0;
+	this._events = [];
+	this._eventTimes = [];
+}
+
+/**
+ * @returns {number} Elapsed time
+ */
+ROT.EventQueue.prototype.getTime = function() {
+	return this._time;
+}
+
+/**
+ * Clear all scheduled events
+ */
+ROT.EventQueue.prototype.clear = function() {
+	this._events = [];
+	this._eventTimes = [];
+	return this;
+}
+
+/**
+ * @param {?} event
+ * @param {number} time
+ */
+ROT.EventQueue.prototype.add = function(event, time) {
+	var index = this._events.length;
+	for (var i=0;i<this._eventTimes.length;i++) {
+		if (this._eventTimes[i] > time) {
+			index = i;
+			break;
+		}
+	}
+
+	this._events.splice(index, 0, event);
+	this._eventTimes.splice(index, 0, time);
+}
+
+/**
+ * Locates the nearest event, advances time if necessary. Returns that event and removes it from the queue.
+ * @returns {? || null} The event previously added by addEvent, null if no event available
+ */
+ROT.EventQueue.prototype.get = function() {
+	if (!this._events.length) { return null; }
+
+	var time = this._eventTimes.splice(0, 1)[0];
+	if (time > 0) { /* advance */
+		this._time += time;
+		for (var i=0;i<this._eventTimes.length;i++) { this._eventTimes[i] -= time; }
+	}
+
+	return this._events.splice(0, 1)[0];
+}
+
+/**
+ * Remove an event from the queue
+ * @param {?} event
+ */
+ROT.EventQueue.prototype.remove = function(event) {
+	var index = this._events.indexOf(event);
+	if (index == -1) { throw new Error("Cannot remove event " + event + ", not found"); }
+	this._remove(index);
+	return this;
+}
+
+/**
+ * Remove an event from the queue
+ * @param {int} index
+ */
+ROT.EventQueue.prototype._remove = function(index) {
+	this._events.splice(index, 1);
+	this._eventTimes.splice(index, 1);
+}
+/**
+ * @class Abstract scheduler
+ */
+ROT.Scheduler = function() {
+	this._queue = new ROT.EventQueue();
+	this._actors = [];
+	this._events = [];
+	this._current = null;
+}
+
+/**
+ * @param {?} actor
+ */
+ROT.Scheduler.prototype.addActor = function(actor) {
+	this._actors.push(actor);
+	return this;
+}
+
+/**
+ * @param {?} event
+ */
+ROT.Scheduler.prototype.addEvent = function(event) {
+	this._events.push(event);
+	return this;
+}
+
+/**
+ * Clear all actors
+ */
+ROT.Scheduler.prototype.clear = function() {
+	this._queue.clear();
+	this._actors = [];
+	this._events = [];
+	this._current = null;
+	return this;
+}
+
+/**
+ * Remove a previously added actor or event
+ * @param {?} actor Actor or event
+ */
+ROT.Scheduler.prototype.remove = function(actorOrEvent) {
+	this._queue.remove(actorOrEvent);
+
+	var index = this._actors.indexOf(actorOrEvent);
+	if (index != -1) { this._actors.splice(index, 1); }
+	var index = this._events.indexOf(actorOrEvent);
+	if (index != -1) { this._events.splice(index, 1); }
+
+	if (this._current == actorOrEvent) { this._current = null; }
+
+	return this;
+}
+
+/**
+ * Schedule next actor
+ * @returns {?}
+ */
+ROT.Scheduler.prototype.next = function() {
+	var scheduled = this._queue.get();
+	this._current = scheduled;
+
+	if (scheduled) {
+		var index = this._events.indexOf(scheduled);
+		if (index != -1) {
+			this._events.splice(index, 1);
+			this._current = null;
+		}
+	}
+
+	return scheduled;
+}
+/**
+ * @class Simple fair scheduler (round-robin style)
+ */
+ROT.Scheduler.Simple = function() {
+	ROT.Scheduler.call(this);
+}
+ROT.Scheduler.Simple.extend(ROT.Scheduler);
+
+/**
+ * @see ROT.Scheduler#addActor
+ */
+ROT.Scheduler.Simple.prototype.addActor = function(actor) {
+	this._queue.add(actor, 0);
+	return ROT.Scheduler.prototype.addActor.call(this, actor);
+}
+
+/**
+ * @see ROT.Scheduler#addEvent
+ */
+ROT.Scheduler.Simple.prototype.addEvent = function(event) {
+	this._queue.add(event, 0);
+	return ROT.Scheduler.prototype.addEvent.call(this, event);
+}
+
+/**
+ * @see ROT.Scheduler#next
+ */
+ROT.Scheduler.Simple.prototype.next = function() {
+	if (this._current) {
+		this._queue.add(this._current, 0);
+	}
+	return ROT.Scheduler.prototype.next.call(this);
+}
+/**
+ * @class Speed-based scheduler
+ */
+ROT.Scheduler.Speed = function() {
+	ROT.Scheduler.call(this);
+	this._current = null;
+}
+ROT.Scheduler.Speed.extend(ROT.Scheduler);
+
+/**
+ * @param {object} actor anything with "getSpeed" method
+ * @see ROT.Scheduler#addActor
+ */
+ROT.Scheduler.Speed.prototype.addActor = function(actor) {
+	this._queue.add(actor, 1/actor.getSpeed());
+	return ROT.Scheduler.prototype.addActor.call(this, actor);
+}
+
+/**
+ * @param {object} actor anything with "getSpeed" method
+ * @see ROT.Scheduler#addEvent
+ */
+ROT.Scheduler.Speed.prototype.addEvent = function(event) {
+	this._queue.add(event, 1/event.getSpeed());
+	return ROT.Scheduler.prototype.addEvent.call(this, event);
+}
+
+/**
+ * @see ROT.Scheduler#next
+ */
+ROT.Scheduler.Speed.prototype.next = function() {
+	if (this._current) {
+		this._queue.add(this._current, 1/this._current.getSpeed());
+	}
+	return ROT.Scheduler.prototype.next.call(this);
+}
+/**
+ * @class Asynchronous main loop
+ * @param {ROT.Scheduler} scheduler
+ */
+ROT.Engine = function(scheduler) {
+	this._scheduler = scheduler;
+	this._lock = 1;
+}
+
+/**
+ * @param {object} actor Anything with "getSpeed" and "act" methods
+ */
+ROT.Engine.prototype.addActor = function(actor) {
+	this._scheduler.add(actor);
+	return this;
+}
+
+/**
+ * Remove a previously added actor
+ * @param {object} actor
+ */
+ROT.Engine.prototype.removeActor = function(actor) {
+	this._scheduler.remove(actor);
+	return this;
+}
+
+/**
+ * Remove all actors
+ */
+ROT.Engine.prototype.clear = function() {
+	this._scheduler.clear();
+	return this;
+}
+
+/**
+ * Start the main loop. When this call returns, the loop is locked.
+ */
+ROT.Engine.prototype.start = function() {
+	return this.unlock();
+}
+
+/**
+ * Interrupt the engine by an asynchronous action
+ */
+ROT.Engine.prototype.lock = function() {
+	this._lock++;
+}
+
+/**
+ * Resume execution (paused by a previous lock)
+ */
+ROT.Engine.prototype.unlock = function() {
+	if (!this._lock) { throw new Error("Cannot unlock unlocked engine"); }
+	this._lock--;
+
+	while (!this._lock) {
+		var actor = this._scheduler.next();
+		if (!actor) { return this.lock(); } /* no actors */
+		actor.act();
+	}
+
+	return this;
 }
 /**
  * @class Base map generator

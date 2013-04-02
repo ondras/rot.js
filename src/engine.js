@@ -1,8 +1,9 @@
 /**
  * @class Asynchronous main loop
+ * @param {ROT.Scheduler} scheduler
  */
-ROT.Engine = function() {
-	this._scheduler = new ROT.Scheduler();
+ROT.Engine = function(scheduler) {
+	this._scheduler = scheduler;
 	this._lock = 1;
 }
 

@@ -3,7 +3,7 @@ describe("Scheduler", function() {
 	var A100a = {getSpeed: function() { return 100; }};
 	var A100b = {getSpeed: function() { return 100; }};
 	var A200 = {getSpeed: function() { return 200; }};
-	var s = new ROT.Scheduler();
+	var s = new ROT.Scheduler.Speed();
 
 	beforeEach(function() {
 		s.clear();
@@ -18,8 +18,8 @@ describe("Scheduler", function() {
 	});
 
 	it("should schedule same speed evenly", function() {
-		s.add(A100a);
-		s.add(A100b);
+		s.addActor(A100a);
+		s.addActor(A100b);
 		var result = [];
 		for (var i=0;i<4;i++) { result.push(s.next()); }
 
@@ -27,9 +27,9 @@ describe("Scheduler", function() {
 	});
 
 	it("should schedule different speeds properly", function() {
-		s.add(A50);
-		s.add(A100a);
-		s.add(A200);
+		s.addActor(A50);
+		s.addActor(A100a);
+		s.addActor(A200);
 		var result = [];
 		for (var i=0;i<7;i++) { result.push(s.next()); }
 		expect(result).toSchedule([A200, A100a, A200, A200, A50, A100a, A200]);

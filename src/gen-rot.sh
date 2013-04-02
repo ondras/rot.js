@@ -2,9 +2,6 @@
 LIST="
 rot.js
 text.js
-eventqueue.js
-scheduler.js
-engine.js
 js/array.js
 js/date.js
 js/number.js
@@ -17,6 +14,12 @@ display/rect.js
 display/hex.js
 rng.js
 stringgenerator.js
+eventqueue.js
+scheduler/scheduler.js
+scheduler/scheduler-simple.js
+scheduler/scheduler-speed.js
+scheduler/scheduler-action.js
+engine.js
 map/map.js
 map/arena.js
 map/dividedmaze.js
