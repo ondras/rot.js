@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Tue Apr  2 16:13:41 CEST 2013.
+	Version 0.5~dev, generated on Wed Apr  3 15:08:25 CEST 2013.
 */
 
 /**
@@ -1513,12 +1513,13 @@ ROT.EventQueue.prototype.get = function() {
 /**
  * Remove an event from the queue
  * @param {?} event
+ * @returns {bool} success?
  */
 ROT.EventQueue.prototype.remove = function(event) {
 	var index = this._events.indexOf(event);
-	if (index == -1) { throw new Error("Cannot remove event " + event + ", not found"); }
+	if (index == -1) { return false }
 	this._remove(index);
-	return this;
+	return true;
 }
 
 /**
@@ -1534,72 +1535,51 @@ ROT.EventQueue.prototype._remove = function(index) {
  */
 ROT.Scheduler = function() {
 	this._queue = new ROT.EventQueue();
-	this._actors = [];
-	this._events = [];
+	this._repeat = [];
 	this._current = null;
 }
 
 /**
- * @param {?} actor
+ * @param {?} item
+ * @param {bool} repeat
  */
-ROT.Scheduler.prototype.addActor = function(actor) {
-	this._actors.push(actor);
+ROT.Scheduler.prototype.add = function(item, repeat) {
+	if (repeat) { this._repeat.push(item); }
 	return this;
 }
 
 /**
- * @param {?} event
- */
-ROT.Scheduler.prototype.addEvent = function(event) {
-	this._events.push(event);
-	return this;
-}
-
-/**
- * Clear all actors
+ * Clear all items
  */
 ROT.Scheduler.prototype.clear = function() {
 	this._queue.clear();
-	this._actors = [];
-	this._events = [];
+	this._repeat = [];
 	this._current = null;
 	return this;
 }
 
 /**
- * Remove a previously added actor or event
- * @param {?} actor Actor or event
+ * Remove a previously added item
+ * @param {?} item
  */
-ROT.Scheduler.prototype.remove = function(actorOrEvent) {
-	this._queue.remove(actorOrEvent);
+ROT.Scheduler.prototype.remove = function(item) {
+	this._queue.remove(item);
 
-	var index = this._actors.indexOf(actorOrEvent);
-	if (index != -1) { this._actors.splice(index, 1); }
-	var index = this._events.indexOf(actorOrEvent);
-	if (index != -1) { this._events.splice(index, 1); }
+	var index = this._repeat.indexOf(item);
+	if (index != -1) { this._repeat.splice(index, 1); }
 
-	if (this._current == actorOrEvent) { this._current = null; }
+	if (this._current == item) { this._current = null; }
 
 	return this;
 }
 
 /**
- * Schedule next actor
+ * Schedule next item
  * @returns {?}
  */
 ROT.Scheduler.prototype.next = function() {
-	var scheduled = this._queue.get();
-	this._current = scheduled;
-
-	if (scheduled) {
-		var index = this._events.indexOf(scheduled);
-		if (index != -1) {
-			this._events.splice(index, 1);
-			this._current = null;
-		}
-	}
-
-	return scheduled;
+	this._current = this._queue.get();
+	return this._current;
 }
 /**
  * @class Simple fair scheduler (round-robin style)
@@ -1610,26 +1590,18 @@ ROT.Scheduler.Simple = function() {
 ROT.Scheduler.Simple.extend(ROT.Scheduler);
 
 /**
- * @see ROT.Scheduler#addActor
+ * @see ROT.Scheduler#add
  */
-ROT.Scheduler.Simple.prototype.addActor = function(actor) {
-	this._queue.add(actor, 0);
-	return ROT.Scheduler.prototype.addActor.call(this, actor);
-}
-
-/**
- * @see ROT.Scheduler#addEvent
- */
-ROT.Scheduler.Simple.prototype.addEvent = function(event) {
-	this._queue.add(event, 0);
-	return ROT.Scheduler.prototype.addEvent.call(this, event);
+ROT.Scheduler.Simple.prototype.add = function(item, repeat) {
+	this._queue.add(item, 0);
+	return ROT.Scheduler.prototype.add.call(this, item, repeat);
 }
 
 /**
  * @see ROT.Scheduler#next
  */
 ROT.Scheduler.Simple.prototype.next = function() {
-	if (this._current) {
+	if (this._current && this._repeat.indexOf(this._current) != -1) {
 		this._queue.add(this._current, 0);
 	}
 	return ROT.Scheduler.prototype.next.call(this);
@@ -1644,28 +1616,19 @@ ROT.Scheduler.Speed = function() {
 ROT.Scheduler.Speed.extend(ROT.Scheduler);
 
 /**
- * @param {object} actor anything with "getSpeed" method
- * @see ROT.Scheduler#addActor
+ * @param {object} item anything with "getSpeed" method
+ * @see ROT.Scheduler#add
  */
-ROT.Scheduler.Speed.prototype.addActor = function(actor) {
-	this._queue.add(actor, 1/actor.getSpeed());
-	return ROT.Scheduler.prototype.addActor.call(this, actor);
-}
-
-/**
- * @param {object} actor anything with "getSpeed" method
- * @see ROT.Scheduler#addEvent
- */
-ROT.Scheduler.Speed.prototype.addEvent = function(event) {
-	this._queue.add(event, 1/event.getSpeed());
-	return ROT.Scheduler.prototype.addEvent.call(this, event);
+ROT.Scheduler.Speed.prototype.add = function(item, repeat) {
+	this._queue.add(item, 1/item.getSpeed());
+	return ROT.Scheduler.prototype.add.call(this, item, repeat);
 }
 
 /**
  * @see ROT.Scheduler#next
  */
 ROT.Scheduler.Speed.prototype.next = function() {
-	if (this._current) {
+	if (this._current && this._repeat.indexOf(this._current) != -1) {
 		this._queue.add(this._current, 1/this._current.getSpeed());
 	}
 	return ROT.Scheduler.prototype.next.call(this);
@@ -1677,31 +1640,6 @@ ROT.Scheduler.Speed.prototype.next = function() {
 ROT.Engine = function(scheduler) {
 	this._scheduler = scheduler;
 	this._lock = 1;
-}
-
-/**
- * @param {object} actor Anything with "getSpeed" and "act" methods
- */
-ROT.Engine.prototype.addActor = function(actor) {
-	this._scheduler.add(actor);
-	return this;
-}
-
-/**
- * Remove a previously added actor
- * @param {object} actor
- */
-ROT.Engine.prototype.removeActor = function(actor) {
-	this._scheduler.remove(actor);
-	return this;
-}
-
-/**
- * Remove all actors
- */
-ROT.Engine.prototype.clear = function() {
-	this._scheduler.clear();
-	return this;
 }
 
 /**

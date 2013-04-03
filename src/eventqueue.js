@@ -59,12 +59,13 @@ ROT.EventQueue.prototype.get = function() {
 /**
  * Remove an event from the queue
  * @param {?} event
+ * @returns {bool} success?
  */
 ROT.EventQueue.prototype.remove = function(event) {
 	var index = this._events.indexOf(event);
-	if (index == -1) { throw new Error("Cannot remove event " + event + ", not found"); }
+	if (index == -1) { return false }
 	this._remove(index);
-	return this;
+	return true;
 }
 
 /**

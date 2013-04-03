@@ -7,26 +7,18 @@ ROT.Scheduler.Simple = function() {
 ROT.Scheduler.Simple.extend(ROT.Scheduler);
 
 /**
- * @see ROT.Scheduler#addActor
+ * @see ROT.Scheduler#add
  */
-ROT.Scheduler.Simple.prototype.addActor = function(actor) {
-	this._queue.add(actor, 0);
-	return ROT.Scheduler.prototype.addActor.call(this, actor);
-}
-
-/**
- * @see ROT.Scheduler#addEvent
- */
-ROT.Scheduler.Simple.prototype.addEvent = function(event) {
-	this._queue.add(event, 0);
-	return ROT.Scheduler.prototype.addEvent.call(this, event);
+ROT.Scheduler.Simple.prototype.add = function(item, repeat) {
+	this._queue.add(item, 0);
+	return ROT.Scheduler.prototype.add.call(this, item, repeat);
 }
 
 /**
  * @see ROT.Scheduler#next
  */
 ROT.Scheduler.Simple.prototype.next = function() {
-	if (this._current) {
+	if (this._current && this._repeat.indexOf(this._current) != -1) {
 		this._queue.add(this._current, 0);
 	}
 	return ROT.Scheduler.prototype.next.call(this);

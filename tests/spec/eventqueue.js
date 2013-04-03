@@ -21,8 +21,17 @@ describe("EventQueue", function() {
 		var q = new ROT.EventQueue();
 		q.add(123, 0);
 		q.add(456, 0);
-		q.remove(123);
+		var result = q.remove(123);
+		expect(result).toEqual(true);
 		expect(q.get()).toEqual(456);
+	});
+
+	it("should survive removal of non-existant events", function() {
+		var q = new ROT.EventQueue();
+		q.add(0, 0);
+		var result = q.remove(1);
+		expect(result).toEqual(false);
+		expect(q.get()).toEqual(0);
 	});
 
 	it("should return events sorted", function() {

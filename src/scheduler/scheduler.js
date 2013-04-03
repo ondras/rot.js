@@ -3,70 +3,49 @@
  */
 ROT.Scheduler = function() {
 	this._queue = new ROT.EventQueue();
-	this._actors = [];
-	this._events = [];
+	this._repeat = [];
 	this._current = null;
 }
 
 /**
- * @param {?} actor
+ * @param {?} item
+ * @param {bool} repeat
  */
-ROT.Scheduler.prototype.addActor = function(actor) {
-	this._actors.push(actor);
+ROT.Scheduler.prototype.add = function(item, repeat) {
+	if (repeat) { this._repeat.push(item); }
 	return this;
 }
 
 /**
- * @param {?} event
- */
-ROT.Scheduler.prototype.addEvent = function(event) {
-	this._events.push(event);
-	return this;
-}
-
-/**
- * Clear all actors
+ * Clear all items
  */
 ROT.Scheduler.prototype.clear = function() {
 	this._queue.clear();
-	this._actors = [];
-	this._events = [];
+	this._repeat = [];
 	this._current = null;
 	return this;
 }
 
 /**
- * Remove a previously added actor or event
- * @param {?} actor Actor or event
+ * Remove a previously added item
+ * @param {?} item
  */
-ROT.Scheduler.prototype.remove = function(actorOrEvent) {
-	this._queue.remove(actorOrEvent);
+ROT.Scheduler.prototype.remove = function(item) {
+	this._queue.remove(item);
 
-	var index = this._actors.indexOf(actorOrEvent);
-	if (index != -1) { this._actors.splice(index, 1); }
-	var index = this._events.indexOf(actorOrEvent);
-	if (index != -1) { this._events.splice(index, 1); }
+	var index = this._repeat.indexOf(item);
+	if (index != -1) { this._repeat.splice(index, 1); }
 
-	if (this._current == actorOrEvent) { this._current = null; }
+	if (this._current == item) { this._current = null; }
 
 	return this;
 }
 
 /**
- * Schedule next actor
+ * Schedule next item
  * @returns {?}
  */
 ROT.Scheduler.prototype.next = function() {
-	var scheduled = this._queue.get();
-	this._current = scheduled;
-
-	if (scheduled) {
-		var index = this._events.indexOf(scheduled);
-		if (index != -1) {
-			this._events.splice(index, 1);
-			this._current = null;
-		}
-	}
-
-	return scheduled;
+	this._current = this._queue.get();
+	return this._current;
 }

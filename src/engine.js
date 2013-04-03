@@ -8,31 +8,6 @@ ROT.Engine = function(scheduler) {
 }
 
 /**
- * @param {object} actor Anything with "getSpeed" and "act" methods
- */
-ROT.Engine.prototype.addActor = function(actor) {
-	this._scheduler.add(actor);
-	return this;
-}
-
-/**
- * Remove a previously added actor
- * @param {object} actor
- */
-ROT.Engine.prototype.removeActor = function(actor) {
-	this._scheduler.remove(actor);
-	return this;
-}
-
-/**
- * Remove all actors
- */
-ROT.Engine.prototype.clear = function() {
-	this._scheduler.clear();
-	return this;
-}
-
-/**
  * Start the main loop. When this call returns, the loop is locked.
  */
 ROT.Engine.prototype.start = function() {
