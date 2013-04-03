@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Wed Apr  3 15:08:25 CEST 2013.
+	Version 0.5~dev, generated on Wed Apr  3 16:15:12 CEST 2013.
 */
 
 /**
@@ -1540,6 +1540,13 @@ ROT.Scheduler = function() {
 }
 
 /**
+ * @see ROT.EventQueue#getTime
+ */
+ROT.Scheduler.prototype.getTime = function() {
+	return this._queue.getTime();
+}
+
+/**
  * @param {?} item
  * @param {bool} repeat
  */
@@ -1561,16 +1568,17 @@ ROT.Scheduler.prototype.clear = function() {
 /**
  * Remove a previously added item
  * @param {?} item
+ * @returns {bool} successful?
  */
 ROT.Scheduler.prototype.remove = function(item) {
-	this._queue.remove(item);
+	var result = this._queue.remove(item);
 
 	var index = this._repeat.indexOf(item);
 	if (index != -1) { this._repeat.splice(index, 1); }
 
 	if (this._current == item) { this._current = null; }
 
-	return this;
+	return result;
 }
 
 /**
@@ -1611,12 +1619,12 @@ ROT.Scheduler.Simple.prototype.next = function() {
  */
 ROT.Scheduler.Speed = function() {
 	ROT.Scheduler.call(this);
-	this._current = null;
 }
 ROT.Scheduler.Speed.extend(ROT.Scheduler);
 
 /**
  * @param {object} item anything with "getSpeed" method
+ * @param {bool} repeat
  * @see ROT.Scheduler#add
  */
 ROT.Scheduler.Speed.prototype.add = function(item, repeat) {
@@ -1632,6 +1640,55 @@ ROT.Scheduler.Speed.prototype.next = function() {
 		this._queue.add(this._current, 1/this._current.getSpeed());
 	}
 	return ROT.Scheduler.prototype.next.call(this);
+}
+/**
+ * @class Action-based scheduler
+ */
+ROT.Scheduler.Action = function() {
+	ROT.Scheduler.call(this);
+	this._defaultDuration = 1; /* for newly added */
+	this._duration = this._defaultDuration; /* for this._current */
+}
+ROT.Scheduler.Action.extend(ROT.Scheduler);
+
+/**
+ * @param {object} item
+ * @param {bool} repeat
+ * @param {number} [time=1]
+ * @see ROT.Scheduler#add
+ */
+ROT.Scheduler.Action.prototype.add = function(item, repeat, time) {
+	this._queue.add(item, time || this._defaultDuration);
+	return ROT.Scheduler.prototype.add.call(this, item, repeat);
+}
+
+ROT.Scheduler.Action.prototype.clear = function() {
+	this._duration = this._defaultDuration;
+	return ROT.Scheduler.prototype.clear.call(this);
+}
+
+ROT.Scheduler.Action.prototype.remove = function(item) {
+	if (item == this._current) { this._duration = this._defaultDuration; }
+	return ROT.Scheduler.prototype.remove.call(this, item);
+}
+
+/**
+ * @see ROT.Scheduler#next
+ */
+ROT.Scheduler.Action.prototype.next = function() {
+	if (this._current && this._repeat.indexOf(this._current) != -1) {
+		this._queue.add(this._current, this._duration || this._defaultDuration);
+		this._duration = this._defaultDuration;
+	}
+	return ROT.Scheduler.prototype.next.call(this);
+}
+
+/**
+ * Set duration for the active item
+ */
+ROT.Scheduler.Action.prototype.setDuration = function(time) {
+	if (this._current) { this._duration = time; }
+	return this;
 }
 /**
  * @class Asynchronous main loop
