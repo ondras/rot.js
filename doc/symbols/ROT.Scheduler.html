@@ -193,8 +193,6 @@ ul.inheritsList
 	
 	<li><a href="../symbols/Array.html">Array</a></li>
 	
-	<li><a href="../symbols/Date.html">Date</a></li>
-	
 	<li><a href="../symbols/Function.html">Function</a></li>
 	
 	<li><a href="../symbols/Number.html">Number</a></li>
@@ -208,6 +206,8 @@ ul.inheritsList
 	<li><a href="../symbols/ROT.Display.html">ROT.Display</a></li>
 	
 	<li><a href="../symbols/ROT.Engine.html">ROT.Engine</a></li>
+	
+	<li><a href="../symbols/ROT.EventQueue.html">ROT.EventQueue</a></li>
 	
 	<li><a href="../symbols/ROT.FOV.html">ROT.FOV</a></li>
 	
@@ -257,6 +257,12 @@ ul.inheritsList
 	
 	<li><a href="../symbols/ROT.Scheduler.html">ROT.Scheduler</a></li>
 	
+	<li><a href="../symbols/ROT.Scheduler.Action.html">ROT.Scheduler.Action</a></li>
+	
+	<li><a href="../symbols/ROT.Scheduler.Simple.html">ROT.Scheduler.Simple</a></li>
+	
+	<li><a href="../symbols/ROT.Scheduler.Speed.html">ROT.Scheduler.Speed</a></li>
+	
 	<li><a href="../symbols/ROT.StringGenerator.html">ROT.StringGenerator</a></li>
 	
 	<li><a href="../symbols/ROT.Text.html">ROT.Text</a></li>
@@ -280,7 +286,7 @@ ul.inheritsList
 				
 				
 			
-				Speed-based scheduler
+				Abstract scheduler
 				
 				
 					<br /><i>Defined in: </i> &lt;rot.js&gt;.
@@ -331,7 +337,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Scheduler.html#add">add</a></b>(item)
+								<div class="fixedFont"><b><a href="../symbols/ROT.Scheduler.html#add">add</a></b>(item, repeat)
 								</div>
 								<div class="description"></div>
 							</td>
@@ -342,7 +348,16 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/ROT.Scheduler.html#clear">clear</a></b>()
 								</div>
-								<div class="description">Clear all actors</div>
+								<div class="description">Clear all items</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Scheduler.html#getTime">getTime</a></b>()
+								</div>
+								<div class="description"></div>
 							</td>
 						</tr>
 					
@@ -351,7 +366,7 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/ROT.Scheduler.html#next">next</a></b>()
 								</div>
-								<div class="description">Schedule next actor</div>
+								<div class="description">Schedule next item</div>
 							</td>
 						</tr>
 					
@@ -416,7 +431,7 @@ ul.inheritsList
 					<div class="fixedFont">
 					
 					
-					<b>add</b>(item)
+					<b>add</b>(item, repeat)
 					
 					</div>
 					<div class="description">
@@ -432,10 +447,16 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{object}</span> <b>item</b>
+									<span class="light fixedFont">{?}</span> <b>item</b>
 									
 								</dt>
-								<dd>anything with "getSpeed" method</dd>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{bool}</span> <b>repeat</b>
+									
+								</dt>
+								<dd></dd>
 							
 							</dl>
 						
@@ -456,7 +477,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Clear all actors
+						Clear all items
 						
 						
 					</div>
@@ -473,15 +494,47 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name="getTime"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getTime</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/ROT.EventQueue.html#getTime">ROT.EventQueue#getTime</a></dd>
+							
+							</dl>
+						
+
+					<hr />
+				
 					<a name="next"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{object}</span>
+					<span class="light">{?}</span>
 					<b>next</b>()
 					
 					</div>
 					<div class="description">
-						Schedule next actor
+						Schedule next item
 						
 						
 					</div>
@@ -496,7 +549,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{object}</span> </dd>
+								<dd><span class="light fixedFont">{?}</span> </dd>
 							
 							</dl>
 						
@@ -508,7 +561,7 @@ ul.inheritsList
 					<a name="remove"> </a>
 					<div class="fixedFont">
 					
-					
+					<span class="light">{bool}</span>
 					<b>remove</b>(item)
 					
 					</div>
@@ -525,16 +578,23 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{object}</span> <b>item</b>
+									<span class="light fixedFont">{?}</span> <b>item</b>
 									
 								</dt>
-								<dd>anything with "getSpeed" method</dd>
+								<dd></dd>
 							
 							</dl>
 						
 						
 						
 						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{bool}</span> successful?</dd>
+							
+							</dl>
 						
 						
 						
@@ -553,7 +613,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Mar 21 2013 15:06:16 GMT+0100 (CET)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Apr 04 2013 12:25:28 GMT+0200 (CEST)
 		</div>
 	</body>
 </html>

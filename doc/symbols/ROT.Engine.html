@@ -193,8 +193,6 @@ ul.inheritsList
 	
 	<li><a href="../symbols/Array.html">Array</a></li>
 	
-	<li><a href="../symbols/Date.html">Date</a></li>
-	
 	<li><a href="../symbols/Function.html">Function</a></li>
 	
 	<li><a href="../symbols/Number.html">Number</a></li>
@@ -208,6 +206,8 @@ ul.inheritsList
 	<li><a href="../symbols/ROT.Display.html">ROT.Display</a></li>
 	
 	<li><a href="../symbols/ROT.Engine.html">ROT.Engine</a></li>
+	
+	<li><a href="../symbols/ROT.EventQueue.html">ROT.EventQueue</a></li>
 	
 	<li><a href="../symbols/ROT.FOV.html">ROT.FOV</a></li>
 	
@@ -257,6 +257,12 @@ ul.inheritsList
 	
 	<li><a href="../symbols/ROT.Scheduler.html">ROT.Scheduler</a></li>
 	
+	<li><a href="../symbols/ROT.Scheduler.Action.html">ROT.Scheduler.Action</a></li>
+	
+	<li><a href="../symbols/ROT.Scheduler.Simple.html">ROT.Scheduler.Simple</a></li>
+	
+	<li><a href="../symbols/ROT.Scheduler.Speed.html">ROT.Scheduler.Speed</a></li>
+	
 	<li><a href="../symbols/ROT.StringGenerator.html">ROT.StringGenerator</a></li>
 	
 	<li><a href="../symbols/ROT.Text.html">ROT.Text</a></li>
@@ -302,7 +308,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROT.Engine.html#constructor">ROT.Engine</a></b>()
+								<b><a href="../symbols/ROT.Engine.html#constructor">ROT.Engine</a></b>(scheduler)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -331,36 +337,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Engine.html#addActor">addActor</a></b>(actor)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Engine.html#clear">clear</a></b>()
-								</div>
-								<div class="description">Remove all actors</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/ROT.Engine.html#lock">lock</a></b>()
 								</div>
 								<div class="description">Interrupt the engine by an asynchronous action</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Engine.html#removeActor">removeActor</a></b>(actor)
-								</div>
-								<div class="description">Remove a previously added actor</div>
 							</td>
 						</tr>
 					
@@ -399,7 +378,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROT.Engine</b>()
+						<b>ROT.Engine</b>(scheduler)
 				</div>
 				
 				<div class="description">
@@ -410,6 +389,17 @@ ul.inheritsList
 				
 				
 				
+					
+						<dl class="detailList">
+						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								<span class="light fixedFont">{<a href="../symbols/ROT.Scheduler.html">ROT.Scheduler</a>}</span>  <b>scheduler</b>
+								
+							</dt>
+								<dd></dd>
+						
+						</dl>
 					
 					
 					
@@ -430,67 +420,6 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="addActor"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>addActor</b>(actor)
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{object}</span> <b>actor</b>
-									
-								</dt>
-								<dd>Anything with "getSpeed" and "act" methods</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="clear"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>clear</b>()
-					
-					</div>
-					<div class="description">
-						Remove all actors
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
 					<a name="lock"> </a>
 					<div class="fixedFont">
 					
@@ -506,42 +435,6 @@ ul.inheritsList
 					
 					
 					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="removeActor"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>removeActor</b>(actor)
-					
-					</div>
-					<div class="description">
-						Remove a previously added actor
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{object}</span> <b>actor</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
 						
 						
 						
@@ -614,7 +507,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Mar 21 2013 15:06:16 GMT+0100 (CET)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Apr 04 2013 12:25:28 GMT+0200 (CEST)
 		</div>
 	</body>
 </html>

@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Object</title>
+		<title>JsDoc Reference - ROT.Scheduler.Action</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -278,20 +278,45 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Built-In Namespace Object
+				Class ROT.Scheduler.Action
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
+				<br />Extends
+					<a href="../symbols/ROT.Scheduler.html">ROT.Scheduler</a>.<br />
 				
 			
+				Action-based scheduler
 				
 				
+					<br /><i>Defined in: </i> &lt;rot.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
+			
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Scheduler.Action.">
+				<caption>Class Summary</caption>
+				<thead>
+					<tr>
+						<th scope="col">Constructor Attributes</th>
+						<th scope="col">Constructor Name and Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="attributes">&nbsp;</td>
+						<td class="nameDescription" >
+							<div class="fixedFont">
+								<b><a href="../symbols/ROT.Scheduler.Action.html#constructor">ROT.Scheduler.Action</a></b>()
+							</div>
+							<div class="description"></div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 			
 
 <!-- ============================== properties summary ===================== -->
@@ -301,7 +326,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Object.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Scheduler.Action.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -312,11 +337,47 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Object.<b><a href="../symbols/Object.html#.create">create</a></b>(o)
+								<div class="fixedFont"><b><a href="../symbols/ROT.Scheduler.Action.html#add">add</a></b>(item, repeat, time)
 								</div>
-								<div class="description">ES5 Object.create</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Scheduler.Action.html#clear">clear</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Scheduler.Action.html#next">next</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Scheduler.Action.html#remove">remove</a></b>(item)
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.Scheduler.Action.html#setDuration">setDuration</a></b>(time)
+								</div>
+								<div class="description">Set duration for the active item</div>
 							</td>
 						</tr>
 					
@@ -325,11 +386,42 @@ ul.inheritsList
 				
 				
 				
+				<dl class="inheritsList">
+				<dt>Methods borrowed from class <a href="../symbols/ROT.Scheduler.html">ROT.Scheduler</a>: </dt><dd><a href="../symbols/ROT.Scheduler.html#getTime">getTime</a></dd>
+				</dl>
+				
 			
 <!-- ============================== events summary ======================== -->
 			
 
 <!-- ============================== constructor details ==================== -->		
+			
+			<div class="details"><a name="constructor"> </a>
+				<div class="sectionTitle">
+					Class Detail
+				</div>
+				
+				<div class="fixedFont">
+						<b>ROT.Scheduler.Action</b>()
+				</div>
+				
+				<div class="description">
+					
+					
+				</div>
+				
+				
+				
+				
+					
+					
+					
+					
+					
+					
+					
+
+			</div>
 			
 
 <!-- ============================== field details ========================== -->		
@@ -341,18 +433,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".create"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="add"> </a>
+					<div class="fixedFont">
 					
 					
-					<span class="light">Object.</span><b>create</b>(o)
+					<b>add</b>(item, repeat, time)
 					
 					</div>
 					<div class="description">
-						ES5 Object.create
 						
-							<br />
-							<i>Defined in: </i> &lt;rot.js&gt;.
 						
 						
 					</div>
@@ -364,7 +453,155 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>o</b>
+									<span class="light fixedFont">{object}</span> <b>item</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{bool}</span> <b>repeat</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>time</b>
+									<i>Optional, Default: 1</i>
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/ROT.Scheduler.html#add">ROT.Scheduler#add</a></dd>
+							
+							</dl>
+						
+
+					<hr />
+				
+					<a name="clear"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>clear</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="next"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>next</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/ROT.Scheduler.html#next">ROT.Scheduler#next</a></dd>
+							
+							</dl>
+						
+
+					<hr />
+				
+					<a name="remove"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>remove</b>(item)
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>item</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="setDuration"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setDuration</b>(time)
+					
+					</div>
+					<div class="description">
+						Set duration for the active item
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>time</b>
 									
 								</dt>
 								<dd></dd>
@@ -392,7 +629,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Apr 04 2013 12:25:27 GMT+0200 (CEST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Apr 04 2013 12:25:28 GMT+0200 (CEST)
 		</div>
 	</body>
 </html>

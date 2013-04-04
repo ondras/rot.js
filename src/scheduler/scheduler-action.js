@@ -1,5 +1,6 @@
 /**
  * @class Action-based scheduler
+ * @augments ROT.Scheduler
  */
 ROT.Scheduler.Action = function() {
 	ROT.Scheduler.call(this);

@@ -1,5 +1,6 @@
 /**
  * @class Speed-based scheduler
+ * @augments ROT.Scheduler
  */
 ROT.Scheduler.Speed = function() {
 	ROT.Scheduler.call(this);

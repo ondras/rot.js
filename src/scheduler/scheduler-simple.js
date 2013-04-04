@@ -1,5 +1,6 @@
 /**
  * @class Simple fair scheduler (round-robin style)
+ * @augments ROT.Scheduler
  */
 ROT.Scheduler.Simple = function() {
 	ROT.Scheduler.call(this);

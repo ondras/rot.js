@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Object</title>
+		<title>JsDoc Reference - ROT.EventQueue</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -278,7 +278,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Built-In Namespace Object
+				Class ROT.EventQueue
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -286,12 +286,35 @@ ul.inheritsList
 				
 				
 			
+				Generic event queue: stores events and retrieves them based on their time
 				
 				
+					<br /><i>Defined in: </i> &lt;rot.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
+			
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.EventQueue.">
+				<caption>Class Summary</caption>
+				<thead>
+					<tr>
+						<th scope="col">Constructor Attributes</th>
+						<th scope="col">Constructor Name and Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="attributes">&nbsp;</td>
+						<td class="nameDescription" >
+							<div class="fixedFont">
+								<b><a href="../symbols/ROT.EventQueue.html#constructor">ROT.EventQueue</a></b>()
+							</div>
+							<div class="description"></div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 			
 
 <!-- ============================== properties summary ===================== -->
@@ -301,7 +324,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Object.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.EventQueue.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -312,11 +335,47 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Object.<b><a href="../symbols/Object.html#.create">create</a></b>(o)
+								<div class="fixedFont"><b><a href="../symbols/ROT.EventQueue.html#add">add</a></b>(event, time)
 								</div>
-								<div class="description">ES5 Object.create</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.EventQueue.html#clear">clear</a></b>()
+								</div>
+								<div class="description">Clear all scheduled events</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.EventQueue.html#get">get</a></b>()
+								</div>
+								<div class="description">Locates the nearest event, advances time if necessary.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.EventQueue.html#getTime">getTime</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.EventQueue.html#remove">remove</a></b>(event)
+								</div>
+								<div class="description">Remove an event from the queue</div>
 							</td>
 						</tr>
 					
@@ -331,6 +390,33 @@ ul.inheritsList
 
 <!-- ============================== constructor details ==================== -->		
 			
+			<div class="details"><a name="constructor"> </a>
+				<div class="sectionTitle">
+					Class Detail
+				</div>
+				
+				<div class="fixedFont">
+						<b>ROT.EventQueue</b>()
+				</div>
+				
+				<div class="description">
+					
+					
+				</div>
+				
+				
+				
+				
+					
+					
+					
+					
+					
+					
+					
+
+			</div>
+			
 
 <!-- ============================== field details ========================== -->		
 			
@@ -341,18 +427,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".create"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="add"> </a>
+					<div class="fixedFont">
 					
 					
-					<span class="light">Object.</span><b>create</b>(o)
+					<b>add</b>(event, time)
 					
 					</div>
 					<div class="description">
-						ES5 Object.create
 						
-							<br />
-							<i>Defined in: </i> &lt;rot.js&gt;.
 						
 						
 					</div>
@@ -364,7 +447,13 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>o</b>
+									<span class="light fixedFont">{?}</span> <b>event</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>time</b>
 									
 								</dt>
 								<dd></dd>
@@ -374,6 +463,138 @@ ul.inheritsList
 						
 						
 						
+						
+						
+						
+
+					<hr />
+				
+					<a name="clear"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>clear</b>()
+					
+					</div>
+					<div class="description">
+						Clear all scheduled events
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="get"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{? || null}</span>
+					<b>get</b>()
+					
+					</div>
+					<div class="description">
+						Locates the nearest event, advances time if necessary. Returns that event and removes it from the queue.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{? || null}</span> The event previously added by addEvent, null if no event available</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="getTime"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{number}</span>
+					<b>getTime</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{number}</span> Elapsed time</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="remove"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{bool}</span>
+					<b>remove</b>(event)
+					
+					</div>
+					<div class="description">
+						Remove an event from the queue
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{?}</span> <b>event</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{bool}</span> success?</dd>
+							
+							</dl>
 						
 						
 						
@@ -392,7 +613,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Apr 04 2013 12:25:27 GMT+0200 (CEST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Apr 04 2013 12:25:28 GMT+0200 (CEST)
 		</div>
 	</body>
 </html>

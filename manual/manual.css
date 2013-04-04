@@ -1,12 +1,11 @@
-@import url(http://fonts.googleapis.com/css?family=Droid+Serif:400,400italic,700,700italic|Inconsolata);
-@import url(menu.css);
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans:400,700|Inconsolata:400,700);@import url(menu.css);
 
 body {
 	background-color: #606060;
 	color: #fff;
 	text-shadow: 0px 1px 0px #000;
 	margin-left: 0px;
-	font-family: droid serif;
+	font-family: droid sans, sans-serif;
 }
 
 h1 {

@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Thu Apr  4 09:44:50 CEST 2013.
+	Version 0.5~dev, generated on Thu Apr  4 12:25:16 CEST 2013.
 */
 
 /**
@@ -1585,6 +1585,7 @@ ROT.Scheduler.prototype.next = function() {
 }
 /**
  * @class Simple fair scheduler (round-robin style)
+ * @augments ROT.Scheduler
  */
 ROT.Scheduler.Simple = function() {
 	ROT.Scheduler.call(this);
@@ -1610,6 +1611,7 @@ ROT.Scheduler.Simple.prototype.next = function() {
 }
 /**
  * @class Speed-based scheduler
+ * @augments ROT.Scheduler
  */
 ROT.Scheduler.Speed = function() {
 	ROT.Scheduler.call(this);
@@ -1637,6 +1639,7 @@ ROT.Scheduler.Speed.prototype.next = function() {
 }
 /**
  * @class Action-based scheduler
+ * @augments ROT.Scheduler
  */
 ROT.Scheduler.Action = function() {
 	ROT.Scheduler.call(this);
