@@ -1,11 +1,11 @@
 <h2>Scheduler</h2>
 
-<p>There are many ways and strategies of scheduling game turns and/or actors. The <code>ROT.Scheduler</code> API is meant as a general scheduling abstraction; there are also three distinct implementation for commonly used scheduling approaches.</p>
+<p>There are many ways and strategies of scheduling game turns and/or actors. The <code>ROT.Scheduler</code> API is meant as a general scheduling abstraction; there are also three distinct implementations for commonly used scheduling approaches.</p>
 
 <p>All available schedulers share these common methods:</p>
 
 <ul>
-	<li><code>add(item, repeat)</code> to add a new schedulable item. There are no specific requirements for the <code>item</code> argument. Second argument specifies whether the scheduler shall treat the item as a repeated actor (such as a being or player), or a one-time event (such as an earthquake or a messenger appearing from nowhere).</li>
+	<li><code>add(item, repeat)</code> to add a new schedulable item. There are no specific requirements for the <code>item</code> argument. The second argument specifies whether the scheduler shall treat the item as a repeated actor (such as a being or player), or a one-time event (such as an earthquake or a messenger appearing from nowhere).</li>
 	<li><code>remove(item)</code> to remove a previously added item</li>
 	<li><code>clear()</code> to remove all items</li>
 	<li><code>getTime()</code> to retrieve the elapsed time from the (internally) used <a href="#timing/eventqueue">Event queue</a></li>

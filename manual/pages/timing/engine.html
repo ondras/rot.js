@@ -1,6 +1,6 @@
 <h2>Asynchronous game engine</h2>
 
-<p>Client-side JavaScript is non-blocking: all long-running operations are asynchronous. The <code>ROT.Engine</code> loop is well suited for orchestrating the possibly-async coordination of various game actors.</p>
+<p>Client-side JavaScript is non-blocking: all long-running operations are asynchronous. The <code>ROT.Engine</code> loop is well suited to orchestrating the possibly-async coordination of various game actors.</p>
 
 <p>To use the engine, you first need a <a href="#timing/scheduler">scheduler</a> that stores your actors and manages their priority. This scheduler is passed to <code>ROT.Engine</code>'s constructor. Once the engine is started, it correctly calls the <code>act()</code> method on proper actors (picked by the scheduler). It is possible to recursively stop (lock) the engine, should some operation (such as displaying a dialog or waiting for user input) block the execution. Once all lock levels are unlocked, the engine continues its execution.</p>
 
