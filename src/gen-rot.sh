@@ -3,7 +3,6 @@ LIST="
 rot.js
 text.js
 js/array.js
-js/date.js
 js/number.js
 js/string.js
 js/object.js

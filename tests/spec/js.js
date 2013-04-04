@@ -103,15 +103,6 @@ describe("JS", function() {
 		});
 	});
 
-	describe("Date", function() {
-		describe("now", function() {
-			it("should return current timestamp", function() {
-				expect(typeof(Date.now())).toBe("number");
-				expect(Date.now()).toBeGreaterThan(0);
-			});
-		});
-	});
-
 	describe("Number", function() {
 		describe("mod", function() {
 			it("should compute modulus of a positive number", function() {

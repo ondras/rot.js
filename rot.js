@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Wed Apr  3 16:15:12 CEST 2013.
+	Version 0.5~dev, generated on Thu Apr  4 09:44:50 CEST 2013.
 */
 
 /**
@@ -569,12 +569,6 @@ Array.prototype.randomize = function() {
 		result.push(this.splice(index, 1)[0]);
 	}
 	return result;
-}
-if (!Date.now) { 
-	/**
-	 * @returns {int} Current timestamp (msec)
-	 */
-	Date.now = function() { return +(new Date); } 
 }
 /**
  * Always positive modulus
