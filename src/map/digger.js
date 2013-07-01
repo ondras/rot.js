@@ -67,7 +67,7 @@ ROT.Map.Digger.prototype.create = function(callback) {
 		do {
 			featureAttempts++;
 			if (this._tryFeature(x, y, dir[0], dir[1])) { /* feature added */
-				if (this._rooms.length + this._corridors.length == 2) { this._rooms[0].addDoor(x, y); } /* first room oficially has doors */
+				//if (this._rooms.length + this._corridors.length == 2) { this._rooms[0].addDoor(x, y); } /* first room oficially has doors */
 				this._removeSurroundingWalls(x, y);
 				this._removeSurroundingWalls(x-dir[0], y-dir[1]);
 				break; 
@@ -86,6 +86,32 @@ ROT.Map.Digger.prototype.create = function(callback) {
 			for (var j=0;j<this._height;j++) {
 				callback(i, j, this._map[i][j]);
 			}
+		}
+	}
+	
+	// Find empty spaces surrounding rooms, and apply doors.
+	for ( var i = 0; i < this._rooms.length; i++ )
+	{
+		var __room = this._rooms[i];
+		// TOP
+		for ( var j = __room._x1; j <= __room._x2; j++ )
+		{
+			if ( this._map[j][__room._y1 - 1] == 0 ) __room.addDoor(j, __room._y1 - 1);
+		}
+		// BOTTOM
+		for ( var j = __room._x1; j <= __room._x2; j++ )
+		{
+			if ( this._map[j][__room._y2 + 1] == 0 ) __room.addDoor(j, __room._y2 + 1);
+		}
+		// LEFT
+		for ( var j = __room._y1; j <= __room._y2; j++ )
+		{
+			if ( this._map[__room._x1 - 1][j] == 0 ) __room.addDoor(__room._x1 - 1, j);
+		}
+		// RIGHT
+		for ( var j = __room._y1; j <= __room._y2; j++ )
+		{
+			if ( this._map[__room._x2 + 1][j] == 0 ) __room.addDoor(__room._x2 + 1, j);
 		}
 	}
 	
