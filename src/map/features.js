@@ -106,6 +106,7 @@ ROT.Map.Feature.Room.createRandom = function(availWidth, availHeight, options) {
 
 ROT.Map.Feature.Room.prototype.addDoor = function(x, y) {
 	this._doors[x+","+y] = 1;
+	return this;
 }
 
 /**
@@ -116,10 +117,29 @@ ROT.Map.Feature.Room.prototype.getDoors = function(callback) {
 		var parts = key.split(",");
 		callback(parseInt(parts[0]), parseInt(parts[1]));
 	}
+	return this;
 }
 
 ROT.Map.Feature.Room.prototype.clearDoors = function() {
 	this._doors = {};
+	return this;
+}
+
+ROT.Map.Feature.Room.prototype.addDoors = function(isWallCallback) {
+	var left = this._x1-1;
+	var right = this._x2+1;
+	var top = this._y1-1;
+	var bottom = this._y2+1;
+
+	for (var x=left; x<=right; x++) {
+		for (var y=top; y<=bottom; y++) {
+			if (x != left && x != right && y != top && y != bottom) { continue; }
+			if (isWallCallback(x, y)) { continue; }
+
+			this.addDoor(x, y);
+		}
+	}
+
 	return this;
 }
 

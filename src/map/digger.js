@@ -81,37 +81,13 @@ ROT.Map.Digger.prototype.create = function(callback) {
 
 	} while (this._dug/area < this._options.dugPercentage || priorityWalls); /* fixme number of priority walls */
 
+	this._addDoors();
+
 	if (callback) {
 		for (var i=0;i<this._width;i++) {
 			for (var j=0;j<this._height;j++) {
 				callback(i, j, this._map[i][j]);
 			}
-		}
-	}
-	
-	// Find empty spaces surrounding rooms, and apply doors.
-	for ( var i = 0; i < this._rooms.length; i++ )
-	{
-		var __room = this._rooms[i];
-		// TOP
-		for ( var j = __room._x1; j <= __room._x2; j++ )
-		{
-			if ( this._map[j][__room._y1 - 1] == 0 ) __room.addDoor(j, __room._y1 - 1);
-		}
-		// BOTTOM
-		for ( var j = __room._x1; j <= __room._x2; j++ )
-		{
-			if ( this._map[j][__room._y2 + 1] == 0 ) __room.addDoor(j, __room._y2 + 1);
-		}
-		// LEFT
-		for ( var j = __room._y1; j <= __room._y2; j++ )
-		{
-			if ( this._map[__room._x1 - 1][j] == 0 ) __room.addDoor(__room._x1 - 1, j);
-		}
-		// RIGHT
-		for ( var j = __room._y1; j <= __room._y2; j++ )
-		{
-			if ( this._map[__room._x2 + 1][j] == 0 ) __room.addDoor(__room._x2 + 1, j);
 		}
 	}
 	
@@ -253,4 +229,19 @@ ROT.Map.Digger.prototype._getDiggingDirection = function(cx, cy) {
 	if (!result) { return null; }
 	
 	return [-result[0], -result[1]];
+}
+
+/**
+ * Find empty spaces surrounding rooms, and apply doors.
+ */
+ROT.Map.Digger.prototype._addDoors = function() {
+	var data = this._map;
+	var isWallCallback = function(x, y) {
+		return (data[x][y] == 1);
+	}
+	for (var i = 0; i < this._rooms.length; i++ ) {
+		var room = this._rooms[i];
+		room.clearDoors();
+		room.addDoors(isWallCallback);
+	}
 }

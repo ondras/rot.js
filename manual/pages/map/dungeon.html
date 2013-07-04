@@ -1,6 +1,6 @@
 <h2>Dungeon generators</h2>
 
-<p>This family of map generators produces corridors and rooms. Room information can be retrieved after the map has been created by calling <code>getRooms()</code>; corridor information can be retrieved via <code>getCorridors()</code>:</p>
+<p>This family of map generators produces corridors and rooms. Room information can be retrieved after the map has been created by calling <code>getRooms()</code>; corridor information can be retrieved via <code>getCorridors()</code>. Rooms can also include door info:</p>
 
 <div class="example">
 ROT.RNG.setSeed(1234);
@@ -8,6 +8,10 @@ var map = new ROT.Map.Digger();
 var display = new ROT.Display({fontSize:8});
 SHOW(display.getContainer());
 map.create(display.DEBUG);
+
+var drawDoor = function(x, y) {
+	display.draw(x, y, "", "", "red");
+}
 
 var rooms = map.getRooms();
 for (var i=0; i&lt;rooms.length; i++) {
@@ -17,6 +21,8 @@ for (var i=0; i&lt;rooms.length; i++) {
 		room.getLeft(), room.getTop(),
 		room.getRight(), room.getBottom()
 	));
+
+	room.getDoors(drawDoor);
 }
 </div>
 
