@@ -157,21 +157,8 @@ ROT.Map.Digger.prototype._findWall = function() {
  * @returns {bool} was this a successful try?
  */
 ROT.Map.Digger.prototype._tryFeature = function(x, y, dx, dy) {
-	var feature = null;
-	var total = 0;
-	for (var p in this._features) { total += this._features[p]; }
-	var random = Math.floor(ROT.RNG.getUniform()*total);
-	
-	var sub = 0;
-	for (var p in this._features) {
-		sub += this._features[p];
-		if (random < sub) { 
-			feature = ROT.Map.Feature[p];
-			break; 
-		}
-	}
-	
-	feature = feature.createRandomAt(x, y, dx, dy, this._options);
+	var feature = ROT.RNG.getWeightedValue(this._features);
+	feature = ROT.Map.Feature[feature].createRandomAt(x, y, dx, dy, this._options);
 	
 	if (!feature.isValid(this._isWallCallback, this._canBeDugCallback)) {
 //		console.log("not valid");

@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Thu Jul  4 10:35:13 CEST 2013.
+	Version 0.5~dev, generated on Thu Jul  4 10:46:30 CEST 2013.
 */
 
 /**
@@ -2343,21 +2343,8 @@ ROT.Map.Digger.prototype._findWall = function() {
  * @returns {bool} was this a successful try?
  */
 ROT.Map.Digger.prototype._tryFeature = function(x, y, dx, dy) {
-	var feature = null;
-	var total = 0;
-	for (var p in this._features) { total += this._features[p]; }
-	var random = Math.floor(ROT.RNG.getUniform()*total);
-	
-	var sub = 0;
-	for (var p in this._features) {
-		sub += this._features[p];
-		if (random < sub) { 
-			feature = ROT.Map.Feature[p];
-			break; 
-		}
-	}
-	
-	feature = feature.createRandomAt(x, y, dx, dy, this._options);
+	var feature = ROT.RNG.getWeightedValue(this._features);
+	feature = ROT.Map.Feature[feature].createRandomAt(x, y, dx, dy, this._options);
 	
 	if (!feature.isValid(this._isWallCallback, this._canBeDugCallback)) {
 //		console.log("not valid");
@@ -3196,8 +3183,7 @@ ROT.Map.Rogue.prototype._createCorridors = function () {
 	}
 }
 /**
- * @class
- * Dungeon feature; has own .create() method
+ * @class Dungeon feature; has own .create() method
  */
 ROT.Map.Feature = function() {}
 ROT.Map.Feature.prototype.isValid = function(canBeDugCallback) {}

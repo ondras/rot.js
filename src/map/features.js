@@ -1,6 +1,5 @@
 /**
- * @class
- * Dungeon feature; has own .create() method
+ * @class Dungeon feature; has own .create() method
  */
 ROT.Map.Feature = function() {}
 ROT.Map.Feature.prototype.isValid = function(canBeDugCallback) {}
