@@ -48,11 +48,12 @@ ROT.RNG = {
 	 * @returns {float} A normally distributed pseudorandom value
 	 */
 	getNormal: function(mean, stddev) {
+		var u,v,r;
 		do {
-			var u = 2*this.getUniform()-1;
-			var v = 2*this.getUniform()-1;
-			var r = u*u + v*v;
-		} while (r > 1 || r == 0);
+			u = 2*this.getUniform()-1;
+			v = 2*this.getUniform()-1;
+			r = u*u + v*v;
+		} while (r > 1 || r === 0);
 
 		var gauss = u * Math.sqrt(-2*Math.log(r)/r);
 		return (mean || 0) + gauss*(stddev || 1);
