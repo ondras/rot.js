@@ -40,6 +40,7 @@ lighting.js
 path/path.js
 path/dijkstra.js
 path/astar.js
+image/image.js
 "
 
 star() {
