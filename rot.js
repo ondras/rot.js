@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Thu Jul 25 08:44:01 CEST 2013.
+	Version 0.5~dev, generated on vie ago  9 01:23:35 CEST 2013.
 */
 
 /**
@@ -4728,4 +4728,16 @@ ROT.Path.AStar.prototype._distance = function(x, y) {
 			return Math.max(Math.abs(x-this._fromX), Math.abs(y-this._fromY));
 		break;
 	}
+}
+/**
+ * @class Base image (as ASCII art) converter
+ */
+ROT.Image = function() {
+	this.aDefaultCharList = (" .,:;i1tfLCG08@").split("");
+	this.aDefaultColorCharList = (" CGO08@").split("");
+	this.strFont = "courier new";
+};
+
+ROT.Image.prototype.get = function(xin, yin) {
+	console.log(888);
 }
