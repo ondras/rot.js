@@ -1,0 +1,78 @@
+<html>
+<head>
+<title>test</title>
+</head>
+<body>
+<script type="text/javascript" src="src/rot.js"></script>
+<script type="text/javascript" src="src/text.js"></script>
+<script type="text/javascript" src="src/js/array.js"></script>
+<script type="text/javascript" src="src/js/number.js"></script>
+<script type="text/javascript" src="src/js/string.js"></script>
+<script type="text/javascript" src="src/js/object.js"></script>
+<script type="text/javascript" src="src/js/function.js"></script>
+<script type="text/javascript" src="src/display/display.js"></script>
+<script type="text/javascript" src="src/display/backend.js"></script>
+<script type="text/javascript" src="src/display/rect.js"></script>
+<script type="text/javascript" src="src/display/hex.js"></script>
+<script type="text/javascript" src="src/rng.js"></script>
+<script type="text/javascript" src="src/stringgenerator.js"></script>
+<script type="text/javascript" src="src/eventqueue.js"></script>
+<script type="text/javascript" src="src/scheduler/scheduler.js"></script>
+<script type="text/javascript" src="src/scheduler/scheduler-simple.js"></script>
+<script type="text/javascript" src="src/scheduler/scheduler-speed.js"></script>
+<script type="text/javascript" src="src/scheduler/scheduler-action.js"></script>
+<script type="text/javascript" src="src/engine.js"></script>
+<script type="text/javascript" src="src/map/map.js"></script>
+<script type="text/javascript" src="src/map/arena.js"></script>
+<script type="text/javascript" src="src/map/dividedmaze.js"></script>
+<script type="text/javascript" src="src/map/iceymaze.js"></script>
+<script type="text/javascript" src="src/map/ellermaze.js"></script>
+<script type="text/javascript" src="src/map/cellular.js"></script>
+<script type="text/javascript" src="src/map/dungeon.js"></script>
+<script type="text/javascript" src="src/map/digger.js"></script>
+<script type="text/javascript" src="src/map/uniform.js"></script>
+<script type="text/javascript" src="src/map/rogue.js"></script>
+<script type="text/javascript" src="src/map/features.js"></script>
+<script type="text/javascript" src="src/noise/noise.js"></script>
+<script type="text/javascript" src="src/noise/simplex.js"></script>
+<script type="text/javascript" src="src/fov/fov.js"></script>
+<script type="text/javascript" src="src/fov/discrete-shadowcasting.js"></script>
+<script type="text/javascript" src="src/fov/precise-shadowcasting.js"></script>
+<script type="text/javascript" src="src/color.js"></script>
+<script type="text/javascript" src="src/lighting.js"></script>
+<script type="text/javascript" src="src/path/path.js"></script>
+<script type="text/javascript" src="src/path/dijkstra.js"></script>
+<script type="text/javascript" src="src/path/astar.js"></script>
+<script type="text/javascript" src="src/image/image.js"></script>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+
+<script type="text/javascript">
+var w = 256;
+var h = 100;
+var noise = new ROT.Noise.Simplex();
+var image = new ROT.Image();
+image.load("mario.jpg");
+image.get();
+
+var display = new ROT.Display({width:w, height:h, fontSize:3});
+
+document.body.appendChild(display.getContainer());
+
+$("body").html(image.ascii_art);
+
+for (var j=0;j<h;j++) {
+    for (var i=0;i<w;i++) {
+        var val = noise.get(i/20, j/20) * 255;
+
+        var r = ~~(val>0 ? val : 0);
+        var g = ~~(val<0 ? -val : 0);
+        
+        display.draw(i, j, "", "", "rgb("+r+","+g+",0)");
+    }
+}
+</script>
+<canvas></canvas>
+<img src="mario.jpg"/>
+</body>
+</html>
