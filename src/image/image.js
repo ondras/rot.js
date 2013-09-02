@@ -5,14 +5,19 @@ ROT.Image = function() {
 	this.aDefaultCharList = (" .,:;i1tfLCG08@").split("");
 	this.aDefaultColorCharList = (" CGO08@").split("");
 	this.strFont = "courier new";
+	this.bBlock = true;
+	this.bAlpha = false;
+	this.bColor = true;
+	this.strResolution = "low";
 	
 	this.ascii_art = "";
 };
 
 ROT.Image.prototype.loadASCII = function() {
 	var aCharList = this.aDefaultCharList;
-	var bBlock = true;
-	var bAlpha = false;
+	var bBlock = this.bBlock;
+	var bAlpha = this.bAlpha;
+	var bColor = this.bColor;
 	
 	var oCanvas = document.createElement("canvas");
 	if (!oCanvas.getContext) {
@@ -23,7 +28,7 @@ ROT.Image.prototype.loadASCII = function() {
 		return;
 	}
 	
-	var strResolution = "low";
+	var strResolution = this.strResolution;
 	
 	var fResolution = 0.5;
 	
@@ -72,15 +77,15 @@ ROT.Image.prototype.loadASCII = function() {
 			if (strThisChar == " ") 
 				strThisChar = "&nbsp;";
 			
-			//~ if (bColor) {
+			if (bColor) {
 				strChars += "<span style='"
 					+ "color:rgb("+iRed+","+iGreen+","+iBlue+");"
 					+ (bBlock ? "background-color:rgb("+iRed+","+iGreen+","+iBlue+");" : "")
 					+ (bAlpha ? "opacity:" + (iAlpha/255) + ";" : "")
 					+ "'>" + strThisChar + "</span>";
-			//~ } else {
-				//~ strChars += strThisChar;
-			//~ }
+			} else {
+				strChars += strThisChar;
+			}
 		}
 		strChars += "<br/>";
 	}
