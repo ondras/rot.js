@@ -11,6 +11,9 @@ ROT.Image = function() {
 	this.strResolution = "low";
 	
 	this.ascii_art = "";
+	this.ascii_art_array = null;
+	this.height = 0;
+	this.width = 0;
 };
 
 ROT.Image.prototype.loadASCII = function() {
@@ -40,6 +43,8 @@ ROT.Image.prototype.loadASCII = function() {
 	
 	var iWidth = Math.round(parseInt(this.img.width) * fResolution);
 	var iHeight = Math.round(parseInt(this.img.height) * fResolution);
+	this.width = iWidth;
+	this.height = iHeight;
 	
 	oCanvas.width = iWidth;
 	oCanvas.height = iHeight;
@@ -52,8 +57,10 @@ ROT.Image.prototype.loadASCII = function() {
 	var oImgData = oCtx.getImageData(0, 0, iWidth, iHeight).data;
 	
 	var strChars = "";
+	var array_chars = [];
 	
 	for (var y=0;y<iHeight;y+=2) {
+		array_chars[y] = [];
 		for (var x=0;x<iWidth;x++) {
 			var iOffset = (y*iWidth + x) * 4;
 			
@@ -73,6 +80,7 @@ ROT.Image.prototype.loadASCII = function() {
 				//~ iCharIdx = (aCharList.length-1) - iCharIdx;
 			//~ }
 			var strThisChar = aCharList[iCharIdx];
+			var unscape_char = strThisChar;
 			
 			if (strThisChar == " ") 
 				strThisChar = "&nbsp;";
@@ -83,12 +91,17 @@ ROT.Image.prototype.loadASCII = function() {
 					+ (bBlock ? "background-color:rgb("+iRed+","+iGreen+","+iBlue+");" : "")
 					+ (bAlpha ? "opacity:" + (iAlpha/255) + ";" : "")
 					+ "'>" + strThisChar + "</span>";
+				
+				array_chars[y][x] = {'r': iRed, 'g' : iGreen, 'b' : iBlue, 'char': unscape_char};
 			} else {
 				strChars += strThisChar;
+				array_chars[y][x] = {'char': unscape_char};
 			}
 		}
 		strChars += "<br/>";
 	}
+	
+	this.ascii_art_array = array_chars;
 	
 	return strChars;
 };
@@ -107,5 +120,31 @@ ROT.Image.prototype.load = function(image_url) {
 };
 
 ROT.Image.prototype.get = function(xin, yin) {
-	console.log(888);
+	return this.ascii_art_array[yin][xin];
+};
+
+ROT.Image.prototype.paint = function(display, offset_x, offset_y) {
+	var i = 0;
+	for (var y = 0; y < this.height; y += 2) {
+		var j = 0;
+		for (var x = 0; x < this.width; x++) {
+			if (this.bColor) {
+				var color = "#" +
+					this.ascii_art_array[y][x]['r'].toString(16) +
+					this.ascii_art_array[y][x]['g'].toString(16) +
+					this.ascii_art_array[y][x]['b'].toString(16);
+				if (this.bBlock) {
+					display.draw(offset_x + j,  offset_y + i, this.ascii_art_array[y][x]['char'], color, color);
+				}
+				else {
+					display.draw(offset_x + j,  offset_y + i, this.ascii_art_array[y][x]['char'], color);
+				}
+			}
+			else {
+				display.draw(offset_x + j,  offset_y + i, this.ascii_art_array[y][x]['char']);
+			}
+			j++;
+		}
+		i++;
+	}
 };
