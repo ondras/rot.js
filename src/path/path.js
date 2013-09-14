@@ -18,6 +18,18 @@ ROT.Path = function(toX, toY, passableCallback, options) {
 	for (var p in options) { this._options[p] = options[p]; }
 
 	this._dirs = ROT.DIRS[this._options.topology];
+	if (this._options.topology == 8) { /* reorder dirs for more aesthetic result (vertical/horizontal first) */
+		this._dirs = [
+			this._dirs[0],
+			this._dirs[2],
+			this._dirs[4],
+			this._dirs[6],
+			this._dirs[1],
+			this._dirs[3],
+			this._dirs[5],
+			this._dirs[7]
+		]
+	}
 }
 
 /**

@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Thu Jul 25 08:44:01 CEST 2013.
+	Version 0.5~dev, generated on Sat Sep 14 13:19:53 CEST 2013.
 */
 
 /**
@@ -4554,6 +4554,18 @@ ROT.Path = function(toX, toY, passableCallback, options) {
 	for (var p in options) { this._options[p] = options[p]; }
 
 	this._dirs = ROT.DIRS[this._options.topology];
+	if (this._options.topology == 8) { /* reorder dirs for more aesthetic result (vertical/horizontal first) */
+		this._dirs = [
+			this._dirs[0],
+			this._dirs[2],
+			this._dirs[4],
+			this._dirs[6],
+			this._dirs[1],
+			this._dirs[3],
+			this._dirs[5],
+			this._dirs[7]
+		]
+	}
 }
 
 /**
