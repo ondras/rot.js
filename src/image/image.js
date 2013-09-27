@@ -59,8 +59,9 @@ ROT.Image.prototype.loadASCII = function() {
 	var strChars = "";
 	var array_chars = [];
 	
+	var iterator_y = 0;
 	for (var y=0;y<iHeight;y+=2) {
-		array_chars[y] = [];
+		array_chars[iterator_y] = [];
 		for (var x=0;x<iWidth;x++) {
 			var iOffset = (y*iWidth + x) * 4;
 			
@@ -92,14 +93,18 @@ ROT.Image.prototype.loadASCII = function() {
 					+ (bAlpha ? "opacity:" + (iAlpha/255) + ";" : "")
 					+ "'>" + strThisChar + "</span>";
 				
-				array_chars[y][x] = {'r': iRed, 'g' : iGreen, 'b' : iBlue, 'char': unscape_char};
-			} else {
+				array_chars[iterator_y][x] = {'r': iRed, 'g' : iGreen, 'b' : iBlue, 'char': unscape_char};
+			}
+			else {
 				strChars += strThisChar;
-				array_chars[y][x] = {'char': unscape_char};
+				array_chars[iterator_y][x] = {'char': unscape_char};
 			}
 		}
+		iterator_y++;
 		strChars += "<br/>";
 	}
+	
+	this.height = iterator_y;
 	
 	this.ascii_art_array = array_chars;
 	
@@ -123,9 +128,37 @@ ROT.Image.prototype.get = function(xin, yin) {
 	return this.ascii_art_array[yin][xin];
 };
 
+ROT.Image.prototype.blit = function(display, display_x, display_y, image_x, image_y, rect_w, rect_h) {
+	var i = 0;
+	
+	for (var y = image_y; y < rect_h; y++) {
+		var j = 0;
+		for (var x = image_x; x < rect_w; x++) {
+			if (this.bColor) {
+				var color = "#" +
+					this.ascii_art_array[y][x]['r'].toString(16) +
+					this.ascii_art_array[y][x]['g'].toString(16) +
+					this.ascii_art_array[y][x]['b'].toString(16);
+				if (this.bBlock) {
+					display.draw(display_x + j,  display_y + i, this.ascii_art_array[y][x]['char'], color, color);
+				}
+				else {
+					display.draw(display_x + j,  display_y + i, this.ascii_art_array[y][x]['char'], color);
+				}
+			}
+			else {
+				display.draw(display_x + j,  display_y + i, this.ascii_art_array[y][x]['char']);
+			}
+			j++;
+		}
+		i++;
+	}
+};
+
 ROT.Image.prototype.paint = function(display, offset_x, offset_y) {
 	var i = 0;
-	for (var y = 0; y < this.height; y += 2) {
+	
+	for (var y = 0; y < this.height; y++) {
 		var j = 0;
 		for (var x = 0; x < this.width; x++) {
 			if (this.bColor) {
