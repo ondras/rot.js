@@ -15,7 +15,7 @@ ROT.Image = function() {
 	this.bBlock = true;
 	this.bAlpha = false;
 	this.bColor = true;
-	this.strResolution = "low";
+	this.strResolution = "medium";
 	
 	this.ascii_art = "";
 	this.ascii_art_array = null;

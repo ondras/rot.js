@@ -48,31 +48,22 @@
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 
 <script type="text/javascript">
-var w = 256;
-var h = 100;
+var w = 200;
+var h = 60;
 var noise = new ROT.Noise.Simplex();
 var image = new ROT.Image();
-image.load("mario.jpg");
-image.get();
+image.strResolution = "medium";
+image.bBlock = false;
+image.load("title.png");
 
-var display = new ROT.Display({width:w, height:h, fontSize:3});
+var display = new ROT.Display({width:w, height:h, fontSize:10});
+
+image.paint(display, 0, 0);
 
 document.body.appendChild(display.getContainer());
 
-$("body").html(image.ascii_art);
 
-for (var j=0;j<h;j++) {
-    for (var i=0;i<w;i++) {
-        var val = noise.get(i/20, j/20) * 255;
-
-        var r = ~~(val>0 ? val : 0);
-        var g = ~~(val<0 ? -val : 0);
-        
-        display.draw(i, j, "", "", "rgb("+r+","+g+",0)");
-    }
-}
 </script>
 <canvas></canvas>
-<img src="mario.jpg"/>
 </body>
 </html>
