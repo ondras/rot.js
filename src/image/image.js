@@ -1,6 +1,13 @@
 /**
  * @class Base image (as ASCII art) converter
  */
+ 
+ //BASED IN THE WORK OF:
+ /*
+ * jsAscii 0.1
+ * Copyright (c) 2008 Jacob Seidelin, jseidelin@nihilogic.dk, http://blog.nihilogic.dk/
+ * MIT License [http://www.nihilogic.dk/licenses/mit-license.txt]
+ */
 ROT.Image = function() {
 	this.aDefaultCharList = (" .,:;i1tfLCG08@").split("");
 	this.aDefaultColorCharList = (" CGO08@").split("");
