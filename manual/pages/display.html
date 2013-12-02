@@ -79,3 +79,41 @@ var str = "Goodbye %c{red}cr%b{blue}u%b{}el %c{}world"
 display.drawText(5,  2, str);
 </div>
 
+<h3>Graphic tiles</h3>
+
+<p>The <code>"tile"</code> layout module is used to draw graphic tiles. You need to define a proper <code>tileMap</code> by mapping individual chars to offsets in your <code>tileSet</code> image. Please note that the image must be loaded before you attempt to use it.</p>
+<div class="example">
+var tileSet = document.createElement("img");
+tileSet.src = "tiles.png";
+
+var options = {
+	layout: "tile",
+	bg: "transparent",
+	tileWidth: 64,
+	tileHeight: 64,
+	tileSet: tileSet,
+	tileMap: {
+		"@": [0, 0],
+		"#": [0, 1],
+		"a": [1, 0],
+		"!": [1, 1]
+	},
+	width: 3,
+	height: 3
+}
+var display = new ROT.Display(options);
+SHOW(display.getContainer());
+
+tileSet.onload = function() {
+	display.draw(1, 1, "@");
+	display.draw(0, 0, "#");
+	display.draw(0, 1, "#");
+	display.draw(1, 0, "#");
+	display.draw(0, 2, "#");
+	display.draw(2, 2, "a");
+	display.draw(2, 0, "!");
+	display.draw(2, 1, "!");
+}
+</div>
+
+

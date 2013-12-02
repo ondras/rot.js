@@ -11,6 +11,7 @@ display/display.js
 display/backend.js
 display/rect.js
 display/hex.js
+display/tile.js
 rng.js
 stringgenerator.js
 eventqueue.js

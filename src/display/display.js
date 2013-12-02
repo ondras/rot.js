@@ -12,6 +12,10 @@
  * @param {float} [options.spacing=1]
  * @param {float} [options.border=0]
  * @param {string} [options.layout="rect"]
+ * @param {int} [options.tileWidth=32]
+ * @param {int} [options.tileHeight=32]
+ * @param {object} [options.tileMap={}]
+ * @param {image} [options.tileSet=null]
  */
 ROT.Display = function(options) {
 	var canvas = document.createElement("canvas");
@@ -32,7 +36,11 @@ ROT.Display = function(options) {
 		fontFamily: "monospace",
 		fontStyle: "",
 		fg: "#ccc",
-		bg: "#000"
+		bg: "#000",
+		tileWidth: 32,
+		tileHeight: 32,
+		tileMap: {},
+		tileSet: null
 	};
 	for (var p in options) { defaultOptions[p] = options[p]; }
 	this.setOptions(defaultOptions);

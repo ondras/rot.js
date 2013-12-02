@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Sat Sep 14 13:19:53 CEST 2013.
+	Version 0.5~dev, generated on Mon Dec  2 11:46:01 CET 2013.
 */
 
 /**
@@ -692,6 +692,10 @@ Function.prototype.extend = function(parent) {
  * @param {float} [options.spacing=1]
  * @param {float} [options.border=0]
  * @param {string} [options.layout="rect"]
+ * @param {int} [options.tileWidth=32]
+ * @param {int} [options.tileHeight=32]
+ * @param {object} [options.tileMap={}]
+ * @param {image} [options.tileSet=null]
  */
 ROT.Display = function(options) {
 	var canvas = document.createElement("canvas");
@@ -712,7 +716,11 @@ ROT.Display = function(options) {
 		fontFamily: "monospace",
 		fontStyle: "",
 		fg: "#ccc",
-		bg: "#000"
+		bg: "#000",
+		tileWidth: 32,
+		tileHeight: 32,
+		tileMap: {},
+		tileSet: null
 	};
 	for (var p in options) { defaultOptions[p] = options[p]; }
 	this.setOptions(defaultOptions);
@@ -1151,6 +1159,49 @@ ROT.Display.Hex.prototype._fill = function(cx, cy) {
 	this._context.lineTo(cx - this._spacingX + b, cy-a/2+b);
 	this._context.lineTo(cx, cy-a+b);
 	this._context.fill();
+}
+/**
+ * @class Tile backend
+ * @private
+ */
+ROT.Display.Tile = function(context) {
+	ROT.Display.Rect.call(this, context);
+	
+	this._options = {};
+}
+ROT.Display.Tile.extend(ROT.Display.Rect);
+
+ROT.Display.Tile.prototype.compute = function(options) {
+	this._options = options;
+	this._context.canvas.width = options.width * options.tileWidth;
+	this._context.canvas.height = options.height * options.tileHeight;
+}
+
+ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
+	var x = data[0];
+	var y = data[1];
+	var ch = data[2];
+	var fg = data[3];
+	var bg = data[4];
+
+	var tileWidth = this._options.tileWidth;
+	var tileHeight = this._options.tileHeight;
+
+	if (clearBefore) {
+		var b = this._options.border;
+		this._context.fillStyle = bg;
+		this._context.fillRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+	}
+
+	if (!ch) { return; }
+	var tile = this._options.tileMap[ch];
+	if (!tile) { throw new Error("Char '" + ch + "' not found in tileMap"); }
+	
+	this._context.drawImage(
+		this._options.tileSet,
+		tile[0]*tileWidth, tile[1]*tileHeight, tileWidth, tileHeight,
+		      x*tileWidth,       y*tileHeight, tileWidth, tileHeight
+	);
 }
 /**
  * @namespace
