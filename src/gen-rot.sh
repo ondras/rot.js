@@ -7,6 +7,7 @@ js/number.js
 js/string.js
 js/object.js
 js/function.js
+js/raf.js
 display/display.js
 display/backend.js
 display/rect.js

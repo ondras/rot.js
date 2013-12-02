@@ -8,7 +8,6 @@
  * @param {string} [options.fontStyle=""] bold/italic/none/both
  * @param {string} [options.fg="#ccc"]
  * @param {string} [options.bg="#000"]
- * @param {int} [options.fps=25]
  * @param {float} [options.spacing=1]
  * @param {float} [options.border=0]
  * @param {string} [options.layout="rect"]
@@ -30,7 +29,6 @@ ROT.Display = function(options) {
 		height: ROT.DEFAULT_HEIGHT,
 		layout: "rect",
 		fontSize: 15,
-		fps: 25,
 		spacing: 1,
 		border: 0,
 		fontFamily: "monospace",
@@ -45,8 +43,9 @@ ROT.Display = function(options) {
 	for (var p in options) { defaultOptions[p] = options[p]; }
 	this.setOptions(defaultOptions);
 	this.DEBUG = this.DEBUG.bind(this);
-	
-	this._interval = setInterval(this._tick.bind(this), 1000/this._options.fps);
+
+	this._tick = this._tick.bind(this);
+	requestAnimationFrame(this._tick);
 }
 
 /**
@@ -215,6 +214,8 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
  * Timer tick: update dirty parts
  */
 ROT.Display.prototype._tick = function() {
+	requestAnimationFrame(this._tick);
+
 	if (!this._dirty) { return; }
 
 	if (this._dirty === true) { /* draw all */
