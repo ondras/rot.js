@@ -150,7 +150,7 @@ ROT.Display.prototype.eventToPosition = function(e) {
 /**
  * @param {int} x
  * @param {int} y
- * @param {string} ch 
+ * @param {string || string[]} ch One or more chars (will be overlapping themselves)
  * @param {string} [fg] foreground color
  * @param {string} [bg] background color
  */

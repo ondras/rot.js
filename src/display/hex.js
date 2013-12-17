@@ -41,7 +41,11 @@ ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
 	if (!ch) { return; }
 
 	this._context.fillStyle = fg;
-	this._context.fillText(ch, cx, cy);
+
+	var chars = [].concat(ch);
+	for (var i=0;i<chars.length;i++) {
+		this._context.fillText(chars[i], cx, cy);
+	}
 }
 
 

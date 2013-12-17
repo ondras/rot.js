@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Mon Dec  2 11:49:56 CET 2013.
+	Version 0.5~dev, generated on Tue Dec 17 14:15:03 CET 2013.
 */
 
 /**
@@ -845,7 +845,7 @@ ROT.Display.prototype.eventToPosition = function(e) {
 /**
  * @param {int} x
  * @param {int} y
- * @param {string} ch 
+ * @param {string || string[]} ch One or more chars (will be overlapping themselves)
  * @param {string} [fg] foreground color
  * @param {string} [bg] background color
  */
@@ -1021,7 +1021,11 @@ ROT.Display.Rect.prototype._drawWithCache = function(data, clearBefore) {
 			ctx.font = this._context.font;
 			ctx.textAlign = "center";
 			ctx.textBaseline = "middle";
-			ctx.fillText(ch, this._spacingX/2, this._spacingY/2);
+
+			var chars = [].concat(ch);
+			for (var i=0;i<chars.length;i++) {
+				ctx.fillText(chars[i], this._spacingX/2, this._spacingY/2);
+			}
 		}
 		this._canvasCache[hash] = canvas;
 	}
@@ -1045,7 +1049,11 @@ ROT.Display.Rect.prototype._drawNoCache = function(data, clearBefore) {
 	if (!ch) { return; }
 
 	this._context.fillStyle = fg;
-	this._context.fillText(ch, (x+0.5) * this._spacingX, (y+0.5) * this._spacingY);
+
+	var chars = [].concat(ch);
+	for (var i=0;i<chars.length;i++) {
+		this._context.fillText(chars[i], (x+0.5) * this._spacingX, (y+0.5) * this._spacingY);
+	}
 }
 
 ROT.Display.Rect.prototype.computeSize = function(availWidth, availHeight) {
@@ -1118,7 +1126,11 @@ ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
 	if (!ch) { return; }
 
 	this._context.fillStyle = fg;
-	this._context.fillText(ch, cx, cy);
+
+	var chars = [].concat(ch);
+	for (var i=0;i<chars.length;i++) {
+		this._context.fillText(chars[i], cx, cy);
+	}
 }
 
 
@@ -1210,14 +1222,30 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 	}
 
 	if (!ch) { return; }
-	var tile = this._options.tileMap[ch];
-	if (!tile) { throw new Error("Char '" + ch + "' not found in tileMap"); }
-	
-	this._context.drawImage(
-		this._options.tileSet,
-		tile[0]*tileWidth, tile[1]*tileHeight, tileWidth, tileHeight,
-		      x*tileWidth,       y*tileHeight, tileWidth, tileHeight
-	);
+
+	var chars = [].concat(ch);
+	for (var i=0;i<chars.length;i++) {
+		var tile = this._options.tileMap[chars[i]];
+		if (!tile) { throw new Error("Char '" + chars[i] + "' not found in tileMap"); }
+		
+		this._context.drawImage(
+			this._options.tileSet,
+			tile[0]*tileWidth, tile[1]*tileHeight, tileWidth, tileHeight,
+			      x*tileWidth,       y*tileHeight, tileWidth, tileHeight
+		);
+	}
+}
+
+ROT.Display.Tile.prototype.computeSize = function(availWidth, availHeight) {
+	var width = Math.floor(availWidth / this._options.tileWidth);
+	var height = Math.floor(availHeight / this._options.tileHeight);
+	return [width, height];
+}
+
+ROT.Display.Tile.prototype.computeFontSize = function(availWidth, availHeight) {
+	var width = Math.floor(availWidth / this._options.width);
+	var height = Math.floor(availHeight / this._options.height);
+	return [width, height];
 }
 /**
  * @namespace

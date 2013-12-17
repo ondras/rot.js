@@ -141,6 +141,16 @@ describe("Display", function() {
 				expect(size[1]).toBe(4);
 			});
 		});
+
+		describe("tile layout", function() {
+			var d = new ROT.Display({layout:"tile", tileWidth:32, tileHeight:16});
+
+			it("should compute proper size", function() {
+				var size = d.computeSize(200, 300);
+				expect(size[0]).toBe(6);
+				expect(size[1]).toBe(18);
+			});
+		});
 	});
 
 	describe("computeFontSize", function() {
@@ -182,6 +192,16 @@ describe("Display", function() {
 			it("should compute size for spacing >1", function() {
 				var size = d2.computeFontSize(1/0, 96);
 				expect(size).toBe(14);
+			});
+		});
+
+		describe("tile layout", function() {
+			var d = new ROT.Display({layout:"tile", width:6, height:18});
+
+			it("should compute proper size", function() {
+				var size = d.computeFontSize(200, 300);
+				expect(size[0]).toBe(33);
+				expect(size[1]).toBe(16);
 			});
 		});
 	});

@@ -115,4 +115,31 @@ tileSet.onload = function() {
 }
 </div>
 
+<h3>Multiple tiles at one place</h3>
 
+<p>It is possible to draw multiple tiles at one place: just pass an array of chars as the thir argument to <code>Display.prototype.draw</code>. This can be used in other (non-tiled) backends as well, but brings almost no real usability.</p>
+
+<div class="example">
+var tileSet = document.createElement("img");
+tileSet.src = "tiles.png";
+
+var options = {
+	layout: "tile",
+	bg: "transparent",
+	tileWidth: 64,
+	tileHeight: 64,
+	tileSet: tileSet,
+	tileMap: {
+		"@": [0, 0],
+		"#": [0, 1]
+	},
+	width: 1,
+	height: 1
+}
+var display = new ROT.Display(options);
+SHOW(display.getContainer());
+
+tileSet.onload = function() {
+	display.draw(0, 0, ["#", "@"]);
+}
+</div>
