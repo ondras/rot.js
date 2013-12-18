@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Tue Dec 17 14:15:03 CET 2013.
+	Version 0.5~dev, generated on Wed Dec 18 21:12:34 CET 2013.
 */
 
 /**
@@ -1230,8 +1230,8 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 		
 		this._context.drawImage(
 			this._options.tileSet,
-			tile[0]*tileWidth, tile[1]*tileHeight, tileWidth, tileHeight,
-			      x*tileWidth,       y*tileHeight, tileWidth, tileHeight
+			tile[0], tile[1], tileWidth, tileHeight,
+			x*tileWidth, y*tileHeight, tileWidth, tileHeight
 		);
 	}
 }

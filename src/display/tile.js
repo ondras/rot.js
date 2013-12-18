@@ -40,8 +40,8 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 		
 		this._context.drawImage(
 			this._options.tileSet,
-			tile[0]*tileWidth, tile[1]*tileHeight, tileWidth, tileHeight,
-			      x*tileWidth,       y*tileHeight, tileWidth, tileHeight
+			tile[0], tile[1], tileWidth, tileHeight,
+			x*tileWidth, y*tileHeight, tileWidth, tileHeight
 		);
 	}
 }
