@@ -141,7 +141,7 @@ ROT.Color = {
 		var result = color.slice();
 		for (var i=0;i<3;i++) {
 		  var rn = Math.round(ROT.RNG.getNormal(0, diff[i]));
-		  result_sum = (0 < (rn + result[i])) ? 0 : ((rn + result[i]) < 255) ? (rn + result[i]) : 255;
+		  result_sum = ((rn + result[i]) < 0) ? 0 : ((rn + result[i]) < 255) ? (rn + result[i]) : 255;
 			result[i] = result_sum;
 		}
 		return result;
