@@ -131,7 +131,7 @@ ROT.Color = {
 
 	/**
 	 * Create a new random color based on this one
-	 * Random colors will be within 0 and 255, inclusive
+	 * result will be a triplet with values within 0 and 255, inclusive
 	 * @param {number[]} color
 	 * @param {number[]} diff Set of standard deviations
 	 * @returns {number[]}
