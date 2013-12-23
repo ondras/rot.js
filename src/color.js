@@ -131,6 +131,7 @@ ROT.Color = {
 
 	/**
 	 * Create a new random color based on this one
+	 * Random colors will be within 0 and 255, inclusive
 	 * @param {number[]} color
 	 * @param {number[]} diff Set of standard deviations
 	 * @returns {number[]}
@@ -139,7 +140,9 @@ ROT.Color = {
 		if (!(diff instanceof Array)) { diff = ROT.RNG.getNormal(0, diff); }
 		var result = color.slice();
 		for (var i=0;i<3;i++) {
-			result[i] += (diff instanceof Array ? Math.round(ROT.RNG.getNormal(0, diff[i])) : diff);
+		  var rn = Math.round(ROT.RNG.getNormal(0, diff[i]));
+		  result_sum = (0 < (rn + result[i])) ? 0 : ((rn + result[i]) < 255) ? (rn + result[i]) : 255;
+			result[i] = result_sum;
 		}
 		return result;
 	},
