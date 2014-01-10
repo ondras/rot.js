@@ -68,10 +68,13 @@ doc: rot.js
 push:
 	@hg bookmark -f master
 	@hg bookmark -f gh-pages
-	@hg push ; true
+	@hg push -B master -B gh-pages ; true
 	@hg push github ; true
 
 dist: rot.min.js push
+
+test:
+	@cd tests; ./run.sh
 
 clean:
 	@echo "Removing generated JS files"
