@@ -71,7 +71,9 @@ push:
 	@hg push -B master -B gh-pages ; true
 	@hg push github ; true
 
-dist: rot.min.js push
+dist: rot.min.js doc
+	@hg commit -m "(make dist automatic commit)"
+	$(MAKE) push
 
 test:
 	@cd tests; ./run.sh
