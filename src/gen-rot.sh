@@ -61,7 +61,7 @@ echo "Current version is ${VERSION}"
 
 PROLOGUE="/*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version $VERSION, generated on $(date).
+	Version $VERSION, generated on $(shell date).
 */
 "
 echo "$PROLOGUE" >> $TARGET

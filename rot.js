@@ -1,8 +1,7 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Wed Dec 18 21:12:34 CET 2013.
+	Version 0.5~dev, generated on Fri Jan 10 14:48:48 CET 2014. 
 */
-
 /**
  * @namespace Top-level ROT namespace
  */
@@ -2176,7 +2175,7 @@ ROT.Map.Cellular = function(width, height, options) {
 		survive: [4, 5, 6, 7, 8],
 		topology: 8
 	};
-	for (var p in options) { this._options[p] = options[p]; }
+	this.setOptions(options);
 	
 	this._dirs = ROT.DIRS[this._options.topology];
 	this._map = this._fillMap(0);
@@ -2194,6 +2193,14 @@ ROT.Map.Cellular.prototype.randomize = function(probability) {
 		}
 	}
 	return this;
+}
+
+/**
+ * Change options.
+ * @see ROT.Map.Cellular
+ */
+ROT.Map.Cellular.prototype.setOptions = function(options) {
+	for (var p in options) { this._options[p] = options[p]; }
 }
 
 ROT.Map.Cellular.prototype.set = function(x, y, value) {
