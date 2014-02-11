@@ -6,6 +6,7 @@ This directory contains "skeleton" files to be re-used and adjusted as necessary
   * `pubsub.js`: simple pub-sub implementation. Suitable for cross-component messaging/notification.
   * `xy.js`: 2D Coords
   * `game.js`: sample main namespace
+  * `level.js`: empty level encapsulating entities
   * `entity.js`: abstract displayable game entity
   * `being.js`: rudimentary game being
   * `player.js`: custom game being with keyboard control
