@@ -40,3 +40,39 @@ var unlock = function() {               /* called asynchronously */
 engine.start();
 SHOW(output.join(""));
 </div>
+
+<h3>Promises</h3>
+
+<p><code>ROT.Engine</code> is ready for a promise-based async control flow: if any actor returns a "thenable" from its <code>act()</code> method, the engine locks itself and waits for the thenable to get resolved (via its <code>then()</code> method). This feature is independent on the Promise implementation used; feel free to supply your own, use a library or leverage your browser's native Promises.</p>
+
+<div class="example">
+var scheduler = new ROT.Scheduler.Simple();
+var engine = new ROT.Engine(scheduler);
+var output = [];
+
+/* sample actor: pauses the execution when dead */
+var actor = {
+	lives: 3,
+	act: function() {
+		var done = null;
+		var promise = {
+			then: function(cb) { done = cb; }
+		}
+
+		output.push(".");
+		SHOW(output.join(""));
+		this.lives--;
+
+		/* if alive, wait for 500ms for next turn */
+		if (this.lives) {
+			setTimeout(function() { done(); }, 500);
+		}
+
+		return promise;
+	}
+}
+
+scheduler.add(actor, true);
+
+engine.start();
+</div>

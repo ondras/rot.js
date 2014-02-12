@@ -19,6 +19,7 @@ ROT.Engine.prototype.start = function() {
  */
 ROT.Engine.prototype.lock = function() {
 	this._lock++;
+	return this;
 }
 
 /**
@@ -31,7 +32,11 @@ ROT.Engine.prototype.unlock = function() {
 	while (!this._lock) {
 		var actor = this._scheduler.next();
 		if (!actor) { return this.lock(); } /* no actors */
-		actor.act();
+		var result = actor.act();
+		if (result && result.then) { /* actor returned a "thenable", looks like a Promise */
+			this.lock();
+			result.then(this.unlock.bind(this));
+		}
 	}
 
 	return this;
