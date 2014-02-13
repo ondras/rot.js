@@ -1,5 +1,5 @@
 var Player = function() {
-	Being.call(this);
+	Being.call(this, {ch:"@", fg:"#fff"});
 	
 	this._keys = {};
 	this._keys[ROT.VK_K] = 0;
@@ -60,7 +60,9 @@ Player.prototype._handleKey = function(code) {
 
 		var dir = ROT.DIRS[8][direction];
 		var xy = this._xy.plus(new XY(dir[0], dir[1]));
-		return this._tryMovingTo(xy);
+
+		this._level.setEntity(this, xy); /* FIXME collision detection */
+		return true;
 	}
 
 	return false; /* unknown key */

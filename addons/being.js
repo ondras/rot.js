@@ -1,5 +1,5 @@
-var Being = function() {
-	Entity.call(this);
+var Being = function(visual) {
+	Entity.call(this, visual);
 
 	this._speed = 100;
 	this._hp = 10;
@@ -24,4 +24,13 @@ Being.prototype.act = function() {
 
 Being.prototype.die = function() {
 	Game.scheduler.remove(this);
+}
+
+Being.prototype.setPosition = function(xy, level) {
+	/* came to a currently active level; add self to the scheduler */
+	if (level != this._level && level == Game.level) {
+		Game.scheduler.add(this, true);
+	}
+
+	return Entity.prototype.setPosition.call(this, xy, level);
 }

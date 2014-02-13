@@ -1,6 +1,11 @@
-var Entity = function() {
+var Entity = function(visual) {
+	this._visual = visual;
 	this._xy = null;
 	this._level = null;
+}
+
+Entity.prototype.getVisual = function() {
+	return this._visual;
 }
 
 Entity.prototype.getXY = function() {
@@ -12,11 +17,6 @@ Entity.prototype.getLevel = function() {
 }
 
 Entity.prototype.setPosition = function(xy, level) {
-	/* came to a currently active level; add self to the scheduler */
-	if (level != this._level && level == Game.level) {
-		Game.scheduler.add(this, true);
-	}
-
 	this._xy = xy;
 	this._level = level;
 	return this;
