@@ -4,6 +4,7 @@ var Game = {
 	player: null,
 	level: null,
 	display: null,
+	textBuffer: null,
 	
 	init: function() {
 		window.addEventListener("load", this);
@@ -16,7 +17,8 @@ var Game = {
 
 				this.scheduler = new ROT.Scheduler.Speed();
 				this.engine = new ROT.Engine(this.scheduler);
-				this.display = new ROT.Display();
+				this.display = new ROT.Display({fontSize:16});
+				this.textBuffer = new TextBuffer(this.display);
 				document.body.appendChild(this.display.getContainer());
 				this.player = new Player();
 
@@ -48,7 +50,15 @@ var Game = {
 
 		this.level = level;
 		var size = this.level.getSize();
-		this.display.setOptions({width:size.x, height:size.y});
+
+		var bufferSize = 3;
+		this.display.setOptions({width:size.x, height:size.y + bufferSize});
+		this.textBuffer.configure({
+			display: this.display,
+			position: new XY(0, size.y),
+			size: new XY(size.x, bufferSize)
+		});
+		this.textBuffer.clear();
 
 		/* FIXME draw a level */
 		var xy = new XY();

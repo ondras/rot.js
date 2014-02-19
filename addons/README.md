@@ -10,4 +10,5 @@ This directory contains "skeleton" files to be re-used and adjusted as necessary
   * `entity.js`: abstract displayable game entity
   * `being.js`: rudimentary game being
   * `player.js`: custom game being with keyboard control
+  * `textbuffer.js`: buffering text output and displaying it within a ROT.Display subset
   * `sample.html`: working game with a display, level/map and an interactive player character

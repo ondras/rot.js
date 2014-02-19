@@ -18,14 +18,17 @@ Level.prototype.setEntity = function(entity, xy) {
 	if (entity.getLevel() == this) {
 		var oldXY = entity.getXY();
 		delete this._beings[oldXY];
-		Game.draw(oldXY);
+		if (Game.level == this) { Game.draw(oldXY); }
 	}
 
 	entity.setPosition(xy, this); /* propagate position data to the entity itself */
 
 	/* FIXME set new position, draw */
 	this._beings[xy] = entity;
-	Game.draw(xy);
+	if (Game.level == this) { 
+		Game.draw(xy); 
+		Game.textBuffer.write("An entity moves to " + xy + ".");
+	}
 }
 
 Level.prototype.getEntityAt = function(xy) {
