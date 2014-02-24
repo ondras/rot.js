@@ -46,7 +46,7 @@ rot.js: $(SOURCES)
 	@echo Current rot.js version is $(VERSION)
 	@echo "/*\n\
 	\tThis is rot.js, the ROguelike Toolkit in JavaScript.\n\
-	\tVersion $(VERSION), generated on $(shell date). \n\
+	\tVersion $(VERSION), generated on $(shell date).\n\
 	*/" > $@
 
 	@cat $^ >> $@

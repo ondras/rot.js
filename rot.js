@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Wed Feb 12 09:49:59 CET 2014. 
+	Version 0.5~dev, generated on Mon Feb 24 12:29:35 CET 2014.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -1804,7 +1804,6 @@ ROT.Engine.prototype.lock = function() {
  * Resume execution (paused by a previous lock)
  */
 ROT.Engine.prototype.unlock = function() {
-	console.log("unlock");
 	if (!this._lock) { throw new Error("Cannot unlock unlocked engine"); }
 	this._lock--;
 
@@ -4236,7 +4235,7 @@ ROT.Color = {
 		var l = color[2];
 
 		if (color[1] == 0) {
-			l *= 255;
+			l = Math.round(l*255);
 			return [l, l, l];
 		} else {
 			function hue2rgb(p, q, t) {
