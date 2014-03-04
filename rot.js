@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Mon Feb 24 12:29:35 CET 2014.
+	Version 0.5~dev, generated on Tue Mar  4 10:16:09 CET 2014.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -2562,6 +2562,7 @@ ROT.Map.Uniform.prototype.create = function(callback) {
 		this._rooms = [];
 		this._unconnected = [];
 		this._generateRooms();
+		if (this._rooms.length < 2) { continue; }
 		if (this._generateCorridors()) { break; }
 	}
 	
