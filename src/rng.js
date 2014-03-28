@@ -43,6 +43,17 @@ ROT.RNG = {
 	},
 
 	/**
+	 * @param {int} lowerBound The lower end of the range to return a value from
+	 * @param {int} upperBound The upper end of the range to return a value from, inclusive
+	 * @returns {int} Pseudorandom value [lowerBound, upperBound], using ROT.RNG.getUniform() to distribute the value
+	 */
+  getRandomInt: function(lowerBound, upperBound) {
+    var max = Math.max(lowerBound, upperBound);
+    var min = Math.min(lowerBound, upperBound);
+    return Math.floor(this.getUniform() * (max - min + 1)) + min;
+  },
+
+	/**
 	 * @param {float} [mean=0] Mean value
 	 * @param {float} [stddev=1] Standard deviation. ~95% of the absolute values will be lower than 2*stddev.
 	 * @returns {float} A normally distributed pseudorandom value
