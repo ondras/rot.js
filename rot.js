@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Fri Mar 28 20:28:02 EDT 2014.
+	Version 0.5~dev, generated on Fri Mar 28 22:19:29 EDT 2014.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -4083,6 +4083,8 @@ ROT.FOV.RecursiveShadowcasting.OCTANTS = [
  * @param {function} callback
  */
 ROT.FOV.RecursiveShadowcasting.prototype.compute = function(x, y, R, callback) {
+  //You can always see your own tile
+  callback(x, y, 0, true);
   for(var i = 0; i < ROT.FOV.RecursiveShadowcasting.OCTANTS.length; i++) {
     this.renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[i], R, callback);
   }
@@ -4097,6 +4099,8 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute = function(x, y, R, callback) {
  * @param {function} callback
  */
 ROT.FOV.RecursiveShadowcasting.prototype.compute180 = function(x, y, R, dir, callback) {
+  //You can always see your own tile
+  callback(x, y, 0, true);
   var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 180 degrees
   var nextPreviousOctant = (dir - 2 + 8) % 8; //Need to retrieve the previous two octants to render a full 180 degrees
   var nextOctant = (dir+ 1 + 8) % 8; //Need to grab to next octant to render a full 180 degrees
@@ -4115,6 +4119,8 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute180 = function(x, y, R, dir, cal
  * @param {function} callback
  */
 ROT.FOV.RecursiveShadowcasting.prototype.compute90 = function(x, y, R, dir, callback) {
+  //You can always see your own tile
+  callback(x, y, 0, true);
   var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 90 degrees
   this.renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[dir], R, callback);
   this.renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[previousOctant], R, callback);
@@ -4129,7 +4135,8 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute90 = function(x, y, R, dir, call
  * @param {function} callback
  */
 ROT.FOV.RecursiveShadowcasting.prototype.renderOctant = function(x, y, octant, R, callback) {
-  this.castVisibility(x, y, 1, 1.0, 0.0, R, octant[0], octant[1], octant[2], octant[3], callback);
+  //Radius incremented by 1 to provide same coverage area as other shadowcasting radiuses
+  this.castVisibility(x, y, 1, 1.0, 0.0, R + 1, octant[0], octant[1], octant[2], octant[3], callback);
 }
 
 /**
