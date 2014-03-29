@@ -81,7 +81,8 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute90 = function(x, y, R, dir, call
  * @param {function} callback
  */
 ROT.FOV.RecursiveShadowcasting.prototype.renderOctant = function(x, y, octant, R, callback) {
-  this.castVisibility(x, y, 1, 1.0, 0.0, R, octant[0], octant[1], octant[2], octant[3], callback);
+  //Radius incremented by 1 to provide same coverage area as other shadowcasting radiuses
+  this.castVisibility(x, y, 1, 1.0, 0.0, R + 1, octant[0], octant[1], octant[2], octant[3], callback);
 }
 
 /**
