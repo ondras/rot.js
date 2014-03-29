@@ -11,14 +11,14 @@ ROT.FOV.RecursiveShadowcasting.extend(ROT.FOV);
 
 /** Octants used for translating recursive shadowcasting offsets */
 ROT.FOV.RecursiveShadowcasting.OCTANTS = [
-  [-1,  0,  0,  1],
-  [ 0, -1,  1,  0],
-  [ 0, -1, -1,  0],
-  [-1,  0,  0, -1],
-  [ 1,  0,  0, -1],
-  [ 0,  1, -1,  0],
-  [ 0,  1,  1,  0],
-  [ 1,  0,  0,  1]
+	[-1,  0,  0,  1],
+	[ 0, -1,  1,  0],
+	[ 0, -1, -1,  0],
+	[-1,  0,  0, -1],
+	[ 1,  0,  0, -1],
+	[ 0,  1, -1,  0],
+	[ 0,  1,  1,  0],
+	[ 1,  0,  0,  1]
 ];
 
 /**
@@ -29,11 +29,11 @@ ROT.FOV.RecursiveShadowcasting.OCTANTS = [
  * @param {function} callback
  */
 ROT.FOV.RecursiveShadowcasting.prototype.compute = function(x, y, R, callback) {
-  //You can always see your own tile
-  callback(x, y, 0, true);
-  for(var i = 0; i < ROT.FOV.RecursiveShadowcasting.OCTANTS.length; i++) {
-    this.renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[i], R, callback);
-  }
+	//You can always see your own tile
+	callback(x, y, 0, true);
+	for(var i = 0; i < ROT.FOV.RecursiveShadowcasting.OCTANTS.length; i++) {
+		this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[i], R, callback);
+	}
 }
 
 /**
@@ -45,15 +45,15 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute = function(x, y, R, callback) {
  * @param {function} callback
  */
 ROT.FOV.RecursiveShadowcasting.prototype.compute180 = function(x, y, R, dir, callback) {
-  //You can always see your own tile
-  callback(x, y, 0, true);
-  var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 180 degrees
-  var nextPreviousOctant = (dir - 2 + 8) % 8; //Need to retrieve the previous two octants to render a full 180 degrees
-  var nextOctant = (dir+ 1 + 8) % 8; //Need to grab to next octant to render a full 180 degrees
-  this.renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[nextPreviousOctant], R, callback);
-  this.renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[previousOctant], R, callback);
-  this.renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[dir], R, callback);
-  this.renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[nextOctant], R, callback);
+	//You can always see your own tile
+	callback(x, y, 0, true);
+	var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 180 degrees
+	var nextPreviousOctant = (dir - 2 + 8) % 8; //Need to retrieve the previous two octants to render a full 180 degrees
+	var nextOctant = (dir+ 1 + 8) % 8; //Need to grab to next octant to render a full 180 degrees
+	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[nextPreviousOctant], R, callback);
+	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[previousOctant], R, callback);
+	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[dir], R, callback);
+	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[nextOctant], R, callback);
 }
 
 /**
@@ -65,11 +65,11 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute180 = function(x, y, R, dir, cal
  * @param {function} callback
  */
 ROT.FOV.RecursiveShadowcasting.prototype.compute90 = function(x, y, R, dir, callback) {
-  //You can always see your own tile
-  callback(x, y, 0, true);
-  var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 90 degrees
-  this.renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[dir], R, callback);
-  this.renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[previousOctant], R, callback);
+	//You can always see your own tile
+	callback(x, y, 0, true);
+	var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 90 degrees
+	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[dir], R, callback);
+	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[previousOctant], R, callback);
 }
 
 /**
@@ -80,9 +80,9 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute90 = function(x, y, R, dir, call
  * @param {int} R Maximum visibility radius
  * @param {function} callback
  */
-ROT.FOV.RecursiveShadowcasting.prototype.renderOctant = function(x, y, octant, R, callback) {
-  //Radius incremented by 1 to provide same coverage area as other shadowcasting radiuses
-  this.castVisibility(x, y, 1, 1.0, 0.0, R + 1, octant[0], octant[1], octant[2], octant[3], callback);
+ROT.FOV.RecursiveShadowcasting.prototype._renderOctant = function(x, y, octant, R, callback) {
+	//Radius incremented by 1 to provide same coverage area as other shadowcasting radiuses
+	this._castVisibility(x, y, 1, 1.0, 0.0, R + 1, octant[0], octant[1], octant[2], octant[3], callback);
 }
 
 /**
@@ -99,56 +99,56 @@ ROT.FOV.RecursiveShadowcasting.prototype.renderOctant = function(x, y, octant, R
  * @param {int} yy 
  * @param {function} callback The callback to use when we hit a block that is visible
  */
-ROT.FOV.RecursiveShadowcasting.prototype.castVisibility = function(startX, startY, row, visSlopeStart, visSlopeEnd, radius, xx, xy, yx, yy, callback) {
-  if(visSlopeStart < visSlopeEnd) { return; }
-  for(var i = row; i <= radius; i++) {
-    var dx = -i - 1;
-    var dy = -i;
-    var blocked = false;
-    var newStart = 0;
+ROT.FOV.RecursiveShadowcasting.prototype._castVisibility = function(startX, startY, row, visSlopeStart, visSlopeEnd, radius, xx, xy, yx, yy, callback) {
+	if(visSlopeStart < visSlopeEnd) { return; }
+	for(var i = row; i <= radius; i++) {
+		var dx = -i - 1;
+		var dy = -i;
+		var blocked = false;
+		var newStart = 0;
 
-    //'Row' could be column, names here assume octant 0 and would be flipped for half the octants
-    while(dx <= 0) {
-      dx += 1;
+		//'Row' could be column, names here assume octant 0 and would be flipped for half the octants
+		while(dx <= 0) {
+			dx += 1;
 
-      //Translate from relative coordinates to map coordinates
-      var mapX = startX + dx * xx + dy * xy;
-      var mapY = startY + dx * yx + dy * yy;
+			//Translate from relative coordinates to map coordinates
+			var mapX = startX + dx * xx + dy * xy;
+			var mapY = startY + dx * yx + dy * yy;
 
-      //Range of the row
-      var slopeStart = (dx - 0.5) / (dy + 0.5);
-      var slopeEnd = (dx + 0.5) / (dy - 0.5);
-    
-      //Ignore if not yet at left edge of Octant
-      if(slopeEnd > visSlopeStart) { continue; }
-      
-      //Done if past right edge
-      if(slopeStart < visSlopeEnd) { break; }
-        
-      //If it's in range, it's visible
-      if((dx * dx + dy * dy) < (radius * radius)) {
-        callback(mapX, mapY, i, true);
-      }
-  
-      if(!blocked) {
-        //If tile is a blocking tile, cast around it
-        if(!this._lightPasses(mapX, mapY) && i < radius) {
-          blocked = true;
-          this.castVisibility(startX, startY, i + 1, visSlopeStart, slopeStart, radius, xx, xy, yx, yy, callback);
-          newStart = slopeEnd;
-        }
-      } else {
-        //Keep narrowing if scanning across a block
-        if(!this._lightPasses(mapX, mapY)) {
-          newStart = slopeEnd;
-          continue;
-        }
-      
-        //Block has ended
-        blocked = false;
-        visSlopeStart = newStart;
-      }
-    }
-    if(blocked) { break; }
-  }
+			//Range of the row
+			var slopeStart = (dx - 0.5) / (dy + 0.5);
+			var slopeEnd = (dx + 0.5) / (dy - 0.5);
+		
+			//Ignore if not yet at left edge of Octant
+			if(slopeEnd > visSlopeStart) { continue; }
+			
+			//Done if past right edge
+			if(slopeStart < visSlopeEnd) { break; }
+				
+			//If it's in range, it's visible
+			if((dx * dx + dy * dy) < (radius * radius)) {
+				callback(mapX, mapY, i, true);
+			}
+	
+			if(!blocked) {
+				//If tile is a blocking tile, cast around it
+				if(!this._lightPasses(mapX, mapY) && i < radius) {
+					blocked = true;
+					this._castVisibility(startX, startY, i + 1, visSlopeStart, slopeStart, radius, xx, xy, yx, yy, callback);
+					newStart = slopeEnd;
+				}
+			} else {
+				//Keep narrowing if scanning across a block
+				if(!this._lightPasses(mapX, mapY)) {
+					newStart = slopeEnd;
+					continue;
+				}
+			
+				//Block has ended
+				blocked = false;
+				visSlopeStart = newStart;
+			}
+		}
+		if(blocked) { break; }
+	}
 }

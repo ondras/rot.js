@@ -194,62 +194,62 @@ describe("FOV", function() {
 
 	describe("Recursive Shadowcasting", function() {
 		describe("8-topology", function() {
-      describe("360-degree view", function () {
-        it("should compute visible ring0 in 360 degrees", function() {
-          var lightPasses = buildLightCallback(MAP8_RING0);
-          var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
-          checkResult(fov, lightPasses.center, RESULT_MAP8_RING0);
-        });
-        it("should compute visible ring1 in 360 degrees", function() {
-          var lightPasses = buildLightCallback(MAP8_RING1);
-          var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
-          checkResult(fov, lightPasses.center, RESULT_MAP8_RING1);
-        });
-      });
-      describe("180-degree view", function () {
-        it("should compute visible ring0 180 degrees facing north", function() {
-          var lightPasses = buildLightCallback(MAP8_RING0);
-          var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
-          checkResult180Degrees(fov, 0, lightPasses.center, RESULT_MAP8_RING0_180_NORTH);
-        });
-        it("should compute visible ring0 180 degrees facing south", function() {
-          var lightPasses = buildLightCallback(MAP8_RING0);
-          var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
-          checkResult180Degrees(fov, 4, lightPasses.center, RESULT_MAP8_RING0_180_SOUTH);
-        });
-        it("should compute visible ring0 180 degrees facing east", function() {
-          var lightPasses = buildLightCallback(MAP8_RING0);
-          var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
-          checkResult180Degrees(fov, 2, lightPasses.center, RESULT_MAP8_RING0_180_EAST);
-        });
-        it("should compute visible ring0 180 degrees facing west", function() {
-          var lightPasses = buildLightCallback(MAP8_RING0);
-          var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
-          checkResult180Degrees(fov, 6, lightPasses.center, RESULT_MAP8_RING0_180_WEST);
-        });
-      });
-      describe("90-degree view", function () {
-        it("should compute visible ring0 90 degrees facing north", function() {
-          var lightPasses = buildLightCallback(MAP8_RING0);
-          var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
-          checkResult90Degrees(fov, 0, lightPasses.center, RESULT_MAP8_RING0_90_NORTH);
-        });
-        it("should compute visible ring0 90 degrees facing south", function() {
-          var lightPasses = buildLightCallback(MAP8_RING0);
-          var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
-          checkResult90Degrees(fov, 4, lightPasses.center, RESULT_MAP8_RING0_90_SOUTH);
-        });
-        it("should compute visible ring0 90 degrees facing east", function() {
-          var lightPasses = buildLightCallback(MAP8_RING0);
-          var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
-          checkResult90Degrees(fov, 2, lightPasses.center, RESULT_MAP8_RING0_90_EAST);
-        });
-        it("should compute visible ring0 90 degrees facing west", function() {
-          var lightPasses = buildLightCallback(MAP8_RING0);
-          var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
-          checkResult90Degrees(fov, 6, lightPasses.center, RESULT_MAP8_RING0_90_WEST);
-        });
-      });
+			describe("360-degree view", function () {
+				it("should compute visible ring0 in 360 degrees", function() {
+					var lightPasses = buildLightCallback(MAP8_RING0);
+					var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
+					checkResult(fov, lightPasses.center, RESULT_MAP8_RING0);
+				});
+				it("should compute visible ring1 in 360 degrees", function() {
+					var lightPasses = buildLightCallback(MAP8_RING1);
+					var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
+					checkResult(fov, lightPasses.center, RESULT_MAP8_RING1);
+				});
+			});
+			describe("180-degree view", function () {
+				it("should compute visible ring0 180 degrees facing north", function() {
+					var lightPasses = buildLightCallback(MAP8_RING0);
+					var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
+					checkResult180Degrees(fov, 0, lightPasses.center, RESULT_MAP8_RING0_180_NORTH);
+				});
+				it("should compute visible ring0 180 degrees facing south", function() {
+					var lightPasses = buildLightCallback(MAP8_RING0);
+					var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
+					checkResult180Degrees(fov, 4, lightPasses.center, RESULT_MAP8_RING0_180_SOUTH);
+				});
+				it("should compute visible ring0 180 degrees facing east", function() {
+					var lightPasses = buildLightCallback(MAP8_RING0);
+					var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
+					checkResult180Degrees(fov, 2, lightPasses.center, RESULT_MAP8_RING0_180_EAST);
+				});
+				it("should compute visible ring0 180 degrees facing west", function() {
+					var lightPasses = buildLightCallback(MAP8_RING0);
+					var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
+					checkResult180Degrees(fov, 6, lightPasses.center, RESULT_MAP8_RING0_180_WEST);
+				});
+			});
+			describe("90-degree view", function () {
+				it("should compute visible ring0 90 degrees facing north", function() {
+					var lightPasses = buildLightCallback(MAP8_RING0);
+					var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
+					checkResult90Degrees(fov, 0, lightPasses.center, RESULT_MAP8_RING0_90_NORTH);
+				});
+				it("should compute visible ring0 90 degrees facing south", function() {
+					var lightPasses = buildLightCallback(MAP8_RING0);
+					var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
+					checkResult90Degrees(fov, 4, lightPasses.center, RESULT_MAP8_RING0_90_SOUTH);
+				});
+				it("should compute visible ring0 90 degrees facing east", function() {
+					var lightPasses = buildLightCallback(MAP8_RING0);
+					var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
+					checkResult90Degrees(fov, 2, lightPasses.center, RESULT_MAP8_RING0_90_EAST);
+				});
+				it("should compute visible ring0 90 degrees facing west", function() {
+					var lightPasses = buildLightCallback(MAP8_RING0);
+					var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses, {topology:8});
+					checkResult90Degrees(fov, 6, lightPasses.center, RESULT_MAP8_RING0_90_WEST);
+				});
+			});
 		});
 	});
 
