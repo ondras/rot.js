@@ -12,16 +12,15 @@ as <a href="#map">Map generators</a> do: using a user-supplied callback function
 or <code>false</code> (light does not pass). Output callback is called with these arguments: <code>x</code>, <code>y</code>, <code>r</code> and <code>visibility</code>: 
 the meaning is that "the place at [x,y] is visible with a distance of r". The last argument specifies the amount of visibility (0..1).</p>
 
-<p>Currently there are three FOV algorithms available: </p>
+<p>Currently there are these FOV algorithms available: </p>
 <ol>
 	<li><a href="http://www.roguebasin.roguelikedevelopment.org/index.php?title=Precise_Shadowcasting_in_JavaScript">Precise Shadowcasting</a></li>
-	<li>Discrete Shadowcasting</li>
 	<li><a href="http://www.roguebasin.com/index.php?title=FOV_using_recursive_shadowcasting">Recursive Shadowcasting</a></li>
 </ol>
 
-<h3>Precise and Discrete shadowcasting</h3>
+<h3>Precise shadowcasting</h3>
 
-<p>Precise and Discrete shadowcasting FOV computations currently support 360-degree viewsheds and are initiated by calling the <code>compute</code> method with the following arguments:</p>
+<p>Precise shadowcasting FOV computations currently support 360-degree viewsheds and are initiated by calling the <code>compute</code> method with the following arguments:</p>
 
 <ol>
 	<li><code>x</code></li>
