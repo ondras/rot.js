@@ -36,6 +36,7 @@ SOURCES = 	src/rot.js \
 			src/fov/fov.js \
 			src/fov/discrete-shadowcasting.js \
 			src/fov/precise-shadowcasting.js \
+			src/fov/recursive-shadowcasting.js \
 			src/color.js \
 			src/lighting.js \
 			src/path/path.js \
