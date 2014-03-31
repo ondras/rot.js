@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Mon Mar 31 14:35:53 CEST 2014.
+	Version 0.5~dev, generated on Mon Mar 31 15:10:41 CEST 2014.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -3833,7 +3833,7 @@ ROT.FOV.prototype._getCircle = function(cx, cy, r) {
 	return result;
 }
 /**
- * @class Discrete shadowcasting algorithm
+ * @class Discrete shadowcasting algorithm. Obsoleted by Precise shadowcasting.
  * @augments ROT.FOV
  */
 ROT.FOV.DiscreteShadowcasting = function(lightPassesCallback, options) {
@@ -4065,9 +4065,9 @@ ROT.FOV.PreciseShadowcasting.prototype._checkVisibility = function(A1, A2, block
 }
 /**
  * @class Recursive shadowcasting algorithm
- * @augments ROT.FOV
  * Currently only supports 4/8 topologies, not hexagonal.
  * Based on Peter Harkins' implementation of Björn Bergström's algorithm described here: http://www.roguebasin.com/index.php?title=FOV_using_recursive_shadowcasting
+ * @augments ROT.FOV
  */
 ROT.FOV.RecursiveShadowcasting = function(lightPassesCallback, options) {
 	ROT.FOV.call(this, lightPassesCallback, options);

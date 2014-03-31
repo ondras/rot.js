@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ROT.Noise</title>
+		<title>JsDoc Reference - ROT.FOV.RecursiveShadowcasting</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -280,15 +280,19 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class ROT.Noise
+				Class ROT.FOV.RecursiveShadowcasting
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
+				<br />Extends
+					<a href="../symbols/ROT.FOV.html">ROT.FOV</a>.<br />
 				
 			
-				Base noise generator
+				Recursive shadowcasting algorithm
+Currently only supports 4/8 topologies, not hexagonal.
+Based on Peter Harkins' implementation of Björn Bergström's algorithm described here: http://www.roguebasin.com/index.php?title=FOV_using_recursive_shadowcasting
 				
 				
 					<br /><i>Defined in: </i> &lt;rot.js&gt;.
@@ -297,7 +301,7 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.Noise.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROT.FOV.RecursiveShadowcasting.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -310,7 +314,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROT.Noise.html#constructor">ROT.Noise</a></b>()
+								<b><a href="../symbols/ROT.FOV.RecursiveShadowcasting.html#constructor">ROT.FOV.RecursiveShadowcasting</a></b>(lightPassesCallback, options)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -321,12 +325,44 @@ ul.inheritsList
 
 <!-- ============================== properties summary ===================== -->
 			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class ROT.FOV.RecursiveShadowcasting.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								ROT.FOV.RecursiveShadowcasting.<b><a href="../symbols/ROT.FOV.RecursiveShadowcasting.html#.OCTANTS">OCTANTS</a></b>
+								</div>
+								<div class="description">Octants used for translating recursive shadowcasting offsets</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+				<dl class="inheritsList">
+				
+				</dl>
+				
+			
 
 <!-- ============================== methods summary ======================== -->
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.Noise.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROT.FOV.RecursiveShadowcasting.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -339,9 +375,27 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROT.Noise.html#get">get</a></b>(x, y)
+								<div class="fixedFont"><b><a href="../symbols/ROT.FOV.RecursiveShadowcasting.html#compute">compute</a></b>(x, y, R, callback)
 								</div>
-								<div class="description"></div>
+								<div class="description">Compute visibility for a 360-degree circle</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.FOV.RecursiveShadowcasting.html#compute180">compute180</a></b>(x, y, R, dir, callback)
+								</div>
+								<div class="description">Compute visibility for a 180-degree arc</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROT.FOV.RecursiveShadowcasting.html#compute90">compute90</a></b>(x, y, R, dir, callback)
+								</div>
+								<div class="description">Compute visibility for a 90-degree arc</div>
 							</td>
 						</tr>
 					
@@ -349,6 +403,10 @@ ul.inheritsList
 				</table>
 				
 				
+				
+				<dl class="inheritsList">
+				
+				</dl>
 				
 			
 <!-- ============================== events summary ======================== -->
@@ -362,7 +420,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROT.Noise</b>()
+						<b>ROT.FOV.RecursiveShadowcasting</b>(lightPassesCallback, options)
 				</div>
 				
 				<div class="description">
@@ -373,6 +431,23 @@ ul.inheritsList
 				
 				
 				
+					
+						<dl class="detailList">
+						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								 <b>lightPassesCallback</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>options</b>
+								
+							</dt>
+								<dd></dd>
+						
+						</dl>
 					
 					
 					
@@ -386,6 +461,33 @@ ul.inheritsList
 
 <!-- ============================== field details ========================== -->		
 			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name=".OCTANTS"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">ROT.FOV.RecursiveShadowcasting.</span><b>OCTANTS</b>
+					
+					</div>
+					<div class="description">
+						Octants used for translating recursive shadowcasting offsets
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					
+				
+			
 
 <!-- ============================== method details ========================= -->		
 			
@@ -393,15 +495,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="get"> </a>
+					<a name="compute"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>get</b>(x, y)
+					<b>compute</b>(x, y, R, callback)
 					
 					</div>
 					<div class="description">
-						
+						Compute visibility for a 360-degree circle
 						
 						
 					</div>
@@ -413,13 +515,145 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>x</b>
+									<span class="light fixedFont">{int}</span> <b>x</b>
 									
 								</dt>
 								<dd></dd>
 							
 								<dt>
-									<b>y</b>
+									<span class="light fixedFont">{int}</span> <b>y</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>R</b>
+									
+								</dt>
+								<dd>Maximum visibility radius</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function}</span> <b>callback</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="compute180"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>compute180</b>(x, y, R, dir, callback)
+					
+					</div>
+					<div class="description">
+						Compute visibility for a 180-degree arc
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>x</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>y</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>R</b>
+									
+								</dt>
+								<dd>Maximum visibility radius</dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>dir</b>
+									
+								</dt>
+								<dd>Direction to look in (expressed in a ROT.DIR value);</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function}</span> <b>callback</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="compute90"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>compute90</b>(x, y, R, dir, callback)
+					
+					</div>
+					<div class="description">
+						Compute visibility for a 90-degree arc
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>x</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>y</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>R</b>
+									
+								</dt>
+								<dd>Maximum visibility radius</dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>dir</b>
+									
+								</dt>
+								<dd>Direction to look in (expressed in a ROT.DIR value);</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function}</span> <b>callback</b>
 									
 								</dt>
 								<dd></dd>

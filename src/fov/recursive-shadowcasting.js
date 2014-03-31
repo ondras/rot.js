@@ -1,8 +1,8 @@
 /**
  * @class Recursive shadowcasting algorithm
- * @augments ROT.FOV
  * Currently only supports 4/8 topologies, not hexagonal.
  * Based on Peter Harkins' implementation of Björn Bergström's algorithm described here: http://www.roguebasin.com/index.php?title=FOV_using_recursive_shadowcasting
+ * @augments ROT.FOV
  */
 ROT.FOV.RecursiveShadowcasting = function(lightPassesCallback, options) {
 	ROT.FOV.call(this, lightPassesCallback, options);
