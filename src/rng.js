@@ -43,15 +43,15 @@ ROT.RNG = {
 	},
 
 	/**
-	 * @param {int} lowerBound The lower end of the range to return a value from
+	 * @param {int} lowerBound The lower end of the range to return a value from, inclusive
 	 * @param {int} upperBound The upper end of the range to return a value from, inclusive
 	 * @returns {int} Pseudorandom value [lowerBound, upperBound], using ROT.RNG.getUniform() to distribute the value
 	 */
-  getUniformInt: function(lowerBound, upperBound) {
-    var max = Math.max(lowerBound, upperBound);
-    var min = Math.min(lowerBound, upperBound);
-    return Math.floor(this.getUniform() * (max - min + 1)) + min;
-  },
+	getUniformInt: function(lowerBound, upperBound) {
+		var max = Math.max(lowerBound, upperBound);
+		var min = Math.min(lowerBound, upperBound);
+		return Math.floor(this.getUniform() * (max - min + 1)) + min;
+	},
 
 	/**
 	 * @param {float} [mean=0] Mean value

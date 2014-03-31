@@ -11,8 +11,8 @@ describe("RNG", function() {
 	});
 
 	describe("getUniformInt", function() {
-    var lowerBound = 5;
-    var upperBound = 10;
+	var lowerBound = 5;
+	var upperBound = 10;
 		it("should return a number", function() {
 		  var value = ROT.RNG.getUniformInt(lowerBound, upperBound);
 			expect(typeof(value)).toEqual("number");
@@ -20,14 +20,14 @@ describe("RNG", function() {
 		it("should not care which number is larger in the arguments", function() {
 			var seed = Math.round(Math.random()*1000000);
 			ROT.RNG.setSeed(seed);
-      var val1 = ROT.RNG.getUniformInt(lowerBound, upperBound);
+			var val1 = ROT.RNG.getUniformInt(lowerBound, upperBound);
 			ROT.RNG.setSeed(seed);
-      var val2 = ROT.RNG.getUniformInt(upperBound,lowerBound);
+			var val2 = ROT.RNG.getUniformInt(upperBound, lowerBound);
 			expect(val1).toEqual(val2);
 		});
 		it("should only return a number in the desired range", function() {
-      var value = ROT.RNG.getUniformInt(lowerBound,upperBound);
-      var value2 = ROT.RNG.getUniformInt(upperBound, lowerBound);
+			var value = ROT.RNG.getUniformInt(lowerBound, upperBound);
+			var value2 = ROT.RNG.getUniformInt(upperBound, lowerBound);
 			expect(value).not.toBeGreaterThan(upperBound);
 			expect(value).not.toBeLessThan(lowerBound);
 			expect(value2).not.toBeGreaterThan(upperBound);

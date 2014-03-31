@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Fri Mar 28 16:42:28 EDT 2014.
+	Version 0.5~dev, generated on Mon Mar 31 11:50:39 CEST 2014.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -1291,15 +1291,15 @@ ROT.RNG = {
 	},
 
 	/**
-	 * @param {int} lowerBound The lower end of the range to return a value from
+	 * @param {int} lowerBound The lower end of the range to return a value from, inclusive
 	 * @param {int} upperBound The upper end of the range to return a value from, inclusive
 	 * @returns {int} Pseudorandom value [lowerBound, upperBound], using ROT.RNG.getUniform() to distribute the value
 	 */
-  getUniformInt: function(lowerBound, upperBound) {
-    var max = Math.max(lowerBound, upperBound);
-    var min = Math.min(lowerBound, upperBound);
-    return Math.floor(this.getUniform() * (max - min + 1)) + min;
-  },
+	getUniformInt: function(lowerBound, upperBound) {
+		var max = Math.max(lowerBound, upperBound);
+		var min = Math.min(lowerBound, upperBound);
+		return Math.floor(this.getUniform() * (max - min + 1)) + min;
+	},
 
 	/**
 	 * @param {float} [mean=0] Mean value
