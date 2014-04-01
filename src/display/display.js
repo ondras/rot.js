@@ -18,7 +18,13 @@
  */
 ROT.Display = function(options) {
 	var canvas = document.createElement("canvas");
-	this._context = canvas.getContext("2d");
+	if(options && options.layout == "tilediv") {
+		this._context = document.createElement("div");
+		this._context.id = "canvas";
+		this._context.style.background = options.bg;
+	} else {
+		this._context = canvas.getContext("2d");
+	}
 	this._data = {};
 	this._dirty = false; /* false = nothing, true = all, object = dirty cells */
 	this._options = {};
@@ -101,7 +107,7 @@ ROT.Display.prototype.getOptions = function() {
  * @returns {node} DOM node
  */
 ROT.Display.prototype.getContainer = function() {
-	return this._context.canvas;
+	return this._options && this._options.layout == "tilediv" ? this._context : this._context.canvas;
 }
 
 /**
@@ -219,8 +225,7 @@ ROT.Display.prototype._tick = function() {
 	if (!this._dirty) { return; }
 
 	if (this._dirty === true) { /* draw all */
-		this._context.fillStyle = this._options.bg;
-		this._context.fillRect(0, 0, this._context.canvas.width, this._context.canvas.height);
+		this._backend.clear();
 
 		for (var id in this._data) { /* redraw cached data */
 			this._draw(id, false);
