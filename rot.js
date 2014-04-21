@@ -1,8 +1,7 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on vie ago  9 01:23:35 CEST 2013.
+	Version 0.5~dev, generated on Mon Mar 31 15:10:41 CEST 2014.
 */
-
 /**
  * @namespace Top-level ROT namespace
  */
@@ -678,6 +677,21 @@ Function.prototype.extend = function(parent) {
 	this.prototype.constructor = this;
 	return this;
 }
+window.requestAnimationFrame =
+	window.requestAnimationFrame
+	|| window.mozRequestAnimationFrame
+	|| window.webkitRequestAnimationFrame
+	|| window.oRequestAnimationFrame
+	|| window.msRequestAnimationFrame
+	|| function(cb) { return setTimeout(cb, 1000/60); };
+
+window.cancelAnimationFrame =
+	window.cancelAnimationFrame
+	|| window.mozCancelAnimationFrame
+	|| window.webkitCancelAnimationFrame
+	|| window.oCancelAnimationFrame
+	|| window.msCancelAnimationFrame
+	|| function(id) { return clearTimeout(id); };
 /**
  * @class Visual map display
  * @param {object} [options]
@@ -688,10 +702,13 @@ Function.prototype.extend = function(parent) {
  * @param {string} [options.fontStyle=""] bold/italic/none/both
  * @param {string} [options.fg="#ccc"]
  * @param {string} [options.bg="#000"]
- * @param {int} [options.fps=25]
  * @param {float} [options.spacing=1]
  * @param {float} [options.border=0]
  * @param {string} [options.layout="rect"]
+ * @param {int} [options.tileWidth=32]
+ * @param {int} [options.tileHeight=32]
+ * @param {object} [options.tileMap={}]
+ * @param {image} [options.tileSet=null]
  */
 ROT.Display = function(options) {
 	var canvas = document.createElement("canvas");
@@ -706,19 +723,23 @@ ROT.Display = function(options) {
 		height: ROT.DEFAULT_HEIGHT,
 		layout: "rect",
 		fontSize: 15,
-		fps: 25,
 		spacing: 1,
 		border: 0,
 		fontFamily: "monospace",
 		fontStyle: "",
 		fg: "#ccc",
-		bg: "#000"
+		bg: "#000",
+		tileWidth: 32,
+		tileHeight: 32,
+		tileMap: {},
+		tileSet: null
 	};
 	for (var p in options) { defaultOptions[p] = options[p]; }
 	this.setOptions(defaultOptions);
 	this.DEBUG = this.DEBUG.bind(this);
-	
-	this._interval = setInterval(this._tick.bind(this), 1000/this._options.fps);
+
+	this._tick = this._tick.bind(this);
+	requestAnimationFrame(this._tick);
 }
 
 /**
@@ -823,7 +844,7 @@ ROT.Display.prototype.eventToPosition = function(e) {
 /**
  * @param {int} x
  * @param {int} y
- * @param {string} ch 
+ * @param {string || string[]} ch One or more chars (will be overlapping themselves)
  * @param {string} [fg] foreground color
  * @param {string} [bg] background color
  */
@@ -887,6 +908,8 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
  * Timer tick: update dirty parts
  */
 ROT.Display.prototype._tick = function() {
+	requestAnimationFrame(this._tick);
+
 	if (!this._dirty) { return; }
 
 	if (this._dirty === true) { /* draw all */
@@ -997,7 +1020,11 @@ ROT.Display.Rect.prototype._drawWithCache = function(data, clearBefore) {
 			ctx.font = this._context.font;
 			ctx.textAlign = "center";
 			ctx.textBaseline = "middle";
-			ctx.fillText(ch, this._spacingX/2, this._spacingY/2);
+
+			var chars = [].concat(ch);
+			for (var i=0;i<chars.length;i++) {
+				ctx.fillText(chars[i], this._spacingX/2, this._spacingY/2);
+			}
 		}
 		this._canvasCache[hash] = canvas;
 	}
@@ -1021,7 +1048,11 @@ ROT.Display.Rect.prototype._drawNoCache = function(data, clearBefore) {
 	if (!ch) { return; }
 
 	this._context.fillStyle = fg;
-	this._context.fillText(ch, (x+0.5) * this._spacingX, (y+0.5) * this._spacingY);
+
+	var chars = [].concat(ch);
+	for (var i=0;i<chars.length;i++) {
+		this._context.fillText(chars[i], (x+0.5) * this._spacingX, (y+0.5) * this._spacingY);
+	}
 }
 
 ROT.Display.Rect.prototype.computeSize = function(availWidth, availHeight) {
@@ -1094,7 +1125,11 @@ ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
 	if (!ch) { return; }
 
 	this._context.fillStyle = fg;
-	this._context.fillText(ch, cx, cy);
+
+	var chars = [].concat(ch);
+	for (var i=0;i<chars.length;i++) {
+		this._context.fillText(chars[i], cx, cy);
+	}
 }
 
 
@@ -1153,6 +1188,65 @@ ROT.Display.Hex.prototype._fill = function(cx, cy) {
 	this._context.fill();
 }
 /**
+ * @class Tile backend
+ * @private
+ */
+ROT.Display.Tile = function(context) {
+	ROT.Display.Rect.call(this, context);
+	
+	this._options = {};
+}
+ROT.Display.Tile.extend(ROT.Display.Rect);
+
+ROT.Display.Tile.prototype.compute = function(options) {
+	this._options = options;
+	this._context.canvas.width = options.width * options.tileWidth;
+	this._context.canvas.height = options.height * options.tileHeight;
+}
+
+ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
+	var x = data[0];
+	var y = data[1];
+	var ch = data[2];
+	var fg = data[3];
+	var bg = data[4];
+
+	var tileWidth = this._options.tileWidth;
+	var tileHeight = this._options.tileHeight;
+
+	if (clearBefore) {
+		var b = this._options.border;
+		this._context.fillStyle = bg;
+		this._context.fillRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+	}
+
+	if (!ch) { return; }
+
+	var chars = [].concat(ch);
+	for (var i=0;i<chars.length;i++) {
+		var tile = this._options.tileMap[chars[i]];
+		if (!tile) { throw new Error("Char '" + chars[i] + "' not found in tileMap"); }
+		
+		this._context.drawImage(
+			this._options.tileSet,
+			tile[0], tile[1], tileWidth, tileHeight,
+			x*tileWidth, y*tileHeight, tileWidth, tileHeight
+		);
+	}
+}
+
+ROT.Display.Tile.prototype.computeSize = function(availWidth, availHeight) {
+	var width = Math.floor(availWidth / this._options.tileWidth);
+	var height = Math.floor(availHeight / this._options.tileHeight);
+	return [width, height];
+}
+
+ROT.Display.Tile.prototype.computeFontSize = function(availWidth, availHeight) {
+	var width = Math.floor(availWidth / this._options.width);
+	var height = Math.floor(availHeight / this._options.height);
+	return [width, height];
+}
+/**
  * @namespace
  * This code is an implementation of Alea algorithm; (C) 2010 Johannes Baagøe.
  * Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
@@ -1194,6 +1288,17 @@ ROT.RNG = {
 		this._c = t | 0;
 		this._s2 = t - this._c;
 		return this._s2;
+	},
+
+	/**
+	 * @param {int} lowerBound The lower end of the range to return a value from, inclusive
+	 * @param {int} upperBound The upper end of the range to return a value from, inclusive
+	 * @returns {int} Pseudorandom value [lowerBound, upperBound], using ROT.RNG.getUniform() to distribute the value
+	 */
+	getUniformInt: function(lowerBound, upperBound) {
+		var max = Math.max(lowerBound, upperBound);
+		var min = Math.min(lowerBound, upperBound);
+		return Math.floor(this.getUniform() * (max - min + 1)) + min;
 	},
 
 	/**
@@ -1703,6 +1808,7 @@ ROT.Engine.prototype.start = function() {
  */
 ROT.Engine.prototype.lock = function() {
 	this._lock++;
+	return this;
 }
 
 /**
@@ -1715,7 +1821,11 @@ ROT.Engine.prototype.unlock = function() {
 	while (!this._lock) {
 		var actor = this._scheduler.next();
 		if (!actor) { return this.lock(); } /* no actors */
-		actor.act();
+		var result = actor.act();
+		if (result && result.then) { /* actor returned a "thenable", looks like a Promise */
+			this.lock();
+			result.then(this.unlock.bind(this));
+		}
 	}
 
 	return this;
@@ -2081,7 +2191,7 @@ ROT.Map.Cellular = function(width, height, options) {
 		survive: [4, 5, 6, 7, 8],
 		topology: 8
 	};
-	for (var p in options) { this._options[p] = options[p]; }
+	this.setOptions(options);
 	
 	this._dirs = ROT.DIRS[this._options.topology];
 	this._map = this._fillMap(0);
@@ -2099,6 +2209,14 @@ ROT.Map.Cellular.prototype.randomize = function(probability) {
 		}
 	}
 	return this;
+}
+
+/**
+ * Change options.
+ * @see ROT.Map.Cellular
+ */
+ROT.Map.Cellular.prototype.setOptions = function(options) {
+	for (var p in options) { this._options[p] = options[p]; }
 }
 
 ROT.Map.Cellular.prototype.set = function(x, y, value) {
@@ -2455,6 +2573,7 @@ ROT.Map.Uniform.prototype.create = function(callback) {
 		this._rooms = [];
 		this._unconnected = [];
 		this._generateRooms();
+		if (this._rooms.length < 2) { continue; }
 		if (this._generateCorridors()) { break; }
 	}
 	
@@ -3654,7 +3773,7 @@ ROT.FOV = function(lightPassesCallback, options) {
 };
 
 /**
- * Compute visibility
+ * Compute visibility for a 360-degree circle
  * @param {int} x
  * @param {int} y
  * @param {int} R Maximum visibility radius
@@ -3714,7 +3833,7 @@ ROT.FOV.prototype._getCircle = function(cx, cy, r) {
 	return result;
 }
 /**
- * @class Discrete shadowcasting algorithm
+ * @class Discrete shadowcasting algorithm. Obsoleted by Precise shadowcasting.
  * @augments ROT.FOV
  */
 ROT.FOV.DiscreteShadowcasting = function(lightPassesCallback, options) {
@@ -3945,6 +4064,160 @@ ROT.FOV.PreciseShadowcasting.prototype._checkVisibility = function(A1, A2, block
 	return visibleLength/arcLength;
 }
 /**
+ * @class Recursive shadowcasting algorithm
+ * Currently only supports 4/8 topologies, not hexagonal.
+ * Based on Peter Harkins' implementation of Björn Bergström's algorithm described here: http://www.roguebasin.com/index.php?title=FOV_using_recursive_shadowcasting
+ * @augments ROT.FOV
+ */
+ROT.FOV.RecursiveShadowcasting = function(lightPassesCallback, options) {
+	ROT.FOV.call(this, lightPassesCallback, options);
+}
+ROT.FOV.RecursiveShadowcasting.extend(ROT.FOV);
+
+/** Octants used for translating recursive shadowcasting offsets */
+ROT.FOV.RecursiveShadowcasting.OCTANTS = [
+	[-1,  0,  0,  1],
+	[ 0, -1,  1,  0],
+	[ 0, -1, -1,  0],
+	[-1,  0,  0, -1],
+	[ 1,  0,  0, -1],
+	[ 0,  1, -1,  0],
+	[ 0,  1,  1,  0],
+	[ 1,  0,  0,  1]
+];
+
+/**
+ * Compute visibility for a 360-degree circle
+ * @param {int} x
+ * @param {int} y
+ * @param {int} R Maximum visibility radius
+ * @param {function} callback
+ */
+ROT.FOV.RecursiveShadowcasting.prototype.compute = function(x, y, R, callback) {
+	//You can always see your own tile
+	callback(x, y, 0, true);
+	for(var i = 0; i < ROT.FOV.RecursiveShadowcasting.OCTANTS.length; i++) {
+		this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[i], R, callback);
+	}
+}
+
+/**
+ * Compute visibility for a 180-degree arc
+ * @param {int} x
+ * @param {int} y
+ * @param {int} R Maximum visibility radius
+ * @param {int} dir Direction to look in (expressed in a ROT.DIR value);
+ * @param {function} callback
+ */
+ROT.FOV.RecursiveShadowcasting.prototype.compute180 = function(x, y, R, dir, callback) {
+	//You can always see your own tile
+	callback(x, y, 0, true);
+	var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 180 degrees
+	var nextPreviousOctant = (dir - 2 + 8) % 8; //Need to retrieve the previous two octants to render a full 180 degrees
+	var nextOctant = (dir+ 1 + 8) % 8; //Need to grab to next octant to render a full 180 degrees
+	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[nextPreviousOctant], R, callback);
+	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[previousOctant], R, callback);
+	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[dir], R, callback);
+	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[nextOctant], R, callback);
+}
+
+/**
+ * Compute visibility for a 90-degree arc
+ * @param {int} x
+ * @param {int} y
+ * @param {int} R Maximum visibility radius
+ * @param {int} dir Direction to look in (expressed in a ROT.DIR value);
+ * @param {function} callback
+ */
+ROT.FOV.RecursiveShadowcasting.prototype.compute90 = function(x, y, R, dir, callback) {
+	//You can always see your own tile
+	callback(x, y, 0, true);
+	var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 90 degrees
+	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[dir], R, callback);
+	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[previousOctant], R, callback);
+}
+
+/**
+ * Render one octant (45-degree arc) of the viewshed
+ * @param {int} x
+ * @param {int} y
+ * @param {int} octant Octant to be rendered
+ * @param {int} R Maximum visibility radius
+ * @param {function} callback
+ */
+ROT.FOV.RecursiveShadowcasting.prototype._renderOctant = function(x, y, octant, R, callback) {
+	//Radius incremented by 1 to provide same coverage area as other shadowcasting radiuses
+	this._castVisibility(x, y, 1, 1.0, 0.0, R + 1, octant[0], octant[1], octant[2], octant[3], callback);
+}
+
+/**
+ * Actually calculates the visibility
+ * @param {int} startX The starting X coordinate
+ * @param {int} startY The starting Y coordinate
+ * @param {int} row The row to render
+ * @param {float} visSlopeStart The slope to start at
+ * @param {float} visSlopeEnd The slope to end at
+ * @param {int} radius The radius to reach out to
+ * @param {int} xx 
+ * @param {int} xy 
+ * @param {int} yx 
+ * @param {int} yy 
+ * @param {function} callback The callback to use when we hit a block that is visible
+ */
+ROT.FOV.RecursiveShadowcasting.prototype._castVisibility = function(startX, startY, row, visSlopeStart, visSlopeEnd, radius, xx, xy, yx, yy, callback) {
+	if(visSlopeStart < visSlopeEnd) { return; }
+	for(var i = row; i <= radius; i++) {
+		var dx = -i - 1;
+		var dy = -i;
+		var blocked = false;
+		var newStart = 0;
+
+		//'Row' could be column, names here assume octant 0 and would be flipped for half the octants
+		while(dx <= 0) {
+			dx += 1;
+
+			//Translate from relative coordinates to map coordinates
+			var mapX = startX + dx * xx + dy * xy;
+			var mapY = startY + dx * yx + dy * yy;
+
+			//Range of the row
+			var slopeStart = (dx - 0.5) / (dy + 0.5);
+			var slopeEnd = (dx + 0.5) / (dy - 0.5);
+		
+			//Ignore if not yet at left edge of Octant
+			if(slopeEnd > visSlopeStart) { continue; }
+			
+			//Done if past right edge
+			if(slopeStart < visSlopeEnd) { break; }
+				
+			//If it's in range, it's visible
+			if((dx * dx + dy * dy) < (radius * radius)) {
+				callback(mapX, mapY, i, true);
+			}
+	
+			if(!blocked) {
+				//If tile is a blocking tile, cast around it
+				if(!this._lightPasses(mapX, mapY) && i < radius) {
+					blocked = true;
+					this._castVisibility(startX, startY, i + 1, visSlopeStart, slopeStart, radius, xx, xy, yx, yy, callback);
+					newStart = slopeEnd;
+				}
+			} else {
+				//Keep narrowing if scanning across a block
+				if(!this._lightPasses(mapX, mapY)) {
+					newStart = slopeEnd;
+					continue;
+				}
+			
+				//Block has ended
+				blocked = false;
+				visSlopeStart = newStart;
+			}
+		}
+		if(blocked) { break; }
+	}
+}
+/**
  * @namespace Color operations
  */
 ROT.Color = {
@@ -4128,7 +4401,7 @@ ROT.Color = {
 		var l = color[2];
 
 		if (color[1] == 0) {
-			l *= 255;
+			l = Math.round(l*255);
 			return [l, l, l];
 		} else {
 			function hue2rgb(p, q, t) {
@@ -4554,6 +4827,18 @@ ROT.Path = function(toX, toY, passableCallback, options) {
 	for (var p in options) { this._options[p] = options[p]; }
 
 	this._dirs = ROT.DIRS[this._options.topology];
+	if (this._options.topology == 8) { /* reorder dirs for more aesthetic result (vertical/horizontal first) */
+		this._dirs = [
+			this._dirs[0],
+			this._dirs[2],
+			this._dirs[4],
+			this._dirs[6],
+			this._dirs[1],
+			this._dirs[3],
+			this._dirs[5],
+			this._dirs[7]
+		]
+	}
 }
 
 /**
@@ -4728,16 +5013,4 @@ ROT.Path.AStar.prototype._distance = function(x, y) {
 			return Math.max(Math.abs(x-this._fromX), Math.abs(y-this._fromY));
 		break;
 	}
-}
-/**
- * @class Base image (as ASCII art) converter
- */
-ROT.Image = function() {
-	this.aDefaultCharList = (" .,:;i1tfLCG08@").split("");
-	this.aDefaultColorCharList = (" CGO08@").split("");
-	this.strFont = "courier new";
-};
-
-ROT.Image.prototype.get = function(xin, yin) {
-	console.log(888);
 }

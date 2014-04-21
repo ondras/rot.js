@@ -170,5 +170,13 @@ describe("Color", function() {
 				expect(rgb2).toEqual(color);
 			}
 		});
+
+		it("should round converted values", function() {
+			var hsl = [0.5, 0, 0.3];
+			var rgb = ROT.Color.hsl2rgb(hsl);
+			for (var i=0;i<rgb.length;i++) {
+				expect(Math.round(rgb[i])).toEqual(rgb[i]);
+			}
+		});
 	});
 });

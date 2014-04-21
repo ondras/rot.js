@@ -40,6 +40,7 @@ ROT.Map.Uniform.prototype.create = function(callback) {
 		this._rooms = [];
 		this._unconnected = [];
 		this._generateRooms();
+		if (this._rooms.length < 2) { continue; }
 		if (this._generateCorridors()) { break; }
 	}
 	

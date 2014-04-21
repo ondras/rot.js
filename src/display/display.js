@@ -8,10 +8,13 @@
  * @param {string} [options.fontStyle=""] bold/italic/none/both
  * @param {string} [options.fg="#ccc"]
  * @param {string} [options.bg="#000"]
- * @param {int} [options.fps=25]
  * @param {float} [options.spacing=1]
  * @param {float} [options.border=0]
  * @param {string} [options.layout="rect"]
+ * @param {int} [options.tileWidth=32]
+ * @param {int} [options.tileHeight=32]
+ * @param {object} [options.tileMap={}]
+ * @param {image} [options.tileSet=null]
  */
 ROT.Display = function(options) {
 	var canvas = document.createElement("canvas");
@@ -26,19 +29,23 @@ ROT.Display = function(options) {
 		height: ROT.DEFAULT_HEIGHT,
 		layout: "rect",
 		fontSize: 15,
-		fps: 25,
 		spacing: 1,
 		border: 0,
 		fontFamily: "monospace",
 		fontStyle: "",
 		fg: "#ccc",
-		bg: "#000"
+		bg: "#000",
+		tileWidth: 32,
+		tileHeight: 32,
+		tileMap: {},
+		tileSet: null
 	};
 	for (var p in options) { defaultOptions[p] = options[p]; }
 	this.setOptions(defaultOptions);
 	this.DEBUG = this.DEBUG.bind(this);
-	
-	this._interval = setInterval(this._tick.bind(this), 1000/this._options.fps);
+
+	this._tick = this._tick.bind(this);
+	requestAnimationFrame(this._tick);
 }
 
 /**
@@ -143,7 +150,7 @@ ROT.Display.prototype.eventToPosition = function(e) {
 /**
  * @param {int} x
  * @param {int} y
- * @param {string} ch 
+ * @param {string || string[]} ch One or more chars (will be overlapping themselves)
  * @param {string} [fg] foreground color
  * @param {string} [bg] background color
  */
@@ -207,6 +214,8 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
  * Timer tick: update dirty parts
  */
 ROT.Display.prototype._tick = function() {
+	requestAnimationFrame(this._tick);
+
 	if (!this._dirty) { return; }
 
 	if (this._dirty === true) { /* draw all */

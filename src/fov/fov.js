@@ -13,7 +13,7 @@ ROT.FOV = function(lightPassesCallback, options) {
 };
 
 /**
- * Compute visibility
+ * Compute visibility for a 360-degree circle
  * @param {int} x
  * @param {int} y
  * @param {int} R Maximum visibility radius

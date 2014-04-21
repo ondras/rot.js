@@ -15,7 +15,7 @@ ROT.Map.Cellular = function(width, height, options) {
 		survive: [4, 5, 6, 7, 8],
 		topology: 8
 	};
-	for (var p in options) { this._options[p] = options[p]; }
+	this.setOptions(options);
 	
 	this._dirs = ROT.DIRS[this._options.topology];
 	this._map = this._fillMap(0);
@@ -33,6 +33,14 @@ ROT.Map.Cellular.prototype.randomize = function(probability) {
 		}
 	}
 	return this;
+}
+
+/**
+ * Change options.
+ * @see ROT.Map.Cellular
+ */
+ROT.Map.Cellular.prototype.setOptions = function(options) {
+	for (var p in options) { this._options[p] = options[p]; }
 }
 
 ROT.Map.Cellular.prototype.set = function(x, y, value) {

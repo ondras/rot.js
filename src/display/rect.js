@@ -57,7 +57,11 @@ ROT.Display.Rect.prototype._drawWithCache = function(data, clearBefore) {
 			ctx.font = this._context.font;
 			ctx.textAlign = "center";
 			ctx.textBaseline = "middle";
-			ctx.fillText(ch, this._spacingX/2, this._spacingY/2);
+
+			var chars = [].concat(ch);
+			for (var i=0;i<chars.length;i++) {
+				ctx.fillText(chars[i], this._spacingX/2, this._spacingY/2);
+			}
 		}
 		this._canvasCache[hash] = canvas;
 	}
@@ -81,7 +85,11 @@ ROT.Display.Rect.prototype._drawNoCache = function(data, clearBefore) {
 	if (!ch) { return; }
 
 	this._context.fillStyle = fg;
-	this._context.fillText(ch, (x+0.5) * this._spacingX, (y+0.5) * this._spacingY);
+
+	var chars = [].concat(ch);
+	for (var i=0;i<chars.length;i++) {
+		this._context.fillText(chars[i], (x+0.5) * this._spacingX, (y+0.5) * this._spacingY);
+	}
 }
 
 ROT.Display.Rect.prototype.computeSize = function(availWidth, availHeight) {

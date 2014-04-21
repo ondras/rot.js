@@ -1,5 +1,5 @@
 /**
- * @class Discrete shadowcasting algorithm
+ * @class Discrete shadowcasting algorithm. Obsoleted by Precise shadowcasting.
  * @augments ROT.FOV
  */
 ROT.FOV.DiscreteShadowcasting = function(lightPassesCallback, options) {

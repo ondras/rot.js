@@ -5,7 +5,7 @@
 	<li>Create an <em>input callback</em>; function that returns passability info (true/false) for a given coordinates</li>
 	<li>Instantialize the pathfinder; pass the values of <code>targetX</code>, <code>targetY</code> and <code>inputCallback</code> to the constructor
 		<ul>
-			<li>Fourth constructor option is a configuration object; so far, only one key is supported: <code>topology</code> (values 4/6/8)</li>
+			<li>Fourth constructor option is a configuration object; so far, only one key is supported: <code>topology</code> (values 4/6/8, default 8). A topology of 4 allows only orthagonal movement, 8 allows diagonal movement and 6 supports hexagonal grids.</li>
 		</ul>
 	</li>
 	<li>Call the <code>compute</code> method with three arguments: <code>sourceX</code>, <code>sourceY</code> and <code>outputCallback</code></li>

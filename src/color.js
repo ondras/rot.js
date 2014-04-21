@@ -182,7 +182,7 @@ ROT.Color = {
 		var l = color[2];
 
 		if (color[1] == 0) {
-			l *= 255;
+			l = Math.round(l*255);
 			return [l, l, l];
 		} else {
 			function hue2rgb(p, q, t) {

@@ -17,7 +17,6 @@ SHOW(display.getContainer()); /* do not forget to append to page! */
 	<li><code>height</code> &ndash; vertical size, in characters</li>
 	<li><code>fontSize</code> &ndash; in pixels, default 15</li>
 	<li><code>fontFamily</code> &ndash; string, default "monospace"</li>
-	<li><code>fps</code> &ndash; int, target frames-per-second rate, default 25</li>
 	<li><code>fg</code> &ndash; default foreground color; valid CSS color string</li>
 	<li><code>bg</code> &ndash; default background color; valid CSS color string</li>
 	<li><code>spacing</code> &ndash; spacing adjustment coefficient; 1 = normal, &lt;1 tighter, &gt;1 looser</li>
@@ -79,3 +78,68 @@ var str = "Goodbye %c{red}cr%b{blue}u%b{}el %c{}world"
 display.drawText(5,  2, str);
 </div>
 
+<h3>Graphic tiles</h3>
+
+<p>The <code>"tile"</code> layout module is used to draw graphic tiles. You need to define a proper <code>tileMap</code> by mapping individual chars to offsets in your <code>tileSet</code> image. Please note that the image must be loaded before you attempt to use it.</p>
+<div class="example">
+var tileSet = document.createElement("img");
+tileSet.src = "tiles.png";
+
+var options = {
+	layout: "tile",
+	bg: "transparent",
+	tileWidth: 64,
+	tileHeight: 64,
+	tileSet: tileSet,
+	tileMap: {
+		"@": [0, 0],
+		"#": [0, 64],
+		"a": [64, 0],
+		"!": [64, 64]
+	},
+	width: 3,
+	height: 3
+}
+var display = new ROT.Display(options);
+SHOW(display.getContainer());
+
+tileSet.onload = function() {
+	display.draw(1, 1, "@");
+	display.draw(0, 0, "#");
+	display.draw(0, 1, "#");
+	display.draw(1, 0, "#");
+	display.draw(0, 2, "#");
+	display.draw(2, 2, "a");
+	display.draw(2, 0, "!");
+	display.draw(2, 1, "!");
+}
+</div>
+
+<h3>Multiple tiles at one place</h3>
+
+<p>It is possible to draw multiple tiles at one place: just pass an array of chars as the thir argument to <code>Display.prototype.draw</code>. This can be used in other (non-tiled) backends as well, but brings almost no real usability.</p>
+
+<div class="example">
+var tileSet = document.createElement("img");
+tileSet.src = "tiles.png";
+
+var options = {
+	layout: "tile",
+	bg: "transparent",
+	tileWidth: 64,
+	tileHeight: 64,
+	tileSet: tileSet,
+	tileMap: {
+		"@": [0, 0],
+		"#": [0, 64]
+	},
+	width: 1,
+	height: 1
+}
+var display = new ROT.Display(options);
+SHOW(display.getContainer());
+
+tileSet.onload = function() {
+	display.draw(0, 0, ["#", "@"]);
+}
+</div>
