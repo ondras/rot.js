@@ -2398,6 +2398,7 @@ ROT.Map.Digger.prototype.create = function(callback) {
 
 ROT.Map.Digger.prototype._digCallback = function(x, y, value) {
 	if (value == 0 || value == 2) { /* empty */
+		if (!this._map[x]) this._map[x]=[];
 		this._map[x][y] = 0;
 		this._dug++;
 	} else { /* wall */
