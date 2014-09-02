@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Sat Apr 26 10:24:50 PDT 2014.
+	Version 0.5~dev, generated on Tue Sep  2 09:56:17 CEST 2014.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -1245,6 +1245,10 @@ ROT.Display.Tile.prototype.computeFontSize = function(availWidth, availHeight) {
 	var width = Math.floor(availWidth / this._options.width);
 	var height = Math.floor(availHeight / this._options.height);
 	return [width, height];
+}
+
+ROT.Display.Tile.prototype.eventToPosition = function(x, y) {
+	return [Math.floor(x/this._options.tileWidth), Math.floor(y/this._options.tileHeight)];
 }
 /**
  * @namespace
@@ -3062,10 +3066,10 @@ ROT.Map.Rogue = function(width, height, options) {
 	*/
 	
 	if (!this._options.hasOwnProperty("roomWidth")) {
-		this._options["roomWidth"] = this._calculateRoomSize(width, this._options["cellWidth"]);
+		this._options["roomWidth"] = this._calculateRoomSize(this._width, this._options["cellWidth"]);
 	}
 	if (!this._options.hasOwnProperty["roomHeight"]) {
-		this._options["roomHeight"] = this._calculateRoomSize(height, this._options["cellHeight"]);
+		this._options["roomHeight"] = this._calculateRoomSize(this._height, this._options["cellHeight"]);
 	}
 	
 }

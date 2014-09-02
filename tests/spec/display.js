@@ -91,6 +91,29 @@ describe("Display", function() {
 				unlink(d);
 			});
 		});
+
+		describe("tile layout", function() {
+			it("should compute inside canvas", function() {
+				var d = new ROT.Display({width:64, height:64, layout:"tile", tileWidth:32, tileHeight:32});
+				appendToBody(d);
+				var node = d.getContainer();
+				var e = {clientX: 100+10, clientY: 100+40};
+				var pos = d.eventToPosition(e);
+				expect(pos[0]).toBe(0);
+				expect(pos[1]).toBe(1);				
+				unlink(d);
+			});
+			it("should fail outside of canvas (left top)", function() {
+				var d = new ROT.Display({width:64, height:64, layout:"tile", tileWidth:32, tileHeight:32});
+				appendToBody(d);
+				var e = {clientX: 10, clientY: 10};
+				var pos = d.eventToPosition(e);
+				expect(pos[0]).toBe(-1);
+				expect(pos[1]).toBe(-1);				
+				unlink(d);
+			});
+		});
+
 	});
 
 	describe("drawText", function() {

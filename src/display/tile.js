@@ -57,3 +57,7 @@ ROT.Display.Tile.prototype.computeFontSize = function(availWidth, availHeight) {
 	var height = Math.floor(availHeight / this._options.height);
 	return [width, height];
 }
+
+ROT.Display.Tile.prototype.eventToPosition = function(x, y) {
+	return [Math.floor(x/this._options.tileWidth), Math.floor(y/this._options.tileHeight)];
+}
