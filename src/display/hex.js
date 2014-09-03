@@ -19,8 +19,16 @@ ROT.Display.Hex.prototype.compute = function(options) {
 	this._hexSize = Math.floor(options.spacing * (options.fontSize + charWidth/Math.sqrt(3)) / 2);
 	this._spacingX = this._hexSize * Math.sqrt(3) / 2;
 	this._spacingY = this._hexSize * 1.5;
-	this._context.canvas.width = Math.ceil( (options.width + 1) * this._spacingX );
-	this._context.canvas.height = Math.ceil( (options.height - 1) * this._spacingY + 2*this._hexSize );
+
+	if (options.transpose) {
+		var xprop = "height";
+		var yprop = "width";
+	} else {
+		var xprop = "width";
+		var yprop = "height";
+	}
+	this._context.canvas[xprop] = Math.ceil( (options.width + 1) * this._spacingX );
+	this._context.canvas[yprop] = Math.ceil( (options.height - 1) * this._spacingY + 2*this._hexSize );
 }
 
 ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
@@ -30,12 +38,15 @@ ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
 	var fg = data[3];
 	var bg = data[4];
 
-	var cx = (x+1) * this._spacingX;
-	var cy = y * this._spacingY + this._hexSize;
+	var px = [
+		(x+1) * this._spacingX,
+		y * this._spacingY + this._hexSize
+	];
+	if (this._options.transpose) { px.reverse(); }
 
 	if (clearBefore) { 
 		this._context.fillStyle = bg;
-		this._fill(cx, cy);
+		this._fill(px[0], px[1]);
 	}
 	
 	if (!ch) { return; }
@@ -44,18 +55,19 @@ ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
 
 	var chars = [].concat(ch);
 	for (var i=0;i<chars.length;i++) {
-		this._context.fillText(chars[i], cx, cy);
+		this._context.fillText(chars[i], px[0], px[1]);
 	}
 }
 
-
 ROT.Display.Hex.prototype.computeSize = function(availWidth, availHeight) {
+	/* FIXME transpose */
 	var width = Math.floor(availWidth / this._spacingX) - 1;
 	var height = Math.floor((availHeight - 2*this._hexSize) / this._spacingY + 1);
 	return [width, height];
 }
 
 ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
+	/* FIXME transpose */
 	var hexSizeWidth = 2*availWidth / ((this._options.width+1) * Math.sqrt(3)) - 1;
 	var hexSizeHeight = availHeight / (2 + 1.5*(this._options.height-1));
 	var hexSize = Math.min(hexSizeWidth, hexSizeHeight);
@@ -76,6 +88,7 @@ ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
 }
 
 ROT.Display.Hex.prototype.eventToPosition = function(x, y) {
+	/* FIXME transpose */
 	var height = this._context.canvas.height / this._options.height;
 	y = Math.floor(y/height);
 	
@@ -89,17 +102,31 @@ ROT.Display.Hex.prototype.eventToPosition = function(x, y) {
 	return [x, y];
 }
 
+/**
+ * Arguments are pixel values. If "transposed" mode is enabled, then these two are already swapped.
+ */
 ROT.Display.Hex.prototype._fill = function(cx, cy) {
 	var a = this._hexSize;
 	var b = this._options.border;
 	
 	this._context.beginPath();
-	this._context.moveTo(cx, cy-a+b);
-	this._context.lineTo(cx + this._spacingX - b, cy-a/2+b);
-	this._context.lineTo(cx + this._spacingX - b, cy+a/2-b);
-	this._context.lineTo(cx, cy+a-b);
-	this._context.lineTo(cx - this._spacingX + b, cy+a/2-b);
-	this._context.lineTo(cx - this._spacingX + b, cy-a/2+b);
-	this._context.lineTo(cx, cy-a+b);
+
+	if (this._options.transpose) {
+		this._context.moveTo(cx-a+b,	cy);
+		this._context.lineTo(cx-a/2+b,	cy+this._spacingX-b);
+		this._context.lineTo(cx+a/2-b,	cy+this._spacingX-b);
+		this._context.lineTo(cx+a-b,	cy);
+		this._context.lineTo(cx+a/2-b,	cy-this._spacingX+b);
+		this._context.lineTo(cx-a/2+b,	cy-this._spacingX+b);
+		this._context.lineTo(cx-a+b,	cy);
+	} else {
+		this._context.moveTo(cx,					cy-a+b);
+		this._context.lineTo(cx+this._spacingX-b,	cy-a/2+b);
+		this._context.lineTo(cx+this._spacingX-b,	cy+a/2-b);
+		this._context.lineTo(cx,					cy+a-b);
+		this._context.lineTo(cx-this._spacingX+b,	cy+a/2-b);
+		this._context.lineTo(cx-this._spacingX+b,	cy-a/2+b);
+		this._context.lineTo(cx,					cy-a+b);
+	}
 	this._context.fill();
 }

@@ -37,6 +37,20 @@ for (var y = 0; y &lt; 5; y++) {
 }
 </div>
 
+<p>If you <strong>absolutely</strong> need inverted hex layout ("flat-tops"), you can force transposed rendering by passing the <code>transpose:true</code> option to the <code>ROT.Display</code> constructor. Please note that this inverts the x-y values of all display-related functions and operations.</p>
+
+<div class="example">
+var display = new ROT.Display({width:10, height:4, layout:"hex", transpose:true});
+SHOW(display.getContainer());
+
+for (var y = 0; y &lt; 4; y++) {
+	for (var x = y%2; x &lt; 10; x += 2) {
+		var bg = ["#333", "#666", "#999", "#ccc", "#fff"].random();
+		display.draw(x, y, "&bull;", "#000", bg);
+	}
+}
+</div>
+
 <h2>Cellular dungeon generator</h2>
 
 <p>Pass the <code>topology:6</code> option to the <code>ROT.Map.Cellular</code> constructor to operate in hexagonal mode.</p>
