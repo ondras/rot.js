@@ -15,6 +15,7 @@ ROT.Display.Hex.extend(ROT.Display.Backend);
 ROT.Display.Hex.prototype.compute = function(options) {
 	this._options = options;
 
+	/* FIXME char size computation does not respect transposed hexes */
 	var charWidth = Math.ceil(this._context.measureText("W").width);
 	this._hexSize = Math.floor(options.spacing * (options.fontSize + charWidth/Math.sqrt(3)) / 2);
 	this._spacingX = this._hexSize * Math.sqrt(3) / 2;
@@ -60,14 +61,24 @@ ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
 }
 
 ROT.Display.Hex.prototype.computeSize = function(availWidth, availHeight) {
-	/* FIXME transpose */
+	if (this._options.transpose) {
+		availWidth += availHeight;
+		availHeight = availWidth - availHeight;
+		availWidth -= availHeight;
+	}
+
 	var width = Math.floor(availWidth / this._spacingX) - 1;
 	var height = Math.floor((availHeight - 2*this._hexSize) / this._spacingY + 1);
 	return [width, height];
 }
 
 ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
-	/* FIXME transpose */
+	if (this._options.transpose) {
+		availWidth += availHeight;
+		availHeight = availWidth - availHeight;
+		availWidth -= availHeight;
+	}
+
 	var hexSizeWidth = 2*availWidth / ((this._options.width+1) * Math.sqrt(3)) - 1;
 	var hexSizeHeight = availHeight / (2 + 1.5*(this._options.height-1));
 	var hexSize = Math.min(hexSizeWidth, hexSizeHeight);
@@ -81,6 +92,7 @@ ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
 
 	hexSize = Math.floor(hexSize)+1; /* closest larger hexSize */
 
+	/* FIXME char size computation does not respect transposed hexes */
 	var fontSize = 2*hexSize / (this._options.spacing * (1 + ratio / Math.sqrt(3)));
 
 	/* closest smaller fontSize */
@@ -88,10 +100,17 @@ ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
 }
 
 ROT.Display.Hex.prototype.eventToPosition = function(x, y) {
-	/* FIXME transpose */
-	var height = this._context.canvas.height / this._options.height;
-	y = Math.floor(y/height);
-	
+	if (this._options.transpose) {
+		x += y;
+		y = x-y;
+		x -= y;
+		var prop = "width";
+	} else {
+		var prop = "height";
+	}
+	var size = this._context.canvas[prop] / this._options[prop];
+	y = Math.floor(y/size);
+
 	if (y.mod(2)) { /* odd row */
 		x -= this._spacingX;
 		x = 1 + 2*Math.floor(x/(2*this._spacingX));
