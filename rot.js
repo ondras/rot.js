@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Mon Mar 31 15:10:41 CEST 2014.
+	Version 0.5~dev, generated on Thu Sep  4 10:51:11 CEST 2014.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -721,6 +721,7 @@ ROT.Display = function(options) {
 	var defaultOptions = {
 		width: ROT.DEFAULT_WIDTH,
 		height: ROT.DEFAULT_HEIGHT,
+		transpose: false,
 		layout: "rect",
 		fontSize: 15,
 		spacing: 1,
@@ -1099,12 +1100,21 @@ ROT.Display.Hex.extend(ROT.Display.Backend);
 ROT.Display.Hex.prototype.compute = function(options) {
 	this._options = options;
 
+	/* FIXME char size computation does not respect transposed hexes */
 	var charWidth = Math.ceil(this._context.measureText("W").width);
 	this._hexSize = Math.floor(options.spacing * (options.fontSize + charWidth/Math.sqrt(3)) / 2);
 	this._spacingX = this._hexSize * Math.sqrt(3) / 2;
 	this._spacingY = this._hexSize * 1.5;
-	this._context.canvas.width = Math.ceil( (options.width + 1) * this._spacingX );
-	this._context.canvas.height = Math.ceil( (options.height - 1) * this._spacingY + 2*this._hexSize );
+
+	if (options.transpose) {
+		var xprop = "height";
+		var yprop = "width";
+	} else {
+		var xprop = "width";
+		var yprop = "height";
+	}
+	this._context.canvas[xprop] = Math.ceil( (options.width + 1) * this._spacingX );
+	this._context.canvas[yprop] = Math.ceil( (options.height - 1) * this._spacingY + 2*this._hexSize );
 }
 
 ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
@@ -1114,12 +1124,15 @@ ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
 	var fg = data[3];
 	var bg = data[4];
 
-	var cx = (x+1) * this._spacingX;
-	var cy = y * this._spacingY + this._hexSize;
+	var px = [
+		(x+1) * this._spacingX,
+		y * this._spacingY + this._hexSize
+	];
+	if (this._options.transpose) { px.reverse(); }
 
 	if (clearBefore) { 
 		this._context.fillStyle = bg;
-		this._fill(cx, cy);
+		this._fill(px[0], px[1]);
 	}
 	
 	if (!ch) { return; }
@@ -1128,18 +1141,29 @@ ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
 
 	var chars = [].concat(ch);
 	for (var i=0;i<chars.length;i++) {
-		this._context.fillText(chars[i], cx, cy);
+		this._context.fillText(chars[i], px[0], px[1]);
 	}
 }
 
-
 ROT.Display.Hex.prototype.computeSize = function(availWidth, availHeight) {
+	if (this._options.transpose) {
+		availWidth += availHeight;
+		availHeight = availWidth - availHeight;
+		availWidth -= availHeight;
+	}
+
 	var width = Math.floor(availWidth / this._spacingX) - 1;
 	var height = Math.floor((availHeight - 2*this._hexSize) / this._spacingY + 1);
 	return [width, height];
 }
 
 ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
+	if (this._options.transpose) {
+		availWidth += availHeight;
+		availHeight = availWidth - availHeight;
+		availWidth -= availHeight;
+	}
+
 	var hexSizeWidth = 2*availWidth / ((this._options.width+1) * Math.sqrt(3)) - 1;
 	var hexSizeHeight = availHeight / (2 + 1.5*(this._options.height-1));
 	var hexSize = Math.min(hexSizeWidth, hexSizeHeight);
@@ -1153,6 +1177,7 @@ ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
 
 	hexSize = Math.floor(hexSize)+1; /* closest larger hexSize */
 
+	/* FIXME char size computation does not respect transposed hexes */
 	var fontSize = 2*hexSize / (this._options.spacing * (1 + ratio / Math.sqrt(3)));
 
 	/* closest smaller fontSize */
@@ -1160,9 +1185,17 @@ ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
 }
 
 ROT.Display.Hex.prototype.eventToPosition = function(x, y) {
-	var height = this._context.canvas.height / this._options.height;
-	y = Math.floor(y/height);
-	
+	if (this._options.transpose) {
+		x += y;
+		y = x-y;
+		x -= y;
+		var prop = "width";
+	} else {
+		var prop = "height";
+	}
+	var size = this._context.canvas[prop] / this._options[prop];
+	y = Math.floor(y/size);
+
 	if (y.mod(2)) { /* odd row */
 		x -= this._spacingX;
 		x = 1 + 2*Math.floor(x/(2*this._spacingX));
@@ -1173,18 +1206,32 @@ ROT.Display.Hex.prototype.eventToPosition = function(x, y) {
 	return [x, y];
 }
 
+/**
+ * Arguments are pixel values. If "transposed" mode is enabled, then these two are already swapped.
+ */
 ROT.Display.Hex.prototype._fill = function(cx, cy) {
 	var a = this._hexSize;
 	var b = this._options.border;
 	
 	this._context.beginPath();
-	this._context.moveTo(cx, cy-a+b);
-	this._context.lineTo(cx + this._spacingX - b, cy-a/2+b);
-	this._context.lineTo(cx + this._spacingX - b, cy+a/2-b);
-	this._context.lineTo(cx, cy+a-b);
-	this._context.lineTo(cx - this._spacingX + b, cy+a/2-b);
-	this._context.lineTo(cx - this._spacingX + b, cy-a/2+b);
-	this._context.lineTo(cx, cy-a+b);
+
+	if (this._options.transpose) {
+		this._context.moveTo(cx-a+b,	cy);
+		this._context.lineTo(cx-a/2+b,	cy+this._spacingX-b);
+		this._context.lineTo(cx+a/2-b,	cy+this._spacingX-b);
+		this._context.lineTo(cx+a-b,	cy);
+		this._context.lineTo(cx+a/2-b,	cy-this._spacingX+b);
+		this._context.lineTo(cx-a/2+b,	cy-this._spacingX+b);
+		this._context.lineTo(cx-a+b,	cy);
+	} else {
+		this._context.moveTo(cx,					cy-a+b);
+		this._context.lineTo(cx+this._spacingX-b,	cy-a/2+b);
+		this._context.lineTo(cx+this._spacingX-b,	cy+a/2-b);
+		this._context.lineTo(cx,					cy+a-b);
+		this._context.lineTo(cx-this._spacingX+b,	cy+a/2-b);
+		this._context.lineTo(cx-this._spacingX+b,	cy-a/2+b);
+		this._context.lineTo(cx,					cy-a+b);
+	}
 	this._context.fill();
 }
 /**
@@ -1245,6 +1292,10 @@ ROT.Display.Tile.prototype.computeFontSize = function(availWidth, availHeight) {
 	var width = Math.floor(availWidth / this._options.width);
 	var height = Math.floor(availHeight / this._options.height);
 	return [width, height];
+}
+
+ROT.Display.Tile.prototype.eventToPosition = function(x, y) {
+	return [Math.floor(x/this._options.tileWidth), Math.floor(y/this._options.tileHeight)];
 }
 /**
  * @namespace
@@ -2189,7 +2240,8 @@ ROT.Map.Cellular = function(width, height, options) {
 	this._options = {
 		born: [5, 6, 7, 8],
 		survive: [4, 5, 6, 7, 8],
-		topology: 8
+		topology: 8,
+		connected: false
 	};
 	this.setOptions(options);
 	
@@ -2246,13 +2298,24 @@ ROT.Map.Cellular.prototype.create = function(callback) {
 				newMap[i][j] = 1;
 			} else if (!cur && born.indexOf(ncount) != -1) { /* born */
 				newMap[i][j] = 1;
-			}
-			
-			if (callback) { callback(i, j, newMap[i][j]); }
+			}			
 		}
 	}
 	
 	this._map = newMap;
+
+	// optinially connect every space
+	if (this._options.connected) {
+		this._completeMaze();	
+	}
+
+	if (callback) { 
+		for (var i = 0; i < this._width; i++) {
+			for (var j = 0; j < this._height; j++) {
+				callback(i, j, newMap[i][j]);
+			}
+		}
+	}
 }
 
 /**
@@ -2271,6 +2334,166 @@ ROT.Map.Cellular.prototype._getNeighbors = function(cx, cy) {
 	
 	return result;
 }
+
+/**
+ * Make sure every non-wall space is accessible.
+ */
+ROT.Map.Cellular.prototype._completeMaze = function() {
+	var allFreeSpace = [];
+	var notConnected = {};
+	// find all free space
+	for (var x = 0; x < this._width; x++) {
+		for (var y = 0; y < this._height; y++) {
+			if (this._freeSpace(x, y)) {
+				var p = [x, y];
+				notConnected[this._pointKey(p)] = p;
+				allFreeSpace.push([x, y]);
+			}
+		}
+	}
+	var start = allFreeSpace[ROT.RNG.getUniformInt(0, allFreeSpace.length - 1)];
+
+	var key = this._pointKey(start);
+	var connected = {};
+	connected[key] = start;
+	delete notConnected[key]
+
+	// find what's connected to the starting point
+	this._findConnected(connected, notConnected, [start]);
+
+	while(Object.keys(notConnected).length > 0) {
+
+		// find two points from notConnected to connected
+		var p = this._getFromTo(connected, notConnected);
+		var from = p[0]; // notConnected
+		var to = p[1]; // connected
+
+		// find everything connected to the starting point
+		var local = {};
+		local[this._pointKey(from)] = from;
+		this._findConnected(local, notConnected, [from], true);
+
+		// connect to a connected square
+		this._tunnelToConnected(to, from, connected, notConnected);
+
+		// now all of local is connected
+		for (var k in local) {
+			var pp = local[k];
+			this._map[pp[0]][pp[1]] = 0;
+			connected[k] = pp;
+			delete notConnected[k];
+		}
+	}
+}
+
+/**
+ * Find random points to connect. Search for the closest point in the larger space. 
+ * This is to minimize the length of the passage while maintaining good performance.
+ */
+ROT.Map.Cellular.prototype._getFromTo = function(connected, notConnected) {
+	var from, to, d;
+	var connectedKeys = Object.keys(connected);
+	var notConnectedKeys = Object.keys(notConnected);
+	for (var i = 0; i < 5; i++) {
+		if (connectedKeys.length < notConnectedKeys.length) {
+			var keys = connectedKeys;
+			to = connected[keys[ROT.RNG.getUniformInt(0, keys.length - 1)]]
+			from = this._getClosest(to, notConnected);
+		} else {
+			var keys = notConnectedKeys;
+			from = notConnected[keys[ROT.RNG.getUniformInt(0, keys.length - 1)]]
+			to = this._getClosest(from, connected);
+		}
+		d = (from[0] - to[0]) * (from[0] - to[0]) + (from[1] - to[1]) * (from[1] - to[1]);
+		if (d < 64) {
+			break;
+		}
+	}
+	// console.log(">>> connected=" + to + " notConnected=" + from + " dist=" + d);
+	return [from, to];
+}
+
+ROT.Map.Cellular.prototype._getClosest = function(point, space) {
+	var minPoint = null;
+	var minDist = null;
+	for (k in space) {
+		var p = space[k];
+		var d = (p[0] - point[0]) * (p[0] - point[0]) + (p[1] - point[1]) * (p[1] - point[1]);
+		if (minDist == null || d < minDist) {
+			minDist = d;
+			minPoint = p;
+		}
+	}
+	return minPoint;
+}
+
+ROT.Map.Cellular.prototype._findConnected = function(connected, notConnected, stack, keepNotConnected) {
+	while(stack.length > 0) {
+		var p = stack.splice(0, 1)[0];
+		var tests = [
+			[p[0] + 1, p[1]],
+			[p[0] - 1, p[1]],
+			[p[0],     p[1] + 1],
+			[p[0],     p[1] - 1]
+		];
+		for (var i = 0; i < tests.length; i++) {
+			var key = this._pointKey(tests[i]);
+			if (connected[key] == null && this._freeSpace(tests[i][0], tests[i][1])) {
+				connected[key] = tests[i];
+				if (!keepNotConnected) {
+					delete notConnected[key];
+				}
+				stack.push(tests[i]);
+			}
+		}
+	}
+}
+
+ROT.Map.Cellular.prototype._tunnelToConnected = function(to, from, connected, notConnected) {
+	var key = this._pointKey(from);
+	var a, b;
+	if (from[0] < to[0]) {
+		a = from;
+		b = to;
+	} else {
+		a = to;
+		b = from;
+	}
+	for (var xx = a[0]; xx <= b[0]; xx++) {
+		this._map[xx][a[1]] = 0;
+		var p = [xx, a[1]];
+		var pkey = this._pointKey(p);
+		connected[pkey] = p;
+		delete notConnected[pkey];
+	}
+
+	// x is now fixed
+	var x = b[0];
+
+	if (from[1] < to[1]) {
+		a = from;
+		b = to;
+	} else {
+		a = to;
+		b = from;
+	}
+	for (var yy = a[1]; yy < b[1]; yy++) {
+		this._map[x][yy] = 0;
+		var p = [x, yy];
+		var pkey = this._pointKey(p);
+		connected[pkey] = p;
+		delete notConnected[pkey];
+	}
+}
+
+ROT.Map.Cellular.prototype._freeSpace = function(x, y) {
+	return x >= 0 && x < this._width && y >= 0 && y < this._height && this._map[x][y] != 1;
+}
+
+ROT.Map.Cellular.prototype._pointKey = function(p) {
+	return p[0] + "." + p[1];
+}
+
 /**
  * @class Dungeon map: has rooms and corridors
  * @augments ROT.Map
@@ -2891,10 +3114,10 @@ ROT.Map.Rogue = function(width, height, options) {
 	*/
 	
 	if (!this._options.hasOwnProperty("roomWidth")) {
-		this._options["roomWidth"] = this._calculateRoomSize(width, this._options["cellWidth"]);
+		this._options["roomWidth"] = this._calculateRoomSize(this._width, this._options["cellWidth"]);
 	}
 	if (!this._options.hasOwnProperty["roomHeight"]) {
-		this._options["roomHeight"] = this._calculateRoomSize(height, this._options["cellHeight"]);
+		this._options["roomHeight"] = this._calculateRoomSize(this._height, this._options["cellHeight"]);
 	}
 	
 }

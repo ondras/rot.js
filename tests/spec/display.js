@@ -84,13 +84,62 @@ describe("Display", function() {
 				var node = d.getContainer();
 				var cellH = node.offsetHeight/10;
 				var cellW = node.offsetWidth/5.5;
-				var e = {clientX: 100 + 1*cellW, clientY: 100 + 1.5*cellH};
+				var e = {clientX: 100 + 2*cellW, clientY: 100 + 1.5*cellH};
 				var pos = d.eventToPosition(e);
-				expect(pos[0]).toBe(1);
+				expect(pos[0]).toBe(3);
 				expect(pos[1]).toBe(1);
 				unlink(d);
 			});
 		});
+
+		describe("hex layout (transposed)", function() {
+			it("should compute inside canvas - odd column", function() {
+				var d = new ROT.Display({width:10, height:10, layout:"hex", transpose:true});
+				appendToBody(d);
+				var node = d.getContainer();
+				var cellH = node.offsetHeight/5.5;
+				var cellW = node.offsetWidth/10;
+				var e = {clientX: 100 + 2.5*cellW, clientY: 100 + 1.5*cellH};
+				var pos = d.eventToPosition(e);
+				expect(pos[0]).toBe(2);
+				expect(pos[1]).toBe(2);
+				unlink(d);
+			});
+			it("should compute inside canvas - even column", function() {
+				var d = new ROT.Display({width:10, height:10, layout:"hex", transpose:true});
+				appendToBody(d);
+				var node = d.getContainer();
+				var cellH = node.offsetHeight/5.5;
+				var cellW = node.offsetWidth/10;
+				var e = {clientX: 100 + 1.5*cellW, clientY: 100 + 2*cellH};
+				var pos = d.eventToPosition(e);
+				expect(pos[0]).toBe(3);
+				expect(pos[1]).toBe(1);
+				unlink(d);
+			});
+		});
+		describe("tile layout", function() {
+			it("should compute inside canvas", function() {
+				var d = new ROT.Display({width:64, height:64, layout:"tile", tileWidth:32, tileHeight:32});
+				appendToBody(d);
+				var node = d.getContainer();
+				var e = {clientX: 100+10, clientY: 100+40};
+				var pos = d.eventToPosition(e);
+				expect(pos[0]).toBe(0);
+				expect(pos[1]).toBe(1);				
+				unlink(d);
+			});
+			it("should fail outside of canvas (left top)", function() {
+				var d = new ROT.Display({width:64, height:64, layout:"tile", tileWidth:32, tileHeight:32});
+				appendToBody(d);
+				var e = {clientX: 10, clientY: 10};
+				var pos = d.eventToPosition(e);
+				expect(pos[0]).toBe(-1);
+				expect(pos[1]).toBe(-1);				
+				unlink(d);
+			});
+		});
+
 	});
 
 	describe("drawText", function() {

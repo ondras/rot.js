@@ -27,6 +27,7 @@ ROT.Display = function(options) {
 	var defaultOptions = {
 		width: ROT.DEFAULT_WIDTH,
 		height: ROT.DEFAULT_HEIGHT,
+		transpose: false,
 		layout: "rect",
 		fontSize: 15,
 		spacing: 1,
