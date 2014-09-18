@@ -188,6 +188,9 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 		switch (token.type) {
 			case ROT.Text.TYPE_TEXT:
 				for (var i=0;i<token.value.length;i++) {
+					if(escape(token.value.charAt(i)).indexOf("%u") >= 0){ // a full-width character
+						cx++;
+					}
 					this.draw(cx++, cy, token.value.charAt(i), fg, bg);
 				}
 			break;
