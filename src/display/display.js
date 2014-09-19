@@ -187,20 +187,23 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 		var token = tokens.shift();
 		switch (token.type) {
 			case ROT.Text.TYPE_TEXT:
-				var isSpace = false;
+				var isSpace = isPrevSpace = isFullWidth = isPrevFullWidth = false;
 				for (var i=0;i<token.value.length;i++) {
-					var uc = token.value.charCodeAt(i);
-					if((uc > 0xff && uc < 0xff61) || (uc > 0xffdc && uc < 0xffe8) && uc > 0xffee) { // a full-width character
-						if (!isSpace) { 
-							// If the previous of full-width char is a space, 
-							// there will be no need for extra width.
-							cx++;
-						}
-					}
-					var c = token.value.charAt(i)
-					this.draw(cx++, cy, c, fg, bg);
-					// Space, whatever full-width or half-width char, both are OK.
+					var cc = token.value.charCodeAt(i);
+					var c = token.value.charAt(i);
+					// Assign to `true` when the current char is full-width.
+					isFullWidth = (cc > 0xff && cc < 0xff61) || (cc > 0xffdc && cc < 0xffe8) && cc > 0xffee;
+					// Current char is space, whatever full-width or half-width both are OK.
 					isSpace = (c.charCodeAt(0) == 0x20 || c.charCodeAt(0) == 0x3000);
+					// The previous char is full-width and
+					// current char is nether half-width nor a space.
+					if (isPrevFullWidth && !isFullWidth && !isSpace) { cx++; } // add an extra position
+					// The current char is full-width and
+					// the previous char is not a space.
+					if(isFullWidth && !isPrevSpace) { cx++; } // add an extra position
+					this.draw(cx++, cy, c, fg, bg);
+					isPrevSpace = isSpace;
+					isPrevFullWidth = isFullWidth;
 				}
 			break;
 
