@@ -187,8 +187,20 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 		var token = tokens.shift();
 		switch (token.type) {
 			case ROT.Text.TYPE_TEXT:
+				var isSpace = false;
 				for (var i=0;i<token.value.length;i++) {
-					this.draw(cx++, cy, token.value.charAt(i), fg, bg);
+					var uc = token.value.charCodeAt(i);
+					if((uc > 0xff && uc < 0xff61) || (uc > 0xffdc && uc < 0xffe8) && uc > 0xffee) { // a full-width character
+						if (!isSpace) { 
+							// If the previous of full-width char is a space, 
+							// there will be no need for extra width.
+							cx++;
+						}
+					}
+					var c = token.value.charAt(i)
+					this.draw(cx++, cy, c, fg, bg);
+					// Space, whatever full-width or half-width char, both are OK.
+					isSpace = (c.charCodeAt(0) == 0x20 || c.charCodeAt(0) == 0x3000);
 				}
 			break;
 
