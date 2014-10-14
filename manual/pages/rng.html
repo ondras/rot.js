@@ -77,3 +77,18 @@ SHOW(
 	ROT.RNG.getUniform()
 );
 </div>
+
+<h2>Cloning a RNG</h2>
+
+<p>You can clone a RNG to obtain its copy. The copy is completely independent and pre-set to its parent's state. The copy can be further cloned.</p>
+
+<div class="example">
+var clone = ROT.RNG.clone();
+
+SHOW(ROT.RNG.getUniform());
+SHOW(clone.getUniform());
+
+ROT.RNG.setSeed(123);
+SHOW(ROT.RNG.getUniform());
+SHOW(clone.getUniform());
+</div>

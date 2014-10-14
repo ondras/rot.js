@@ -198,19 +198,19 @@ describe("FOV", function() {
 				var fov = new ROT.FOV.PreciseShadowcasting(lightPasses, {topology:topology});
 				checkResult(fov, lightPasses.center, RESULT_MAP8_RING1);
 			});
-			it("should compute single visible target", function() {
+			xit("should compute single visible target", function() {
 				var lightPasses = buildLightCallback(MAP8_RING1);
 				var fov = new ROT.FOV.PreciseShadowcasting(lightPasses, {topology:topology});
 				var result = fov.computeSingle(lightPasses.center[0], lightPasses.center[1], 2, 0, 1);
 				expect(result).toBe(1);
 			});
-			it("should compute single invisible target", function() {
+			xit("should compute single invisible target", function() {
 				var lightPasses = buildLightCallback(MAP8_RING0);
 				var fov = new ROT.FOV.PreciseShadowcasting(lightPasses, {topology:topology});
 				var result = fov.computeSingle(lightPasses.center[0], lightPasses.center[1], 2, 0, 1);
 				expect(result).toBe(0);
 			});
-			it("should compute single partially visible target", function() {
+			xit("should compute single partially visible target", function() {
 				var lightPasses = buildLightCallback(MAP8_PARTIAL);
 				var fov = new ROT.FOV.PreciseShadowcasting(lightPasses, {topology:topology});
 				var result = fov.computeSingle(lightPasses.center[0], lightPasses.center[1], 2, 0, 1);

@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.5~dev, generated on Thu Sep  4 10:51:11 CEST 2014.
+	Version 0.6~dev, generated on Tue Oct 14 15:41:20 CEST 2014.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -881,8 +881,23 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 		var token = tokens.shift();
 		switch (token.type) {
 			case ROT.Text.TYPE_TEXT:
+				var isSpace = isPrevSpace = isFullWidth = isPrevFullWidth = false;
 				for (var i=0;i<token.value.length;i++) {
-					this.draw(cx++, cy, token.value.charAt(i), fg, bg);
+					var cc = token.value.charCodeAt(i);
+					var c = token.value.charAt(i);
+					// Assign to `true` when the current char is full-width.
+					isFullWidth = (cc > 0xff && cc < 0xff61) || (cc > 0xffdc && cc < 0xffe8) && cc > 0xffee;
+					// Current char is space, whatever full-width or half-width both are OK.
+					isSpace = (c.charCodeAt(0) == 0x20 || c.charCodeAt(0) == 0x3000);
+					// The previous char is full-width and
+					// current char is nether half-width nor a space.
+					if (isPrevFullWidth && !isFullWidth && !isSpace) { cx++; } // add an extra position
+					// The current char is full-width and
+					// the previous char is not a space.
+					if(isFullWidth && !isPrevSpace) { cx++; } // add an extra position
+					this.draw(cx++, cy, c, fg, bg);
+					isPrevSpace = isSpace;
+					isPrevFullWidth = isFullWidth;
 				}
 			break;
 
@@ -1415,6 +1430,15 @@ ROT.RNG = {
 		this._s2 = state[2];
 		this._c  = state[3];
 		return this;
+	},
+
+	/**
+	 * Returns a cloned RNG
+	 */
+	clone: function() {
+		var clone = Object.create(this);
+		clone.setState(this.getState());
+		return clone;
 	},
 
 	_s0: 0,

@@ -118,6 +118,15 @@ ROT.RNG = {
 		return this;
 	},
 
+	/**
+	 * Returns a cloned RNG
+	 */
+	clone: function() {
+		var clone = Object.create(this);
+		clone.setState(this.getState());
+		return clone;
+	},
+
 	_s0: 0,
 	_s1: 0,
 	_s2: 0,

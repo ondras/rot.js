@@ -69,4 +69,24 @@ describe("RNG", function() {
 		});
 	});
 
+	describe("cloning", function() {
+		it("should be able to clone a RNG", function() {
+			var clone = ROT.RNG.clone();
+			expect(typeof(clone)).toEqual("object");
+		});
+
+		it("should clone a working RNG", function() {
+			var clone = ROT.RNG.clone();
+			var num = clone.getUniform();
+			expect(typeof(num)).toEqual("number");
+		});
+
+		it("should clone maintaining its state", function() {
+			var clone = ROT.RNG.clone();
+			var num1 = ROT.RNG.getUniform();
+			var num2 = clone.getUniform();
+			expect(num1).toEqual(num2);
+		});
+	});
+
 });
