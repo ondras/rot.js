@@ -173,13 +173,17 @@ ROT.Display.prototype.draw = function(x, y, ch, fg, bg) {
  * @param {int} [maxWidth] wrap at what width?
  * @returns {int} lines drawn
  */
-ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
+ROT.Display.prototype.drawText = function(x, y, text, maxWidth, maxLines, skipLines) {
 	var fg = null;
 	var bg = null;
 	var cx = x;
 	var cy = y;
 	var lines = 1;
 	if (!maxWidth) { maxWidth = this._options.width-x; }
+	if (skipLines === undefined) { skipLines = 0; }
+	if (maxLines === undefined) { maxLines = this._options.height-y; }
+	cy -= skipLines;
+	lines -= skipLines;
 
 	var tokens = ROT.Text.tokenize(text, maxWidth);
 
@@ -187,23 +191,25 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 		var token = tokens.shift();
 		switch (token.type) {
 			case ROT.Text.TYPE_TEXT:
-				var isSpace = isPrevSpace = isFullWidth = isPrevFullWidth = false;
-				for (var i=0;i<token.value.length;i++) {
-					var cc = token.value.charCodeAt(i);
-					var c = token.value.charAt(i);
-					// Assign to `true` when the current char is full-width.
-					isFullWidth = (cc > 0xff && cc < 0xff61) || (cc > 0xffdc && cc < 0xffe8) && cc > 0xffee;
-					// Current char is space, whatever full-width or half-width both are OK.
-					isSpace = (c.charCodeAt(0) == 0x20 || c.charCodeAt(0) == 0x3000);
-					// The previous char is full-width and
-					// current char is nether half-width nor a space.
-					if (isPrevFullWidth && !isFullWidth && !isSpace) { cx++; } // add an extra position
-					// The current char is full-width and
-					// the previous char is not a space.
-					if(isFullWidth && !isPrevSpace) { cx++; } // add an extra position
-					this.draw(cx++, cy, c, fg, bg);
-					isPrevSpace = isSpace;
-					isPrevFullWidth = isFullWidth;
+				if (lines > 0 && lines <= maxLines) {
+					var isSpace = isPrevSpace = isFullWidth = isPrevFullWidth = false;
+					for (var i=0;i<token.value.length;i++) {
+						var cc = token.value.charCodeAt(i);
+						var c = token.value.charAt(i);
+						// Assign to `true` when the current char is full-width.
+						isFullWidth = (cc > 0xff && cc < 0xff61) || (cc > 0xffdc && cc < 0xffe8) && cc > 0xffee;
+						// Current char is space, whatever full-width or half-width both are OK.
+						isSpace = (c.charCodeAt(0) == 0x20 || c.charCodeAt(0) == 0x3000);
+						// The previous char is full-width and
+						// current char is nether half-width nor a space.
+						if (isPrevFullWidth && !isFullWidth && !isSpace) { cx++; } // add an extra position
+						// The current char is full-width and
+						// the previous char is not a space.
+						if(isFullWidth && !isPrevSpace) { cx++; } // add an extra position
+						this.draw(cx++, cy, c, fg, bg);
+						isPrevSpace = isSpace;
+						isPrevFullWidth = isFullWidth;
+					}
 				}
 			break;
 
