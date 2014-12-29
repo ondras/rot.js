@@ -61,6 +61,13 @@ ROT.Lighting.prototype.setLight = function(x, y, color) {
 }
 
 /**
+ * Remove all light sources
+ */
+ROT.Lighting.prototype.clearLights = function() {
+    this._lights = {};
+}
+
+/**
  * Reset the pre-computed topology values. Call whenever the underlying map changes its light-passability.
  */
 ROT.Lighting.prototype.reset = function() {
