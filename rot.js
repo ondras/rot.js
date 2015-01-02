@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.6~dev, generated on Tue Oct 14 15:41:20 CEST 2014.
+	Version 0.6~dev, generated on Mon Dec 29 14:40:51 CET 2014.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -4901,6 +4901,13 @@ ROT.Lighting.prototype.setLight = function(x, y, color) {
 		delete this._lights[key];
 	}
 	return this;
+}
+
+/**
+ * Remove all light sources
+ */
+ROT.Lighting.prototype.clearLights = function() {
+    this._lights = {};
 }
 
 /**
