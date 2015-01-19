@@ -1289,11 +1289,37 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 		var tile = this._options.tileMap[chars[i]];
 		if (!tile) { throw new Error("Char '" + chars[i] + "' not found in tileMap"); }
 		
-		this._context.drawImage(
+		var bufferCanvas = document.createElement("canvas");
+		bufferCanvas.width = tileWidth;
+		bufferCanvas.height = tileHeight;
+
+		var buffer = bufferCanvas.getContext("2d");
+
+		buffer.clearRect(0, 0, tileWidth, tileHeight)
+
+		buffer.drawImage(
 			this._options.tileSet,
 			tile[0], tile[1], tileWidth, tileHeight,
-			x*tileWidth, y*tileHeight, tileWidth, tileHeight
+			0, 0, tileWidth, tileHeight
 		);
+
+		if (fg != 'transparent') {
+			buffer.fillStyle = fg;
+			buffer.globalCompositeOperation = "source-atop";
+			buffer.fillRect(0, 0, tileWidth, tileHeight);
+		}
+
+		if (bg != 'transparent') {
+			buffer.fillStyle = bg;
+			buffer.globalCompositeOperation = "destination-atop";
+			buffer.fillRect(0, 0, tileWidth, tileHeight);
+		}
+
+		buffer.restore();
+
+		this._context.drawImage(bufferCanvas, x*tileWidth, y*tileHeight, tileWidth, tileHeight)
+
+		bufferCanvas = null
 	}
 }
 
