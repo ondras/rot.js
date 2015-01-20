@@ -713,6 +713,7 @@ window.cancelAnimationFrame =
 ROT.Display = function(options) {
 	var canvas = document.createElement("canvas");
 	this._context = canvas.getContext("2d");
+	this._buffer = document.createElement("canvas");
 	this._data = {};
 	this._dirty = false; /* false = nothing, true = all, object = dirty cells */
 	this._options = {};
@@ -733,7 +734,8 @@ ROT.Display = function(options) {
 		tileWidth: 32,
 		tileHeight: 32,
 		tileMap: {},
-		tileSet: null
+		tileSet: null,
+		tileColor: false
 	};
 	for (var p in options) { defaultOptions[p] = options[p]; }
 	this.setOptions(defaultOptions);
@@ -774,7 +776,7 @@ ROT.Display.prototype.setOptions = function(options) {
 
 		var font = (this._options.fontStyle ? this._options.fontStyle + " " : "") + this._options.fontSize + "px " + this._options.fontFamily;
 		this._context.font = font;
-		this._backend.compute(this._options);
+		this._backend.compute(this._options, this._buffer);
 		this._context.font = font;
 		this._context.textAlign = "center";
 		this._context.textBaseline = "middle";
@@ -1260,10 +1262,13 @@ ROT.Display.Tile = function(context) {
 }
 ROT.Display.Tile.extend(ROT.Display.Rect);
 
-ROT.Display.Tile.prototype.compute = function(options) {
+ROT.Display.Tile.prototype.compute = function(options, buffer) {
 	this._options = options;
+	this._buffer = buffer;
 	this._context.canvas.width = options.width * options.tileWidth;
 	this._context.canvas.height = options.height * options.tileHeight;
+	this._buffer.width = options.tileWidth;
+	this._buffer.height = options.tileHeight;
 }
 
 ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
@@ -1279,7 +1284,11 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 	if (clearBefore) {
 		var b = this._options.border;
 		this._context.fillStyle = bg;
-		this._context.fillRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+
+		if (this._options.tileColor) {this._context.clearRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);} else {
+			this._context.fillRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+		}
+		
 	}
 
 	if (!ch) { return; }
@@ -1289,10 +1298,7 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 		var tile = this._options.tileMap[chars[i]];
 		if (!tile) { throw new Error("Char '" + chars[i] + "' not found in tileMap"); }
 		
-		var bufferCanvas = document.createElement("canvas");
-		bufferCanvas.width = tileWidth;
-		bufferCanvas.height = tileHeight;
-
+		var bufferCanvas = this._buffer
 		var buffer = bufferCanvas.getContext("2d");
 
 		buffer.clearRect(0, 0, tileWidth, tileHeight)
@@ -1303,23 +1309,20 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 			0, 0, tileWidth, tileHeight
 		);
 
-		if (fg != 'transparent') {
+		if (fg != 'transparent' && this._options.tileColor) {
 			buffer.fillStyle = fg;
 			buffer.globalCompositeOperation = "source-atop";
 			buffer.fillRect(0, 0, tileWidth, tileHeight);
 		}
 
-		if (bg != 'transparent') {
+		if (bg != 'transparent' && this._options.tileColor) {
 			buffer.fillStyle = bg;
 			buffer.globalCompositeOperation = "destination-atop";
 			buffer.fillRect(0, 0, tileWidth, tileHeight);
 		}
 
-		buffer.restore();
-
 		this._context.drawImage(bufferCanvas, x*tileWidth, y*tileHeight, tileWidth, tileHeight)
 
-		bufferCanvas = null
 	}
 }
 

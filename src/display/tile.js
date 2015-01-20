@@ -28,7 +28,11 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 	if (clearBefore) {
 		var b = this._options.border;
 		this._context.fillStyle = bg;
-		this._context.fillRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+
+		if (this._options.tileColor) {this._context.clearRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);} else {
+			this._context.fillRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+		}
+		
 	}
 
 	if (!ch) { return; }
@@ -38,10 +42,7 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 		var tile = this._options.tileMap[chars[i]];
 		if (!tile) { throw new Error("Char '" + chars[i] + "' not found in tileMap"); }
 		
-		var bufferCanvas = document.createElement("canvas");
-		bufferCanvas.width = tileWidth;
-		bufferCanvas.height = tileHeight;
-
+		var bufferCanvas = this._buffer
 		var buffer = bufferCanvas.getContext("2d");
 
 		buffer.clearRect(0, 0, tileWidth, tileHeight)
@@ -52,24 +53,20 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 			0, 0, tileWidth, tileHeight
 		);
 
-		if (fg != 'transparent') {
+		if (fg != 'transparent' && this._options.tileColor) {
 			buffer.fillStyle = fg;
 			buffer.globalCompositeOperation = "source-atop";
 			buffer.fillRect(0, 0, tileWidth, tileHeight);
 		}
 
-		if (bg != 'transparent') {
+		if (bg != 'transparent' && this._options.tileColor) {
 			buffer.fillStyle = bg;
 			buffer.globalCompositeOperation = "destination-atop";
 			buffer.fillRect(0, 0, tileWidth, tileHeight);
 		}
 
-		buffer.restore();
-
 		this._context.drawImage(bufferCanvas, x*tileWidth, y*tileHeight, tileWidth, tileHeight)
 
-		bufferCanvas = null
-		
 	}
 }
 
