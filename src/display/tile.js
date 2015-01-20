@@ -9,10 +9,13 @@ ROT.Display.Tile = function(context) {
 }
 ROT.Display.Tile.extend(ROT.Display.Rect);
 
-ROT.Display.Tile.prototype.compute = function(options) {
+ROT.Display.Tile.prototype.compute = function(options, buffer) {
 	this._options = options;
+	this._buffer = buffer;
 	this._context.canvas.width = options.width * options.tileWidth;
 	this._context.canvas.height = options.height * options.tileHeight;
+	this._buffer.width = options.tileWidth;
++	this._buffer.height = options.tileHeight;
 }
 
 ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
@@ -28,7 +31,11 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 	if (clearBefore) {
 		var b = this._options.border;
 		this._context.fillStyle = bg;
-		this._context.fillRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+
+		if (this._options.tileColor) {this._context.clearRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);} else {
+			this._context.fillRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+		}
+		
 	}
 
 	if (!ch) { return; }
@@ -38,11 +45,31 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 		var tile = this._options.tileMap[chars[i]];
 		if (!tile) { throw new Error("Char '" + chars[i] + "' not found in tileMap"); }
 		
-		this._context.drawImage(
+		var bufferCanvas = this._buffer
+		var buffer = bufferCanvas.getContext("2d");
+
+		buffer.clearRect(0, 0, tileWidth, tileHeight)
+
+		buffer.drawImage(
 			this._options.tileSet,
 			tile[0], tile[1], tileWidth, tileHeight,
-			x*tileWidth, y*tileHeight, tileWidth, tileHeight
+			0, 0, tileWidth, tileHeight
 		);
+
+		if (fg != 'transparent' && this._options.tileColor) {
+			buffer.fillStyle = fg;
+			buffer.globalCompositeOperation = "source-atop";
+			buffer.fillRect(0, 0, tileWidth, tileHeight);
+		}
+
+		if (bg != 'transparent' && this._options.tileColor) {
+			buffer.fillStyle = bg;
+			buffer.globalCompositeOperation = "destination-atop";
+			buffer.fillRect(0, 0, tileWidth, tileHeight);
+		}
+
+		this._context.drawImage(bufferCanvas, x*tileWidth, y*tileHeight, tileWidth, tileHeight)
+
 	}
 }
 

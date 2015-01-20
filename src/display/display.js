@@ -19,6 +19,7 @@
 ROT.Display = function(options) {
 	var canvas = document.createElement("canvas");
 	this._context = canvas.getContext("2d");
+	this._buffer = document.createElement("canvas");
 	this._data = {};
 	this._dirty = false; /* false = nothing, true = all, object = dirty cells */
 	this._options = {};
@@ -39,7 +40,8 @@ ROT.Display = function(options) {
 		tileWidth: 32,
 		tileHeight: 32,
 		tileMap: {},
-		tileSet: null
+		tileSet: null,
+		tileColor: false
 	};
 	for (var p in options) { defaultOptions[p] = options[p]; }
 	this.setOptions(defaultOptions);
@@ -80,7 +82,7 @@ ROT.Display.prototype.setOptions = function(options) {
 
 		var font = (this._options.fontStyle ? this._options.fontStyle + " " : "") + this._options.fontSize + "px " + this._options.fontFamily;
 		this._context.font = font;
-		this._backend.compute(this._options);
+		this._backend.compute(this._options, this._buffer);
 		this._context.font = font;
 		this._context.textAlign = "center";
 		this._context.textBaseline = "middle";

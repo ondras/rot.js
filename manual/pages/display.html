@@ -143,3 +143,37 @@ tileSet.onload = function() {
 	display.draw(0, 0, ["#", "@"]);
 }
 </div>
+
+<h3>Coloring tiles</h3>
+
+<div class="example">
+var tileSet = document.createElement("img");
+tileSet.src = "tiles.png";
+
+var options = {
+	layout: "tile",
+	tileWidth: 64,
+	tileHeight: 64,
+	tileSet: tileSet,
+	tileMap: {
+		"@": [0, 0],
+		"#": [0, 64],
+		"a": [64, 0],
+		"!": [64, 64]
+	},
+	width: 3,
+	height: 3,
+	tileColor: true
+}
+var display = new ROT.Display(options);
+SHOW(display.getContainer());
+
+tileSet.onload = function() {
+    display.draw(1, 1, "@", "transparent");
+    display.draw(0, 0, "#", "white");
+    display.draw(0, 1, "#", "blue");
+    display.draw(1, 0, "@", "green", "red");
+
+    display.drawText(0,3,'#@#@')
+}
+</div>
