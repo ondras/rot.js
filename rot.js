@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.6~dev, generated on Fri Jan  2 21:06:50 CET 2015.
+	Version 0.6~dev, generated on Tue Jan 20 12:29:41 CET 2015.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -709,11 +709,11 @@ window.cancelAnimationFrame =
  * @param {int} [options.tileHeight=32]
  * @param {object} [options.tileMap={}]
  * @param {image} [options.tileSet=null]
+ * @param {image} [options.tileColorize=false]
  */
 ROT.Display = function(options) {
 	var canvas = document.createElement("canvas");
 	this._context = canvas.getContext("2d");
-	this._buffer = document.createElement("canvas");
 	this._data = {};
 	this._dirty = false; /* false = nothing, true = all, object = dirty cells */
 	this._options = {};
@@ -735,7 +735,7 @@ ROT.Display = function(options) {
 		tileHeight: 32,
 		tileMap: {},
 		tileSet: null,
-		tileColor: false
+		tileColorize: false
 	};
 	for (var p in options) { defaultOptions[p] = options[p]; }
 	this.setOptions(defaultOptions);
@@ -776,7 +776,7 @@ ROT.Display.prototype.setOptions = function(options) {
 
 		var font = (this._options.fontStyle ? this._options.fontStyle + " " : "") + this._options.fontSize + "px " + this._options.fontFamily;
 		this._context.font = font;
-		this._backend.compute(this._options, this._buffer);
+		this._backend.compute(this._options);
 		this._context.font = font;
 		this._context.textAlign = "center";
 		this._context.textBaseline = "middle";
@@ -1259,16 +1259,16 @@ ROT.Display.Tile = function(context) {
 	ROT.Display.Rect.call(this, context);
 	
 	this._options = {};
+	this._colorCanvas = document.createElement("canvas");
 }
 ROT.Display.Tile.extend(ROT.Display.Rect);
 
-ROT.Display.Tile.prototype.compute = function(options, buffer) {
+ROT.Display.Tile.prototype.compute = function(options) {
 	this._options = options;
-	this._buffer = buffer;
 	this._context.canvas.width = options.width * options.tileWidth;
 	this._context.canvas.height = options.height * options.tileHeight;
-	this._buffer.width = options.tileWidth;
-	this._buffer.height = options.tileHeight;
+	this._colorCanvas.width = options.tileWidth;
+	this._colorCanvas.height = options.tileHeight;
 }
 
 ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
@@ -1298,31 +1298,38 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 		var tile = this._options.tileMap[chars[i]];
 		if (!tile) { throw new Error("Char '" + chars[i] + "' not found in tileMap"); }
 		
-		var bufferCanvas = this._buffer
-		var buffer = bufferCanvas.getContext("2d");
+		if (this._options.tileColorize) { /* apply colorization */
+			var canvas = this._colorCanvas;
+			var context = canvas.getContext("2d");
+			context.clearRect(0, 0, tileWidth, tileHeight);
 
-		buffer.clearRect(0, 0, tileWidth, tileHeight)
+			context.drawImage(
+				this._options.tileSet,
+				tile[0], tile[1], tileWidth, tileHeight,
+				0, 0, tileWidth, tileHeight
+			);
 
-		buffer.drawImage(
-			this._options.tileSet,
-			tile[0], tile[1], tileWidth, tileHeight,
-			0, 0, tileWidth, tileHeight
-		);
+			if (fg != "transparent") {
+				context.fillStyle = fg;
+				context.globalCompositeOperation = "source-atop";
+				context.fillRect(0, 0, tileWidth, tileHeight);
+			}
 
-		if (fg != 'transparent' && this._options.tileColor) {
-			buffer.fillStyle = fg;
-			buffer.globalCompositeOperation = "source-atop";
-			buffer.fillRect(0, 0, tileWidth, tileHeight);
+			if (bg != "transparent") {
+				context.fillStyle = bg;
+				context.globalCompositeOperation = "destination-over";
+				context.fillRect(0, 0, tileWidth, tileHeight);
+			}
+
+			this._context.drawImage(canvas, x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+
+		} else { /* no colorizing, easy */
+			this._context.drawImage(
+				this._options.tileSet,
+				tile[0], tile[1], tileWidth, tileHeight,
+				x*tileWidth, y*tileHeight, tileWidth, tileHeight
+			);
 		}
-
-		if (bg != 'transparent' && this._options.tileColor) {
-			buffer.fillStyle = bg;
-			buffer.globalCompositeOperation = "destination-atop";
-			buffer.fillRect(0, 0, tileWidth, tileHeight);
-		}
-
-		this._context.drawImage(bufferCanvas, x*tileWidth, y*tileHeight, tileWidth, tileHeight)
-
 	}
 }
 
