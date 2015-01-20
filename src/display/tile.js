@@ -9,10 +9,13 @@ ROT.Display.Tile = function(context) {
 }
 ROT.Display.Tile.extend(ROT.Display.Rect);
 
-ROT.Display.Tile.prototype.compute = function(options) {
+ROT.Display.Tile.prototype.compute = function(options, buffer) {
 	this._options = options;
+	this._buffer = buffer;
 	this._context.canvas.width = options.width * options.tileWidth;
 	this._context.canvas.height = options.height * options.tileHeight;
+	this._buffer.width = options.tileWidth;
++	this._buffer.height = options.tileHeight;
 }
 
 ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
