@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.6~dev, generated on Thu Feb 26 00:35:15 EST 2015.
+	Version 0.6~dev, generated on Thu Feb 26 00:39:03 EST 2015.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -677,21 +677,25 @@ Function.prototype.extend = function(parent) {
 	this.prototype.constructor = this;
 	return this;
 }
-window.requestAnimationFrame =
-	window.requestAnimationFrame
-	|| window.mozRequestAnimationFrame
-	|| window.webkitRequestAnimationFrame
-	|| window.oRequestAnimationFrame
-	|| window.msRequestAnimationFrame
-	|| function(cb) { return setTimeout(cb, 1000/60); };
+if (typeof window !== 'undefined') {
 
-window.cancelAnimationFrame =
-	window.cancelAnimationFrame
-	|| window.mozCancelAnimationFrame
-	|| window.webkitCancelAnimationFrame
-	|| window.oCancelAnimationFrame
-	|| window.msCancelAnimationFrame
-	|| function(id) { return clearTimeout(id); };
+	window.requestAnimationFrame =
+		window.requestAnimationFrame
+		|| window.mozRequestAnimationFrame
+		|| window.webkitRequestAnimationFrame
+		|| window.oRequestAnimationFrame
+		|| window.msRequestAnimationFrame
+		|| function(cb) { return setTimeout(cb, 1000/60); };
+
+	window.cancelAnimationFrame =
+		window.cancelAnimationFrame
+		|| window.mozCancelAnimationFrame
+		|| window.webkitCancelAnimationFrame
+		|| window.oCancelAnimationFrame
+		|| window.msCancelAnimationFrame
+		|| function(id) { return clearTimeout(id); };
+
+}
 /**
  * @class Visual map display
  * @param {object} [options]
