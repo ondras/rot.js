@@ -1,0 +1,35 @@
+{
+	"name": "rot.js",
+	"version": "0.5.0",
+	"description": "A roguelike toolkit in JavaScript",
+	"author": "Ondrej Zara <ondrej.zara@gmail.com> (http://ondras.zarovi.cz/)",
+	"main": "rot.js",
+	"directories": {
+		"doc": "doc",
+		"test": "tests"
+	},
+	"scripts": {
+		"test": "make test"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:ondras/rot.js.git"
+	},
+	"keywords": [
+		"rogue",
+		"roguelike",
+		"nethack",
+		"game",
+		"ascii",
+		"tiles",
+		"dungeon",
+		"los",
+		"fov",
+		"lighting"
+	],
+	"license": "BSD-3-Clause",
+	"bugs": {
+		"url": "https://github.com/ondras/rot.js/issues"
+	},
+	"homepage": "http://ondras.github.io/rot.js/hp/"
+}

@@ -49,8 +49,8 @@ rot.js: $(SOURCES)
 	\tThis is rot.js, the ROguelike Toolkit in JavaScript.\n\
 	\tVersion $(VERSION), generated on $(shell date).\n\
 	*/" > $@
-
 	@cat $^ >> $@
+	@echo "\nif (typeof module !== 'undefined') module.exports = ROT;\n" >> $@
 
 rot.min.js: rot.js
 	@echo "Calling closure compiler's REST API, this might take a while"
