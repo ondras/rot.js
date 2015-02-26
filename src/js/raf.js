@@ -1,5 +1,4 @@
-if (typeof window !== 'undefined') {
-
+if (typeof window != "undefined") {
 	window.requestAnimationFrame =
 		window.requestAnimationFrame
 		|| window.mozRequestAnimationFrame
@@ -15,5 +14,4 @@ if (typeof window !== 'undefined') {
 		|| window.oCancelAnimationFrame
 		|| window.msCancelAnimationFrame
 		|| function(id) { return clearTimeout(id); };
-
 }
