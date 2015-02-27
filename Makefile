@@ -50,7 +50,7 @@ rot.js: $(SOURCES)
 	\tVersion $(VERSION), generated on $(shell date).\n\
 	*/" > $@
 	@cat $^ >> $@
-	@echo "\nif (typeof exports != "undefined") for (var p in ROT) { exports[p] = ROT[p]; }\n" >> $@
+	@echo "\nif (typeof exports != \"undefined\") for (var p in ROT) { exports[p] = ROT[p]; }\n" >> $@
 
 rot.min.js: rot.js
 	@echo "Calling closure compiler's REST API, this might take a while"
