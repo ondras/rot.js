@@ -41,7 +41,8 @@ ROT.Display = function(options) {
 		tileHeight: 32,
 		tileMap: {},
 		tileSet: null,
-		tileColorize: false
+		tileColorize: false,
+		termColor: "xterm"
 	};
 	for (var p in options) { defaultOptions[p] = options[p]; }
 	this.setOptions(defaultOptions);
