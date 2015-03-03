@@ -7,6 +7,7 @@
 		"libtcod",
 		"lighting",
 		"los",
+		"rng",
 		"rogue",
 		"roguelike",
 		"tiles"
@@ -16,7 +17,6 @@
 	"license": "BSD-3-Clause",
 	"author": "Ondřej Žára <ondrej.zara@gmail.com> (http://ondras.zarovi.cz/)",
 	"files": [
-		"doc",
 		"lib",
 		"license.txt",
 		"package.json",
@@ -24,7 +24,6 @@
 	],
 	"main": "./lib/rot",
 	"directories": {
-		"doc": "./doc",
 		"lib": "./lib"
 	},
 	"repository": {
