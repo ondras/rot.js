@@ -43,6 +43,29 @@ SOURCES = 	src/rot.js \
 			src/path/dijkstra.js \
 			src/path/astar.js
 
+NODE_VERSION = "$(shell head -1 < VERSION | sed -e 's/~.*//g').0"
+NODE_PRE_SOURCES = 	node/node-shim.js
+NODE_POST_SOURCES =	node/term.js \
+			node/term-color.js \
+			node/xterm-color.js \
+			node/node-export.js
+
+node: package.json rot.js.node
+
+package.json: node/package.node VERSION
+	@echo "Creating package.json for Node.js"
+	@echo "{\n\t\"name\": \"rot-js\",\n\t\"version\": \"$(NODE_VERSION)\"," > $@
+	@cat node/package.node >> $@
+
+rot.js.node: $(NODE_PRE_SOURCES) $(SOURCES) $(NODE_POST_SOURCES)
+	@echo Current rot.js version for Node.js is $(NODE_VERSION)
+	@mkdir -p lib
+	@echo "/*\n\
+	\tThis is rot.js, the ROguelike Toolkit in JavaScript.\n\
+	\tVersion $(VERSION), generated on $(shell date).\n\
+	*/" > lib/rot.js
+	@cat $^ >> lib/rot.js
+
 rot.js: $(SOURCES)
 	@echo Current rot.js version is $(VERSION)
 	@echo "/*\n\
@@ -50,7 +73,6 @@ rot.js: $(SOURCES)
 	\tVersion $(VERSION), generated on $(shell date).\n\
 	*/" > $@
 	@cat $^ >> $@
-	@echo "\nif (typeof exports != \"undefined\") for (var p in ROT) { exports[p] = ROT[p]; }\n" >> $@
 
 rot.min.js: rot.js
 	@echo "Calling closure compiler's REST API, this might take a while"
@@ -78,5 +100,6 @@ test:
 clean:
 	@echo "Removing generated JS files"
 	@rm -f rot.js rot.min.js
+	@rm -fR lib package.json
 
-.PHONY: all doc clean push test
+.PHONY: all doc clean node push test
