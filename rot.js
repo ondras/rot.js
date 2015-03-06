@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.6~dev, generated on Fri Feb 27 10:49:10 CET 2015.
+	Version 0.6~dev, generated on Thu Mar  5 16:31:42 CET 2015.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -737,7 +737,8 @@ ROT.Display = function(options) {
 		tileHeight: 32,
 		tileMap: {},
 		tileSet: null,
-		tileColorize: false
+		tileColorize: false,
+		termColor: "xterm"
 	};
 	for (var p in options) { defaultOptions[p] = options[p]; }
 	this.setOptions(defaultOptions);
@@ -4640,7 +4641,7 @@ ROT.Color = {
 	 * @returns {number[]}
 	 */
 	randomize: function(color, diff) {
-		if (!(diff instanceof Array)) { diff = ROT.RNG.getNormal(0, diff); }
+		if (!(diff instanceof Array)) { diff = Math.round(ROT.RNG.getNormal(0, diff)); }
 		var result = color.slice();
 		for (var i=0;i<3;i++) {
 			result[i] += (diff instanceof Array ? Math.round(ROT.RNG.getNormal(0, diff[i])) : diff);
@@ -5306,6 +5307,3 @@ ROT.Path.AStar.prototype._distance = function(x, y) {
 		break;
 	}
 }
-
-if (typeof exports != "undefined") for (var p in ROT) { exports[p] = ROT[p]; }
-
