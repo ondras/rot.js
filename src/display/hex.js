@@ -56,7 +56,7 @@ ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
 
 	var chars = [].concat(ch);
 	for (var i=0;i<chars.length;i++) {
-		this._context.fillText(chars[i], px[0], px[1]);
+		this._context.fillText(chars[i], px[0], Math.ceil(px[1]));
 	}
 }
 

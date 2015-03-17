@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.6~dev, generated on Thu Mar  5 16:31:42 CET 2015.
+	Version 0.6~dev, generated on Tue Mar 17 16:16:31 CET 2015.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -707,6 +707,7 @@ if (typeof window != "undefined") {
  * @param {float} [options.spacing=1]
  * @param {float} [options.border=0]
  * @param {string} [options.layout="rect"]
+ * @param {bool} [options.forceSquareRatio=false]
  * @param {int} [options.tileWidth=32]
  * @param {int} [options.tileHeight=32]
  * @param {object} [options.tileMap={}]
@@ -729,6 +730,7 @@ ROT.Display = function(options) {
 		fontSize: 15,
 		spacing: 1,
 		border: 0,
+		forceSquareRatio: false,
 		fontFamily: "monospace",
 		fontStyle: "",
 		fg: "#ccc",
@@ -1005,6 +1007,11 @@ ROT.Display.Rect.prototype.compute = function(options) {
 	var charWidth = Math.ceil(this._context.measureText("W").width);
 	this._spacingX = Math.ceil(options.spacing * charWidth);
 	this._spacingY = Math.ceil(options.spacing * options.fontSize);
+
+	if (this._options.forceSquareRatio) {
+		this._spacingX = this._spacingY = Math.max(this._spacingX, this._spacingY);
+	}
+
 	this._context.canvas.width = options.width * this._spacingX;
 	this._context.canvas.height = options.height * this._spacingY;
 }
@@ -1044,7 +1051,7 @@ ROT.Display.Rect.prototype._drawWithCache = function(data, clearBefore) {
 
 			var chars = [].concat(ch);
 			for (var i=0;i<chars.length;i++) {
-				ctx.fillText(chars[i], this._spacingX/2, this._spacingY/2);
+				ctx.fillText(chars[i], this._spacingX/2, Math.ceil(this._spacingY/2));
 			}
 		}
 		this._canvasCache[hash] = canvas;
@@ -1072,7 +1079,7 @@ ROT.Display.Rect.prototype._drawNoCache = function(data, clearBefore) {
 
 	var chars = [].concat(ch);
 	for (var i=0;i<chars.length;i++) {
-		this._context.fillText(chars[i], (x+0.5) * this._spacingX, (y+0.5) * this._spacingY);
+		this._context.fillText(chars[i], (x+0.5) * this._spacingX, Math.ceil((y+0.5) * this._spacingY));
 	}
 }
 
@@ -1161,7 +1168,7 @@ ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
 
 	var chars = [].concat(ch);
 	for (var i=0;i<chars.length;i++) {
-		this._context.fillText(chars[i], px[0], px[1]);
+		this._context.fillText(chars[i], px[0], Math.ceil(px[1]));
 	}
 }
 

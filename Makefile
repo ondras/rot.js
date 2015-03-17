@@ -50,22 +50,6 @@ NODE_POST_SOURCES =	node/term.js \
 			node/xterm-color.js \
 			node/node-export.js
 
-node: package.json rot.js.node
-
-package.json: node/package.node VERSION
-	@echo "Creating package.json for Node.js"
-	@echo "{\n\t\"name\": \"rot-js\",\n\t\"version\": \"$(NODE_VERSION)\"," > $@
-	@cat node/package.node >> $@
-
-rot.js.node: $(NODE_PRE_SOURCES) $(SOURCES) $(NODE_POST_SOURCES)
-	@echo Current rot.js version for Node.js is $(NODE_VERSION)
-	@mkdir -p lib
-	@echo "/*\n\
-	\tThis is rot.js, the ROguelike Toolkit in JavaScript.\n\
-	\tVersion $(VERSION), generated on $(shell date).\n\
-	*/" > lib/rot.js
-	@cat $^ >> lib/rot.js
-
 rot.js: $(SOURCES)
 	@echo Current rot.js version is $(VERSION)
 	@echo "/*\n\
@@ -83,6 +67,22 @@ rot.min.js: rot.js
 		-d charset=utf-8 \
 		--data-urlencode "js_code@-" \
 		http://closure-compiler.appspot.com/compile < $^ > $@
+
+node: package.json rot.js.node
+
+package.json: node/package.node VERSION
+	@echo "Creating package.json for Node.js"
+	@echo "{\n\t\"name\": \"rot-js\",\n\t\"version\": \"$(NODE_VERSION)\"," > $@
+	@cat node/package.node >> $@
+
+rot.js.node: $(NODE_PRE_SOURCES) $(SOURCES) $(NODE_POST_SOURCES)
+	@echo Current rot.js version for Node.js is $(NODE_VERSION)
+	@mkdir -p lib
+	@echo "/*\n\
+	\tThis is rot.js, the ROguelike Toolkit in JavaScript.\n\
+	\tVersion $(VERSION), generated on $(shell date).\n\
+	*/" > lib/rot.js
+	@cat $^ >> lib/rot.js
 
 doc: rot.js
 	@echo "Calling jsdoc to auto-generate documentation"

@@ -11,6 +11,7 @@
  * @param {float} [options.spacing=1]
  * @param {float} [options.border=0]
  * @param {string} [options.layout="rect"]
+ * @param {bool} [options.forceSquareRatio=false]
  * @param {int} [options.tileWidth=32]
  * @param {int} [options.tileHeight=32]
  * @param {object} [options.tileMap={}]
@@ -33,6 +34,7 @@ ROT.Display = function(options) {
 		fontSize: 15,
 		spacing: 1,
 		border: 0,
+		forceSquareRatio: false,
 		fontFamily: "monospace",
 		fontStyle: "",
 		fg: "#ccc",

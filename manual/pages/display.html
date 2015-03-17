@@ -77,3 +77,19 @@ SHOW(display.getContainer());
 var str = "Goodbye %c{red}cr%b{blue}u%b{}el %c{}world"
 display.drawText(5,  2, str);
 </div>
+
+<h3>Forced square aspect ratio</h3>
+
+<p>You can force a regular squared grid layout by using the <code>forceSquareRatio:true</code> option.</p>
+<div class="example">
+var options = {
+	width: 20,
+	height: 8,
+	forceSquareRatio:true
+}
+var display = new ROT.Display(options);
+SHOW(display.getContainer());
+
+var str = "Using a regular grid\n@....%b{blue}#%b{}##.%b{red}.%b{}.$$$";
+display.drawText(5,  2, str);
+</div>
