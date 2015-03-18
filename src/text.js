@@ -107,7 +107,7 @@ ROT.Text = {
 
 				/* if there are spaces at the end, we must remove them (we do not want the line too long) */
 				var arr = token.value.split("");
-				while (arr[arr.length-1] == " ") { arr.pop(); }
+				while (arr.length && arr[arr.length-1] == " ") { arr.pop(); }
 				token.value = arr.join("");
 			}
 
@@ -159,7 +159,7 @@ ROT.Text = {
 				case ROT.Text.TYPE_NEWLINE: 
 					if (lastTextToken) { /* remove trailing space */
 						var arr = lastTextToken.value.split("");
-						while (arr[arr.length-1] == " ") { arr.pop(); }
+						while (arr.length && arr[arr.length-1] == " ") { arr.pop(); }
 						lastTextToken.value = arr.join("");
 					}
 					lastTextToken = null;

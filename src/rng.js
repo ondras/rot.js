@@ -81,7 +81,7 @@ ROT.RNG = {
 	 * @returns {string} whatever
 	 */
 	getWeightedValue: function(data) {
-		var avail = [];
+                var avail = [];
 		var total = 0;
 		
 		for (var id in data) {

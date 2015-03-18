@@ -220,7 +220,7 @@ ROT.Map.Uniform.prototype._connectRooms = function(room1, room2) {
 	
 		var index2 = (index+1)%2;
 		var end = this._placeInWall(room2, dirIndex2);
-		if (!end) { return; }
+		if (!end) { return false; }
 		var mid = Math.round((end[index2] + start[index2])/2);
 
 		var mid1 = [0, 0];

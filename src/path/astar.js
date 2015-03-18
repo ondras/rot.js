@@ -88,4 +88,6 @@ ROT.Path.AStar.prototype._distance = function(x, y) {
 			return Math.max(Math.abs(x-this._fromX), Math.abs(y-this._fromY));
 		break;
 	}
+
+        throw new Error("Illegal topology");
 }

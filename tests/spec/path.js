@@ -72,7 +72,6 @@ describe("Path", function() {
 			var dijkstra = new ROT.Path.Dijkstra(Z[0], Z[1], PASSABLE_CALLBACK_48, {topology:8});
 			
 			it("should compute correct path A", function() {
-				path = [];
 				dijkstra.compute(A[0], A[1], PATH_CALLBACK);
 				expect(PATH.toString()).toEqual(PATH_A.toString());
 			});
@@ -139,7 +138,6 @@ describe("Path", function() {
 			var astar = new ROT.Path.AStar(Z[0], Z[1], PASSABLE_CALLBACK_48, {topology:8});
 			
 			it("should compute correct path A", function() {
-				path = [];
 				astar.compute(A[0], A[1], PATH_CALLBACK);
 				expect(PATH.toString()).toEqual(PATH_A.toString());
 			});

@@ -58,6 +58,8 @@ ROT.Map.Feature.Room.createRandomAt = function(x, y, dx, dy, options) {
 		var x2 = x - Math.floor(ROT.RNG.getUniform() * width);
 		return new this(x2, y-height, x2+width-1, y-1, x, y);
 	}
+
+        throw new Error("dx or dy must be 1 or -1");
 }
 
 /**

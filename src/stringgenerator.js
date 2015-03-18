@@ -136,7 +136,7 @@ ROT.StringGenerator.prototype._sample = function(context) {
 		available = data;
 	}
 
-	return this._pickRandom(available);
+	return ROT.RNG.getWeightedValue(available);
 }
 
 /**
@@ -153,20 +153,4 @@ ROT.StringGenerator.prototype._backoff = function(context) {
 	while (!(this._join(context) in this._data) && context.length > 0) { context = context.slice(1); }
 
 	return context;
-}
-
-
-ROT.StringGenerator.prototype._pickRandom = function(data) {
-	var total = 0;
-	
-	for (var id in data) {
-		total += data[id];
-	}
-	var random = ROT.RNG.getUniform()*total;
-	
-	var part = 0;
-	for (var id in data) {
-		part += data[id];
-		if (random < part) { return id; }
-	}
 }
