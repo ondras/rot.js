@@ -81,7 +81,6 @@ ROT.RNG = {
 	 * @returns {string} whatever
 	 */
 	getWeightedValue: function(data) {
-                var avail = [];
 		var total = 0;
 		
 		for (var id in data) {
@@ -94,8 +93,10 @@ ROT.RNG = {
 			part += data[id];
 			if (random < part) { return id; }
 		}
-		
-		return null;
+
+                // If by some floating-point annoyance we have
+                // random >= total, just return the last id.
+                return id;
 	},
 
 	/**
