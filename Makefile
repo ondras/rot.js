@@ -69,7 +69,7 @@ rot.min.js: rot.js
 		http://closure-compiler.appspot.com/compile < $^ > $@
 
 node: package.json rot.js.node
-	
+
 package.json: node/package.node NODE_VERSION
 	@echo "Creating package.json for Node.js"
 	@echo "{\n\t\"name\": \"rot-js\",\n\t\"version\": \"$(NODE_VERSION)\"," > $@
