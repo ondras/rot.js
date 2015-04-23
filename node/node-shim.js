@@ -5,7 +5,7 @@ global.requestAnimationFrame = function(cb) {
 	return setTimeout(cb, 1000/60);
 };
 
-document = {
+global.document = {
 	body: {
 		appendChild: function(child) {},
 		scrollLeft: 0,
