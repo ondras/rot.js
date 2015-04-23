@@ -1,8 +1,11 @@
 /**
  * Add objects for Node.js environment
  */
-window = global;
-document = {
+global.requestAnimationFrame = function(cb) {
+	return setTimeout(cb, 1000/60);
+};
+
+global.document = {
 	body: {
 		appendChild: function(child) {},
 		scrollLeft: 0,

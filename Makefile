@@ -43,7 +43,7 @@ SOURCES = 	src/rot.js \
 			src/path/dijkstra.js \
 			src/path/astar.js
 
-NODE_VERSION = "$(shell head -1 < VERSION | sed -e 's/~.*//g').0"
+NODE_VERSION = "$(shell head -1 < NODE_VERSION)"
 NODE_PRE_SOURCES = 	node/node-shim.js
 NODE_POST_SOURCES =	node/term.js \
 			node/term-color.js \
@@ -70,12 +70,13 @@ rot.min.js: rot.js
 
 node: package.json rot.js.node
 
-package.json: node/package.node VERSION
+package.json: node/package.node NODE_VERSION
 	@echo "Creating package.json for Node.js"
 	@echo "{\n\t\"name\": \"rot-js\",\n\t\"version\": \"$(NODE_VERSION)\"," > $@
 	@cat node/package.node >> $@
 
 rot.js.node: $(NODE_PRE_SOURCES) $(SOURCES) $(NODE_POST_SOURCES)
+	@echo Current rot.js version is $(VERSION)
 	@echo Current rot.js version for Node.js is $(NODE_VERSION)
 	@mkdir -p lib
 	@echo "/*\n\
