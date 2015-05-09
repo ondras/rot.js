@@ -27,6 +27,12 @@ global.document = {
 					_termcolor: null,
 					beginPath: function() {},
 					canvas: canvas,
+					clearRect: function(x, y, w, h) {
+						if(this._termcolor !== null) {
+							var clearCmd = this._termcolor.clearToAnsi(this.fillStyle);
+							process.stdout.write(clearCmd);
+						}
+					},
 					drawImage: function(a, b, c, d, e, f, g, h, i) {},
 					fill: function() {},
 					fillRect: function(x, y, w, h) {
