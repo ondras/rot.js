@@ -29,11 +29,10 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 	var tileHeight = this._options.tileHeight;
 
 	if (clearBefore) {
-		this._context.fillStyle = bg;
-
-		if (this._options.tileColor) {
+		if (this._options.tileColorize) {
 			this._context.clearRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
 		} else {
+			this._context.fillStyle = bg;
 			this._context.fillRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
 		}
 	}
