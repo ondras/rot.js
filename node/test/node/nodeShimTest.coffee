@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 
 should = require 'should'
-require '../lib/rot'
+require '../../lib/rot'
 
 describe 'node-shim', ->
   it 'should not define window', ->

@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 
 should = require 'should'
-ROT = require '../lib/rot'
+ROT = require '../../lib/rot'
 
 NUM_RANDOM_CALLS = 100
 

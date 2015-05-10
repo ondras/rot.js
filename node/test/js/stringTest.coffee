@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 
 should = require 'should'
-ROT = require '../lib/rot'
+ROT = require '../../lib/rot'
 
 describe 'string', ->
   it 'should extend the String prototype', ->

@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 
 should = require 'should'
-ROT = require '../lib/rot'
+ROT = require '../../lib/rot'
 
 describe 'number', ->
   it 'should have added methods to the Number prototype', ->

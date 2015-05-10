@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 
 should = require 'should'
-ROT = require '../lib/rot'
+ROT = require '../../lib/rot'
 
 describe 'rect', ->
   it 'should export ROT.Display.Rect', ->
@@ -38,6 +38,10 @@ describe 'rect', ->
         ROT.Display.Rect.cache = true
         rect._drawWithCache = -> done()
         rect.draw [ 6, 5, 'a', '#ccc', '#000' ]
+
+    describe '_drawNoCache', ->
+      xit "should be tested", ->
+        false.should.equal true
 
     describe '_drawWithCache', ->
       it 'should cache the things being drawn', ->

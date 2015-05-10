@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 
 should = require 'should'
-ROT = require '../lib/rot'
+ROT = require '../../lib/rot'
 
 describe 'raf', ->
   it 'should provide a global requestAnimationFrame method', ->

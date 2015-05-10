@@ -2,9 +2,17 @@
 #----------------------------------------------------------------------------
 
 should = require 'should'
-ROT = require '../lib/rot'
+ROT = require '../../lib/rot'
+
+oldRAF = global.requestAnimationFrame
 
 describe 'display', ->
+  beforeEach ->
+    global.requestAnimationFrame = ->
+    
+  afterEach ->
+    global.requestAnimationFrame = oldRAF
+    
   it 'should export ROT.Display', ->
     ROT.should.have.property 'Display'
 
