@@ -252,13 +252,21 @@ describe 'display', ->
         display._data["6,5"].should.eql [ 6, 5, 'a', '#ccc', '#000' ]
         display._data["8,5"].should.eql [ 8, 5, 'Ⅷ', '#ccc', '#000' ]
 
-      it 'a chaarcter between 0xffdc and 0xffe8 should not be considered full-width', ->
+      it 'a character between 0xffdc and 0xffe8 should not be considered full-width', ->
         display = new ROT.Display()
         result = display.drawText 3, 5, "\uffe0\uffe0\uffe0"
         result.should.equal 1
         display._data["3,5"].should.eql [ 3, 5, '￠', '#ccc', '#000' ]
         display._data["4,5"].should.eql [ 4, 5, '￠', '#ccc', '#000' ]
         display._data["5,5"].should.eql [ 5, 5, '￠', '#ccc', '#000' ]
+
+    describe "_tick", ->
+      xit "should be tested", ->
+        false.should.equal true
+
+    describe "_draw", ->
+      xit "should be tested", ->
+        false.should.equal true
 
 #----------------------------------------------------------------------------
 # end of displayTest.coffee

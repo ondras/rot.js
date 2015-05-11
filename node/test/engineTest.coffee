@@ -88,16 +88,11 @@ describe "engine", ->
           next: ->
         engine = new ROT.Engine MOCK_scheduler
         maybeLock = _.after 5, (-> engine.lock())
-        lockIt = ->
-          console.log "Before maybeLock()"
-          maybeLock()
-          console.log "After maybeLock()"
         MOCK_actor =
           count: 0
           act: ->
             @count++
             throw new Error "Acting too much!" if @count > 10
-            console.log "count: #{@count}"
             maybeLock()
         MOCK_scheduler.next = -> MOCK_actor
         engine.unlock()

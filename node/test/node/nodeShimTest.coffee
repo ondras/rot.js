@@ -76,10 +76,10 @@ describe 'node-shim', ->
               result = context.measureText()
               result.should.have.property 'width'
 
-            xdescribe 'clearRect', ->
+            describe 'clearRect', ->
               it 'should do nothing when _termcolor is null', ->
                 should(context._termcolor).equal null
-                should(context.fillRect()).not.be.ok
+                should(context.clearRect()).not.be.ok
 
               it 'should call _termcolor.clearToAnsi when _termcolor is defined', (done) ->
                 old_termcolor = context['_termcolor']
@@ -88,7 +88,7 @@ describe 'node-shim', ->
                     context['_termcolor'] = old_termcolor
                     done()
                     return ""
-                should(context.fillRect()).not.be.ok
+                should(context.clearRect()).not.be.ok
 
             describe 'fillRect', ->
               it 'should do nothing when _termcolor is null', ->
