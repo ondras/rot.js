@@ -261,12 +261,58 @@ describe 'display', ->
         display._data["5,5"].should.eql [ 5, 5, '￠', '#ccc', '#000' ]
 
     describe "_tick", ->
-      xit "should be tested", ->
-        false.should.equal true
+      it 'should call RAF to reschedule itself', (done) ->
+        display = new ROT.Display()
+        prevRAF = global.requestAnimationFrame
+        global.requestAnimationFrame = ->
+          done()
+          global.requestAnimationFrame = prevRAF
+        display._tick()
+
+      it 'should return if nothing is dirty on the display', ->
+        display = new ROT.Display()
+        display._dirty = false
+        display._tick()
+
+      it 'should redraw everything if _dirty is true', (done) ->
+        display = new ROT.Display()
+        display._data =
+          "1,1": [ 1, 1, '@', '#fff', '#000' ]
+        display._dirty = true
+        display._draw = -> done()
+        display._tick()
+
+      it 'should redraw only the _dirty stuff', (done) ->
+        display = new ROT.Display()
+        display._data =
+          "1,1": [ 1, 1, '@', '#fff', '#000' ]
+          "2,2": [ 2, 2, '@', '#fff', '#000' ]
+          "3,3": [ 3, 3, '@', '#fff', '#000' ]
+        display._dirty = 
+          "2,2": [ 2, 2, '@', '#fff', '#000' ]
+        display._draw = -> done()
+        display._tick()
 
     describe "_draw", ->
-      xit "should be tested", ->
-        false.should.equal true
+      it "should call draw on the backend", (done) ->
+        display = new ROT.Display()
+        display._backend =
+          draw: -> done()
+        display._data =
+          "1,1": [ 1, 1, '@', '#fff', '#000' ]
+          "2,2": [ 2, 2, '@', '#fff', '#000' ]
+          "3,3": [ 3, 3, '@', '#fff', '#000' ]
+        display._draw "2,2"
+
+      it "should set clearBefore if the background doesn't match", (done) ->
+        display = new ROT.Display()
+        display._backend =
+          draw: (data, clear) -> done() if clear
+        display._data =
+          "1,1": [ 1, 1, '@', '#fff', '#000' ]
+          "2,2": [ 2, 2, '@', '#fff', '#888' ]
+          "3,3": [ 3, 3, '@', '#fff', '#000' ]
+        display._draw "2,2"
 
 #----------------------------------------------------------------------------
 # end of displayTest.coffee
