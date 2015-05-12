@@ -39,10 +39,6 @@ describe 'rect', ->
         rect._drawWithCache = -> done()
         rect.draw [ 6, 5, 'a', '#ccc', '#000' ]
 
-    describe '_drawNoCache', ->
-      xit "should be tested", ->
-        false.should.equal true
-
     describe '_drawWithCache', ->
       it 'should cache the things being drawn', ->
         MOCK_context = document.createElement("canvas").getContext("2d")
@@ -65,6 +61,34 @@ describe 'rect', ->
         should(rect._canvasCache["undefined#ccc#000"]).equal undefined
         rect._drawWithCache [ 6, 5, undefined, '#ccc', '#000' ]
         rect._canvasCache["undefined#ccc#000"].should.be.ok
+
+    describe '_drawNoCache', ->
+      oldRectCache = ROT.Display.Rect.cache
+      
+      beforeEach ->
+        ROT.Display.Rect.cache = false
+
+      afterEach ->
+        ROT.Display.Rect.cache = oldRectCache
+
+      it "should call fillRect if clearBefore is set", (done) ->
+        MOCK_context = document.createElement("canvas").getContext("2d")
+        MOCK_context.fillRect = -> done()
+        rect = new ROT.Display.Rect MOCK_context
+        rect._drawNoCache [ 6, 5, '@', '#fff', '#000' ], true
+
+      it "should return if no character is provided", ->
+        MOCK_context = document.createElement("canvas").getContext("2d")
+        MOCK_context.fillText = -> throw new Error "AWWW HELL NO!"
+        rect = new ROT.Display.Rect MOCK_context
+        rect._drawNoCache [ 6, 5, undefined, '#fff', '#000' ], false
+
+      it "should call fillText if a character is provided", (done) ->
+        MOCK_context = document.createElement("canvas").getContext("2d")
+        MOCK_context.fillRect = ->
+        MOCK_context.fillText = -> done()
+        rect = new ROT.Display.Rect MOCK_context
+        rect._drawNoCache [ 6, 5, '@', '#fff', '#000' ], true
 
     describe 'computeSize', ->
       it 'should compute width as availWidth / x-spacing', ->
