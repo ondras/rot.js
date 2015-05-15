@@ -10,7 +10,7 @@ describe "rng", ->
     
   it "should automatically seed the RNG", ->
     deltaSeed = Math.abs ROT.RNG._seed - Date.now()
-    deltaSeed.should.be.lessThan 1000
+    deltaSeed.should.be.lessThan 10000
   
   describe "RNG", ->
     describe "getSeed", ->
