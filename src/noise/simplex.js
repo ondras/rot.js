@@ -15,7 +15,7 @@ ROT.Noise.Simplex = function(gradients) {
 	ROT.Noise.call(this);
 
 	this._F2 = 0.5 * (Math.sqrt(3) - 1);
-    this._G2 = (3 - Math.sqrt(3)) / 6;
+	this._G2 = (3 - Math.sqrt(3)) / 6;
 
 	this._gradients = [
 		[ 0, -1],
