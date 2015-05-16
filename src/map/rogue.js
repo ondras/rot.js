@@ -256,8 +256,8 @@ ROT.Map.Rogue.prototype._createRooms = function() {
 				}
 			}
 			
-			var sxOffset = Math.round(ROT.RNG.getUniformInt(0, cwp-roomw)/2)
-			var syOffset = Math.round(ROT.RNG.getUniformInt(0, chp-roomh)/2)
+			var sxOffset = Math.round(ROT.RNG.getUniformInt(0, cwp-roomw)/2);
+			var syOffset = Math.round(ROT.RNG.getUniformInt(0, chp-roomh)/2);
 			
 			while (sx + sxOffset + roomw >= w) {
 				if(sxOffset) {
