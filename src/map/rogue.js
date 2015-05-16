@@ -62,10 +62,6 @@ ROT.Map.Rogue.prototype.create = function(callback) {
 	return this;
 }
 
-ROT.Map.Rogue.prototype._getRandomInt = function(min, max) {
-	return Math.floor(ROT.RNG.getUniform() * (max - min + 1)) + min;
-}
-
 ROT.Map.Rogue.prototype._calculateRoomSize = function(size, cell) {
 	var max = Math.floor((size/cell) * 0.8);
 	var min = Math.floor((size/cell) * 0.25);
@@ -86,8 +82,8 @@ ROT.Map.Rogue.prototype._initRooms = function () {
 
 ROT.Map.Rogue.prototype._connectRooms = function() {
 	//pick random starting grid
-	var cgx = this._getRandomInt(0, this._options.cellWidth-1);
-	var cgy = this._getRandomInt(0, this._options.cellHeight-1);
+	var cgx = ROT.RNG.getUniformInt(0, this._options.cellWidth-1);
+	var cgy = ROT.RNG.getUniformInt(0, this._options.cellHeight-1);
 	
 	var idx;
 	var ncgx;
@@ -243,8 +239,8 @@ ROT.Map.Rogue.prototype._createRooms = function() {
 			if (sx == 0) sx = 1;
 			if (sy == 0) sy = 1;
 			
-			roomw = this._getRandomInt(roomWidth[0], roomWidth[1]);
-			roomh = this._getRandomInt(roomHeight[0], roomHeight[1]);
+			roomw = ROT.RNG.getUniformInt(roomWidth[0], roomWidth[1]);
+			roomh = ROT.RNG.getUniformInt(roomHeight[0], roomHeight[1]);
 			
 			if (j > 0) {
 				otherRoom = this.rooms[i][j-1];
@@ -259,9 +255,9 @@ ROT.Map.Rogue.prototype._createRooms = function() {
 					sx++;
 				}
 			}
-						
-			var sxOffset = Math.round(this._getRandomInt(0, cwp-roomw)/2);
-			var syOffset = Math.round(this._getRandomInt(0, chp-roomh)/2);
+			
+			var sxOffset = Math.round(ROT.RNG.getUniformInt(0, cwp-roomw)/2)
+			var syOffset = Math.round(ROT.RNG.getUniformInt(0, chp-roomh)/2)
 			
 			while (sx + sxOffset + roomw >= w) {
 				if(sxOffset) {
@@ -302,7 +298,7 @@ ROT.Map.Rogue.prototype._getWallPosition = function(aRoom, aDirection) {
 	var door;
 	
 	if (aDirection == 1 || aDirection == 3) {
-		rx = this._getRandomInt(aRoom["x"] + 1, aRoom["x"] + aRoom["width"] - 2);
+		rx = ROT.RNG.getUniformInt(aRoom["x"] + 1, aRoom["x"] + aRoom["width"] - 2);
 		if (aDirection == 1) {
 			ry = aRoom["y"] - 2;
 			door = ry + 1;
@@ -314,7 +310,7 @@ ROT.Map.Rogue.prototype._getWallPosition = function(aRoom, aDirection) {
 		this.map[rx][door] = 0; // i'm not setting a specific 'door' tile value right now, just empty space. 
 		
 	} else if (aDirection == 2 || aDirection == 4) {
-		ry = this._getRandomInt(aRoom["y"] + 1, aRoom["y"] + aRoom["height"] - 2);
+		ry = ROT.RNG.getUniformInt(aRoom["y"] + 1, aRoom["y"] + aRoom["height"] - 2);
 		if(aDirection == 2) {
 			rx = aRoom["x"] + aRoom["width"] + 1;
 			door = rx - 1;
