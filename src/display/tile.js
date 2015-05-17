@@ -29,13 +29,12 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 	var tileHeight = this._options.tileHeight;
 
 	if (clearBefore) {
-		var b = this._options.border;
-		this._context.fillStyle = bg;
-
-		if (this._options.tileColor) {this._context.clearRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);} else {
+		if (this._options.tileColorize) {
+			this._context.clearRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+		} else {
+			this._context.fillStyle = bg;
 			this._context.fillRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
 		}
-		
 	}
 
 	if (!ch) { return; }

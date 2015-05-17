@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.6~dev, generated on Tue Mar 17 16:16:31 CET 2015.
+	Version 0.6~dev, generated on Fri May 15 13:53:59 CEST 2015.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -464,7 +464,7 @@ ROT.Text = {
 
 				/* if there are spaces at the end, we must remove them (we do not want the line too long) */
 				var arr = token.value.split("");
-				while (arr[arr.length-1] == " ") { arr.pop(); }
+				while (arr.length && arr[arr.length-1] == " ") { arr.pop(); }
 				token.value = arr.join("");
 			}
 
@@ -516,7 +516,7 @@ ROT.Text = {
 				case ROT.Text.TYPE_NEWLINE: 
 					if (lastTextToken) { /* remove trailing space */
 						var arr = lastTextToken.value.split("");
-						while (arr[arr.length-1] == " ") { arr.pop(); }
+						while (arr.length && arr[arr.length-1] == " ") { arr.pop(); }
 						lastTextToken.value = arr.join("");
 					}
 					lastTextToken = null;
@@ -888,7 +888,7 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 		var token = tokens.shift();
 		switch (token.type) {
 			case ROT.Text.TYPE_TEXT:
-				var isSpace = isPrevSpace = isFullWidth = isPrevFullWidth = false;
+				var isSpace = false, isPrevSpace = false, isFullWidth = false, isPrevFullWidth = false;
 				for (var i=0;i<token.value.length;i++) {
 					var cc = token.value.charCodeAt(i);
 					var c = token.value.charAt(i);
@@ -1292,13 +1292,12 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 	var tileHeight = this._options.tileHeight;
 
 	if (clearBefore) {
-		var b = this._options.border;
-		this._context.fillStyle = bg;
-
-		if (this._options.tileColor) {this._context.clearRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);} else {
+		if (this._options.tileColorize) {
+			this._context.clearRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+		} else {
+			this._context.fillStyle = bg;
 			this._context.fillRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
 		}
-		
 	}
 
 	if (!ch) { return; }
@@ -1441,7 +1440,6 @@ ROT.RNG = {
 	 * @returns {string} whatever
 	 */
 	getWeightedValue: function(data) {
-		var avail = [];
 		var total = 0;
 		
 		for (var id in data) {
@@ -1454,8 +1452,10 @@ ROT.RNG = {
 			part += data[id];
 			if (random < part) { return id; }
 		}
-		
-		return null;
+
+                // If by some floating-point annoyance we have
+                // random >= total, just return the last id.
+                return id;
 	},
 
 	/**
@@ -1633,7 +1633,7 @@ ROT.StringGenerator.prototype._sample = function(context) {
 		available = data;
 	}
 
-	return this._pickRandom(available);
+	return ROT.RNG.getWeightedValue(available);
 }
 
 /**
@@ -1650,22 +1650,6 @@ ROT.StringGenerator.prototype._backoff = function(context) {
 	while (!(this._join(context) in this._data) && context.length > 0) { context = context.slice(1); }
 
 	return context;
-}
-
-
-ROT.StringGenerator.prototype._pickRandom = function(data) {
-	var total = 0;
-	
-	for (var id in data) {
-		total += data[id];
-	}
-	var random = ROT.RNG.getUniform()*total;
-	
-	var part = 0;
-	for (var id in data) {
-		part += data[id];
-		if (random < part) { return id; }
-	}
 }
 /**
  * @class Generic event queue: stores events and retrieves them based on their time
@@ -2788,6 +2772,8 @@ ROT.Map.Digger.prototype._removeSurroundingWalls = function(cx, cy) {
  * Returns vector in "digging" direction, or false, if this does not exist (or is not unique)
  */
 ROT.Map.Digger.prototype._getDiggingDirection = function(cx, cy) {
+	if (cx <= 0 || cy <= 0 || cx >= this._width - 1 || cy >= this._height - 1) { return null; }
+
 	var result = null;
 	var deltas = ROT.DIRS[4];
 	
@@ -2795,8 +2781,6 @@ ROT.Map.Digger.prototype._getDiggingDirection = function(cx, cy) {
 		var delta = deltas[i];
 		var x = cx + delta[0];
 		var y = cy + delta[1];
-		
-		if (x < 0 || y < 0 || x >= this._width || y >= this._width) { return null; }
 		
 		if (!this._map[x][y]) { /* there already is another empty neighbor! */
 			if (result) { return null; }
@@ -3046,7 +3030,7 @@ ROT.Map.Uniform.prototype._connectRooms = function(room1, room2) {
 	
 		var index2 = (index+1)%2;
 		var end = this._placeInWall(room2, dirIndex2);
-		if (!end) { return; }
+		if (!end) { return false; }
 		var mid = Math.round((end[index2] + start[index2])/2);
 
 		var mid1 = [0, 0];
@@ -3649,6 +3633,8 @@ ROT.Map.Feature.Room.createRandomAt = function(x, y, dx, dy, options) {
 		var x2 = x - Math.floor(ROT.RNG.getUniform() * width);
 		return new this(x2, y-height, x2+width-1, y-1, x, y);
 	}
+
+        throw new Error("dx or dy must be 1 or -1");
 }
 
 /**
@@ -3952,7 +3938,7 @@ ROT.Noise.Simplex = function(gradients) {
 	ROT.Noise.call(this);
 
 	this._F2 = 0.5 * (Math.sqrt(3) - 1);
-    this._G2 = (3 - Math.sqrt(3)) / 6;
+	this._G2 = (3 - Math.sqrt(3)) / 6;
 
 	this._gradients = [
 		[ 0, -1],
@@ -4532,7 +4518,7 @@ ROT.Color = {
 					cached = values;
 				}
 
-			} else if (r = str.match(/rgb\(([0-9, ]+)\)/i)) { /* decimal rgb */
+			} else if ((r = str.match(/rgb\(([0-9, ]+)\)/i))) { /* decimal rgb */
 				cached = r[1].split(/\s*,\s*/).map(function(x) { return parseInt(x); });
 			} else { /* html name */
 				cached = [0, 0, 0];
@@ -4697,7 +4683,7 @@ ROT.Color = {
 			l = Math.round(l*255);
 			return [l, l, l];
 		} else {
-			function hue2rgb(p, q, t) {
+			var hue2rgb = function(p, q, t) {
 				if (t < 0) t += 1;
 				if (t > 1) t -= 1;
 				if (t < 1/6) return p + (q - p) * 6 * t;
@@ -5313,4 +5299,6 @@ ROT.Path.AStar.prototype._distance = function(x, y) {
 			return Math.max(Math.abs(x-this._fromX), Math.abs(y-this._fromY));
 		break;
 	}
+
+        throw new Error("Illegal topology");
 }
