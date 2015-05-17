@@ -41,7 +41,7 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute = function(x, y, R, callback) {
  * @param {int} x
  * @param {int} y
  * @param {int} R Maximum visibility radius
- * @param {int} dir Direction to look in (expressed in a ROT.DIR value);
+ * @param {int} dir Direction to look in (expressed in a ROT.DIRS value);
  * @param {function} callback
  */
 ROT.FOV.RecursiveShadowcasting.prototype.compute180 = function(x, y, R, dir, callback) {
@@ -61,7 +61,7 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute180 = function(x, y, R, dir, cal
  * @param {int} x
  * @param {int} y
  * @param {int} R Maximum visibility radius
- * @param {int} dir Direction to look in (expressed in a ROT.DIR value);
+ * @param {int} dir Direction to look in (expressed in a ROT.DIRS value);
  * @param {function} callback
  */
 ROT.FOV.RecursiveShadowcasting.prototype.compute90 = function(x, y, R, dir, callback) {
