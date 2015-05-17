@@ -30,7 +30,7 @@ ROT.FOV.RecursiveShadowcasting.OCTANTS = [
  */
 ROT.FOV.RecursiveShadowcasting.prototype.compute = function(x, y, R, callback) {
 	//You can always see your own tile
-	callback(x, y, 0, true);
+	callback(x, y, 0, 1);
 	for(var i = 0; i < ROT.FOV.RecursiveShadowcasting.OCTANTS.length; i++) {
 		this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[i], R, callback);
 	}
@@ -46,7 +46,7 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute = function(x, y, R, callback) {
  */
 ROT.FOV.RecursiveShadowcasting.prototype.compute180 = function(x, y, R, dir, callback) {
 	//You can always see your own tile
-	callback(x, y, 0, true);
+	callback(x, y, 0, 1);
 	var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 180 degrees
 	var nextPreviousOctant = (dir - 2 + 8) % 8; //Need to retrieve the previous two octants to render a full 180 degrees
 	var nextOctant = (dir+ 1 + 8) % 8; //Need to grab to next octant to render a full 180 degrees
@@ -66,7 +66,7 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute180 = function(x, y, R, dir, cal
  */
 ROT.FOV.RecursiveShadowcasting.prototype.compute90 = function(x, y, R, dir, callback) {
 	//You can always see your own tile
-	callback(x, y, 0, true);
+	callback(x, y, 0, 1);
 	var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 90 degrees
 	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[dir], R, callback);
 	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[previousOctant], R, callback);
@@ -127,7 +127,7 @@ ROT.FOV.RecursiveShadowcasting.prototype._castVisibility = function(startX, star
 				
 			//If it's in range, it's visible
 			if((dx * dx + dy * dy) < (radius * radius)) {
-				callback(mapX, mapY, i, true);
+				callback(mapX, mapY, i, 1);
 			}
 	
 			if(!blocked) {
