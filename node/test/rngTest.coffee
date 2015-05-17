@@ -9,8 +9,7 @@ describe "rng", ->
     ROT.should.have.property "RNG"
     
   it "should automatically seed the RNG", ->
-    deltaSeed = Math.abs ROT.RNG._seed - Date.now()
-    deltaSeed.should.be.lessThan 10000
+    ROT.RNG._seed.should.be.ok
   
   describe "RNG", ->
     describe "getSeed", ->
