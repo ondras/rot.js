@@ -50,9 +50,6 @@ describe "rogue", ->
         dungeon.create (x, y, value) ->
           almostDone()
 
-      xit "should not attempt to calculate a roomHeight it doesn't have", ->
-        false.should.equal true
-
       it "should be OK if no callback is provided", ->
         dungeon = new ROT.Map.Rogue()
         dungeon.create()

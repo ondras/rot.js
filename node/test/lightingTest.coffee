@@ -9,7 +9,7 @@ describe "lighting", ->
   it "should export ROT.Lighting", ->
     ROT.should.have.property "Lighting"
   
-  xit "should be possible to create a Lighting object without options", ->
+  it "should be possible to create a Lighting object without options", ->
     lighting = new ROT.Lighting()
     lighting.should.be.ok
   
@@ -138,9 +138,6 @@ describe "lighting", ->
         lighting._lights.should.eql {}
 
     describe "compute", ->
-      xit "should not add to emittingCells if it already exists", ->
-        false.should.equal true
-        
       it "should light some stuff up", ->
         # based on the code example from the Interactive Manual
         ROT.RNG.setSeed 12345

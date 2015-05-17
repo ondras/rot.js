@@ -47,7 +47,7 @@ describe "discrete-shadowcasting", ->
         canSee = (x, y, r, visible) -> canSeeCount++ if visible is 1
         ds = new ROT.FOV.DiscreteShadowcasting lightPasses
         ds.compute 5, 2, 10, canSee
-        canSeeCount.should.equal 49
+        canSeeCount.should.equal 50
 
 #----------------------------------------------------------------------------
 # end of discreteShadowcastingTest.coffee

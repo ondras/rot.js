@@ -38,7 +38,7 @@ describe "recursive-shadowcasting", ->
           return false if x >= testMap[0].length
           return false if y >= testMap.length
           testMap[y][x] is "."
-        canSee = (x, y, r, visible) -> canSeeCount++ if visible is true
+        canSee = (x, y, r, visible) -> canSeeCount++ if visible is 1
         rs = new ROT.FOV.RecursiveShadowcasting lightPasses
         rs.compute 5, 2, 10, canSee
         canSeeCount.should.equal 71
@@ -60,7 +60,7 @@ describe "recursive-shadowcasting", ->
           return false if x >= testMap[0].length
           return false if y >= testMap.length
           testMap[y][x] is "."
-        canSee = (x, y, r, visible) -> canSeeCount++ if visible is true
+        canSee = (x, y, r, visible) -> canSeeCount++ if visible is 1
         rs = new ROT.FOV.RecursiveShadowcasting lightPasses
         rs.compute180 5, 2, 10, DIR_NORTH, canSee
         canSeeCount.should.equal 36
@@ -82,7 +82,7 @@ describe "recursive-shadowcasting", ->
           return false if x >= testMap[0].length
           return false if y >= testMap.length
           testMap[y][x] is "."
-        canSee = (x, y, r, visible) -> canSeeCount++ if visible is true
+        canSee = (x, y, r, visible) -> canSeeCount++ if visible is 1
         rs = new ROT.FOV.RecursiveShadowcasting lightPasses
         rs.compute90 5, 2, 10, DIR_NORTH, canSee
         canSeeCount.should.equal 11
@@ -103,7 +103,7 @@ describe "recursive-shadowcasting", ->
           return false if x >= testMap[0].length
           return false if y >= testMap.length
           testMap[y][x] is "."
-        canSee = (x, y, r, visible) -> canSeeCount++ if visible is true
+        canSee = (x, y, r, visible) -> canSeeCount++ if visible is 1
         rs = new ROT.FOV.RecursiveShadowcasting lightPasses
         rs.compute 5, 2, 1, canSee
         canSeeCount.should.equal 17

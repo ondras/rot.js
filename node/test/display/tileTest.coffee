@@ -50,7 +50,7 @@ describe 'tile', ->
           tileHeight: 16
           width: 20
           height: 12
-          tileColor: true
+          tileColorize: true
         tile.draw [ null, null, null, null, null ], true
 
       it 'should call fillRect when clearing without tileColorize', (done) ->
@@ -62,7 +62,7 @@ describe 'tile', ->
           tileHeight: 16
           width: 20
           height: 12
-          tileColor: false
+          tileColorize: false
         tile.draw [ null, null, null, null, null ], true
 
       it "should throw an error if an unmapped tile is used", ->

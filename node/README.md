@@ -29,7 +29,16 @@ A set of unit tests offering nearly universal coverage is available.
 * `src/js/object.js` provides `Object.create` for environments that do not have
 their own `Object.create`. Node.js provides this method, so the code provided
 by rot.js will never execute.
+
 * `src/js/raf.js` provides `cancelAnimationFrame` and `requestAnimationFrame`
 for environments that provide a `window` object, but do not provide
 their own animation frame functions. Node.js does not provide a `window`
 object, so the code provided by rot.js will never execute.
+
+* `src/path/astar.js` defines a method `ROT.Path.AStar.prototype._distance`
+that contains a switch statement. There are some unreachable break statements
+here to improve code aesthetics (case/break balance).
+
+* Some of the tests rely on the random generation process to cover the
+cases of the generator. On bad runs, a poor random seed will leave coverage
+gaps. In this case, re-run the tests until you are happy. :-)
