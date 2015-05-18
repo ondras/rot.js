@@ -29,5 +29,12 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/ondras/rot.js.git"
+	},
+	"devDependencies": {
+		"coffee-script": "1.9.2",
+		"istanbul": "0.3.14",
+		"mocha": "2.2.5",
+		"should": "6.0.1",
+		"underscore": "1.8.3"
 	}
 }
