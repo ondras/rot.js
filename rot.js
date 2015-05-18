@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.6~dev, generated on Fri May 15 13:53:59 CEST 2015.
+	Version 0.6~dev, generated on Mon May 18 12:24:44 CEST 2015.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -3169,7 +3169,7 @@ ROT.Map.Rogue = function(width, height, options) {
 	if (!this._options.hasOwnProperty("roomWidth")) {
 		this._options["roomWidth"] = this._calculateRoomSize(this._width, this._options["cellWidth"]);
 	}
-	if (!this._options.hasOwnProperty["roomHeight"]) {
+	if (!this._options.hasOwnProperty("roomHeight")) {
 		this._options["roomHeight"] = this._calculateRoomSize(this._height, this._options["cellHeight"]);
 	}
 	
@@ -3203,10 +3203,6 @@ ROT.Map.Rogue.prototype.create = function(callback) {
 	return this;
 }
 
-ROT.Map.Rogue.prototype._getRandomInt = function(min, max) {
-	return Math.floor(ROT.RNG.getUniform() * (max - min + 1)) + min;
-}
-
 ROT.Map.Rogue.prototype._calculateRoomSize = function(size, cell) {
 	var max = Math.floor((size/cell) * 0.8);
 	var min = Math.floor((size/cell) * 0.25);
@@ -3227,8 +3223,8 @@ ROT.Map.Rogue.prototype._initRooms = function () {
 
 ROT.Map.Rogue.prototype._connectRooms = function() {
 	//pick random starting grid
-	var cgx = this._getRandomInt(0, this._options.cellWidth-1);
-	var cgy = this._getRandomInt(0, this._options.cellHeight-1);
+	var cgx = ROT.RNG.getUniformInt(0, this._options.cellWidth-1);
+	var cgy = ROT.RNG.getUniformInt(0, this._options.cellHeight-1);
 	
 	var idx;
 	var ncgx;
@@ -3384,8 +3380,8 @@ ROT.Map.Rogue.prototype._createRooms = function() {
 			if (sx == 0) sx = 1;
 			if (sy == 0) sy = 1;
 			
-			roomw = this._getRandomInt(roomWidth[0], roomWidth[1]);
-			roomh = this._getRandomInt(roomHeight[0], roomHeight[1]);
+			roomw = ROT.RNG.getUniformInt(roomWidth[0], roomWidth[1]);
+			roomh = ROT.RNG.getUniformInt(roomHeight[0], roomHeight[1]);
 			
 			if (j > 0) {
 				otherRoom = this.rooms[i][j-1];
@@ -3400,9 +3396,9 @@ ROT.Map.Rogue.prototype._createRooms = function() {
 					sx++;
 				}
 			}
-						
-			var sxOffset = Math.round(this._getRandomInt(0, cwp-roomw)/2);
-			var syOffset = Math.round(this._getRandomInt(0, chp-roomh)/2);
+			
+			var sxOffset = Math.round(ROT.RNG.getUniformInt(0, cwp-roomw)/2);
+			var syOffset = Math.round(ROT.RNG.getUniformInt(0, chp-roomh)/2);
 			
 			while (sx + sxOffset + roomw >= w) {
 				if(sxOffset) {
@@ -3443,7 +3439,7 @@ ROT.Map.Rogue.prototype._getWallPosition = function(aRoom, aDirection) {
 	var door;
 	
 	if (aDirection == 1 || aDirection == 3) {
-		rx = this._getRandomInt(aRoom["x"] + 1, aRoom["x"] + aRoom["width"] - 2);
+		rx = ROT.RNG.getUniformInt(aRoom["x"] + 1, aRoom["x"] + aRoom["width"] - 2);
 		if (aDirection == 1) {
 			ry = aRoom["y"] - 2;
 			door = ry + 1;
@@ -3455,7 +3451,7 @@ ROT.Map.Rogue.prototype._getWallPosition = function(aRoom, aDirection) {
 		this.map[rx][door] = 0; // i'm not setting a specific 'door' tile value right now, just empty space. 
 		
 	} else if (aDirection == 2 || aDirection == 4) {
-		ry = this._getRandomInt(aRoom["y"] + 1, aRoom["y"] + aRoom["height"] - 2);
+		ry = ROT.RNG.getUniformInt(aRoom["y"] + 1, aRoom["y"] + aRoom["height"] - 2);
 		if(aDirection == 2) {
 			rx = aRoom["x"] + aRoom["width"] + 1;
 			door = rx - 1;
@@ -4128,7 +4124,7 @@ ROT.FOV.DiscreteShadowcasting.prototype.compute = function(x, y, R, callback) {
 	var map = this._map;
 
 	/* this place is always visible */
-	callback(x, y, 0);
+	callback(x, y, 0, 1);
 
 	/* standing in a dark place. FIXME is this a good idea?  */
 	if (!this._lightPasses(x, y)) { return; }
@@ -4374,7 +4370,7 @@ ROT.FOV.RecursiveShadowcasting.OCTANTS = [
  */
 ROT.FOV.RecursiveShadowcasting.prototype.compute = function(x, y, R, callback) {
 	//You can always see your own tile
-	callback(x, y, 0, true);
+	callback(x, y, 0, 1);
 	for(var i = 0; i < ROT.FOV.RecursiveShadowcasting.OCTANTS.length; i++) {
 		this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[i], R, callback);
 	}
@@ -4385,12 +4381,12 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute = function(x, y, R, callback) {
  * @param {int} x
  * @param {int} y
  * @param {int} R Maximum visibility radius
- * @param {int} dir Direction to look in (expressed in a ROT.DIR value);
+ * @param {int} dir Direction to look in (expressed in a ROT.DIRS value);
  * @param {function} callback
  */
 ROT.FOV.RecursiveShadowcasting.prototype.compute180 = function(x, y, R, dir, callback) {
 	//You can always see your own tile
-	callback(x, y, 0, true);
+	callback(x, y, 0, 1);
 	var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 180 degrees
 	var nextPreviousOctant = (dir - 2 + 8) % 8; //Need to retrieve the previous two octants to render a full 180 degrees
 	var nextOctant = (dir+ 1 + 8) % 8; //Need to grab to next octant to render a full 180 degrees
@@ -4405,12 +4401,12 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute180 = function(x, y, R, dir, cal
  * @param {int} x
  * @param {int} y
  * @param {int} R Maximum visibility radius
- * @param {int} dir Direction to look in (expressed in a ROT.DIR value);
+ * @param {int} dir Direction to look in (expressed in a ROT.DIRS value);
  * @param {function} callback
  */
 ROT.FOV.RecursiveShadowcasting.prototype.compute90 = function(x, y, R, dir, callback) {
 	//You can always see your own tile
-	callback(x, y, 0, true);
+	callback(x, y, 0, 1);
 	var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 90 degrees
 	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[dir], R, callback);
 	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[previousOctant], R, callback);
@@ -4471,7 +4467,7 @@ ROT.FOV.RecursiveShadowcasting.prototype._castVisibility = function(startX, star
 				
 			//If it's in range, it's visible
 			if((dx * dx + dy * dy) < (radius * radius)) {
-				callback(mapX, mapY, i, true);
+				callback(mapX, mapY, i, 1);
 			}
 	
 			if(!blocked) {
@@ -4904,7 +4900,7 @@ ROT.Lighting = function(reflectivityCallback, options) {
  */
 ROT.Lighting.prototype.setOptions = function(options) {
 	for (var p in options) { this._options[p] = options[p]; }
-	if (options.range) { this.reset(); }
+	if (options && options.range) { this.reset(); }
 	return this;
 }
 
@@ -4963,8 +4959,7 @@ ROT.Lighting.prototype.compute = function(lightingCallback) {
 
 	for (var key in this._lights) { /* prepare emitters for first pass */
 		var light = this._lights[key];
-		if (!(key in emittingCells)) { emittingCells[key] = [0, 0, 0]; }
-
+		emittingCells[key] = [0, 0, 0];
 		ROT.Color.add_(emittingCells[key], light);
 	}
 
