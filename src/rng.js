@@ -86,7 +86,7 @@ ROT.RNG = {
 		for (var id in data) {
 			total += data[id];
 		}
-		var random = Math.floor(this.getUniform()*total);
+		var random = this.getUniform()*total;
 		
 		var part = 0;
 		for (var id in data) {
@@ -94,9 +94,9 @@ ROT.RNG = {
 			if (random < part) { return id; }
 		}
 
-                // If by some floating-point annoyance we have
-                // random >= total, just return the last id.
-                return id;
+		// If by some floating-point annoyance we have
+		// random >= total, just return the last id.
+		return id;
 	},
 
 	/**

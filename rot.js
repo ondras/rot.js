@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.6~dev, generated on Mon May 18 12:24:44 CEST 2015.
+	Version 0.6~dev, generated on Mon Jun 29 16:13:49 CEST 2015.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -1445,7 +1445,7 @@ ROT.RNG = {
 		for (var id in data) {
 			total += data[id];
 		}
-		var random = Math.floor(this.getUniform()*total);
+		var random = this.getUniform()*total;
 		
 		var part = 0;
 		for (var id in data) {
@@ -1453,9 +1453,9 @@ ROT.RNG = {
 			if (random < part) { return id; }
 		}
 
-                // If by some floating-point annoyance we have
-                // random >= total, just return the last id.
-                return id;
+		// If by some floating-point annoyance we have
+		// random >= total, just return the last id.
+		return id;
 	},
 
 	/**
