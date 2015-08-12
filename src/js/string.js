@@ -1,7 +1,7 @@
 /**
  * @returns {string} First letter capitalized
  */
-String.prototype.capitalize = function() {
+String.prototype.capitalize = String.prototype.capitalize || function() {
 	return this.charAt(0).toUpperCase() + this.substring(1);
 }
 
@@ -10,7 +10,7 @@ String.prototype.capitalize = function() {
  * @param {string} [character="0"]
  * @param {int} [count=2]
  */
-String.prototype.lpad = function(character, count) {
+String.prototype.lpad = String.prototype.lpad || function(character, count) {
 	var ch = character || "0";
 	var cnt = count || 2;
 
@@ -25,7 +25,7 @@ String.prototype.lpad = function(character, count) {
  * @param {string} [character="0"]
  * @param {int} [count=2]
  */
-String.prototype.rpad = function(character, count) {
+String.prototype.rpad = String.prototype.rpad || function(character, count) {
 	var ch = character || "0";
 	var cnt = count || 2;
 
@@ -40,7 +40,7 @@ String.prototype.rpad = function(character, count) {
  * @param {string} template
  * @param {any} [argv]
  */
-String.format = function(template) {
+String.format = String.format || function(template) {
 	var map = String.format.map;
 	var args = Array.prototype.slice.call(arguments, 1);
 
@@ -66,14 +66,14 @@ String.format = function(template) {
 	return template.replace(/%(?:([a-z]+)|(?:{([^}]+)}))/gi, replacer);
 }
 
-String.format.map = {
+String.format.map = String.format.map || {
 	"s": "toString"
 }
 
 /**
  * Convenience shortcut to String.format(this)
  */
-String.prototype.format = function() {
+String.prototype.format = String.prototype.format || function() {
 	var args = Array.prototype.slice.call(arguments);
 	args.unshift(this);
 	return String.format.apply(String, args);

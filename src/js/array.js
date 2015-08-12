@@ -1,7 +1,7 @@
 /**
  * @returns {any} Randomly picked item, null when length=0
  */
-Array.prototype.random = function() {
+Array.prototype.random = Array.prototype.random || function() {
 	if (!this.length) { return null; }
 	return this[Math.floor(ROT.RNG.getUniform() * this.length)];
 }
@@ -10,7 +10,7 @@ Array.prototype.random = function() {
  * @returns {array} New array with randomized items
  * FIXME destroys this!
  */
-Array.prototype.randomize = function() {
+Array.prototype.randomize = Array.prototype.randomize || function() {
 	var result = [];
 	while (this.length) {
 		var index = this.indexOf(this.random());
