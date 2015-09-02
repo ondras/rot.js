@@ -1,6 +1,10 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
+<<<<<<< local
+	Version 0.6~dev, generated on Wed Sep  2 11:23:31 CEST 2015.
+=======
 	Version 0.6~dev, generated on Mon May 18 12:24:44 CEST 2015.
+>>>>>>> other
 */
 /**
  * @namespace Top-level ROT namespace
@@ -2358,16 +2362,19 @@ ROT.Map.Cellular.prototype.create = function(callback) {
 	
 	this._map = newMap;
 
-	// optinially connect every space
-	if (this._options.connected) {
-		this._completeMaze();	
-	}
+	if (this._options.connected) { this._completeMaze(); } // optionally connect every space
 
-	if (callback) { 
-		for (var i = 0; i < this._width; i++) {
-			for (var j = 0; j < this._height; j++) {
-				callback(i, j, newMap[i][j]);
-			}
+	if (!callback) { return; }
+
+	for (var j=0;j<this._height;j++) {
+		var widthStep = 1;
+		var widthStart = 0;
+		if (this._options.topology == 6) { 
+			widthStep = 2;
+			widthStart = j%2;
+		}
+		for (var i=widthStart; i<this._width; i+=widthStep) {
+			callback(i, j, newMap[i][j]);
 		}
 	}
 }
@@ -2415,7 +2422,7 @@ ROT.Map.Cellular.prototype._completeMaze = function() {
 	// find what's connected to the starting point
 	this._findConnected(connected, notConnected, [start]);
 
-	while(Object.keys(notConnected).length > 0) {
+	while (Object.keys(notConnected).length > 0) {
 
 		// find two points from notConnected to connected
 		var p = this._getFromTo(connected, notConnected);
