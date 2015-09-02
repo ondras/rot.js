@@ -1,14 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-<<<<<<< local
-<<<<<<< local
-	Version 0.6~dev, generated on Wed Sep  2 11:23:31 CEST 2015.
-=======
-	Version 0.6~dev, generated on Mon May 18 12:24:44 CEST 2015.
->>>>>>> other
-=======
-	Version 0.6~dev, generated on mer 12 ago 2015, 16.00.33, CEST.
->>>>>>> other
+	Version 0.6~dev, generated on Wed Sep  2 11:29:00 CEST 2015.
 */
 /**
  * @namespace Top-level ROT namespace
