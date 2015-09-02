@@ -1,9 +1,13 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
 <<<<<<< local
+<<<<<<< local
 	Version 0.6~dev, generated on Wed Sep  2 11:23:31 CEST 2015.
 =======
 	Version 0.6~dev, generated on Mon May 18 12:24:44 CEST 2015.
+>>>>>>> other
+=======
+	Version 0.6~dev, generated on mer 12 ago 2015, 16.00.33, CEST.
 >>>>>>> other
 */
 /**
@@ -556,7 +560,7 @@ ROT.Text = {
 /**
  * @returns {any} Randomly picked item, null when length=0
  */
-Array.prototype.random = function() {
+Array.prototype.random = Array.prototype.random || function() {
 	if (!this.length) { return null; }
 	return this[Math.floor(ROT.RNG.getUniform() * this.length)];
 }
@@ -565,7 +569,7 @@ Array.prototype.random = function() {
  * @returns {array} New array with randomized items
  * FIXME destroys this!
  */
-Array.prototype.randomize = function() {
+Array.prototype.randomize = Array.prototype.randomize || function() {
 	var result = [];
 	while (this.length) {
 		var index = this.indexOf(this.random());
@@ -578,13 +582,13 @@ Array.prototype.randomize = function() {
  * @param {int} n Modulus
  * @returns {int} this modulo n
  */
-Number.prototype.mod = function(n) {
+Number.prototype.mod = Number.prototype.mod || function(n) {
 	return ((this%n)+n)%n;
 }
 /**
  * @returns {string} First letter capitalized
  */
-String.prototype.capitalize = function() {
+String.prototype.capitalize = String.prototype.capitalize || function() {
 	return this.charAt(0).toUpperCase() + this.substring(1);
 }
 
@@ -593,7 +597,7 @@ String.prototype.capitalize = function() {
  * @param {string} [character="0"]
  * @param {int} [count=2]
  */
-String.prototype.lpad = function(character, count) {
+String.prototype.lpad = String.prototype.lpad || function(character, count) {
 	var ch = character || "0";
 	var cnt = count || 2;
 
@@ -608,7 +612,7 @@ String.prototype.lpad = function(character, count) {
  * @param {string} [character="0"]
  * @param {int} [count=2]
  */
-String.prototype.rpad = function(character, count) {
+String.prototype.rpad = String.prototype.rpad || function(character, count) {
 	var ch = character || "0";
 	var cnt = count || 2;
 
@@ -623,7 +627,7 @@ String.prototype.rpad = function(character, count) {
  * @param {string} template
  * @param {any} [argv]
  */
-String.format = function(template) {
+String.format = String.format || function(template) {
 	var map = String.format.map;
 	var args = Array.prototype.slice.call(arguments, 1);
 
@@ -649,14 +653,14 @@ String.format = function(template) {
 	return template.replace(/%(?:([a-z]+)|(?:{([^}]+)}))/gi, replacer);
 }
 
-String.format.map = {
+String.format.map = String.format.map || {
 	"s": "toString"
 }
 
 /**
  * Convenience shortcut to String.format(this)
  */
-String.prototype.format = function() {
+String.prototype.format = String.prototype.format || function() {
 	var args = Array.prototype.slice.call(arguments);
 	args.unshift(this);
 	return String.format.apply(String, args);
@@ -676,7 +680,7 @@ if (!Object.create) {
  * Sets prototype of this function to an instance of parent function
  * @param {function} parent
  */
-Function.prototype.extend = function(parent) {
+Function.prototype.extend = Function.prototype.extend || function(parent) {
 	this.prototype = Object.create(parent.prototype);
 	this.prototype.constructor = this;
 	return this;
@@ -1449,7 +1453,7 @@ ROT.RNG = {
 		for (var id in data) {
 			total += data[id];
 		}
-		var random = Math.floor(this.getUniform()*total);
+		var random = this.getUniform()*total;
 		
 		var part = 0;
 		for (var id in data) {
@@ -1457,9 +1461,9 @@ ROT.RNG = {
 			if (random < part) { return id; }
 		}
 
-                // If by some floating-point annoyance we have
-                // random >= total, just return the last id.
-                return id;
+		// If by some floating-point annoyance we have
+		// random >= total, just return the last id.
+		return id;
 	},
 
 	/**
