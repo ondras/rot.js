@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.6~dev, generated on Wed Sep  2 11:29:00 CEST 2015.
+	Version 0.6~dev, generated on Thu Sep  3 07:14:19 CEST 2015.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -3607,11 +3607,11 @@ ROT.Map.Feature.Room.extend(ROT.Map.Feature);
 ROT.Map.Feature.Room.createRandomAt = function(x, y, dx, dy, options) {
 	var min = options.roomWidth[0];
 	var max = options.roomWidth[1];
-	var width = min + Math.floor(ROT.RNG.getUniform()*(max-min+1));
+	var width = ROT.RNG.getUniformInt(min, max);
 	
 	var min = options.roomHeight[0];
 	var max = options.roomHeight[1];
-	var height = min + Math.floor(ROT.RNG.getUniform()*(max-min+1));
+	var height = ROT.RNG.getUniformInt(min, max);
 	
 	if (dx == 1) { /* to the right */
 		var y2 = y - Math.floor(ROT.RNG.getUniform() * height);
@@ -3642,11 +3642,11 @@ ROT.Map.Feature.Room.createRandomAt = function(x, y, dx, dy, options) {
 ROT.Map.Feature.Room.createRandomCenter = function(cx, cy, options) {
 	var min = options.roomWidth[0];
 	var max = options.roomWidth[1];
-	var width = min + Math.floor(ROT.RNG.getUniform()*(max-min+1));
+	var width = ROT.RNG.getUniformInt(min, max);
 	
 	var min = options.roomHeight[0];
 	var max = options.roomHeight[1];
-	var height = min + Math.floor(ROT.RNG.getUniform()*(max-min+1));
+	var height = ROT.RNG.getUniformInt(min, max);
 
 	var x1 = cx - Math.floor(ROT.RNG.getUniform()*width);
 	var y1 = cy - Math.floor(ROT.RNG.getUniform()*height);
@@ -3662,11 +3662,11 @@ ROT.Map.Feature.Room.createRandomCenter = function(cx, cy, options) {
 ROT.Map.Feature.Room.createRandom = function(availWidth, availHeight, options) {
 	var min = options.roomWidth[0];
 	var max = options.roomWidth[1];
-	var width = min + Math.floor(ROT.RNG.getUniform()*(max-min+1));
+	var width = ROT.RNG.getUniformInt(min, max);
 	
 	var min = options.roomHeight[0];
 	var max = options.roomHeight[1];
-	var height = min + Math.floor(ROT.RNG.getUniform()*(max-min+1));
+	var height = ROT.RNG.getUniformInt(min, max);
 	
 	var left = availWidth - width - 1;
 	var top = availHeight - height - 1;
@@ -3805,7 +3805,7 @@ ROT.Map.Feature.Corridor.extend(ROT.Map.Feature);
 ROT.Map.Feature.Corridor.createRandomAt = function(x, y, dx, dy, options) {
 	var min = options.corridorLength[0];
 	var max = options.corridorLength[1];
-	var length = min + Math.floor(ROT.RNG.getUniform()*(max-min+1));
+	var length = ROT.RNG.getUniformInt(min, max);
 	
 	return new this(x, y, x + dx*length, y + dy*length);
 }
@@ -3913,7 +3913,8 @@ ROT.Map.Feature.Corridor.prototype.createPriorityWalls = function(priorityWallCa
 	priorityWallCallback(this._endX + dx, this._endY + dy);
 	priorityWallCallback(this._endX + nx, this._endY + ny);
 	priorityWallCallback(this._endX - nx, this._endY - ny);
-}/**
+}
+/**
  * @class Base noise generator
  */
 ROT.Noise = function() {
