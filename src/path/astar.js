@@ -16,13 +16,15 @@ ROT.Path.AStar.extend(ROT.Path);
 /**
  * Compute a path from a given point
  * @see ROT.Path#compute
+ * @param {function} weightingCallback Will be called for every path item and used to add weight to decisions - returning 0 means no difficulty, higher numbers add negative votes to taking a path through that cell
  */
-ROT.Path.AStar.prototype.compute = function(fromX, fromY, callback) {
+ROT.Path.AStar.prototype.compute = function(fromX, fromY, callback, weightingCallback) {
 	this._todo = [];
 	this._done = {};
 	this._fromX = fromX;
 	this._fromY = fromY;
-	this._add(this._toX, this._toY, null);
+        weightingCallback = weightingCallback || function(){return 0};
+	this._add(this._toX, this._toY, null, weightingCallback);
 
 	while (this._todo.length) {
 		var item = this._todo.shift();
@@ -35,7 +37,7 @@ ROT.Path.AStar.prototype.compute = function(fromX, fromY, callback) {
 			var y = neighbor[1];
 			var id = x+","+y;
 			if (id in this._done) { continue; }
-			this._add(x, y, item); 
+			this._add(x, y, item, weightingCallback); 
 		}
 	}
 	
@@ -48,13 +50,13 @@ ROT.Path.AStar.prototype.compute = function(fromX, fromY, callback) {
 	}
 }
 
-ROT.Path.AStar.prototype._add = function(x, y, prev) {
+ROT.Path.AStar.prototype._add = function(x, y, prev, weightingCallback) {
 	var obj = {
 		x: x,
 		y: y,
 		prev: prev,
 		g: (prev ? prev.g+1 : 0),
-		h: this._distance(x, y)
+		h: this._distance(x, y) + weightingCallback(x, y)
 	}
 	this._done[x+","+y] = obj;
 	
