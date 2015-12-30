@@ -24,9 +24,11 @@ describe "digger", ->
     describe "create", ->
       it "should call the callback width x height times", (done) ->
         { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT
+        #console.log 'default h,w = '+DEFAULT_HEIGHT+','+DEFAULT_WIDTH
         almostDone = _.after DEFAULT_WIDTH*DEFAULT_HEIGHT, done
         dungeon = new ROT.Map.Digger()
         dungeon.create (x, y, value) ->
+          #console.log '..calling create callback...'
           almostDone()
 
       it "should accept options like timelimit", ->

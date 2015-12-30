@@ -136,3 +136,23 @@ ROT.RNG = {
 }
 
 ROT.RNG.setSeed(Date.now());
+
+ROT.RNG.random = function(arr) {
+	if (!arr.length) { return null; }
+	return arr[Math.floor(this.getUniform() * arr.length)];
+}
+
+
+/**
+ * @returns {array} New array with randomized items
+ * FIXME destroys this!
+ */
+
+ROT.RNG.randomize = function(arr) {
+	var result = [];
+	while (arr.length) {
+		var index = arr.indexOf(this.random(arr));
+		result.push(arr.splice(index, 1)[0]);
+	}
+	return result;
+}

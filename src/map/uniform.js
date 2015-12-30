@@ -108,13 +108,13 @@ ROT.Map.Uniform.prototype._generateCorridors = function() {
 			room.create(this._digCallback); 
 		}
 
-		this._unconnected = this._rooms.slice().randomize();
+		this._unconnected = ROT.RNG.randomize(this._rooms.slice());
 		this._connected = [];
 		if (this._unconnected.length) { this._connected.push(this._unconnected.pop()); } /* first one is always connected */
 		
 		while (1) {
 			/* 1. pick random connected room */
-			var connected = this._connected.random();
+			var connected = ROT.RNG.random(this._connected);
 			
 			/* 2. find closest unconnected */
 			var room1 = this._closestRoom(this._unconnected, connected);
@@ -298,7 +298,7 @@ ROT.Map.Uniform.prototype._placeInWall = function(room, dirIndex) {
 	for (var i=avail.length-1; i>=0; i--) {
 		if (!avail[i]) { avail.splice(i, 1); }
 	}
-	return (avail.length ? avail.random() : null);
+	return (avail.length ? ROT.RNG.random(avail) : null);
 }
 
 /**

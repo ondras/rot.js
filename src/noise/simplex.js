@@ -31,7 +31,7 @@ ROT.Noise.Simplex = function(gradients) {
 	var permutations = [];
 	var count = gradients || 256;
 	for (var i=0;i<count;i++) { permutations.push(i); }
-	permutations = permutations.randomize();
+	permutations = ROT.RNG.randomize(permutations);
 
 	this._perms = [];
 	this._indexes = [];
