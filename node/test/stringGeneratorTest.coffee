@@ -26,7 +26,7 @@ describe "stringgenerator", ->
         stringGenerator._priorValues.should.eql { '\u0000': 0.0001 }
         letters = "abcdefghijklmnopqrstuvwxyz".split ''
         for i in [1..100]
-          rndWord = (letters.random() for i in [1..(Math.floor Math.random()*10)+3]).join ''
+          rndWord = (ROT.RNG.random(letters) for i in [1..(Math.floor Math.random()*10)+3]).join ''
           stringGenerator.observe rndWord
         stringGenerator._data.should.not.eql {}
         stringGenerator._priorValues.should.not.eql {}
@@ -41,7 +41,7 @@ describe "stringgenerator", ->
         stringGenerator._priorValues.should.eql { '\u0000': 0.0001 }
         letters = "abcdefghijklmnopqrstuvwxyz     ".split ''
         for i in [1..100]
-          rndWord = (letters.random() for i in [1..(Math.floor Math.random()*10)+3]).join ''
+          rndWord = (ROT.RNG.random(letters) for i in [1..(Math.floor Math.random()*10)+3]).join ''
           stringGenerator.observe rndWord
         stringGenerator._data.should.not.eql {}
         stringGenerator._priorValues.should.not.eql {}
@@ -59,7 +59,7 @@ describe "stringgenerator", ->
         stringGenerator._priorValues.should.eql { '\u0000': 0.0001 }
         letters = "abcdefghijklmnopqrstuvwxyz".split ''
         for i in [1..100]
-          rndWord = (letters.random() for i in [1..(Math.floor Math.random()*10)+3]).join ''
+          rndWord = (ROT.RNG.random(letters) for i in [1..(Math.floor Math.random()*10)+3]).join ''
           stringGenerator.observe rndWord
         stringGenerator._data.should.not.eql {}
         stringGenerator._priorValues.should.not.eql {}
@@ -76,7 +76,7 @@ describe "stringgenerator", ->
         stringGenerator._priorValues.should.eql { '\u0000': null }
         letters = "abcdefghijklmnopqrstuvwxyz".split ''
         for i in [1..100]
-          rndWord = (letters.random() for i in [1..(Math.floor Math.random()*10)+3]).join ''
+          rndWord = (ROT.RNG.random(letters) for i in [1..(Math.floor Math.random()*10)+3]).join ''
           stringGenerator.observe rndWord
         stringGenerator._data.should.not.eql {}
         stringGenerator._priorValues.should.not.eql {}
@@ -103,7 +103,7 @@ describe "stringgenerator", ->
         stringGenerator._priorValues.should.eql { '\u0000': 0.0001 }
         letters = "abcdefghijklmnopqrstuvwxyz".split ''
         for i in [1..100]
-          rndWord = (letters.random() for i in [1..(Math.floor Math.random()*10)+3]).join ''
+          rndWord = (ROT.RNG.random(letters) for i in [1..(Math.floor Math.random()*10)+3]).join ''
           stringGenerator.observe rndWord
         stringGenerator._data.should.not.eql {}
         stringGenerator._priorValues.should.not.eql {}

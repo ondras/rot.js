@@ -1,20 +1,26 @@
 /**
  * @returns {any} Randomly picked item, null when length=0
  */
-Array.prototype.random = Array.prototype.random || function() {
-	if (!this.length) { return null; }
-	return this[Math.floor(ROT.RNG.getUniform() * this.length)];
+/*
+ROT.random = function(arr) {
+	if (!arr.length) { return null; }
+	return arr[Math.floor(ROT.getUniform() * arr.length)];
 }
+*/
 
 /**
  * @returns {array} New array with randomized items
  * FIXME destroys this!
  */
-Array.prototype.randomize = Array.prototype.randomize || function() {
+
+/*
+ROT.randomize = function(arr) {
 	var result = [];
-	while (this.length) {
-		var index = this.indexOf(this.random());
-		result.push(this.splice(index, 1)[0]);
+	while (arr.length) {
+		var index = arr.indexOf(ROT.random(arr));
+		result.push(arr.splice(index, 1)[0]);
 	}
 	return result;
 }
+*/
+

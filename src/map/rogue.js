@@ -98,7 +98,7 @@ ROT.Map.Rogue.prototype._connectRooms = function() {
 	
 		//var dirToCheck = [0,1,2,3,4,5,6,7];
 		var dirToCheck = [0,2,4,6];
-		dirToCheck = dirToCheck.randomize();
+		dirToCheck = ROT.RNG.randomize(dirToCheck);
 		
 		do {
 			found = false;
@@ -147,7 +147,7 @@ ROT.Map.Rogue.prototype._connectUnconnectedRooms = function() {
 	var ch = this._options.cellHeight;
 	
 	var randomConnectedCell;
-	this.connectedCells = this.connectedCells.randomize();
+	this.connectedCells = ROT.RNG.randomize(this.connectedCells);
 	var room;
 	var otherRoom;
 	var validRoom;
@@ -159,7 +159,7 @@ ROT.Map.Rogue.prototype._connectUnconnectedRooms = function() {
 			
 			if (room["connections"].length == 0) {
 				var directions = [0,2,4,6];
-				directions = directions.randomize();
+				directions = ROT.RNG.randomize(directions);
 				
 				var validRoom = false;
 				

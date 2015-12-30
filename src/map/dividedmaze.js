@@ -61,8 +61,8 @@ ROT.Map.DividedMaze.prototype._partitionRoom = function(room) {
 
 	if (!availX.length || !availY.length) { return; }
 
-	var x = availX.random();
-	var y = availY.random();
+	var x = ROT.RNG.random(availX);
+	var y = ROT.RNG.random(availY);
 	
 	this._map[x][y] = 1;
 	
@@ -92,12 +92,12 @@ ROT.Map.DividedMaze.prototype._partitionRoom = function(room) {
 		w.push([x, j]); 
 	}
 		
-	var solid = walls.random();
+	var solid = ROT.RNG.random(walls);
 	for (var i=0;i<walls.length;i++) {
 		var w = walls[i];
 		if (w == solid) { continue; }
 		
-		var hole = w.random();
+		var hole = ROT.RNG.random(w);
 		this._map[hole[0]][hole[1]] = 0;
 	}
 
