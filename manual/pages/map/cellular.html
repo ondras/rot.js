@@ -9,6 +9,7 @@ because it offers richer features and is more configurable.</p>
 	<li><code>survive</code> &ndash; array of neighbor counts; when an existing cell has this number of neighbors, it will survive into next iteration</li>
 	<li><code>topology</code> &ndash; how are neighbors defined: a cell can have four, six or eight neighbors. Six neighbors correspond to the "hex" layouting algorithm 
 	of <a href="#display">ROT.Display</a>.</li>
+	<li><code>connected</code> &ndash; if set to true, every free space is reachable in the resulting map
 </ul>
 
 <p>It is also possible to initialize/set values for the first generation of cells. Two methods are provided:</p>
@@ -59,4 +60,21 @@ map.randomize(0.9);
 for (var i=49; i&gt;=0; i--) {
 	map.create(i ? null : display.DEBUG);
 }
+</div>
+
+<div class="example">
+var w = 80, h = 40;
+/* create a connected map where the player can reach all non-wall sections */
+var map = new ROT.Map.Cellular(w, h, { connected: true });
+
+/* cells with 1/2 probability */
+map.randomize(0.5);
+
+/* make a few generations */
+for (var i=0; i&lt;4; i++) map.create();
+
+/* display only the final map */
+var display = new ROT.Display({width:w, height:h, fontSize:4});
+SHOW(display.getContainer());	
+map.create(display.DEBUG);
 </div>
