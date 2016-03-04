@@ -116,6 +116,7 @@ ROT.Map.Cellular.prototype._getNeighbors = function(cx, cy) {
  * Make sure every non-wall space is accessible.
  * @param {function} callback to call to display map when do 
  * @param {int} value to consider empty space - defaults to 0
+ * @param {function} callback to call when a new connection is made
  */
 ROT.Map.Cellular.prototype.connect = function(callback, value, connectionCallback) {
 	if (!value) value = 0;

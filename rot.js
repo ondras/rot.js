@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.6~dev, generated on Thu Mar  3 16:21:51 PST 2016.
+	Version 0.6~dev, generated on Thu Mar  3 16:27:15 PST 2016.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -2400,6 +2400,7 @@ ROT.Map.Cellular.prototype._getNeighbors = function(cx, cy) {
  * Make sure every non-wall space is accessible.
  * @param {function} callback to call to display map when do 
  * @param {int} value to consider empty space - defaults to 0
+ * @param {function} callback to call when a new connection is made
  */
 ROT.Map.Cellular.prototype.connect = function(callback, value, connectionCallback) {
 	if (!value) value = 0;
