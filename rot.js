@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.6~dev, generated on Thu Mar  3 16:27:15 PST 2016.
+	Version 0.6~dev, generated on Thu Mar 31 23:30:04 EDT 2016.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -5276,12 +5276,13 @@ ROT.Path.AStar.prototype.compute = function(fromX, fromY, callback) {
 }
 
 ROT.Path.AStar.prototype._add = function(x, y, prev) {
+	var h = this._distance(x, y);
 	var obj = {
 		x: x,
 		y: y,
 		prev: prev,
 		g: (prev ? prev.g+1 : 0),
-		h: this._distance(x, y)
+		h: h
 	}
 	this._done[x+","+y] = obj;
 	
@@ -5290,7 +5291,8 @@ ROT.Path.AStar.prototype._add = function(x, y, prev) {
 	var f = obj.g + obj.h;
 	for (var i=0;i<this._todo.length;i++) {
 		var item = this._todo[i];
-		if (f < item.g + item.h) {
+		var itemF = item.g + item.h;
+		if (f < itemF || (f == itemF && h < item.h)) {
 			this._todo.splice(i, 0, obj);
 			return;
 		}
