@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.6~dev, generated on Thu Mar 31 23:30:04 EDT 2016.
+	Version 0.6~dev, generated on Mon Jun 13 11:07:20 CEST 2016.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -1160,11 +1160,11 @@ ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
 	];
 	if (this._options.transpose) { px.reverse(); }
 
-	if (clearBefore) { 
+	if (clearBefore) {
 		this._context.fillStyle = bg;
 		this._fill(px[0], px[1]);
 	}
-	
+
 	if (!ch) { return; }
 
 	this._context.fillStyle = fg;
@@ -1219,11 +1219,11 @@ ROT.Display.Hex.prototype.eventToPosition = function(x, y) {
 		x += y;
 		y = x-y;
 		x -= y;
-		var prop = "width";
+		var nodeSize = this._context.canvas.width;
 	} else {
-		var prop = "height";
+		var nodeSize = this._context.canvas.height;
 	}
-	var size = this._context.canvas[prop] / this._options[prop];
+	var size = nodeSize / this._options.height;
 	y = Math.floor(y/size);
 
 	if (y.mod(2)) { /* odd row */
@@ -1232,7 +1232,7 @@ ROT.Display.Hex.prototype.eventToPosition = function(x, y) {
 	} else {
 		x = 2*Math.floor(x/(2*this._spacingX));
 	}
-	
+
 	return [x, y];
 }
 
@@ -1242,7 +1242,7 @@ ROT.Display.Hex.prototype.eventToPosition = function(x, y) {
 ROT.Display.Hex.prototype._fill = function(cx, cy) {
 	var a = this._hexSize;
 	var b = this._options.border;
-	
+
 	this._context.beginPath();
 
 	if (this._options.transpose) {
