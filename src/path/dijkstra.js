@@ -16,16 +16,18 @@ ROT.Path.Dijkstra.extend(ROT.Path);
  * Compute a path from a given point
  * @see ROT.Path#compute
  */
-ROT.Path.Dijkstra.prototype.compute = function(fromX, fromY, callback) {
+ROT.Path.Dijkstra.prototype.compute = function(fromX, fromY, callback, initialValue) {
 	var key = fromX+","+fromY;
 	if (!(key in this._computed)) { this._compute(fromX, fromY); }
-	if (!(key in this._computed)) { return; }
-	
+	if (!(key in this._computed)) { return initialValue; }
+
 	var item = this._computed[key];
+	var accumulator = initialValue
 	while (item) {
-		callback(item.x, item.y);
+		accumulator = callback(item.x, item.y, accumulator);
 		item = item.prev;
 	}
+	return accumulator;
 }
 
 /**
@@ -35,16 +37,16 @@ ROT.Path.Dijkstra.prototype._compute = function(fromX, fromY) {
 	while (this._todo.length) {
 		var item = this._todo.shift();
 		if (item.x == fromX && item.y == fromY) { return; }
-		
+
 		var neighbors = this._getNeighbors(item.x, item.y);
-		
+
 		for (var i=0;i<neighbors.length;i++) {
 			var neighbor = neighbors[i];
 			var x = neighbor[0];
 			var y = neighbor[1];
 			var id = x+","+y;
-			if (id in this._computed) { continue; } /* already done */	
-			this._add(x, y, item); 
+			if (id in this._computed) { continue; } /* already done */
+			this._add(x, y, item);
 		}
 	}
 }

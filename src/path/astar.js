@@ -17,7 +17,7 @@ ROT.Path.AStar.extend(ROT.Path);
  * Compute a path from a given point
  * @see ROT.Path#compute
  */
-ROT.Path.AStar.prototype.compute = function(fromX, fromY, callback) {
+ROT.Path.AStar.prototype.compute = function(fromX, fromY, callback, initialValue) {
 	this._todo = [];
 	this._done = {};
 	this._fromX = fromX;
@@ -35,17 +35,19 @@ ROT.Path.AStar.prototype.compute = function(fromX, fromY, callback) {
 			var y = neighbor[1];
 			var id = x+","+y;
 			if (id in this._done) { continue; }
-			this._add(x, y, item); 
+			this._add(x, y, item);
 		}
 	}
-	
+
 	var item = this._done[fromX+","+fromY];
-	if (!item) { return; }
-	
+	if (!item) { return initialValue; }
+
+	var accumulator = initialValue;
 	while (item) {
-		callback(item.x, item.y);
+		accumulator = callback(item.x, item.y, accumulator);
 		item = item.prev;
 	}
+	return accumulator;
 }
 
 ROT.Path.AStar.prototype._add = function(x, y, prev) {
@@ -58,9 +60,9 @@ ROT.Path.AStar.prototype._add = function(x, y, prev) {
 		h: h
 	}
 	this._done[x+","+y] = obj;
-	
+
 	/* insert into priority queue */
-	
+
 	var f = obj.g + obj.h;
 	for (var i=0;i<this._todo.length;i++) {
 		var item = this._todo[i];
@@ -70,7 +72,7 @@ ROT.Path.AStar.prototype._add = function(x, y, prev) {
 			return;
 		}
 	}
-	
+
 	this._todo.push(obj);
 }
 
@@ -86,7 +88,7 @@ ROT.Path.AStar.prototype._distance = function(x, y) {
 			return dy + Math.max(0, (dx-dy)/2);
 		break;
 
-		case 8: 
+		case 8:
 			return Math.max(Math.abs(x-this._fromX), Math.abs(y-this._fromY));
 		break;
 	}

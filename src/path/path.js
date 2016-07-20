@@ -38,7 +38,7 @@ ROT.Path = function(toX, toY, passableCallback, options) {
  * @param {int} fromY
  * @param {function} callback Will be called for every path item with arguments "x" and "y"
  */
-ROT.Path.prototype.compute = function(fromX, fromY, callback) {
+ROT.Path.prototype.compute = function(fromX, fromY, callback, initialValue) {
 }
 
 ROT.Path.prototype._getNeighbors = function(cx, cy) {
@@ -47,10 +47,10 @@ ROT.Path.prototype._getNeighbors = function(cx, cy) {
 		var dir = this._dirs[i];
 		var x = cx + dir[0];
 		var y = cy + dir[1];
-		
+
 		if (!this._passableCallback(x, y)) { continue; }
 		result.push([x, y]);
 	}
-	
+
 	return result;
 }

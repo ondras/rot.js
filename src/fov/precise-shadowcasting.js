@@ -10,16 +10,16 @@ ROT.FOV.PreciseShadowcasting.extend(ROT.FOV);
 /**
  * @see ROT.FOV#compute
  */
-ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback) {
+ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback, initialValue) {
 	/* this place is always visible */
-	callback(x, y, 0, 1);
+	var accumulator = callback(x, y, 0, 1, initialValue);
 
 	/* standing in a dark place. FIXME is this a good idea?  */
-	if (!this._lightPasses(x, y)) { return; }
-	
+	if (!this._lightPasses(x, y)) { return accumulator; }
+
 	/* list of all shadows */
 	var SHADOWS = [];
-	
+
 	var cx, cy, blocks, A1, A2, visibility;
 
 	/* analyze surrounding cells in concentric rings, starting from the center */
@@ -32,16 +32,17 @@ ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback) {
 			cy = neighbors[i][1];
 			/* shift half-an-angle backwards to maintain consistency of 0-th cells */
 			A1 = [i ? 2*i-1 : 2*neighborCount-1, 2*neighborCount];
-			A2 = [2*i+1, 2*neighborCount]; 
-			
+			A2 = [2*i+1, 2*neighborCount];
+
 			blocks = !this._lightPasses(cx, cy);
 			visibility = this._checkVisibility(A1, A2, blocks, SHADOWS);
-			if (visibility) { callback(cx, cy, r, visibility); }
+			if (visibility) { accumulator = callback(cx, cy, r, visibility, accumulator); }
 
-			if (SHADOWS.length == 2 && SHADOWS[0][0] == 0 && SHADOWS[1][0] == SHADOWS[1][1]) { return; } /* cutoff? */
+			if (SHADOWS.length == 2 && SHADOWS[0][0] == 0 && SHADOWS[1][0] == SHADOWS[1][1]) { return accumulator; } /* cutoff? */
 
 		} /* for all cells in this ring */
 	} /* for all rings */
+	return accumulator;
 }
 
 /**
@@ -82,15 +83,15 @@ ROT.FOV.PreciseShadowcasting.prototype._checkVisibility = function(A1, A2, block
 
 	var visible = true;
 	if (index1 == index2 && (edge1 || edge2)) {  /* subset of existing shadow, one of the edges match */
-		visible = false; 
+		visible = false;
 	} else if (edge1 && edge2 && index1+1==index2 && (index2 % 2)) { /* completely equivalent with existing shadow */
 		visible = false;
 	} else if (index1 > index2 && (index1 % 2)) { /* subset of existing shadow, not touching */
 		visible = false;
 	}
-	
+
 	if (!visible) { return 0; } /* fast case: not visible */
-	
+
 	var visibleLength, P;
 
 	/* compute the length of visible arc, adjust list of shadows (if blocking) */
