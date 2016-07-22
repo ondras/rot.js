@@ -16,7 +16,7 @@ ROT.Map.Cellular = function(width, height, options) {
 		topology: 8
 	};
 	this.setOptions(options);
-	
+
 	this._dirs = ROT.DIRS[this._options.topology];
 	this._map = this._fillMap(0);
 }
@@ -56,7 +56,7 @@ ROT.Map.Cellular.prototype.create = function(callback) {
 	for (var j=0;j<this._height;j++) {
 		var widthStep = 1;
 		var widthStart = 0;
-		if (this._options.topology == 6) { 
+		if (this._options.topology == 6) {
 			widthStep = 2;
 			widthStart = j%2;
 		}
@@ -65,15 +65,15 @@ ROT.Map.Cellular.prototype.create = function(callback) {
 
 			var cur = this._map[i][j];
 			var ncount = this._getNeighbors(i, j);
-			
+
 			if (cur && survive.indexOf(ncount) != -1) { /* survive */
 				newMap[i][j] = 1;
 			} else if (!cur && born.indexOf(ncount) != -1) { /* born */
 				newMap[i][j] = 1;
-			}			
+			}
 		}
 	}
-	
+
 	this._map = newMap;
 
 	this.serviceCallback(callback);
@@ -85,7 +85,7 @@ ROT.Map.Cellular.prototype.serviceCallback = function(callback) {
 	for (var j=0;j<this._height;j++) {
 		var widthStep = 1;
 		var widthStart = 0;
-		if (this._options.topology == 6) { 
+		if (this._options.topology == 6) {
 			widthStep = 2;
 			widthStart = j%2;
 		}
@@ -104,17 +104,17 @@ ROT.Map.Cellular.prototype._getNeighbors = function(cx, cy) {
 		var dir = this._dirs[i];
 		var x = cx + dir[0];
 		var y = cy + dir[1];
-		
-		if (x < 0 || x >= this._width || x < 0 || y >= this._width) { continue; }
+
+		if (x < 0 || x >= this._width || y < 0 || y >= this._width) { continue; }
 		result += (this._map[x][y] == 1 ? 1 : 0);
 	}
-	
+
 	return result;
 }
 
 /**
  * Make sure every non-wall space is accessible.
- * @param {function} callback to call to display map when do 
+ * @param {function} callback to call to display map when do
  * @param {int} value to consider empty space - defaults to 0
  * @param {function} callback to call when a new connection is made
  */
@@ -171,7 +171,7 @@ ROT.Map.Cellular.prototype.connect = function(callback, value, connectionCallbac
 }
 
 /**
- * Find random points to connect. Search for the closest point in the larger space. 
+ * Find random points to connect. Search for the closest point in the larger space.
  * This is to minimize the length of the passage while maintaining good performance.
  */
 ROT.Map.Cellular.prototype._getFromTo = function(connected, notConnected) {
@@ -273,7 +273,7 @@ ROT.Map.Cellular.prototype._tunnelToConnected = function(to, from, connected, no
 	}
 	if (connectionCallback && a[1] < b[1]) {
 		connectionCallback([b[0], a[1]], [b[0], b[1]]);
-	}	
+	}
 }
 
 ROT.Map.Cellular.prototype._freeSpace = function(x, y, value) {
@@ -283,4 +283,3 @@ ROT.Map.Cellular.prototype._freeSpace = function(x, y, value) {
 ROT.Map.Cellular.prototype._pointKey = function(p) {
 	return p[0] + "." + p[1];
 }
-
