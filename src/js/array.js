@@ -8,13 +8,18 @@ Array.prototype.random = Array.prototype.random || function() {
 
 /**
  * @returns {array} New array with randomized items
- * FIXME destroys this!
  */
 Array.prototype.randomize = Array.prototype.randomize || function() {
-	var result = [];
-	while (this.length) {
-		var index = this.indexOf(this.random());
-		result.push(this.splice(index, 1)[0]);
-	}
-	return result;
+  var result = [];
+  var clone = [];
+  // Copying values to clone like this prevents changeing 'this'
+  // (As opposed to just doing 'var clone = this')
+  for (var i = 0; i < this.length; i++) {
+    clone[i] = this[i];
+  }
+  while (clone.length) {
+    var index = clone.indexOf(clone.random());
+    result.push(clone.splice(index, 1)[0]);
+  }
+  return result;
 }
