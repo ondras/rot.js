@@ -11,12 +11,7 @@ Array.prototype.random = Array.prototype.random || function() {
  */
 Array.prototype.randomize = Array.prototype.randomize || function() {
   var result = [];
-  var clone = [];
-  // Copying values to clone like this prevents changeing 'this'
-  // (As opposed to just doing 'var clone = this')
-  for (var i = 0; i < this.length; i++) {
-    clone[i] = this[i];
-  }
+  var clone = this.slice();
   while (clone.length) {
     var index = clone.indexOf(clone.random());
     result.push(clone.splice(index, 1)[0]);
