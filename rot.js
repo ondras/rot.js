@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.7~dev, generated on Fri Jul 22 09:47:10 CEST 2016.
+	Version 0.7~dev, generated on Tue Aug 30 12:08:59 CEST 2016.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -559,15 +559,15 @@ Array.prototype.random = Array.prototype.random || function() {
 
 /**
  * @returns {array} New array with randomized items
- * FIXME destroys this!
  */
 Array.prototype.randomize = Array.prototype.randomize || function() {
-	var result = [];
-	while (this.length) {
-		var index = this.indexOf(this.random());
-		result.push(this.splice(index, 1)[0]);
-	}
-	return result;
+  var result = [];
+  var clone = this.slice();
+  while (clone.length) {
+    var index = clone.indexOf(clone.random());
+    result.push(clone.splice(index, 1)[0]);
+  }
+  return result;
 }
 /**
  * Always positive modulus
