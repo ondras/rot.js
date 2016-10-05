@@ -10,10 +10,11 @@ ROT.Scheduler.Speed.extend(ROT.Scheduler);
 /**
  * @param {object} item anything with "getSpeed" method
  * @param {bool} repeat
+ * @param {number} [time=1/item.getSpeed()]
  * @see ROT.Scheduler#add
  */
-ROT.Scheduler.Speed.prototype.add = function(item, repeat) {
-	this._queue.add(item, 1/item.getSpeed());
+ROT.Scheduler.Speed.prototype.add = function(item, repeat, time) {
+	this._queue.add(item, time !== undefined ? time : 1/item.getSpeed());
 	return ROT.Scheduler.prototype.add.call(this, item, repeat);
 }
 

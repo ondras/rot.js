@@ -17,6 +17,25 @@ describe("EventQueue", function() {
 		expect(q.get()).toEqual(null);
 	});
 
+	it("should look up time of events", function() {
+		var q = new ROT.EventQueue();
+		q.add(123, 187);
+		q.add(456, 42);
+		expect(q.getEventTime(123)).toEqual(187);
+		expect(q.getEventTime(456)).toEqual(42);
+	});
+
+	it("should look up correct times after events removed", function() {
+		var q = new ROT.EventQueue();
+		q.add(123, 187);
+		q.add(456, 42);
+		q.add(789, 411);
+                q.get();
+		expect(q.getEventTime(456)).toBeUndefined();
+		expect(q.getEventTime(123)).toEqual(187 - 42);
+		expect(q.getEventTime(789)).toEqual(411 - 42);
+	});
+
 	it("should remove events", function() {
 		var q = new ROT.EventQueue();
 		q.add(123, 0);
