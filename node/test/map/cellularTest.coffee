@@ -38,20 +38,49 @@ describe "cellular", ->
           maze.create (x, y, value) ->
             almostDone()
 
-      it "should be able to specify a fully-connected map", (done) ->
+      it "should be able to call connect after creating the map", (done) ->
         NUM_GENERATIONS = 10
         { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT
         almostDone = _.after NUM_GENERATIONS*DEFAULT_WIDTH*DEFAULT_HEIGHT, done
-        maze = new ROT.Map.Cellular DEFAULT_WIDTH, DEFAULT_HEIGHT, MOCK_options =
-          born: [5, 6, 7, 8]
-          survive: [4, 5, 6, 7, 8]
-          topology: 8
-          connected: true
+        maze = new ROT.Map.Cellular()
         maze.randomize 0.5
-        maze.set 0, 0, 1
         for i in [0...NUM_GENERATIONS]
           maze.create (x, y, value) ->
             almostDone()
+        maze.connect()
+
+      it "should be able to call connect with a callback after creating the map", (done) ->
+        NUM_GENERATIONS = 4
+        { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT
+        maze = new ROT.Map.Cellular()
+        maze.randomize 0.5
+        for i in [0...NUM_GENERATIONS]
+          maze.create 
+        almostDone = _.after DEFAULT_WIDTH*DEFAULT_HEIGHT, done          
+        maze.connect (x, y, value) ->
+          almostDone()
+
+      it "should be able to call connect with a callback and a value after creating the map", (done) ->
+        NUM_GENERATIONS = 4
+        { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT
+        maze = new ROT.Map.Cellular()
+        maze.randomize 0.5
+        for i in [0...NUM_GENERATIONS]
+          maze.create 
+        almostDone = _.after DEFAULT_WIDTH*DEFAULT_HEIGHT, done          
+        callback = (x, y, value) -> almostDone()
+        maze.connect callback, 1
+
+      it "should be able to call connect with a callback, a value and a per-tunnel callback after creating the map", (done) ->
+        NUM_GENERATIONS = 4
+        { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT
+        maze = new ROT.Map.Cellular()
+        maze.randomize 0.5
+        for i in [0...NUM_GENERATIONS]
+          maze.create 
+        almostDone = _.after DEFAULT_WIDTH*DEFAULT_HEIGHT, done          
+        callback = (x, y, value) -> almostDone()
+        maze.connect callback, 1, (pos) -> 1
 
       it "should be able to function without a callback", ->
         NUM_GENERATIONS = 4

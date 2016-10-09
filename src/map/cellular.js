@@ -13,11 +13,10 @@ ROT.Map.Cellular = function(width, height, options) {
 	this._options = {
 		born: [5, 6, 7, 8],
 		survive: [4, 5, 6, 7, 8],
-		topology: 8,
-		connected: false
+		topology: 8
 	};
 	this.setOptions(options);
-	
+
 	this._dirs = ROT.DIRS[this._options.topology];
 	this._map = this._fillMap(0);
 }
@@ -57,7 +56,7 @@ ROT.Map.Cellular.prototype.create = function(callback) {
 	for (var j=0;j<this._height;j++) {
 		var widthStep = 1;
 		var widthStart = 0;
-		if (this._options.topology == 6) { 
+		if (this._options.topology == 6) {
 			widthStep = 2;
 			widthStart = j%2;
 		}
@@ -66,30 +65,32 @@ ROT.Map.Cellular.prototype.create = function(callback) {
 
 			var cur = this._map[i][j];
 			var ncount = this._getNeighbors(i, j);
-			
+
 			if (cur && survive.indexOf(ncount) != -1) { /* survive */
 				newMap[i][j] = 1;
 			} else if (!cur && born.indexOf(ncount) != -1) { /* born */
 				newMap[i][j] = 1;
-			}			
+			}
 		}
 	}
-	
+
 	this._map = newMap;
 
-	if (this._options.connected) { this._completeMaze(); } // optionally connect every space
+	this.serviceCallback(callback);
+}
 
+ROT.Map.Cellular.prototype.serviceCallback = function(callback) {
 	if (!callback) { return; }
 
 	for (var j=0;j<this._height;j++) {
 		var widthStep = 1;
 		var widthStart = 0;
-		if (this._options.topology == 6) { 
+		if (this._options.topology == 6) {
 			widthStep = 2;
 			widthStart = j%2;
 		}
 		for (var i=widthStart; i<this._width; i+=widthStep) {
-			callback(i, j, newMap[i][j]);
+			callback(i, j, this._map[i][j]);
 		}
 	}
 }
@@ -103,24 +104,29 @@ ROT.Map.Cellular.prototype._getNeighbors = function(cx, cy) {
 		var dir = this._dirs[i];
 		var x = cx + dir[0];
 		var y = cy + dir[1];
-		
-		if (x < 0 || x >= this._width || x < 0 || y >= this._width) { continue; }
+
+		if (x < 0 || x >= this._width || y < 0 || y >= this._width) { continue; }
 		result += (this._map[x][y] == 1 ? 1 : 0);
 	}
-	
+
 	return result;
 }
 
 /**
  * Make sure every non-wall space is accessible.
+ * @param {function} callback to call to display map when do
+ * @param {int} value to consider empty space - defaults to 0
+ * @param {function} callback to call when a new connection is made
  */
-ROT.Map.Cellular.prototype._completeMaze = function() {
+ROT.Map.Cellular.prototype.connect = function(callback, value, connectionCallback) {
+	if (!value) value = 0;
+
 	var allFreeSpace = [];
 	var notConnected = {};
 	// find all free space
 	for (var x = 0; x < this._width; x++) {
 		for (var y = 0; y < this._height; y++) {
-			if (this._freeSpace(x, y)) {
+			if (this._freeSpace(x, y, value)) {
 				var p = [x, y];
 				notConnected[this._pointKey(p)] = p;
 				allFreeSpace.push([x, y]);
@@ -135,7 +141,7 @@ ROT.Map.Cellular.prototype._completeMaze = function() {
 	delete notConnected[key]
 
 	// find what's connected to the starting point
-	this._findConnected(connected, notConnected, [start]);
+	this._findConnected(connected, notConnected, [start], false, value);
 
 	while (Object.keys(notConnected).length > 0) {
 
@@ -147,23 +153,25 @@ ROT.Map.Cellular.prototype._completeMaze = function() {
 		// find everything connected to the starting point
 		var local = {};
 		local[this._pointKey(from)] = from;
-		this._findConnected(local, notConnected, [from], true);
+		this._findConnected(local, notConnected, [from], true, value);
 
 		// connect to a connected square
-		this._tunnelToConnected(to, from, connected, notConnected);
+		this._tunnelToConnected(to, from, connected, notConnected, value, connectionCallback);
 
 		// now all of local is connected
 		for (var k in local) {
 			var pp = local[k];
-			this._map[pp[0]][pp[1]] = 0;
+			this._map[pp[0]][pp[1]] = value;
 			connected[k] = pp;
 			delete notConnected[k];
 		}
 	}
+
+	this.serviceCallback(callback);
 }
 
 /**
- * Find random points to connect. Search for the closest point in the larger space. 
+ * Find random points to connect. Search for the closest point in the larger space.
  * This is to minimize the length of the passage while maintaining good performance.
  */
 ROT.Map.Cellular.prototype._getFromTo = function(connected, notConnected) {
@@ -203,7 +211,7 @@ ROT.Map.Cellular.prototype._getClosest = function(point, space) {
 	return minPoint;
 }
 
-ROT.Map.Cellular.prototype._findConnected = function(connected, notConnected, stack, keepNotConnected) {
+ROT.Map.Cellular.prototype._findConnected = function(connected, notConnected, stack, keepNotConnected, value) {
 	while(stack.length > 0) {
 		var p = stack.splice(0, 1)[0];
 		var tests = [
@@ -214,7 +222,7 @@ ROT.Map.Cellular.prototype._findConnected = function(connected, notConnected, st
 		];
 		for (var i = 0; i < tests.length; i++) {
 			var key = this._pointKey(tests[i]);
-			if (connected[key] == null && this._freeSpace(tests[i][0], tests[i][1])) {
+			if (connected[key] == null && this._freeSpace(tests[i][0], tests[i][1], value)) {
 				connected[key] = tests[i];
 				if (!keepNotConnected) {
 					delete notConnected[key];
@@ -225,7 +233,7 @@ ROT.Map.Cellular.prototype._findConnected = function(connected, notConnected, st
 	}
 }
 
-ROT.Map.Cellular.prototype._tunnelToConnected = function(to, from, connected, notConnected) {
+ROT.Map.Cellular.prototype._tunnelToConnected = function(to, from, connected, notConnected, value, connectionCallback) {
 	var key = this._pointKey(from);
 	var a, b;
 	if (from[0] < to[0]) {
@@ -236,11 +244,14 @@ ROT.Map.Cellular.prototype._tunnelToConnected = function(to, from, connected, no
 		b = from;
 	}
 	for (var xx = a[0]; xx <= b[0]; xx++) {
-		this._map[xx][a[1]] = 0;
+		this._map[xx][a[1]] = value;
 		var p = [xx, a[1]];
 		var pkey = this._pointKey(p);
 		connected[pkey] = p;
 		delete notConnected[pkey];
+	}
+	if (connectionCallback && a[0] < b[0]) {
+		connectionCallback(a, [b[0], a[1]]);
 	}
 
 	// x is now fixed
@@ -254,19 +265,21 @@ ROT.Map.Cellular.prototype._tunnelToConnected = function(to, from, connected, no
 		b = from;
 	}
 	for (var yy = a[1]; yy < b[1]; yy++) {
-		this._map[x][yy] = 0;
+		this._map[x][yy] = value;
 		var p = [x, yy];
 		var pkey = this._pointKey(p);
 		connected[pkey] = p;
 		delete notConnected[pkey];
 	}
+	if (connectionCallback && a[1] < b[1]) {
+		connectionCallback([b[0], a[1]], [b[0], b[1]]);
+	}
 }
 
-ROT.Map.Cellular.prototype._freeSpace = function(x, y) {
-	return x >= 0 && x < this._width && y >= 0 && y < this._height && this._map[x][y] != 1;
+ROT.Map.Cellular.prototype._freeSpace = function(x, y, value) {
+	return x >= 0 && x < this._width && y >= 0 && y < this._height && this._map[x][y] == value;
 }
 
 ROT.Map.Cellular.prototype._pointKey = function(p) {
 	return p[0] + "." + p[1];
 }
-

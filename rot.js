@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.6~dev, generated on Thu Sep  3 07:14:19 CEST 2015.
+	Version 0.7~dev, generated on Tue Aug 30 12:08:59 CEST 2016.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -559,15 +559,15 @@ Array.prototype.random = Array.prototype.random || function() {
 
 /**
  * @returns {array} New array with randomized items
- * FIXME destroys this!
  */
 Array.prototype.randomize = Array.prototype.randomize || function() {
-	var result = [];
-	while (this.length) {
-		var index = this.indexOf(this.random());
-		result.push(this.splice(index, 1)[0]);
-	}
-	return result;
+  var result = [];
+  var clone = this.slice();
+  while (clone.length) {
+    var index = clone.indexOf(clone.random());
+    result.push(clone.splice(index, 1)[0]);
+  }
+  return result;
 }
 /**
  * Always positive modulus
@@ -844,6 +844,9 @@ ROT.Display.prototype.eventToPosition = function(e) {
 	x -= rect.left;
 	y -= rect.top;
 	
+	x *= this._context.canvas.width / this._context.canvas.clientWidth;
+	y *= this._context.canvas.height / this._context.canvas.clientHeight;
+
 	if (x < 0 || y < 0 || x >= this._context.canvas.width || y >= this._context.canvas.height) { return [-1, -1]; }
 
 	return this._backend.eventToPosition(x, y);
@@ -1157,11 +1160,11 @@ ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
 	];
 	if (this._options.transpose) { px.reverse(); }
 
-	if (clearBefore) { 
+	if (clearBefore) {
 		this._context.fillStyle = bg;
 		this._fill(px[0], px[1]);
 	}
-	
+
 	if (!ch) { return; }
 
 	this._context.fillStyle = fg;
@@ -1216,11 +1219,11 @@ ROT.Display.Hex.prototype.eventToPosition = function(x, y) {
 		x += y;
 		y = x-y;
 		x -= y;
-		var prop = "width";
+		var nodeSize = this._context.canvas.width;
 	} else {
-		var prop = "height";
+		var nodeSize = this._context.canvas.height;
 	}
-	var size = this._context.canvas[prop] / this._options[prop];
+	var size = nodeSize / this._options.height;
 	y = Math.floor(y/size);
 
 	if (y.mod(2)) { /* odd row */
@@ -1229,7 +1232,7 @@ ROT.Display.Hex.prototype.eventToPosition = function(x, y) {
 	} else {
 		x = 2*Math.floor(x/(2*this._spacingX));
 	}
-	
+
 	return [x, y];
 }
 
@@ -1239,7 +1242,7 @@ ROT.Display.Hex.prototype.eventToPosition = function(x, y) {
 ROT.Display.Hex.prototype._fill = function(cx, cy) {
 	var a = this._hexSize;
 	var b = this._options.border;
-	
+
 	this._context.beginPath();
 
 	if (this._options.transpose) {
@@ -2294,11 +2297,10 @@ ROT.Map.Cellular = function(width, height, options) {
 	this._options = {
 		born: [5, 6, 7, 8],
 		survive: [4, 5, 6, 7, 8],
-		topology: 8,
-		connected: false
+		topology: 8
 	};
 	this.setOptions(options);
-	
+
 	this._dirs = ROT.DIRS[this._options.topology];
 	this._map = this._fillMap(0);
 }
@@ -2338,7 +2340,7 @@ ROT.Map.Cellular.prototype.create = function(callback) {
 	for (var j=0;j<this._height;j++) {
 		var widthStep = 1;
 		var widthStart = 0;
-		if (this._options.topology == 6) { 
+		if (this._options.topology == 6) {
 			widthStep = 2;
 			widthStart = j%2;
 		}
@@ -2347,30 +2349,32 @@ ROT.Map.Cellular.prototype.create = function(callback) {
 
 			var cur = this._map[i][j];
 			var ncount = this._getNeighbors(i, j);
-			
+
 			if (cur && survive.indexOf(ncount) != -1) { /* survive */
 				newMap[i][j] = 1;
 			} else if (!cur && born.indexOf(ncount) != -1) { /* born */
 				newMap[i][j] = 1;
-			}			
+			}
 		}
 	}
-	
+
 	this._map = newMap;
 
-	if (this._options.connected) { this._completeMaze(); } // optionally connect every space
+	this.serviceCallback(callback);
+}
 
+ROT.Map.Cellular.prototype.serviceCallback = function(callback) {
 	if (!callback) { return; }
 
 	for (var j=0;j<this._height;j++) {
 		var widthStep = 1;
 		var widthStart = 0;
-		if (this._options.topology == 6) { 
+		if (this._options.topology == 6) {
 			widthStep = 2;
 			widthStart = j%2;
 		}
 		for (var i=widthStart; i<this._width; i+=widthStep) {
-			callback(i, j, newMap[i][j]);
+			callback(i, j, this._map[i][j]);
 		}
 	}
 }
@@ -2384,24 +2388,29 @@ ROT.Map.Cellular.prototype._getNeighbors = function(cx, cy) {
 		var dir = this._dirs[i];
 		var x = cx + dir[0];
 		var y = cy + dir[1];
-		
-		if (x < 0 || x >= this._width || x < 0 || y >= this._width) { continue; }
+
+		if (x < 0 || x >= this._width || y < 0 || y >= this._width) { continue; }
 		result += (this._map[x][y] == 1 ? 1 : 0);
 	}
-	
+
 	return result;
 }
 
 /**
  * Make sure every non-wall space is accessible.
+ * @param {function} callback to call to display map when do
+ * @param {int} value to consider empty space - defaults to 0
+ * @param {function} callback to call when a new connection is made
  */
-ROT.Map.Cellular.prototype._completeMaze = function() {
+ROT.Map.Cellular.prototype.connect = function(callback, value, connectionCallback) {
+	if (!value) value = 0;
+
 	var allFreeSpace = [];
 	var notConnected = {};
 	// find all free space
 	for (var x = 0; x < this._width; x++) {
 		for (var y = 0; y < this._height; y++) {
-			if (this._freeSpace(x, y)) {
+			if (this._freeSpace(x, y, value)) {
 				var p = [x, y];
 				notConnected[this._pointKey(p)] = p;
 				allFreeSpace.push([x, y]);
@@ -2416,7 +2425,7 @@ ROT.Map.Cellular.prototype._completeMaze = function() {
 	delete notConnected[key]
 
 	// find what's connected to the starting point
-	this._findConnected(connected, notConnected, [start]);
+	this._findConnected(connected, notConnected, [start], false, value);
 
 	while (Object.keys(notConnected).length > 0) {
 
@@ -2428,23 +2437,25 @@ ROT.Map.Cellular.prototype._completeMaze = function() {
 		// find everything connected to the starting point
 		var local = {};
 		local[this._pointKey(from)] = from;
-		this._findConnected(local, notConnected, [from], true);
+		this._findConnected(local, notConnected, [from], true, value);
 
 		// connect to a connected square
-		this._tunnelToConnected(to, from, connected, notConnected);
+		this._tunnelToConnected(to, from, connected, notConnected, value, connectionCallback);
 
 		// now all of local is connected
 		for (var k in local) {
 			var pp = local[k];
-			this._map[pp[0]][pp[1]] = 0;
+			this._map[pp[0]][pp[1]] = value;
 			connected[k] = pp;
 			delete notConnected[k];
 		}
 	}
+
+	this.serviceCallback(callback);
 }
 
 /**
- * Find random points to connect. Search for the closest point in the larger space. 
+ * Find random points to connect. Search for the closest point in the larger space.
  * This is to minimize the length of the passage while maintaining good performance.
  */
 ROT.Map.Cellular.prototype._getFromTo = function(connected, notConnected) {
@@ -2484,7 +2495,7 @@ ROT.Map.Cellular.prototype._getClosest = function(point, space) {
 	return minPoint;
 }
 
-ROT.Map.Cellular.prototype._findConnected = function(connected, notConnected, stack, keepNotConnected) {
+ROT.Map.Cellular.prototype._findConnected = function(connected, notConnected, stack, keepNotConnected, value) {
 	while(stack.length > 0) {
 		var p = stack.splice(0, 1)[0];
 		var tests = [
@@ -2495,7 +2506,7 @@ ROT.Map.Cellular.prototype._findConnected = function(connected, notConnected, st
 		];
 		for (var i = 0; i < tests.length; i++) {
 			var key = this._pointKey(tests[i]);
-			if (connected[key] == null && this._freeSpace(tests[i][0], tests[i][1])) {
+			if (connected[key] == null && this._freeSpace(tests[i][0], tests[i][1], value)) {
 				connected[key] = tests[i];
 				if (!keepNotConnected) {
 					delete notConnected[key];
@@ -2506,7 +2517,7 @@ ROT.Map.Cellular.prototype._findConnected = function(connected, notConnected, st
 	}
 }
 
-ROT.Map.Cellular.prototype._tunnelToConnected = function(to, from, connected, notConnected) {
+ROT.Map.Cellular.prototype._tunnelToConnected = function(to, from, connected, notConnected, value, connectionCallback) {
 	var key = this._pointKey(from);
 	var a, b;
 	if (from[0] < to[0]) {
@@ -2517,11 +2528,14 @@ ROT.Map.Cellular.prototype._tunnelToConnected = function(to, from, connected, no
 		b = from;
 	}
 	for (var xx = a[0]; xx <= b[0]; xx++) {
-		this._map[xx][a[1]] = 0;
+		this._map[xx][a[1]] = value;
 		var p = [xx, a[1]];
 		var pkey = this._pointKey(p);
 		connected[pkey] = p;
 		delete notConnected[pkey];
+	}
+	if (connectionCallback && a[0] < b[0]) {
+		connectionCallback(a, [b[0], a[1]]);
 	}
 
 	// x is now fixed
@@ -2535,22 +2549,24 @@ ROT.Map.Cellular.prototype._tunnelToConnected = function(to, from, connected, no
 		b = from;
 	}
 	for (var yy = a[1]; yy < b[1]; yy++) {
-		this._map[x][yy] = 0;
+		this._map[x][yy] = value;
 		var p = [x, yy];
 		var pkey = this._pointKey(p);
 		connected[pkey] = p;
 		delete notConnected[pkey];
 	}
+	if (connectionCallback && a[1] < b[1]) {
+		connectionCallback([b[0], a[1]], [b[0], b[1]]);
+	}
 }
 
-ROT.Map.Cellular.prototype._freeSpace = function(x, y) {
-	return x >= 0 && x < this._width && y >= 0 && y < this._height && this._map[x][y] != 1;
+ROT.Map.Cellular.prototype._freeSpace = function(x, y, value) {
+	return x >= 0 && x < this._width && y >= 0 && y < this._height && this._map[x][y] == value;
 }
 
 ROT.Map.Cellular.prototype._pointKey = function(p) {
 	return p[0] + "." + p[1];
 }
-
 /**
  * @class Dungeon map: has rooms and corridors
  * @augments ROT.Map
@@ -3150,297 +3166,283 @@ ROT.Map.Uniform.prototype._canBeDugCallback = function(x, y) {
  * @param {int} [height=ROT.DEFAULT_HEIGHT]
  * @param {object} [options] Options
  * @param {int[]} [options.cellWidth=3] Number of cells to create on the horizontal (number of rooms horizontally)
- * @param {int[]} [options.cellHeight=3] Number of cells to create on the vertical (number of rooms vertically) 
+ * @param {int[]} [options.cellHeight=3] Number of cells to create on the vertical (number of rooms vertically)
  * @param {int} [options.roomWidth] Room min and max width - normally set auto-magically via the constructor.
- * @param {int} [options.roomHeight] Room min and max height - normally set auto-magically via the constructor. 
+ * @param {int} [options.roomHeight] Room min and max height - normally set auto-magically via the constructor.
  */
-ROT.Map.Rogue = function(width, height, options) {
+ROT.Map.Rogue = function (width, height, options) {
 	ROT.Map.call(this, width, height);
-	
+
 	this._options = {
 		cellWidth: 3,  // NOTE to self, these could probably work the same as the roomWidth/room Height values
 		cellHeight: 3  //     ie. as an array with min-max values for each direction....
-	}
-	
+	};
+
 	for (var p in options) { this._options[p] = options[p]; }
-	
+
 	/*
-	Set the room sizes according to the over-all width of the map, 
-	and the cell sizes. 
+	Set the room sizes according to the over-all width of the map,
+	and the cell sizes.
 	*/
-	
 	if (!this._options.hasOwnProperty("roomWidth")) {
 		this._options["roomWidth"] = this._calculateRoomSize(this._width, this._options["cellWidth"]);
 	}
 	if (!this._options.hasOwnProperty("roomHeight")) {
 		this._options["roomHeight"] = this._calculateRoomSize(this._height, this._options["cellHeight"]);
 	}
-	
-}
 
-ROT.Map.Rogue.extend(ROT.Map); 
+};
+
+ROT.Map.Rogue.extend(ROT.Map);
 
 /**
  * @see ROT.Map#create
  */
-ROT.Map.Rogue.prototype.create = function(callback) {
+ROT.Map.Rogue.prototype.create = function (callback) {
 	this.map = this._fillMap(1);
 	this.rooms = [];
 	this.connectedCells = [];
-	
+
 	this._initRooms();
 	this._connectRooms();
 	this._connectUnconnectedRooms();
 	this._createRandomRoomConnections();
 	this._createRooms();
 	this._createCorridors();
-	
+
 	if (callback) {
 		for (var i = 0; i < this._width; i++) {
 			for (var j = 0; j < this._height; j++) {
-				callback(i, j, this.map[i][j]);   
+				callback(i, j, this.map[i][j]);
 			}
 		}
 	}
-	
-	return this;
-}
 
-ROT.Map.Rogue.prototype._calculateRoomSize = function(size, cell) {
+	return this;
+};
+
+ROT.Map.Rogue.prototype._calculateRoomSize = function (size, cell) {
 	var max = Math.floor((size/cell) * 0.8);
 	var min = Math.floor((size/cell) * 0.25);
-	if (min < 2) min = 2;
-	if (max < 2) max = 2;
+	if (min < 2) { min = 2; }
+	if (max < 2) { max = 2; }
 	return [min, max];
-}
+};
 
-ROT.Map.Rogue.prototype._initRooms = function () { 
-	// create rooms array. This is the "grid" list from the algo.  
-	for (var i = 0; i < this._options.cellWidth; i++) {  
+ROT.Map.Rogue.prototype._initRooms = function () {
+	// create rooms array. This is the "grid" list from the algo.
+	for (var i = 0; i < this._options.cellWidth; i++) {
 		this.rooms.push([]);
 		for(var j = 0; j < this._options.cellHeight; j++) {
 			this.rooms[i].push({"x":0, "y":0, "width":0, "height":0, "connections":[], "cellx":i, "celly":j});
 		}
 	}
-}
+};
 
-ROT.Map.Rogue.prototype._connectRooms = function() {
+ROT.Map.Rogue.prototype._connectRooms = function () {
 	//pick random starting grid
 	var cgx = ROT.RNG.getUniformInt(0, this._options.cellWidth-1);
 	var cgy = ROT.RNG.getUniformInt(0, this._options.cellHeight-1);
-	
+
 	var idx;
 	var ncgx;
 	var ncgy;
-	
+
 	var found = false;
 	var room;
 	var otherRoom;
-	
+
 	// find  unconnected neighbour cells
 	do {
-	
-		//var dirToCheck = [0,1,2,3,4,5,6,7];
-		var dirToCheck = [0,2,4,6];
+
+		//var dirToCheck = [0, 1, 2, 3, 4, 5, 6, 7];
+		var dirToCheck = [0, 2, 4, 6];
 		dirToCheck = dirToCheck.randomize();
-		
+
 		do {
 			found = false;
 			idx = dirToCheck.pop();
-			
-			
+
 			ncgx = cgx + ROT.DIRS[8][idx][0];
 			ncgy = cgy + ROT.DIRS[8][idx][1];
-			
-			if(ncgx < 0 || ncgx >= this._options.cellWidth) continue;
-			if(ncgy < 0 || ncgy >= this._options.cellHeight) continue;
-			
+
+			if (ncgx < 0 || ncgx >= this._options.cellWidth) { continue; }
+			if (ncgy < 0 || ncgy >= this._options.cellHeight) { continue; }
+
 			room = this.rooms[cgx][cgy];
-			
-			if(room["connections"].length > 0)
-			{
-				// as long as this room doesn't already coonect to me, we are ok with it. 
-				if(room["connections"][0][0] == ncgx &&
-				room["connections"][0][1] == ncgy)
-				{
+
+			if (room["connections"].length > 0) {
+				// as long as this room doesn't already coonect to me, we are ok with it.
+				if (room["connections"][0][0] == ncgx && room["connections"][0][1] == ncgy) {
 					break;
 				}
 			}
-			
+
 			otherRoom = this.rooms[ncgx][ncgy];
-			
-			if (otherRoom["connections"].length == 0) { 
-				otherRoom["connections"].push([cgx,cgy]);
-				
+
+			if (otherRoom["connections"].length == 0) {
+				otherRoom["connections"].push([cgx, cgy]);
+
 				this.connectedCells.push([ncgx, ncgy]);
 				cgx = ncgx;
 				cgy = ncgy;
 				found = true;
 			}
-					
-		} while (dirToCheck.length > 0 && found == false)
-		
-	} while (dirToCheck.length > 0)
 
-}
+		} while (dirToCheck.length > 0 && found == false);
 
-ROT.Map.Rogue.prototype._connectUnconnectedRooms = function() {
-	//While there are unconnected rooms, try to connect them to a random connected neighbor 
+	} while (dirToCheck.length > 0);
+
+};
+
+ROT.Map.Rogue.prototype._connectUnconnectedRooms = function () {
+	//While there are unconnected rooms, try to connect them to a random connected neighbor
 	//(if a room has no connected neighbors yet, just keep cycling, you'll fill out to it eventually).
 	var cw = this._options.cellWidth;
 	var ch = this._options.cellHeight;
-	
-	var randomConnectedCell;
+
 	this.connectedCells = this.connectedCells.randomize();
 	var room;
 	var otherRoom;
 	var validRoom;
-	
+
 	for (var i = 0; i < this._options.cellWidth; i++) {
 		for (var j = 0; j < this._options.cellHeight; j++)  {
-				
+
 			room = this.rooms[i][j];
-			
+
 			if (room["connections"].length == 0) {
-				var directions = [0,2,4,6];
+				var directions = [0, 2, 4, 6];
 				directions = directions.randomize();
-				
-				var validRoom = false;
-				
+
+				validRoom = false;
+
 				do {
-					
+
 					var dirIdx = directions.pop();
 					var newI = i + ROT.DIRS[8][dirIdx][0];
 					var newJ = j + ROT.DIRS[8][dirIdx][1];
-					
-					if (newI < 0 || newI >= cw || 
-					newJ < 0 || newJ >= ch) {
-						continue;
-					}
-					
+
+					if (newI < 0 || newI >= cw || newJ < 0 || newJ >= ch) { continue; }
+
 					otherRoom = this.rooms[newI][newJ];
-					
+
 					validRoom = true;
-					
-					if (otherRoom["connections"].length == 0) {
-						break;
-					}
-					
+
+					if (otherRoom["connections"].length == 0) { break; }
+
 					for (var k = 0; k < otherRoom["connections"].length; k++) {
-						if(otherRoom["connections"][k][0] == i && 
-						otherRoom["connections"][k][1] == j) {
+						if (otherRoom["connections"][k][0] == i && otherRoom["connections"][k][1] == j) {
 							validRoom = false;
 							break;
 						}
 					}
-					
-					if (validRoom) break;
-					
-				} while (directions.length)
-				
-				if(validRoom) { 
-					room["connections"].push( [otherRoom["cellx"], otherRoom["celly"]] );  
+
+					if (validRoom) { break; }
+
+				} while (directions.length);
+
+				if (validRoom) {
+					room["connections"].push([otherRoom["cellx"], otherRoom["celly"]]);
 				} else {
 					console.log("-- Unable to connect room.");
 				}
 			}
 		}
 	}
-}
+};
 
-ROT.Map.Rogue.prototype._createRandomRoomConnections = function(connections) {
-	// Empty for now. 
-}
+ROT.Map.Rogue.prototype._createRandomRoomConnections = function (connections) {
+	// Empty for now.
+};
 
 
-ROT.Map.Rogue.prototype._createRooms = function() {
-	// Create Rooms 
-	
+ROT.Map.Rogue.prototype._createRooms = function () {
+	// Create Rooms
+
 	var w = this._width;
 	var h = this._height;
-	
+
 	var cw = this._options.cellWidth;
 	var ch = this._options.cellHeight;
-	
+
 	var cwp = Math.floor(this._width / cw);
 	var chp = Math.floor(this._height / ch);
-	
+
 	var roomw;
 	var roomh;
 	var roomWidth = this._options["roomWidth"];
 	var roomHeight = this._options["roomHeight"];
 	var sx;
 	var sy;
-	var tx;
-	var ty;
 	var otherRoom;
-	
+
 	for (var i = 0; i < cw; i++) {
 		for (var j = 0; j < ch; j++) {
 			sx = cwp * i;
 			sy = chp * j;
-			
-			if (sx == 0) sx = 1;
-			if (sy == 0) sy = 1;
-			
+
+			if (sx == 0) { sx = 1; }
+			if (sy == 0) { sy = 1; }
+
 			roomw = ROT.RNG.getUniformInt(roomWidth[0], roomWidth[1]);
 			roomh = ROT.RNG.getUniformInt(roomHeight[0], roomHeight[1]);
-			
+
 			if (j > 0) {
 				otherRoom = this.rooms[i][j-1];
 				while (sy - (otherRoom["y"] + otherRoom["height"] ) < 3) {
 					sy++;
 				}
 			}
-			
+
 			if (i > 0) {
 				otherRoom = this.rooms[i-1][j];
 				while(sx - (otherRoom["x"] + otherRoom["width"]) < 3) {
 					sx++;
 				}
 			}
-			
+
 			var sxOffset = Math.round(ROT.RNG.getUniformInt(0, cwp-roomw)/2);
 			var syOffset = Math.round(ROT.RNG.getUniformInt(0, chp-roomh)/2);
-			
+
 			while (sx + sxOffset + roomw >= w) {
 				if(sxOffset) {
 					sxOffset--;
 				} else {
-					roomw--; 
+					roomw--;
 				}
 			}
-			
-			while (sy + syOffset + roomh >= h) { 
+
+			while (sy + syOffset + roomh >= h) {
 				if(syOffset) {
 					syOffset--;
 				} else {
-					roomh--; 
+					roomh--;
 				}
 			}
-			
+
 			sx = sx + sxOffset;
 			sy = sy + syOffset;
-			
+
 			this.rooms[i][j]["x"] = sx;
 			this.rooms[i][j]["y"] = sy;
 			this.rooms[i][j]["width"] = roomw;
-			this.rooms[i][j]["height"] = roomh;  
-			
+			this.rooms[i][j]["height"] = roomh;
+
 			for (var ii = sx; ii < sx + roomw; ii++) {
 				for (var jj = sy; jj < sy + roomh; jj++) {
 					this.map[ii][jj] = 0;
 				}
-			}  
+			}
 		}
 	}
-}
+};
 
-ROT.Map.Rogue.prototype._getWallPosition = function(aRoom, aDirection) {
+ROT.Map.Rogue.prototype._getWallPosition = function (aRoom, aDirection) {
 	var rx;
 	var ry;
 	var door;
-	
+
 	if (aDirection == 1 || aDirection == 3) {
 		rx = ROT.RNG.getUniformInt(aRoom["x"] + 1, aRoom["x"] + aRoom["width"] - 2);
 		if (aDirection == 1) {
@@ -3450,9 +3452,9 @@ ROT.Map.Rogue.prototype._getWallPosition = function(aRoom, aDirection) {
 			ry = aRoom["y"] + aRoom["height"] + 1;
 			door = ry -1;
 		}
-		
-		this.map[rx][door] = 0; // i'm not setting a specific 'door' tile value right now, just empty space. 
-		
+
+		this.map[rx][door] = 0; // i'm not setting a specific 'door' tile value right now, just empty space.
+
 	} else if (aDirection == 2 || aDirection == 4) {
 		ry = ROT.RNG.getUniformInt(aRoom["y"] + 1, aRoom["y"] + aRoom["height"] - 2);
 		if(aDirection == 2) {
@@ -3462,41 +3464,41 @@ ROT.Map.Rogue.prototype._getWallPosition = function(aRoom, aDirection) {
 			rx = aRoom["x"] - 2;
 			door = rx + 1;
 		}
-		
-		this.map[door][ry] = 0; // i'm not setting a specific 'door' tile value right now, just empty space. 
-		
+
+		this.map[door][ry] = 0; // i'm not setting a specific 'door' tile value right now, just empty space.
+
 	}
 	return [rx, ry];
-}
+};
 
 /***
 * @param startPosition a 2 element array
 * @param endPosition a 2 element array
 */
-ROT.Map.Rogue.prototype._drawCorridore = function (startPosition, endPosition) {
+ROT.Map.Rogue.prototype._drawCorridor = function (startPosition, endPosition) {
 	var xOffset = endPosition[0] - startPosition[0];
 	var yOffset = endPosition[1] - startPosition[1];
-	
+
 	var xpos = startPosition[0];
 	var ypos = startPosition[1];
-	
+
 	var tempDist;
 	var xDir;
 	var yDir;
-	
-	var move; // 2 element array, element 0 is the direction, element 1 is the total value to move. 
+
+	var move; // 2 element array, element 0 is the direction, element 1 is the total value to move.
 	var moves = []; // a list of 2 element arrays
-	
+
 	var xAbs = Math.abs(xOffset);
 	var yAbs = Math.abs(yOffset);
-	
+
 	var percent = ROT.RNG.getUniform(); // used to split the move at different places along the long axis
 	var firstHalf = percent;
 	var secondHalf = 1 - percent;
-	
+
 	xDir = xOffset > 0 ? 2 : 6;
 	yDir = yOffset > 0 ? 4 : 0;
-	
+
 	if (xAbs < yAbs) {
 		// move firstHalf of the y offset
 		tempDist = Math.ceil(yAbs * firstHalf);
@@ -3514,11 +3516,11 @@ ROT.Map.Rogue.prototype._drawCorridore = function (startPosition, endPosition) {
 		moves.push([yDir, yAbs]);
 		// move secondHalf of the x offset.
 		tempDist = Math.floor(xAbs * secondHalf);
-		moves.push([xDir, tempDist]);  
+		moves.push([xDir, tempDist]);
 	}
-	
+
 	this.map[xpos][ypos] = 0;
-	
+
 	while (moves.length > 0) {
 		move = moves.pop();
 		while (move[1] > 0) {
@@ -3528,11 +3530,11 @@ ROT.Map.Rogue.prototype._drawCorridore = function (startPosition, endPosition) {
 			move[1] = move[1] - 1;
 		}
 	}
-}
+};
 
 ROT.Map.Rogue.prototype._createCorridors = function () {
 	// Draw Corridors between connected rooms
-	
+
 	var cw = this._options.cellWidth;
 	var ch = this._options.cellHeight;
 	var room;
@@ -3540,23 +3542,23 @@ ROT.Map.Rogue.prototype._createCorridors = function () {
 	var otherRoom;
 	var wall;
 	var otherWall;
-	
+
 	for (var i = 0; i < cw; i++) {
 		for (var j = 0; j < ch; j++) {
 			room = this.rooms[i][j];
-			
+
 			for (var k = 0; k < room["connections"].length; k++) {
-					
-				connection = room["connections"][k]; 
-				
+
+				connection = room["connections"][k];
+
 				otherRoom = this.rooms[connection[0]][connection[1]];
-				
+
 				// figure out what wall our corridor will start one.
-				// figure out what wall our corridor will end on. 
-				if (otherRoom["cellx"] > room["cellx"] ) {
+				// figure out what wall our corridor will end on.
+				if (otherRoom["cellx"] > room["cellx"]) {
 					wall = 2;
 					otherWall = 4;
-				} else if (otherRoom["cellx"] < room["cellx"] ) {
+				} else if (otherRoom["cellx"] < room["cellx"]) {
 					wall = 4;
 					otherWall = 2;
 				} else if(otherRoom["celly"] > room["celly"]) {
@@ -3566,12 +3568,12 @@ ROT.Map.Rogue.prototype._createCorridors = function () {
 					wall = 1;
 					otherWall = 3;
 				}
-				
-				this._drawCorridore(this._getWallPosition(room, wall), this._getWallPosition(otherRoom, otherWall));
+
+				this._drawCorridor(this._getWallPosition(room, wall), this._getWallPosition(otherRoom, otherWall));
 			}
 		}
 	}
-}
+};
 /**
  * @class Dungeon feature; has own .create() method
  */
@@ -5259,12 +5261,13 @@ ROT.Path.AStar.prototype.compute = function(fromX, fromY, callback) {
 }
 
 ROT.Path.AStar.prototype._add = function(x, y, prev) {
+	var h = this._distance(x, y);
 	var obj = {
 		x: x,
 		y: y,
 		prev: prev,
 		g: (prev ? prev.g+1 : 0),
-		h: this._distance(x, y)
+		h: h
 	}
 	this._done[x+","+y] = obj;
 	
@@ -5273,7 +5276,8 @@ ROT.Path.AStar.prototype._add = function(x, y, prev) {
 	var f = obj.g + obj.h;
 	for (var i=0;i<this._todo.length;i++) {
 		var item = this._todo[i];
-		if (f < item.g + item.h) {
+		var itemF = item.g + item.h;
+		if (f < itemF || (f == itemF && h < item.h)) {
 			this._todo.splice(i, 0, obj);
 			return;
 		}

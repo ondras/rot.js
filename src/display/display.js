@@ -148,6 +148,9 @@ ROT.Display.prototype.eventToPosition = function(e) {
 	x -= rect.left;
 	y -= rect.top;
 	
+	x *= this._context.canvas.width / this._context.canvas.clientWidth;
+	y *= this._context.canvas.height / this._context.canvas.clientHeight;
+
 	if (x < 0 || y < 0 || x >= this._context.canvas.width || y >= this._context.canvas.height) { return [-1, -1]; }
 
 	return this._backend.eventToPosition(x, y);

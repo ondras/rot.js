@@ -57,6 +57,17 @@ ROT.EventQueue.prototype.get = function() {
 }
 
 /**
+ * Get the time associated with the given event
+ * @param {?} event
+ * @returns {number} time
+ */
+ROT.EventQueue.prototype.getEventTime = function(event) {
+	var index = this._events.indexOf(event);
+	if (index == -1) { return undefined }
+	return this._eventTimes[index];
+}
+
+/**
  * Remove an event from the queue
  * @param {?} event
  * @returns {bool} success?
