@@ -1,15 +1,27 @@
+
 var pre = document.querySelector("pre");
+
 var re = /(&gt;)|([a-z-][a-z0-9 \.,:\(\)-]*[a-z0-9\.:])|(#+)|(\.+)|([+/])|(\$+)|(\^)|(\?)|(=+)|(!)/ig;
+var types = ["", "staircase", "text", "wall", "corridor", "door", "money", "trap", "scroll", "water", "potion"];
+
+/// create custom elements
+
+types.forEach(function (value, key) {
+	document.registerElement("r-" + value);
+});
+
 
 var str = pre.innerHTML;
 str = str.replace(re, function(match) {
-	var types = ["", "staircase", "text", "wall", "corridor", "door", "money", "trap", "scroll", "water", "potion"];
 	for (var i=1; i<arguments.length-1; i++) {
 		if (arguments[i]) { 
 			var type = types[i];
-			var str = "<span class='"+type+"' ";
-			if (type != "wall" && type != "corridor" && type != "text") { str += "title='"+type+"' "; }
-			str += ">" + match + "</span>"; 
+			var str = "";
+			if (type == "wall" || type == "corridor" || type == "text") {
+				str = "<r-" + type + ">" + match + "</r-" + type + ">";
+			} else {
+				str = "<r-" + type + " title='"+type+"'>" + match + "</r-" + type + ">";
+                        }
 			return str;
 		}
 	}
