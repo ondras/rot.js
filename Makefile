@@ -41,7 +41,7 @@ SOURCES = 	src/rot.js \
 			src/lighting.js \
 			src/path/path.js \
 			src/path/dijkstra.js \
-			src/path/astar.js
+			src/path/astar.js \
 			src/image/image.js
 
 NODE_VERSION = "$(shell head -1 < NODE_VERSION)"
