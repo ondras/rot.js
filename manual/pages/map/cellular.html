@@ -60,3 +60,81 @@ for (var i=49; i&gt;=0; i--) {
 	map.create(i ? null : display.DEBUG);
 }
 </div>
+
+<p>Once the map has been created, you can optionally call connect() to connect every free space. This way the player can traverse every part of the maze. You might have to refresh this page a few times to spot the differences.</p>
+
+<div class="example">
+var w = 80, h = 40;
+/* create a connected map where the player can reach all non-wall sections */
+var map = new ROT.Map.Cellular(w, h, { connected: true });
+
+/* cells with 1/2 probability */
+map.randomize(0.5);
+
+/* make a few generations */
+for (var i=0; i&lt;4; i++) map.create();
+
+/* display only the final map */
+var display = new ROT.Display({width:w, height:h, fontSize:4});
+SHOW(display.getContainer());	
+map.create(display.DEBUG);
+
+/* now connect the maze */
+var display = new ROT.Display({width:w, height:h, fontSize:4});
+SHOW(display.getContainer());	
+map.connect(display.DEBUG);
+
+</div>
+
+<p>You can also connect walls instead of empty space by specifying the map value that should be connected. See the second parameter of the connect() call below:</p>
+
+<div class="example">
+var w = 80, h = 40;
+/* create a connected map where the player can reach all non-wall sections */
+var map = new ROT.Map.Cellular(w, h, { connected: true });
+
+/* cells with 1/2 probability */
+map.randomize(0.5);
+
+/* make a few generations */
+for (var i=0; i&lt;4; i++) map.create();
+
+/* display only the final map */
+var display = new ROT.Display({width:w, height:h, fontSize:4});
+SHOW(display.getContainer());	
+map.create(display.DEBUG);
+
+/* now connect the maze */
+var display = new ROT.Display({width:w, height:h, fontSize:4});
+SHOW(display.getContainer());	
+map.connect(display.DEBUG, 1);
+
+</div>
+
+
+<p>Finally, you can be optionally notified when connect creates a new connection between formerly separate regions.</p>
+
+<div class="example">
+var w = 80, h = 40;
+/* create a connected map where the player can reach all non-wall sections */
+var map = new ROT.Map.Cellular(w, h, { connected: true });
+
+/* cells with 1/2 probability */
+map.randomize(0.5);
+
+/* make a few generations */
+for (var i=0; i&lt;4; i++) map.create();
+
+/* display only the final map */
+var display = new ROT.Display({width:w, height:h, fontSize:4});
+SHOW(display.getContainer());	
+map.create(display.DEBUG);
+
+/* now connect the maze */
+var display = new ROT.Display({width:w, height:h, fontSize:4});
+SHOW(display.getContainer());	
+map.connect(display.DEBUG, 0, function(from, to) {
+	SHOW("Connection was made " + from + " to " + to);
+});
+
+</div>

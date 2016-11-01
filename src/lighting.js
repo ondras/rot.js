@@ -29,7 +29,7 @@ ROT.Lighting = function(reflectivityCallback, options) {
  */
 ROT.Lighting.prototype.setOptions = function(options) {
 	for (var p in options) { this._options[p] = options[p]; }
-	if (options.range) { this.reset(); }
+	if (options && options.range) { this.reset(); }
 	return this;
 }
 
@@ -61,6 +61,13 @@ ROT.Lighting.prototype.setLight = function(x, y, color) {
 }
 
 /**
+ * Remove all light sources
+ */
+ROT.Lighting.prototype.clearLights = function() {
+    this._lights = {};
+}
+
+/**
  * Reset the pre-computed topology values. Call whenever the underlying map changes its light-passability.
  */
 ROT.Lighting.prototype.reset = function() {
@@ -81,8 +88,7 @@ ROT.Lighting.prototype.compute = function(lightingCallback) {
 
 	for (var key in this._lights) { /* prepare emitters for first pass */
 		var light = this._lights[key];
-		if (!(key in emittingCells)) { emittingCells[key] = [0, 0, 0]; }
-
+		emittingCells[key] = [0, 0, 0];
 		ROT.Color.add_(emittingCells[key], light);
 	}
 

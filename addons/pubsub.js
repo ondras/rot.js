@@ -9,7 +9,7 @@
 	}
 	
 	window.subscribe = function(message, subscriber) {
-		if (!(message in this._subscribers)) {
+		if (!(message in _subscribers)) {
 			_subscribers[message] = [];
 		}
 		_subscribers[message].push(subscriber);

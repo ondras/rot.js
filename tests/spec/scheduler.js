@@ -89,6 +89,23 @@ describe("Scheduler", function() {
 			for (var i=0;i<7;i++) { result.push(S.next()); }
 			expect(result).toSchedule([A200, A100a, A200, A200, A50, A100a, A200]);
 		});
+
+		it("should schedule with initial offsets", function() {
+			S.add(A50, true, 1/300);
+			S.add(A100a, true, 0);
+			S.add(A200, true);
+			var result = [];
+			for (var i=0;i<9;i++) { result.push(S.next()); }
+			expect(result).toSchedule([A100a, A50, A200, A100a, A200, A200, A100a, A200, A50]);
+		});
+
+		it("should look up the time of an event", function() {
+			S.add(A100a, true);
+			S.add(A50, true, 1/200);
+			expect(S.getTimeOf(A50)).toEqual(1/200);
+			expect(S.getTimeOf(A100a)).toEqual(1/100);
+		});
+
 	});
 
 	describe("Action", function() {

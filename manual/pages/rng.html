@@ -77,3 +77,34 @@ SHOW(
 	ROT.RNG.getUniform()
 );
 </div>
+
+<h2>Cloning a RNG</h2>
+
+<p>You can clone a RNG to obtain its copy. The copy is completely independent and pre-set to its parent's state. The copy can be further cloned.</p>
+
+<div class="example">
+var clone = ROT.RNG.clone();
+
+SHOW(ROT.RNG.getUniform());
+SHOW(clone.getUniform());
+
+ROT.RNG.setSeed(123);
+SHOW(ROT.RNG.getUniform());
+SHOW(clone.getUniform());
+</div>
+
+<h2>Picking a weighted value</h2>
+
+<p>Choosing from a list of values with uneven weights is a common operation in Roguelike development. The <code>getWeightedValue</code> method is useful for this task; just give it a JS object with numeric weight values (arbitrary numbers) and a corresponding key will be picked randomly.</p>
+
+<div class="example">
+var monsters = {
+	"orc": 3,
+	"ogre": 1,
+	"rat": 5
+}
+
+for (var i=0; i&lt;20; i++) {
+	SHOW(ROT.RNG.getWeightedValue(monsters));
+}
+</div>

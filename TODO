@@ -1,2 +1,3 @@
 remove FIXMEs
 fix drawText on hexes, how?
+transposed hexes: font size computations

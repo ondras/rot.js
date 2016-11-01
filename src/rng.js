@@ -81,21 +81,22 @@ ROT.RNG = {
 	 * @returns {string} whatever
 	 */
 	getWeightedValue: function(data) {
-		var avail = [];
 		var total = 0;
 		
 		for (var id in data) {
 			total += data[id];
 		}
-		var random = Math.floor(this.getUniform()*total);
+		var random = this.getUniform()*total;
 		
 		var part = 0;
 		for (var id in data) {
 			part += data[id];
 			if (random < part) { return id; }
 		}
-		
-		return null;
+
+		// If by some floating-point annoyance we have
+		// random >= total, just return the last id.
+		return id;
 	},
 
 	/**
@@ -116,6 +117,15 @@ ROT.RNG = {
 		this._s2 = state[2];
 		this._c  = state[3];
 		return this;
+	},
+
+	/**
+	 * Returns a cloned RNG
+	 */
+	clone: function() {
+		var clone = Object.create(this);
+		clone.setState(this.getState());
+		return clone;
 	},
 
 	_s0: 0,

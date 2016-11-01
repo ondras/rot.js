@@ -59,9 +59,13 @@ describe("Path", function() {
 		if (x<0 || y<0 || x>=MAP6.length || y>=MAP6[0].length) { return false; }
 		return (MAP6[x][y] == 0);
 	}
+
+	var VISITS = 0;
+	var PASSABLE_CALLBACK_VISIT = function(x, y) { VISITS++; return true; }
 	
 	beforeEach(function() {
 		PATH = [];
+		VISITS = 0;
 	});
 	
 	
@@ -72,7 +76,6 @@ describe("Path", function() {
 			var dijkstra = new ROT.Path.Dijkstra(Z[0], Z[1], PASSABLE_CALLBACK_48, {topology:8});
 			
 			it("should compute correct path A", function() {
-				path = [];
 				dijkstra.compute(A[0], A[1], PATH_CALLBACK);
 				expect(PATH.toString()).toEqual(PATH_A.toString());
 			});
@@ -139,7 +142,6 @@ describe("Path", function() {
 			var astar = new ROT.Path.AStar(Z[0], Z[1], PASSABLE_CALLBACK_48, {topology:8});
 			
 			it("should compute correct path A", function() {
-				path = [];
 				astar.compute(A[0], A[1], PATH_CALLBACK);
 				expect(PATH.toString()).toEqual(PATH_A.toString());
 			});
@@ -152,6 +154,12 @@ describe("Path", function() {
 			it("should survive non-existant path X", function() {
 				astar.compute(X[0], X[1], PATH_CALLBACK);
 				expect(PATH.length).toEqual(0);
+			});
+
+			it("should efficiently compute path",function(){
+				var open_astar = new ROT.Path.AStar(0,0, PASSABLE_CALLBACK_VISIT);
+				open_astar.compute(50,0, PATH_CALLBACK);
+				expect(VISITS).toEqual(400);
 			});
 		}); /* 8-topology */
 

@@ -1,0 +1,102 @@
+<h2>Graphic tiles</h2>
+
+<p>The <code>"tile"</code> layout module is used to draw graphic tiles. You need to define a proper <code>tileMap</code> by mapping individual chars to offsets in your <code>tileSet</code> image. Please note that the image must be loaded before you attempt to use it.</p>
+
+<div class="example">
+var tileSet = document.createElement("img");
+tileSet.src = "tiles.png";
+
+var options = {
+	layout: "tile",
+	bg: "transparent",
+	tileWidth: 64,
+	tileHeight: 64,
+	tileSet: tileSet,
+	tileMap: {
+		"@": [0, 0],
+		"#": [0, 64],
+		"a": [64, 0],
+		"!": [64, 64]
+	},
+	width: 3,
+	height: 3
+}
+var display = new ROT.Display(options);
+SHOW(display.getContainer());
+
+tileSet.onload = function() {
+	display.draw(1, 1, "@");
+	display.draw(0, 0, "#");
+	display.draw(0, 1, "#");
+	display.draw(1, 0, "#");
+	display.draw(0, 2, "#");
+	display.draw(2, 2, "a");
+	display.draw(2, 0, "!");
+	display.draw(2, 1, "!");
+}
+</div>
+
+<h2>Multiple tiles at one place</h2>
+
+<p>It is possible to draw multiple tiles at one place: just pass an array of chars as the third argument to <code>Display.prototype.draw</code>. This can be used in other (non-tiled) backends as well, but brings almost no real usability.</p>
+
+<div class="example">
+var tileSet = document.createElement("img");
+tileSet.src = "tiles.png";
+
+var options = {
+	layout: "tile",
+	bg: "transparent",
+	tileWidth: 64,
+	tileHeight: 64,
+	tileSet: tileSet,
+	tileMap: {
+		"@": [0, 0],
+		"#": [0, 64]
+	},
+	width: 1,
+	height: 1
+}
+var display = new ROT.Display(options);
+SHOW(display.getContainer());
+
+tileSet.onload = function() {
+	display.draw(0, 0, ["#", "@"]);
+}
+</div>
+
+<h2>Colorizing tiles</h2>
+
+<p>It is possibly to (partially) colorize a tile image. To do this, you first need to pass the <code>tileColorize:true</code> option to the <code>ROT.Display</code> constructor. Additional arguments to <code>draw</code> then specify foreground and background colors to be applied (<code>"transparent" means no tinting</code>). RGBA values can be used for partial tinting.
+
+<div class="example">
+var tileSet = document.createElement("img");
+tileSet.src = "tiles.png";
+
+var options = {
+	layout: "tile",
+	tileWidth: 64,
+	tileHeight: 64,
+	tileSet: tileSet,
+	tileMap: {
+		"@": [0, 0],
+		"#": [0, 64],
+		"a": [64, 0],
+		"!": [64, 64]
+	},
+	width: 3,
+	height: 2,
+	tileColorize: true
+}
+var display = new ROT.Display(options);
+SHOW(display.getContainer());
+
+tileSet.onload = function() {
+    display.draw(0, 0, "@", "transparent");
+    display.draw(1, 0, "@", "green", "red");
+    display.draw(2, 0, "@", "rgba(30, 200, 30, 0.5)", "red");
+    display.draw(0, 1, "#", "transparent");
+    display.draw(1, 1, "#", "white");
+    display.draw(2, 1, "#", "transparent", "rgba(250, 250, 0, 0.5)");
+}
+</div>

@@ -11,10 +11,12 @@
  * @param {float} [options.spacing=1]
  * @param {float} [options.border=0]
  * @param {string} [options.layout="rect"]
+ * @param {bool} [options.forceSquareRatio=false]
  * @param {int} [options.tileWidth=32]
  * @param {int} [options.tileHeight=32]
  * @param {object} [options.tileMap={}]
  * @param {image} [options.tileSet=null]
+ * @param {image} [options.tileColorize=false]
  */
 ROT.Display = function(options) {
 	var canvas = document.createElement("canvas");
@@ -32,6 +34,7 @@ ROT.Display = function(options) {
 		fontSize: 15,
 		spacing: 1,
 		border: 0,
+		forceSquareRatio: false,
 		fontFamily: "monospace",
 		fontStyle: "",
 		fg: "#ccc",
@@ -39,7 +42,9 @@ ROT.Display = function(options) {
 		tileWidth: 32,
 		tileHeight: 32,
 		tileMap: {},
-		tileSet: null
+		tileSet: null,
+		tileColorize: false,
+		termColor: "xterm"
 	};
 	for (var p in options) { defaultOptions[p] = options[p]; }
 	this.setOptions(defaultOptions);
@@ -143,6 +148,9 @@ ROT.Display.prototype.eventToPosition = function(e) {
 	x -= rect.left;
 	y -= rect.top;
 	
+	x *= this._context.canvas.width / this._context.canvas.clientWidth;
+	y *= this._context.canvas.height / this._context.canvas.clientHeight;
+
 	if (x < 0 || y < 0 || x >= this._context.canvas.width || y >= this._context.canvas.height) { return [-1, -1]; }
 
 	return this._backend.eventToPosition(x, y);
@@ -187,8 +195,23 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 		var token = tokens.shift();
 		switch (token.type) {
 			case ROT.Text.TYPE_TEXT:
+				var isSpace = false, isPrevSpace = false, isFullWidth = false, isPrevFullWidth = false;
 				for (var i=0;i<token.value.length;i++) {
-					this.draw(cx++, cy, token.value.charAt(i), fg, bg);
+					var cc = token.value.charCodeAt(i);
+					var c = token.value.charAt(i);
+					// Assign to `true` when the current char is full-width.
+					isFullWidth = (cc > 0xff && cc < 0xff61) || (cc > 0xffdc && cc < 0xffe8) && cc > 0xffee;
+					// Current char is space, whatever full-width or half-width both are OK.
+					isSpace = (c.charCodeAt(0) == 0x20 || c.charCodeAt(0) == 0x3000);
+					// The previous char is full-width and
+					// current char is nether half-width nor a space.
+					if (isPrevFullWidth && !isFullWidth && !isSpace) { cx++; } // add an extra position
+					// The current char is full-width and
+					// the previous char is not a space.
+					if(isFullWidth && !isPrevSpace) { cx++; } // add an extra position
+					this.draw(cx++, cy, c, fg, bg);
+					isPrevSpace = isSpace;
+					isPrevFullWidth = isFullWidth;
 				}
 			break;
 

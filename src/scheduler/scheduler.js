@@ -24,6 +24,15 @@ ROT.Scheduler.prototype.add = function(item, repeat) {
 }
 
 /**
+ * Get the time the given item is scheduled for
+ * @param {?} item
+ * @returns {number} time
+ */
+ROT.Scheduler.prototype.getTimeOf = function(item) {
+	return this._queue.getEventTime(item);
+}
+
+/**
  * Clear all items
  */
 ROT.Scheduler.prototype.clear = function() {

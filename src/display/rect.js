@@ -21,6 +21,11 @@ ROT.Display.Rect.prototype.compute = function(options) {
 	var charWidth = Math.ceil(this._context.measureText("W").width);
 	this._spacingX = Math.ceil(options.spacing * charWidth);
 	this._spacingY = Math.ceil(options.spacing * options.fontSize);
+
+	if (this._options.forceSquareRatio) {
+		this._spacingX = this._spacingY = Math.max(this._spacingX, this._spacingY);
+	}
+
 	this._context.canvas.width = options.width * this._spacingX;
 	this._context.canvas.height = options.height * this._spacingY;
 }
@@ -60,7 +65,7 @@ ROT.Display.Rect.prototype._drawWithCache = function(data, clearBefore) {
 
 			var chars = [].concat(ch);
 			for (var i=0;i<chars.length;i++) {
-				ctx.fillText(chars[i], this._spacingX/2, this._spacingY/2);
+				ctx.fillText(chars[i], this._spacingX/2, Math.ceil(this._spacingY/2));
 			}
 		}
 		this._canvasCache[hash] = canvas;
@@ -88,7 +93,7 @@ ROT.Display.Rect.prototype._drawNoCache = function(data, clearBefore) {
 
 	var chars = [].concat(ch);
 	for (var i=0;i<chars.length;i++) {
-		this._context.fillText(chars[i], (x+0.5) * this._spacingX, (y+0.5) * this._spacingY);
+		this._context.fillText(chars[i], (x+0.5) * this._spacingX, Math.ceil((y+0.5) * this._spacingY));
 	}
 }
 

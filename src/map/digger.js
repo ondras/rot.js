@@ -196,6 +196,8 @@ ROT.Map.Digger.prototype._removeSurroundingWalls = function(cx, cy) {
  * Returns vector in "digging" direction, or false, if this does not exist (or is not unique)
  */
 ROT.Map.Digger.prototype._getDiggingDirection = function(cx, cy) {
+	if (cx <= 0 || cy <= 0 || cx >= this._width - 1 || cy >= this._height - 1) { return null; }
+
 	var result = null;
 	var deltas = ROT.DIRS[4];
 	
@@ -203,8 +205,6 @@ ROT.Map.Digger.prototype._getDiggingDirection = function(cx, cy) {
 		var delta = deltas[i];
 		var x = cx + delta[0];
 		var y = cy + delta[1];
-		
-		if (x < 0 || y < 0 || x >= this._width || y >= this._width) { return null; }
 		
 		if (!this._map[x][y]) { /* there already is another empty neighbor! */
 			if (result) { return null; }

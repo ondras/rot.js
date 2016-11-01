@@ -20,7 +20,7 @@ ROT.Color = {
 					cached = values;
 				}
 
-			} else if (r = str.match(/rgb\(([0-9, ]+)\)/i)) { /* decimal rgb */
+			} else if ((r = str.match(/rgb\(([0-9, ]+)\)/i))) { /* decimal rgb */
 				cached = r[1].split(/\s*,\s*/).map(function(x) { return parseInt(x); });
 			} else { /* html name */
 				cached = [0, 0, 0];
@@ -136,7 +136,7 @@ ROT.Color = {
 	 * @returns {number[]}
 	 */
 	randomize: function(color, diff) {
-		if (!(diff instanceof Array)) { diff = ROT.RNG.getNormal(0, diff); }
+		if (!(diff instanceof Array)) { diff = Math.round(ROT.RNG.getNormal(0, diff)); }
 		var result = color.slice();
 		for (var i=0;i<3;i++) {
 			result[i] += (diff instanceof Array ? Math.round(ROT.RNG.getNormal(0, diff[i])) : diff);
@@ -185,7 +185,7 @@ ROT.Color = {
 			l = Math.round(l*255);
 			return [l, l, l];
 		} else {
-			function hue2rgb(p, q, t) {
+			var hue2rgb = function(p, q, t) {
 				if (t < 0) t += 1;
 				if (t > 1) t -= 1;
 				if (t < 1/6) return p + (q - p) * 6 * t;
