@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.7~dev, generated on Tue Aug 30 12:08:59 CEST 2016.
+	Version 0.7~dev, generated on mar nov  1 20:20:43 CET 2016.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -1713,6 +1713,17 @@ ROT.EventQueue.prototype.get = function() {
 }
 
 /**
+ * Get the time associated with the given event
+ * @param {?} event
+ * @returns {number} time
+ */
+ROT.EventQueue.prototype.getEventTime = function(event) {
+	var index = this._events.indexOf(event);
+	if (index == -1) { return undefined }
+	return this._eventTimes[index];
+}
+
+/**
  * Remove an event from the queue
  * @param {?} event
  * @returns {bool} success?
@@ -1755,6 +1766,15 @@ ROT.Scheduler.prototype.getTime = function() {
 ROT.Scheduler.prototype.add = function(item, repeat) {
 	if (repeat) { this._repeat.push(item); }
 	return this;
+}
+
+/**
+ * Get the time the given item is scheduled for
+ * @param {?} item
+ * @returns {number} time
+ */
+ROT.Scheduler.prototype.getTimeOf = function(item) {
+	return this._queue.getEventTime(item);
 }
 
 /**
@@ -1829,10 +1849,11 @@ ROT.Scheduler.Speed.extend(ROT.Scheduler);
 /**
  * @param {object} item anything with "getSpeed" method
  * @param {bool} repeat
+ * @param {number} [time=1/item.getSpeed()]
  * @see ROT.Scheduler#add
  */
-ROT.Scheduler.Speed.prototype.add = function(item, repeat) {
-	this._queue.add(item, 1/item.getSpeed());
+ROT.Scheduler.Speed.prototype.add = function(item, repeat, time) {
+	this._queue.add(item, time !== undefined ? time : 1/item.getSpeed());
 	return ROT.Scheduler.prototype.add.call(this, item, repeat);
 }
 
@@ -2694,7 +2715,6 @@ ROT.Map.Digger.prototype.create = function(callback) {
 
 ROT.Map.Digger.prototype._digCallback = function(x, y, value) {
 	if (value == 0 || value == 2) { /* empty */
-		if (!this._map[x]) this._map[x]=[];
 		this._map[x][y] = 0;
 		this._dug++;
 	} else { /* wall */
