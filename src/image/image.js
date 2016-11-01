@@ -120,13 +120,18 @@ ROT.Image.prototype.loadASCII = function() {
 
 ROT.Image.prototype.load = function(image_url) {
 	this.img = new Image();
+	this.img.setAttribute('crossOrigin', '');
 	this.img.src = image_url;
+	
+	var self = this;
+	
 	if (this.img.complete) {
+		console.log(this);
 		this.ascii_art = this.loadASCII();
 	}
 	else {
 		this.img.onload = function() {
-			this.ascii_art = this.loadASCII()
+			self.ascii_art = self.loadASCII();
 		}
 	}
 };
