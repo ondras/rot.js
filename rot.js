@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.7~dev, generated on mar nov  1 20:53:53 CET 2016.
+	Version 0.7~dev, generated on mié nov  2 00:54:29 CET 2016.
 */
 /**
  * @namespace Top-level ROT namespace
@@ -5446,7 +5446,7 @@ ROT.Image.prototype.loadASCII = function() {
 	return strChars;
 };
 
-ROT.Image.prototype.load = function(image_url) {
+ROT.Image.prototype.load = function(image_url, callback_load_complete) {
 	this.img = new Image();
 	this.img.setAttribute('crossOrigin', '');
 	this.img.src = image_url;
@@ -5454,13 +5454,19 @@ ROT.Image.prototype.load = function(image_url) {
 	var self = this;
 	
 	if (this.img.complete) {
-		console.log(this);
 		this.ascii_art = this.loadASCII();
+		
+		return true;
 	}
 	else {
 		this.img.onload = function() {
 			self.ascii_art = self.loadASCII();
+			
+			if (typeof(callback_load_complete) != "undefined")
+				callback_load_complete();
 		}
+		
+		return false;
 	}
 };
 

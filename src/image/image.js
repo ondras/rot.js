@@ -118,7 +118,7 @@ ROT.Image.prototype.loadASCII = function() {
 	return strChars;
 };
 
-ROT.Image.prototype.load = function(image_url) {
+ROT.Image.prototype.load = function(image_url, callback_load_complete) {
 	this.img = new Image();
 	this.img.setAttribute('crossOrigin', '');
 	this.img.src = image_url;
@@ -126,13 +126,19 @@ ROT.Image.prototype.load = function(image_url) {
 	var self = this;
 	
 	if (this.img.complete) {
-		console.log(this);
 		this.ascii_art = this.loadASCII();
+		
+		return true;
 	}
 	else {
 		this.img.onload = function() {
 			self.ascii_art = self.loadASCII();
+			
+			if (typeof(callback_load_complete) != "undefined")
+				callback_load_complete();
 		}
+		
+		return false;
 	}
 };
 
