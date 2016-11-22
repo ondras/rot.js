@@ -200,7 +200,7 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 					var cc = token.value.charCodeAt(i);
 					var c = token.value.charAt(i);
 					// Assign to `true` when the current char is full-width.
-					isFullWidth = (cc > 0xff && cc < 0xff61) || (cc > 0xffdc && cc < 0xffe8) && cc > 0xffee;
+					isFullWidth = (cc > 0xff00 && cc < 0xff61) || (cc > 0xffdc && cc < 0xffe8) || cc > 0xffee;
 					// Current char is space, whatever full-width or half-width both are OK.
 					isSpace = (c.charCodeAt(0) == 0x20 || c.charCodeAt(0) == 0x3000);
 					// The previous char is full-width and
