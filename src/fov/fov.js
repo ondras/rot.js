@@ -19,7 +19,7 @@ ROT.FOV = function(lightPassesCallback, options) {
  * @param {int} R Maximum visibility radius
  * @param {function} callback
  */
-ROT.FOV.prototype.compute = function(x, y, R, callback) {}
+ROT.FOV.prototype.compute = function(x, y, R, callback, initialValue) {}
 
 /**
  * Return all neighbors in a concentric ring
