@@ -20,7 +20,7 @@ ROT.Lighting = function(reflectivityCallback, options) {
 	this._fovCache = {};
 
 	this.setOptions(options);
-}
+};
 
 /**
  * Adjust options at runtime
@@ -31,7 +31,7 @@ ROT.Lighting.prototype.setOptions = function(options) {
 	for (var p in options) { this._options[p] = options[p]; }
 	if (options && options.range) { this.reset(); }
 	return this;
-}
+};
 
 /**
  * Set the used Field-Of-View algo
@@ -41,7 +41,7 @@ ROT.Lighting.prototype.setFOV = function(fov) {
 	this._fov = fov;
 	this._fovCache = {};
 	return this;
-}
+};
 
 /**
  * Set (or remove) a light source
@@ -50,22 +50,22 @@ ROT.Lighting.prototype.setFOV = function(fov) {
  * @param {null || string || number[3]} color
  */
 ROT.Lighting.prototype.setLight = function(x, y, color) {
-	var key = x+","+y;
+  var key = x + "," + y;
 
-	if (color) {
-		this._lights[key] = (typeof(color) == "string" ? ROT.Color.fromString(color) : color);
-	} else {
-		delete this._lights[key];
-	}
-	return this;
-}
+  if (color) {
+    this._lights[key] = (typeof(color) == "string" ? ROT.Color.fromString(color) : color);
+  } else {
+    delete this._lights[key];
+  }
+  return this;
+};
 
 /**
  * Remove all light sources
  */
 ROT.Lighting.prototype.clearLights = function() {
     this._lights = {};
-}
+};
 
 /**
  * Reset the pre-computed topology values. Call whenever the underlying map changes its light-passability.
@@ -75,7 +75,7 @@ ROT.Lighting.prototype.reset = function() {
 	this._fovCache = {};
 
 	return this;
-}
+};
 
 /**
  * Compute the lighting
@@ -106,7 +106,7 @@ ROT.Lighting.prototype.compute = function(lightingCallback) {
 	}
 
 	return this;
-}
+};
 
 /**
  * Compute one iteration from all emitting cells
@@ -123,7 +123,7 @@ ROT.Lighting.prototype._emitLight = function(emittingCells, litCells, doneCells)
 		doneCells[key] = 1;
 	}
 	return this;
-}
+};
 
 /**
  * Prepare a list of emitters for next pass
@@ -163,7 +163,7 @@ ROT.Lighting.prototype._computeEmitters = function(litCells, doneCells) {
 	}
 
 	return result;
-}
+};
 
 /**
  * Compute one iteration from one cell
@@ -194,7 +194,7 @@ ROT.Lighting.prototype._emitLightFromCell = function(x, y, color, litCells) {
 	}
 
 	return this;
-}
+};
 
 /**
  * Compute FOV ("form factor") for a potential light source at [x,y]
@@ -212,8 +212,8 @@ ROT.Lighting.prototype._updateFOV = function(x, y) {
 		var formFactor = vis * (1-r/range);
 		if (formFactor == 0) { return; }
 		cache[key2] = formFactor;
-	}
+	};
 	this._fov.compute(x, y, range, cb.bind(this));
 
 	return cache;
-}
+};

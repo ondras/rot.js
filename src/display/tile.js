@@ -7,7 +7,7 @@ ROT.Display.Tile = function(context) {
 	
 	this._options = {};
 	this._colorCanvas = document.createElement("canvas");
-}
+};
 ROT.Display.Tile.extend(ROT.Display.Rect);
 
 ROT.Display.Tile.prototype.compute = function(options) {
@@ -16,7 +16,7 @@ ROT.Display.Tile.prototype.compute = function(options) {
 	this._context.canvas.height = options.height * options.tileHeight;
 	this._colorCanvas.width = options.tileWidth;
 	this._colorCanvas.height = options.tileHeight;
-}
+};
 
 ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 	var x = data[0];
@@ -77,20 +77,20 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 			);
 		}
 	}
-}
+};
 
 ROT.Display.Tile.prototype.computeSize = function(availWidth, availHeight) {
 	var width = Math.floor(availWidth / this._options.tileWidth);
 	var height = Math.floor(availHeight / this._options.tileHeight);
 	return [width, height];
-}
+};
 
 ROT.Display.Tile.prototype.computeFontSize = function(availWidth, availHeight) {
 	var width = Math.floor(availWidth / this._options.width);
 	var height = Math.floor(availHeight / this._options.height);
 	return [width, height];
-}
+};
 
 ROT.Display.Tile.prototype.eventToPosition = function(x, y) {
 	return [Math.floor(x/this._options.tileWidth), Math.floor(y/this._options.tileHeight)];
-}
+};

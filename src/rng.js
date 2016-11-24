@@ -133,6 +133,6 @@ ROT.RNG = {
 	_s2: 0,
 	_c: 0,
 	_frac: 2.3283064365386963e-10 /* 2^-32 */
-}
+};
 
 ROT.RNG.setSeed(Date.now());

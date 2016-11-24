@@ -5,7 +5,7 @@
 ROT.Map.DividedMaze = function(width, height) {
 	ROT.Map.call(this, width, height);
 	this._stack = [];
-}
+};
 ROT.Map.DividedMaze.extend(ROT.Map);
 
 ROT.Map.DividedMaze.prototype.create = function(callback) {
@@ -34,14 +34,14 @@ ROT.Map.DividedMaze.prototype.create = function(callback) {
 	}
 	this._map = null;
 	return this;
-}
+};
 
 ROT.Map.DividedMaze.prototype._process = function() {
 	while (this._stack.length) {
 		var room = this._stack.shift(); /* [left, top, right, bottom] */
 		this._partitionRoom(room);
 	}
-}
+};
 
 ROT.Map.DividedMaze.prototype._partitionRoom = function(room) {
 	var availX = [];
@@ -105,4 +105,4 @@ ROT.Map.DividedMaze.prototype._partitionRoom = function(room) {
 	this._stack.push([x+1, room[1], room[2], y-1]); /* right top */
 	this._stack.push([room[0], y+1, x-1, room[3]]); /* left bottom */
 	this._stack.push([x+1, y+1, room[2], room[3]]); /* right bottom */
-}
+};

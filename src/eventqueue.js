@@ -5,14 +5,14 @@ ROT.EventQueue = function() {
 	this._time = 0;
 	this._events = [];
 	this._eventTimes = [];
-}
+};
 
 /**
  * @returns {number} Elapsed time
  */
 ROT.EventQueue.prototype.getTime = function() {
 	return this._time;
-}
+};
 
 /**
  * Clear all scheduled events
@@ -21,7 +21,7 @@ ROT.EventQueue.prototype.clear = function() {
 	this._events = [];
 	this._eventTimes = [];
 	return this;
-}
+};
 
 /**
  * @param {?} event
@@ -38,7 +38,7 @@ ROT.EventQueue.prototype.add = function(event, time) {
 
 	this._events.splice(index, 0, event);
 	this._eventTimes.splice(index, 0, time);
-}
+};
 
 /**
  * Locates the nearest event, advances time if necessary. Returns that event and removes it from the queue.
@@ -54,7 +54,7 @@ ROT.EventQueue.prototype.get = function() {
 	}
 
 	return this._events.splice(0, 1)[0];
-}
+};
 
 /**
  * Get the time associated with the given event
@@ -65,7 +65,7 @@ ROT.EventQueue.prototype.getEventTime = function(event) {
 	var index = this._events.indexOf(event);
 	if (index == -1) { return undefined }
 	return this._eventTimes[index];
-}
+};
 
 /**
  * Remove an event from the queue
@@ -77,7 +77,7 @@ ROT.EventQueue.prototype.remove = function(event) {
 	if (index == -1) { return false }
 	this._remove(index);
 	return true;
-}
+};
 
 /**
  * Remove an event from the queue
@@ -86,4 +86,4 @@ ROT.EventQueue.prototype.remove = function(event) {
 ROT.EventQueue.prototype._remove = function(index) {
 	this._events.splice(index, 1);
 	this._eventTimes.splice(index, 1);
-}
+};

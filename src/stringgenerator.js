@@ -12,7 +12,7 @@ ROT.StringGenerator = function(options) {
 		words: false,
 		order: 3,
 		prior: 0.001
-	}
+	};
 	for (var p in options) { this._options[p] = options[p]; }
 
 	this._boundary = String.fromCharCode(0);
@@ -24,7 +24,7 @@ ROT.StringGenerator = function(options) {
 	this._priorValues[this._boundary] = this._options.prior;
 
 	this._data = {};
-}
+};
 
 /**
  * Remove all learning data
@@ -32,7 +32,7 @@ ROT.StringGenerator = function(options) {
 ROT.StringGenerator.prototype.clear = function() {
 	this._data = {};
 	this._priorValues = {};
-}
+};
 
 /**
  * @returns {string} Generated string
@@ -43,7 +43,7 @@ ROT.StringGenerator.prototype.generate = function() {
 		result.push(this._sample(result));
 	}
 	return this._join(result.slice(0, -1));
-}
+};
 
 /**
  * Observe (learn) a string from a training set
@@ -65,7 +65,7 @@ ROT.StringGenerator.prototype.observe = function(string) {
 			this._observeEvent(subcontext, event);
 		}
 	}
-}
+};
 
 ROT.StringGenerator.prototype.getStats = function() {
 	var parts = [];
@@ -87,7 +87,7 @@ ROT.StringGenerator.prototype.getStats = function() {
 	parts.push("dictionary size (events): " + eventCount);
 
 	return parts.join(", ");
-}
+};
 
 /**
  * @param {string}
@@ -95,7 +95,7 @@ ROT.StringGenerator.prototype.getStats = function() {
  */
 ROT.StringGenerator.prototype._split = function(str) {
 	return str.split(this._options.words ? /\s+/ : "");
-}
+};
 
 /**
  * @param {string[]}
@@ -103,7 +103,7 @@ ROT.StringGenerator.prototype._split = function(str) {
  */
 ROT.StringGenerator.prototype._join = function(arr) {
 	return arr.join(this._options.words ? " " : "");
-}
+};
 
 /**
  * @param {string[]} context
@@ -116,7 +116,7 @@ ROT.StringGenerator.prototype._observeEvent = function(context, event) {
 
 	if (!(event in data)) { data[event] = 0; }
 	data[event]++;
-}
+};
 
 /**
  * @param {string[]}
@@ -137,7 +137,7 @@ ROT.StringGenerator.prototype._sample = function(context) {
 	}
 
 	return ROT.RNG.getWeightedValue(available);
-}
+};
 
 /**
  * @param {string[]}
@@ -153,4 +153,4 @@ ROT.StringGenerator.prototype._backoff = function(context) {
 	while (!(this._join(context) in this._data) && context.length > 0) { context = context.slice(1); }
 
 	return context;
-}
+};

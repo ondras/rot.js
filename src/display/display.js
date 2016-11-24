@@ -52,7 +52,7 @@ ROT.Display = function(options) {
 
 	this._tick = this._tick.bind(this);
 	requestAnimationFrame(this._tick);
-}
+};
 
 /**
  * Debug helper, ideal as a map generator callback. Always bound to this.
@@ -63,7 +63,7 @@ ROT.Display = function(options) {
 ROT.Display.prototype.DEBUG = function(x, y, what) {
 	var colors = [this._options.bg, this._options.fg];
 	this.draw(x, y, null, null, colors[what % colors.length]);
-}
+};
 
 /**
  * Clear the whole display (cover it with background color)
@@ -71,7 +71,7 @@ ROT.Display.prototype.DEBUG = function(x, y, what) {
 ROT.Display.prototype.clear = function() {
 	this._data = {};
 	this._dirty = true;
-}
+};
 
 /**
  * @see ROT.Display
@@ -92,7 +92,7 @@ ROT.Display.prototype.setOptions = function(options) {
 		this._dirty = true;
 	}
 	return this;
-}
+};
 
 /**
  * Returns currently set options
@@ -100,7 +100,7 @@ ROT.Display.prototype.setOptions = function(options) {
  */
 ROT.Display.prototype.getOptions = function() {
 	return this._options;
-}
+};
 
 /**
  * Returns the DOM node of this display
@@ -108,7 +108,7 @@ ROT.Display.prototype.getOptions = function() {
  */
 ROT.Display.prototype.getContainer = function() {
 	return this._context.canvas;
-}
+};
 
 /**
  * Compute the maximum width/height to fit into a set of given constraints
@@ -118,7 +118,7 @@ ROT.Display.prototype.getContainer = function() {
  */
 ROT.Display.prototype.computeSize = function(availWidth, availHeight) {
 	return this._backend.computeSize(availWidth, availHeight, this._options);
-}
+};
 
 /**
  * Compute the maximum font size to fit into a set of given constraints
@@ -128,7 +128,7 @@ ROT.Display.prototype.computeSize = function(availWidth, availHeight) {
  */
 ROT.Display.prototype.computeFontSize = function(availWidth, availHeight) {
 	return this._backend.computeFontSize(availWidth, availHeight, this._options);
-}
+};
 
 /**
  * Convert a DOM event (mouse or touch) to map coordinates. Uses first touch for multi-touch.
@@ -154,7 +154,7 @@ ROT.Display.prototype.eventToPosition = function(e) {
 	if (x < 0 || y < 0 || x >= this._context.canvas.width || y >= this._context.canvas.height) { return [-1, -1]; }
 
 	return this._backend.eventToPosition(x, y);
-}
+};
 
 /**
  * @param {int} x
@@ -171,7 +171,7 @@ ROT.Display.prototype.draw = function(x, y, ch, fg, bg) {
 	if (this._dirty === true) { return; } /* will already redraw everything */
 	if (!this._dirty) { this._dirty = {}; } /* first! */
 	this._dirty[x+","+y] = true;
-}
+};
 
 /**
  * Draws a text at given position. Optionally wraps at a maximum length. Currently does not work with hex layout.
@@ -226,13 +226,13 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 			case ROT.Text.TYPE_NEWLINE:
 				cx = x;
 				cy++;
-				lines++
+				lines++;
 			break;
 		}
 	}
 
 	return lines;
-}
+};
 
 /**
  * Timer tick: update dirty parts
@@ -257,7 +257,7 @@ ROT.Display.prototype._tick = function() {
 	}
 
 	this._dirty = false;
-}
+};
 
 /**
  * @param {string} key What to draw
@@ -268,4 +268,4 @@ ROT.Display.prototype._draw = function(key, clearBefore) {
 	if (data[4] != this._options.bg) { clearBefore = true; }
 
 	this._backend.draw(data, clearBefore);
-}
+};

@@ -19,7 +19,7 @@ ROT.Map.Cellular = function(width, height, options) {
 
 	this._dirs = ROT.DIRS[this._options.topology];
 	this._map = this._fillMap(0);
-}
+};
 ROT.Map.Cellular.extend(ROT.Map);
 
 /**
@@ -33,7 +33,7 @@ ROT.Map.Cellular.prototype.randomize = function(probability) {
 		}
 	}
 	return this;
-}
+};
 
 /**
  * Change options.
@@ -41,11 +41,11 @@ ROT.Map.Cellular.prototype.randomize = function(probability) {
  */
 ROT.Map.Cellular.prototype.setOptions = function(options) {
 	for (var p in options) { this._options[p] = options[p]; }
-}
+};
 
 ROT.Map.Cellular.prototype.set = function(x, y, value) {
 	this._map[x][y] = value;
-}
+};
 
 ROT.Map.Cellular.prototype.create = function(callback) {
 	var newMap = this._fillMap(0);
@@ -77,7 +77,7 @@ ROT.Map.Cellular.prototype.create = function(callback) {
 	this._map = newMap;
 
 	this.serviceCallback(callback);
-}
+};
 
 ROT.Map.Cellular.prototype.serviceCallback = function(callback) {
 	if (!callback) { return; }
@@ -93,7 +93,7 @@ ROT.Map.Cellular.prototype.serviceCallback = function(callback) {
 			callback(i, j, this._map[i][j]);
 		}
 	}
-}
+};
 
 /**
  * Get neighbor count at [i,j] in this._map
@@ -110,7 +110,7 @@ ROT.Map.Cellular.prototype._getNeighbors = function(cx, cy) {
 	}
 
 	return result;
-}
+};
 
 /**
  * Make sure every non-wall space is accessible.
@@ -138,7 +138,7 @@ ROT.Map.Cellular.prototype.connect = function(callback, value, connectionCallbac
 	var key = this._pointKey(start);
 	var connected = {};
 	connected[key] = start;
-	delete notConnected[key]
+	delete notConnected[key];
 
 	// find what's connected to the starting point
 	this._findConnected(connected, notConnected, [start], false, value);
@@ -168,7 +168,7 @@ ROT.Map.Cellular.prototype.connect = function(callback, value, connectionCallbac
 	}
 
 	this.serviceCallback(callback);
-}
+};
 
 /**
  * Find random points to connect. Search for the closest point in the larger space.
@@ -181,11 +181,11 @@ ROT.Map.Cellular.prototype._getFromTo = function(connected, notConnected) {
 	for (var i = 0; i < 5; i++) {
 		if (connectedKeys.length < notConnectedKeys.length) {
 			var keys = connectedKeys;
-			to = connected[keys[ROT.RNG.getUniformInt(0, keys.length - 1)]]
+			to = connected[keys[ROT.RNG.getUniformInt(0, keys.length - 1)]];
 			from = this._getClosest(to, notConnected);
 		} else {
 			var keys = notConnectedKeys;
-			from = notConnected[keys[ROT.RNG.getUniformInt(0, keys.length - 1)]]
+			from = notConnected[keys[ROT.RNG.getUniformInt(0, keys.length - 1)]];
 			to = this._getClosest(from, connected);
 		}
 		d = (from[0] - to[0]) * (from[0] - to[0]) + (from[1] - to[1]) * (from[1] - to[1]);
@@ -195,7 +195,7 @@ ROT.Map.Cellular.prototype._getFromTo = function(connected, notConnected) {
 	}
 	// console.log(">>> connected=" + to + " notConnected=" + from + " dist=" + d);
 	return [from, to];
-}
+};
 
 ROT.Map.Cellular.prototype._getClosest = function(point, space) {
 	var minPoint = null;
@@ -209,7 +209,7 @@ ROT.Map.Cellular.prototype._getClosest = function(point, space) {
 		}
 	}
 	return minPoint;
-}
+};
 
 ROT.Map.Cellular.prototype._findConnected = function(connected, notConnected, stack, keepNotConnected, value) {
 	while(stack.length > 0) {
@@ -231,7 +231,7 @@ ROT.Map.Cellular.prototype._findConnected = function(connected, notConnected, st
 			}
 		}
 	}
-}
+};
 
 ROT.Map.Cellular.prototype._tunnelToConnected = function(to, from, connected, notConnected, value, connectionCallback) {
 	var key = this._pointKey(from);
@@ -274,12 +274,12 @@ ROT.Map.Cellular.prototype._tunnelToConnected = function(to, from, connected, no
 	if (connectionCallback && a[1] < b[1]) {
 		connectionCallback([b[0], a[1]], [b[0], b[1]]);
 	}
-}
+};
 
 ROT.Map.Cellular.prototype._freeSpace = function(x, y, value) {
 	return x >= 0 && x < this._width && y >= 0 && y < this._height && this._map[x][y] == value;
-}
+};
 
 ROT.Map.Cellular.prototype._pointKey = function(p) {
 	return p[0] + "." + p[1];
-}
+};

@@ -9,7 +9,7 @@ ROT.Display.Hex = function(context) {
 	this._spacingY = 0;
 	this._hexSize = 0;
 	this._options = {};
-}
+};
 ROT.Display.Hex.extend(ROT.Display.Backend);
 
 ROT.Display.Hex.prototype.compute = function(options) {
@@ -30,7 +30,7 @@ ROT.Display.Hex.prototype.compute = function(options) {
 	}
 	this._context.canvas[xprop] = Math.ceil( (options.width + 1) * this._spacingX );
 	this._context.canvas[yprop] = Math.ceil( (options.height - 1) * this._spacingY + 2*this._hexSize );
-}
+};
 
 ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
 	var x = data[0];
@@ -58,7 +58,7 @@ ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
 	for (var i=0;i<chars.length;i++) {
 		this._context.fillText(chars[i], px[0], Math.ceil(px[1]));
 	}
-}
+};
 
 ROT.Display.Hex.prototype.computeSize = function(availWidth, availHeight) {
 	if (this._options.transpose) {
@@ -70,7 +70,7 @@ ROT.Display.Hex.prototype.computeSize = function(availWidth, availHeight) {
 	var width = Math.floor(availWidth / this._spacingX) - 1;
 	var height = Math.floor((availHeight - 2*this._hexSize) / this._spacingY + 1);
 	return [width, height];
-}
+};
 
 ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
 	if (this._options.transpose) {
@@ -97,7 +97,7 @@ ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
 
 	/* closest smaller fontSize */
 	return Math.ceil(fontSize)-1;
-}
+};
 
 ROT.Display.Hex.prototype.eventToPosition = function(x, y) {
 	if (this._options.transpose) {
@@ -119,7 +119,7 @@ ROT.Display.Hex.prototype.eventToPosition = function(x, y) {
 	}
 
 	return [x, y];
-}
+};
 
 /**
  * Arguments are pixel values. If "transposed" mode is enabled, then these two are already swapped.
@@ -148,4 +148,4 @@ ROT.Display.Hex.prototype._fill = function(cx, cy) {
 		this._context.lineTo(cx,					cy-a+b);
 	}
 	this._context.fill();
-}
+};

@@ -5,14 +5,14 @@ ROT.Scheduler = function() {
 	this._queue = new ROT.EventQueue();
 	this._repeat = [];
 	this._current = null;
-}
+};
 
 /**
  * @see ROT.EventQueue#getTime
  */
 ROT.Scheduler.prototype.getTime = function() {
 	return this._queue.getTime();
-}
+};
 
 /**
  * @param {?} item
@@ -21,7 +21,7 @@ ROT.Scheduler.prototype.getTime = function() {
 ROT.Scheduler.prototype.add = function(item, repeat) {
 	if (repeat) { this._repeat.push(item); }
 	return this;
-}
+};
 
 /**
  * Get the time the given item is scheduled for
@@ -30,7 +30,7 @@ ROT.Scheduler.prototype.add = function(item, repeat) {
  */
 ROT.Scheduler.prototype.getTimeOf = function(item) {
 	return this._queue.getEventTime(item);
-}
+};
 
 /**
  * Clear all items
@@ -40,7 +40,7 @@ ROT.Scheduler.prototype.clear = function() {
 	this._repeat = [];
 	this._current = null;
 	return this;
-}
+};
 
 /**
  * Remove a previously added item
@@ -56,7 +56,7 @@ ROT.Scheduler.prototype.remove = function(item) {
 	if (this._current == item) { this._current = null; }
 
 	return result;
-}
+};
 
 /**
  * Schedule next item
@@ -65,4 +65,4 @@ ROT.Scheduler.prototype.remove = function(item) {
 ROT.Scheduler.prototype.next = function() {
 	this._current = this._queue.get();
 	return this._current;
-}
+};

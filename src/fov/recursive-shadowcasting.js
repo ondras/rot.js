@@ -6,7 +6,7 @@
  */
 ROT.FOV.RecursiveShadowcasting = function(lightPassesCallback, options) {
 	ROT.FOV.call(this, lightPassesCallback, options);
-}
+};
 ROT.FOV.RecursiveShadowcasting.extend(ROT.FOV);
 
 /** Octants used for translating recursive shadowcasting offsets */
@@ -34,7 +34,7 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute = function(x, y, R, callback) {
 	for(var i = 0; i < ROT.FOV.RecursiveShadowcasting.OCTANTS.length; i++) {
 		this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[i], R, callback);
 	}
-}
+};
 
 /**
  * Compute visibility for a 180-degree arc
@@ -54,7 +54,7 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute180 = function(x, y, R, dir, cal
 	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[previousOctant], R, callback);
 	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[dir], R, callback);
 	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[nextOctant], R, callback);
-}
+};
 
 /**
  * Compute visibility for a 90-degree arc
@@ -70,7 +70,7 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute90 = function(x, y, R, dir, call
 	var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 90 degrees
 	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[dir], R, callback);
 	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[previousOctant], R, callback);
-}
+};
 
 /**
  * Render one octant (45-degree arc) of the viewshed
@@ -83,7 +83,7 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute90 = function(x, y, R, dir, call
 ROT.FOV.RecursiveShadowcasting.prototype._renderOctant = function(x, y, octant, R, callback) {
 	//Radius incremented by 1 to provide same coverage area as other shadowcasting radiuses
 	this._castVisibility(x, y, 1, 1.0, 0.0, R + 1, octant[0], octant[1], octant[2], octant[3], callback);
-}
+};
 
 /**
  * Actually calculates the visibility
@@ -151,4 +151,4 @@ ROT.FOV.RecursiveShadowcasting.prototype._castVisibility = function(startX, star
 		}
 		if(blocked) { break; }
 	}
-}
+};

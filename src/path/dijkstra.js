@@ -9,7 +9,7 @@ ROT.Path.Dijkstra = function(toX, toY, passableCallback, options) {
 	this._computed = {};
 	this._todo = [];
 	this._add(toX, toY, null);
-}
+};
 ROT.Path.Dijkstra.extend(ROT.Path);
 
 /**
@@ -26,7 +26,7 @@ ROT.Path.Dijkstra.prototype.compute = function(fromX, fromY, callback) {
 		callback(item.x, item.y);
 		item = item.prev;
 	}
-}
+};
 
 /**
  * Compute a non-cached value
@@ -47,14 +47,14 @@ ROT.Path.Dijkstra.prototype._compute = function(fromX, fromY) {
 			this._add(x, y, item); 
 		}
 	}
-}
+};
 
 ROT.Path.Dijkstra.prototype._add = function(x, y, prev) {
 	var obj = {
 		x: x,
 		y: y,
 		prev: prev
-	}
+	};
 	this._computed[x+","+y] = obj;
 	this._todo.push(obj);
-}
+};
