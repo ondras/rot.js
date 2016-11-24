@@ -1,7 +1,21 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.7~dev, generated on Tue Aug 30 12:08:59 CEST 2016.
+	Version 0.7~dev, generated on Thu 24 Nov 2016 08:07:39 MST.
 */
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define([], factory);
+    } else if (typeof exports === 'object') {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        module.exports = factory();
+    } else {
+        // Browser globals (root is window)
+        root.ROT = factory();
+    }
+}(this, function() {
 /**
  * @namespace Top-level ROT namespace
  */
@@ -437,7 +451,7 @@ ROT.Text = {
 
 	/* insert line breaks into first-pass tokenized data */
 	_breakLines: function(tokens, maxWidth) {
-		if (!maxWidth) { maxWidth = Infinity; };
+		if (!maxWidth) { maxWidth = Infinity; }
 
 		var i = 0;
 		var lineLength = 0;
@@ -540,22 +554,22 @@ ROT.Text = {
 	_breakInsideToken: function(tokens, tokenIndex, breakIndex, removeBreakChar) {
 		var newBreakToken = {
 			type: ROT.Text.TYPE_NEWLINE
-		}
+		};
 		var newTextToken = {
 			type: ROT.Text.TYPE_TEXT,
 			value: tokens[tokenIndex].value.substring(breakIndex + (removeBreakChar ? 1 : 0))
-		}
+		};
 		tokens.splice(tokenIndex+1, 0, newBreakToken, newTextToken);
 		return tokens[tokenIndex].value.substring(0, breakIndex);
 	}
-}
+};
 /**
  * @returns {any} Randomly picked item, null when length=0
  */
 Array.prototype.random = Array.prototype.random || function() {
 	if (!this.length) { return null; }
 	return this[Math.floor(ROT.RNG.getUniform() * this.length)];
-}
+};
 
 /**
  * @returns {array} New array with randomized items
@@ -568,7 +582,7 @@ Array.prototype.randomize = Array.prototype.randomize || function() {
     result.push(clone.splice(index, 1)[0]);
   }
   return result;
-}
+};
 /**
  * Always positive modulus
  * @param {int} n Modulus
@@ -576,13 +590,13 @@ Array.prototype.randomize = Array.prototype.randomize || function() {
  */
 Number.prototype.mod = Number.prototype.mod || function(n) {
 	return ((this%n)+n)%n;
-}
+};
 /**
  * @returns {string} First letter capitalized
  */
 String.prototype.capitalize = String.prototype.capitalize || function() {
 	return this.charAt(0).toUpperCase() + this.substring(1);
-}
+};
 
 /** 
  * Left pad
@@ -597,7 +611,7 @@ String.prototype.lpad = String.prototype.lpad || function(character, count) {
 	while (s.length < (cnt - this.length)) { s += ch; }
 	s = s.substring(0, cnt-this.length);
 	return s+this;
-}
+};
 
 /** 
  * Right pad
@@ -612,7 +626,7 @@ String.prototype.rpad = String.prototype.rpad || function(character, count) {
 	while (s.length < (cnt - this.length)) { s += ch; }
 	s = s.substring(0, cnt-this.length);
 	return this+s;
-}
+};
 
 /**
  * Format a string in a flexible way. Scans for %s strings and replaces them with arguments. List of patterns is modifiable via String.format.map.
@@ -641,13 +655,13 @@ String.format = String.format || function(template) {
 		if (first != first.toLowerCase()) { replaced = replaced.capitalize(); }
 
 		return replaced;
-	}
+	};
 	return template.replace(/%(?:([a-z]+)|(?:{([^}]+)}))/gi, replacer);
-}
+};
 
 String.format.map = String.format.map || {
 	"s": "toString"
-}
+};
 
 /**
  * Convenience shortcut to String.format(this)
@@ -656,7 +670,7 @@ String.prototype.format = String.prototype.format || function() {
 	var args = Array.prototype.slice.call(arguments);
 	args.unshift(this);
 	return String.format.apply(String, args);
-}
+};
 
 if (!Object.create) {  
 	/**
@@ -676,7 +690,7 @@ Function.prototype.extend = Function.prototype.extend || function(parent) {
 	this.prototype = Object.create(parent.prototype);
 	this.prototype.constructor = this;
 	return this;
-}
+};
 if (typeof window != "undefined") {
 	window.requestAnimationFrame =
 		window.requestAnimationFrame
@@ -748,7 +762,7 @@ ROT.Display = function(options) {
 
 	this._tick = this._tick.bind(this);
 	requestAnimationFrame(this._tick);
-}
+};
 
 /**
  * Debug helper, ideal as a map generator callback. Always bound to this.
@@ -759,7 +773,7 @@ ROT.Display = function(options) {
 ROT.Display.prototype.DEBUG = function(x, y, what) {
 	var colors = [this._options.bg, this._options.fg];
 	this.draw(x, y, null, null, colors[what % colors.length]);
-}
+};
 
 /**
  * Clear the whole display (cover it with background color)
@@ -767,7 +781,7 @@ ROT.Display.prototype.DEBUG = function(x, y, what) {
 ROT.Display.prototype.clear = function() {
 	this._data = {};
 	this._dirty = true;
-}
+};
 
 /**
  * @see ROT.Display
@@ -788,7 +802,7 @@ ROT.Display.prototype.setOptions = function(options) {
 		this._dirty = true;
 	}
 	return this;
-}
+};
 
 /**
  * Returns currently set options
@@ -796,7 +810,7 @@ ROT.Display.prototype.setOptions = function(options) {
  */
 ROT.Display.prototype.getOptions = function() {
 	return this._options;
-}
+};
 
 /**
  * Returns the DOM node of this display
@@ -804,7 +818,7 @@ ROT.Display.prototype.getOptions = function() {
  */
 ROT.Display.prototype.getContainer = function() {
 	return this._context.canvas;
-}
+};
 
 /**
  * Compute the maximum width/height to fit into a set of given constraints
@@ -814,7 +828,7 @@ ROT.Display.prototype.getContainer = function() {
  */
 ROT.Display.prototype.computeSize = function(availWidth, availHeight) {
 	return this._backend.computeSize(availWidth, availHeight, this._options);
-}
+};
 
 /**
  * Compute the maximum font size to fit into a set of given constraints
@@ -824,7 +838,7 @@ ROT.Display.prototype.computeSize = function(availWidth, availHeight) {
  */
 ROT.Display.prototype.computeFontSize = function(availWidth, availHeight) {
 	return this._backend.computeFontSize(availWidth, availHeight, this._options);
-}
+};
 
 /**
  * Convert a DOM event (mouse or touch) to map coordinates. Uses first touch for multi-touch.
@@ -850,7 +864,7 @@ ROT.Display.prototype.eventToPosition = function(e) {
 	if (x < 0 || y < 0 || x >= this._context.canvas.width || y >= this._context.canvas.height) { return [-1, -1]; }
 
 	return this._backend.eventToPosition(x, y);
-}
+};
 
 /**
  * @param {int} x
@@ -867,7 +881,7 @@ ROT.Display.prototype.draw = function(x, y, ch, fg, bg) {
 	if (this._dirty === true) { return; } /* will already redraw everything */
 	if (!this._dirty) { this._dirty = {}; } /* first! */
 	this._dirty[x+","+y] = true;
-}
+};
 
 /**
  * Draws a text at given position. Optionally wraps at a maximum length. Currently does not work with hex layout.
@@ -896,7 +910,7 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 					var cc = token.value.charCodeAt(i);
 					var c = token.value.charAt(i);
 					// Assign to `true` when the current char is full-width.
-					isFullWidth = (cc > 0xff && cc < 0xff61) || (cc > 0xffdc && cc < 0xffe8) && cc > 0xffee;
+					isFullWidth = (cc > 0xff00 && cc < 0xff61) || (cc > 0xffdc && cc < 0xffe8) || cc > 0xffee;
 					// Current char is space, whatever full-width or half-width both are OK.
 					isSpace = (c.charCodeAt(0) == 0x20 || c.charCodeAt(0) == 0x3000);
 					// The previous char is full-width and
@@ -922,13 +936,13 @@ ROT.Display.prototype.drawText = function(x, y, text, maxWidth) {
 			case ROT.Text.TYPE_NEWLINE:
 				cx = x;
 				cy++;
-				lines++
+				lines++;
 			break;
 		}
 	}
 
 	return lines;
-}
+};
 
 /**
  * Timer tick: update dirty parts
@@ -953,7 +967,7 @@ ROT.Display.prototype._tick = function() {
 	}
 
 	this._dirty = false;
-}
+};
 
 /**
  * @param {string} key What to draw
@@ -964,29 +978,29 @@ ROT.Display.prototype._draw = function(key, clearBefore) {
 	if (data[4] != this._options.bg) { clearBefore = true; }
 
 	this._backend.draw(data, clearBefore);
-}
+};
 /**
  * @class Abstract display backend module
  * @private
  */
 ROT.Display.Backend = function(context) {
 	this._context = context;
-}
+};
 
 ROT.Display.Backend.prototype.compute = function(options) {
-}
+};
 
 ROT.Display.Backend.prototype.draw = function(data, clearBefore) {
-}
+};
 
 ROT.Display.Backend.prototype.computeSize = function(availWidth, availHeight) {
-}
+};
 
 ROT.Display.Backend.prototype.computeFontSize = function(availWidth, availHeight) {
-}
+};
 
 ROT.Display.Backend.prototype.eventToPosition = function(x, y) {
-}
+};
 /**
  * @class Rectangular backend
  * @private
@@ -998,7 +1012,7 @@ ROT.Display.Rect = function(context) {
 	this._spacingY = 0;
 	this._canvasCache = {};
 	this._options = {};
-}
+};
 ROT.Display.Rect.extend(ROT.Display.Backend);
 
 ROT.Display.Rect.cache = false;
@@ -1017,7 +1031,7 @@ ROT.Display.Rect.prototype.compute = function(options) {
 
 	this._context.canvas.width = options.width * this._spacingX;
 	this._context.canvas.height = options.height * this._spacingY;
-}
+};
 
 ROT.Display.Rect.prototype.draw = function(data, clearBefore) {
 	if (this.constructor.cache) {
@@ -1025,7 +1039,7 @@ ROT.Display.Rect.prototype.draw = function(data, clearBefore) {
 	} else {
 		this._drawNoCache(data, clearBefore);
 	}
-}
+};
 
 ROT.Display.Rect.prototype._drawWithCache = function(data, clearBefore) {
 	var x = data[0];
@@ -1061,7 +1075,7 @@ ROT.Display.Rect.prototype._drawWithCache = function(data, clearBefore) {
 	}
 	
 	this._context.drawImage(canvas, x*this._spacingX, y*this._spacingY);
-}
+};
 
 ROT.Display.Rect.prototype._drawNoCache = function(data, clearBefore) {
 	var x = data[0];
@@ -1084,13 +1098,13 @@ ROT.Display.Rect.prototype._drawNoCache = function(data, clearBefore) {
 	for (var i=0;i<chars.length;i++) {
 		this._context.fillText(chars[i], (x+0.5) * this._spacingX, Math.ceil((y+0.5) * this._spacingY));
 	}
-}
+};
 
 ROT.Display.Rect.prototype.computeSize = function(availWidth, availHeight) {
 	var width = Math.floor(availWidth / this._spacingX);
 	var height = Math.floor(availHeight / this._spacingY);
 	return [width, height];
-}
+};
 
 ROT.Display.Rect.prototype.computeFontSize = function(availWidth, availHeight) {
 	var boxWidth = Math.floor(availWidth / this._options.width);
@@ -1108,11 +1122,11 @@ ROT.Display.Rect.prototype.computeFontSize = function(availWidth, availHeight) {
 		boxHeight = Math.floor(boxHeight / widthFraction);
 	}
 	return Math.floor(boxHeight / this._options.spacing);
-}
+};
 
 ROT.Display.Rect.prototype.eventToPosition = function(x, y) {
 	return [Math.floor(x/this._spacingX), Math.floor(y/this._spacingY)];
-}
+};
 /**
  * @class Hexagonal backend
  * @private
@@ -1124,7 +1138,7 @@ ROT.Display.Hex = function(context) {
 	this._spacingY = 0;
 	this._hexSize = 0;
 	this._options = {};
-}
+};
 ROT.Display.Hex.extend(ROT.Display.Backend);
 
 ROT.Display.Hex.prototype.compute = function(options) {
@@ -1145,7 +1159,7 @@ ROT.Display.Hex.prototype.compute = function(options) {
 	}
 	this._context.canvas[xprop] = Math.ceil( (options.width + 1) * this._spacingX );
 	this._context.canvas[yprop] = Math.ceil( (options.height - 1) * this._spacingY + 2*this._hexSize );
-}
+};
 
 ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
 	var x = data[0];
@@ -1173,7 +1187,7 @@ ROT.Display.Hex.prototype.draw = function(data, clearBefore) {
 	for (var i=0;i<chars.length;i++) {
 		this._context.fillText(chars[i], px[0], Math.ceil(px[1]));
 	}
-}
+};
 
 ROT.Display.Hex.prototype.computeSize = function(availWidth, availHeight) {
 	if (this._options.transpose) {
@@ -1185,7 +1199,7 @@ ROT.Display.Hex.prototype.computeSize = function(availWidth, availHeight) {
 	var width = Math.floor(availWidth / this._spacingX) - 1;
 	var height = Math.floor((availHeight - 2*this._hexSize) / this._spacingY + 1);
 	return [width, height];
-}
+};
 
 ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
 	if (this._options.transpose) {
@@ -1212,7 +1226,7 @@ ROT.Display.Hex.prototype.computeFontSize = function(availWidth, availHeight) {
 
 	/* closest smaller fontSize */
 	return Math.ceil(fontSize)-1;
-}
+};
 
 ROT.Display.Hex.prototype.eventToPosition = function(x, y) {
 	if (this._options.transpose) {
@@ -1234,7 +1248,7 @@ ROT.Display.Hex.prototype.eventToPosition = function(x, y) {
 	}
 
 	return [x, y];
-}
+};
 
 /**
  * Arguments are pixel values. If "transposed" mode is enabled, then these two are already swapped.
@@ -1263,7 +1277,7 @@ ROT.Display.Hex.prototype._fill = function(cx, cy) {
 		this._context.lineTo(cx,					cy-a+b);
 	}
 	this._context.fill();
-}
+};
 /**
  * @class Tile backend
  * @private
@@ -1273,7 +1287,7 @@ ROT.Display.Tile = function(context) {
 	
 	this._options = {};
 	this._colorCanvas = document.createElement("canvas");
-}
+};
 ROT.Display.Tile.extend(ROT.Display.Rect);
 
 ROT.Display.Tile.prototype.compute = function(options) {
@@ -1282,7 +1296,7 @@ ROT.Display.Tile.prototype.compute = function(options) {
 	this._context.canvas.height = options.height * options.tileHeight;
 	this._colorCanvas.width = options.tileWidth;
 	this._colorCanvas.height = options.tileHeight;
-}
+};
 
 ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 	var x = data[0];
@@ -1343,23 +1357,23 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 			);
 		}
 	}
-}
+};
 
 ROT.Display.Tile.prototype.computeSize = function(availWidth, availHeight) {
 	var width = Math.floor(availWidth / this._options.tileWidth);
 	var height = Math.floor(availHeight / this._options.tileHeight);
 	return [width, height];
-}
+};
 
 ROT.Display.Tile.prototype.computeFontSize = function(availWidth, availHeight) {
 	var width = Math.floor(availWidth / this._options.width);
 	var height = Math.floor(availHeight / this._options.height);
 	return [width, height];
-}
+};
 
 ROT.Display.Tile.prototype.eventToPosition = function(x, y) {
 	return [Math.floor(x/this._options.tileWidth), Math.floor(y/this._options.tileHeight)];
-}
+};
 /**
  * @namespace
  * This code is an implementation of Alea algorithm; (C) 2010 Johannes Baagøe.
@@ -1495,7 +1509,7 @@ ROT.RNG = {
 	_s2: 0,
 	_c: 0,
 	_frac: 2.3283064365386963e-10 /* 2^-32 */
-}
+};
 
 ROT.RNG.setSeed(Date.now());
 /**
@@ -1512,7 +1526,7 @@ ROT.StringGenerator = function(options) {
 		words: false,
 		order: 3,
 		prior: 0.001
-	}
+	};
 	for (var p in options) { this._options[p] = options[p]; }
 
 	this._boundary = String.fromCharCode(0);
@@ -1524,7 +1538,7 @@ ROT.StringGenerator = function(options) {
 	this._priorValues[this._boundary] = this._options.prior;
 
 	this._data = {};
-}
+};
 
 /**
  * Remove all learning data
@@ -1532,7 +1546,7 @@ ROT.StringGenerator = function(options) {
 ROT.StringGenerator.prototype.clear = function() {
 	this._data = {};
 	this._priorValues = {};
-}
+};
 
 /**
  * @returns {string} Generated string
@@ -1543,7 +1557,7 @@ ROT.StringGenerator.prototype.generate = function() {
 		result.push(this._sample(result));
 	}
 	return this._join(result.slice(0, -1));
-}
+};
 
 /**
  * Observe (learn) a string from a training set
@@ -1565,7 +1579,7 @@ ROT.StringGenerator.prototype.observe = function(string) {
 			this._observeEvent(subcontext, event);
 		}
 	}
-}
+};
 
 ROT.StringGenerator.prototype.getStats = function() {
 	var parts = [];
@@ -1587,7 +1601,7 @@ ROT.StringGenerator.prototype.getStats = function() {
 	parts.push("dictionary size (events): " + eventCount);
 
 	return parts.join(", ");
-}
+};
 
 /**
  * @param {string}
@@ -1595,7 +1609,7 @@ ROT.StringGenerator.prototype.getStats = function() {
  */
 ROT.StringGenerator.prototype._split = function(str) {
 	return str.split(this._options.words ? /\s+/ : "");
-}
+};
 
 /**
  * @param {string[]}
@@ -1603,7 +1617,7 @@ ROT.StringGenerator.prototype._split = function(str) {
  */
 ROT.StringGenerator.prototype._join = function(arr) {
 	return arr.join(this._options.words ? " " : "");
-}
+};
 
 /**
  * @param {string[]} context
@@ -1616,7 +1630,7 @@ ROT.StringGenerator.prototype._observeEvent = function(context, event) {
 
 	if (!(event in data)) { data[event] = 0; }
 	data[event]++;
-}
+};
 
 /**
  * @param {string[]}
@@ -1637,7 +1651,7 @@ ROT.StringGenerator.prototype._sample = function(context) {
 	}
 
 	return ROT.RNG.getWeightedValue(available);
-}
+};
 
 /**
  * @param {string[]}
@@ -1653,7 +1667,7 @@ ROT.StringGenerator.prototype._backoff = function(context) {
 	while (!(this._join(context) in this._data) && context.length > 0) { context = context.slice(1); }
 
 	return context;
-}
+};
 /**
  * @class Generic event queue: stores events and retrieves them based on their time
  */
@@ -1661,14 +1675,14 @@ ROT.EventQueue = function() {
 	this._time = 0;
 	this._events = [];
 	this._eventTimes = [];
-}
+};
 
 /**
  * @returns {number} Elapsed time
  */
 ROT.EventQueue.prototype.getTime = function() {
 	return this._time;
-}
+};
 
 /**
  * Clear all scheduled events
@@ -1677,7 +1691,7 @@ ROT.EventQueue.prototype.clear = function() {
 	this._events = [];
 	this._eventTimes = [];
 	return this;
-}
+};
 
 /**
  * @param {?} event
@@ -1694,7 +1708,7 @@ ROT.EventQueue.prototype.add = function(event, time) {
 
 	this._events.splice(index, 0, event);
 	this._eventTimes.splice(index, 0, time);
-}
+};
 
 /**
  * Locates the nearest event, advances time if necessary. Returns that event and removes it from the queue.
@@ -1710,7 +1724,18 @@ ROT.EventQueue.prototype.get = function() {
 	}
 
 	return this._events.splice(0, 1)[0];
-}
+};
+
+/**
+ * Get the time associated with the given event
+ * @param {?} event
+ * @returns {number} time
+ */
+ROT.EventQueue.prototype.getEventTime = function(event) {
+	var index = this._events.indexOf(event);
+	if (index == -1) { return undefined }
+	return this._eventTimes[index];
+};
 
 /**
  * Remove an event from the queue
@@ -1722,7 +1747,7 @@ ROT.EventQueue.prototype.remove = function(event) {
 	if (index == -1) { return false }
 	this._remove(index);
 	return true;
-}
+};
 
 /**
  * Remove an event from the queue
@@ -1731,7 +1756,7 @@ ROT.EventQueue.prototype.remove = function(event) {
 ROT.EventQueue.prototype._remove = function(index) {
 	this._events.splice(index, 1);
 	this._eventTimes.splice(index, 1);
-}
+};
 /**
  * @class Abstract scheduler
  */
@@ -1739,14 +1764,14 @@ ROT.Scheduler = function() {
 	this._queue = new ROT.EventQueue();
 	this._repeat = [];
 	this._current = null;
-}
+};
 
 /**
  * @see ROT.EventQueue#getTime
  */
 ROT.Scheduler.prototype.getTime = function() {
 	return this._queue.getTime();
-}
+};
 
 /**
  * @param {?} item
@@ -1755,7 +1780,16 @@ ROT.Scheduler.prototype.getTime = function() {
 ROT.Scheduler.prototype.add = function(item, repeat) {
 	if (repeat) { this._repeat.push(item); }
 	return this;
-}
+};
+
+/**
+ * Get the time the given item is scheduled for
+ * @param {?} item
+ * @returns {number} time
+ */
+ROT.Scheduler.prototype.getTimeOf = function(item) {
+	return this._queue.getEventTime(item);
+};
 
 /**
  * Clear all items
@@ -1765,7 +1799,7 @@ ROT.Scheduler.prototype.clear = function() {
 	this._repeat = [];
 	this._current = null;
 	return this;
-}
+};
 
 /**
  * Remove a previously added item
@@ -1781,7 +1815,7 @@ ROT.Scheduler.prototype.remove = function(item) {
 	if (this._current == item) { this._current = null; }
 
 	return result;
-}
+};
 
 /**
  * Schedule next item
@@ -1790,14 +1824,14 @@ ROT.Scheduler.prototype.remove = function(item) {
 ROT.Scheduler.prototype.next = function() {
 	this._current = this._queue.get();
 	return this._current;
-}
+};
 /**
  * @class Simple fair scheduler (round-robin style)
  * @augments ROT.Scheduler
  */
 ROT.Scheduler.Simple = function() {
 	ROT.Scheduler.call(this);
-}
+};
 ROT.Scheduler.Simple.extend(ROT.Scheduler);
 
 /**
@@ -1806,7 +1840,7 @@ ROT.Scheduler.Simple.extend(ROT.Scheduler);
 ROT.Scheduler.Simple.prototype.add = function(item, repeat) {
 	this._queue.add(item, 0);
 	return ROT.Scheduler.prototype.add.call(this, item, repeat);
-}
+};
 
 /**
  * @see ROT.Scheduler#next
@@ -1816,25 +1850,26 @@ ROT.Scheduler.Simple.prototype.next = function() {
 		this._queue.add(this._current, 0);
 	}
 	return ROT.Scheduler.prototype.next.call(this);
-}
+};
 /**
  * @class Speed-based scheduler
  * @augments ROT.Scheduler
  */
 ROT.Scheduler.Speed = function() {
 	ROT.Scheduler.call(this);
-}
+};
 ROT.Scheduler.Speed.extend(ROT.Scheduler);
 
 /**
  * @param {object} item anything with "getSpeed" method
  * @param {bool} repeat
+ * @param {number} [time=1/item.getSpeed()]
  * @see ROT.Scheduler#add
  */
-ROT.Scheduler.Speed.prototype.add = function(item, repeat) {
-	this._queue.add(item, 1/item.getSpeed());
+ROT.Scheduler.Speed.prototype.add = function(item, repeat, time) {
+	this._queue.add(item, time !== undefined ? time : 1/item.getSpeed());
 	return ROT.Scheduler.prototype.add.call(this, item, repeat);
-}
+};
 
 /**
  * @see ROT.Scheduler#next
@@ -1844,7 +1879,7 @@ ROT.Scheduler.Speed.prototype.next = function() {
 		this._queue.add(this._current, 1/this._current.getSpeed());
 	}
 	return ROT.Scheduler.prototype.next.call(this);
-}
+};
 /**
  * @class Action-based scheduler
  * @augments ROT.Scheduler
@@ -1853,7 +1888,7 @@ ROT.Scheduler.Action = function() {
 	ROT.Scheduler.call(this);
 	this._defaultDuration = 1; /* for newly added */
 	this._duration = this._defaultDuration; /* for this._current */
-}
+};
 ROT.Scheduler.Action.extend(ROT.Scheduler);
 
 /**
@@ -1865,17 +1900,17 @@ ROT.Scheduler.Action.extend(ROT.Scheduler);
 ROT.Scheduler.Action.prototype.add = function(item, repeat, time) {
 	this._queue.add(item, time || this._defaultDuration);
 	return ROT.Scheduler.prototype.add.call(this, item, repeat);
-}
+};
 
 ROT.Scheduler.Action.prototype.clear = function() {
 	this._duration = this._defaultDuration;
 	return ROT.Scheduler.prototype.clear.call(this);
-}
+};
 
 ROT.Scheduler.Action.prototype.remove = function(item) {
 	if (item == this._current) { this._duration = this._defaultDuration; }
 	return ROT.Scheduler.prototype.remove.call(this, item);
-}
+};
 
 /**
  * @see ROT.Scheduler#next
@@ -1886,7 +1921,7 @@ ROT.Scheduler.Action.prototype.next = function() {
 		this._duration = this._defaultDuration;
 	}
 	return ROT.Scheduler.prototype.next.call(this);
-}
+};
 
 /**
  * Set duration for the active item
@@ -1894,7 +1929,7 @@ ROT.Scheduler.Action.prototype.next = function() {
 ROT.Scheduler.Action.prototype.setDuration = function(time) {
 	if (this._current) { this._duration = time; }
 	return this;
-}
+};
 /**
  * @class Asynchronous main loop
  * @param {ROT.Scheduler} scheduler
@@ -1902,14 +1937,14 @@ ROT.Scheduler.Action.prototype.setDuration = function(time) {
 ROT.Engine = function(scheduler) {
 	this._scheduler = scheduler;
 	this._lock = 1;
-}
+};
 
 /**
  * Start the main loop. When this call returns, the loop is locked.
  */
 ROT.Engine.prototype.start = function() {
 	return this.unlock();
-}
+};
 
 /**
  * Interrupt the engine by an asynchronous action
@@ -1917,7 +1952,7 @@ ROT.Engine.prototype.start = function() {
 ROT.Engine.prototype.lock = function() {
 	this._lock++;
 	return this;
-}
+};
 
 /**
  * Resume execution (paused by a previous lock)
@@ -1937,7 +1972,7 @@ ROT.Engine.prototype.unlock = function() {
 	}
 
 	return this;
-}
+};
 /**
  * @class Base map generator
  * @param {int} [width=ROT.DEFAULT_WIDTH]
@@ -1948,7 +1983,7 @@ ROT.Map = function(width, height) {
 	this._height = height || ROT.DEFAULT_HEIGHT;
 };
 
-ROT.Map.prototype.create = function(callback) {}
+ROT.Map.prototype.create = function(callback) {};
 
 ROT.Map.prototype._fillMap = function(value) {
 	var map = [];
@@ -1957,14 +1992,14 @@ ROT.Map.prototype._fillMap = function(value) {
 		for (var j=0;j<this._height;j++) { map[i].push(value); }
 	}
 	return map;
-}
+};
 /**
  * @class Simple empty rectangular room
  * @augments ROT.Map
  */
 ROT.Map.Arena = function(width, height) {
 	ROT.Map.call(this, width, height);
-}
+};
 ROT.Map.Arena.extend(ROT.Map);
 
 ROT.Map.Arena.prototype.create = function(callback) {
@@ -1977,7 +2012,7 @@ ROT.Map.Arena.prototype.create = function(callback) {
 		}
 	}
 	return this;
-}
+};
 /**
  * @class Recursively divided maze, http://en.wikipedia.org/wiki/Maze_generation_algorithm#Recursive_division_method
  * @augments ROT.Map
@@ -1985,7 +2020,7 @@ ROT.Map.Arena.prototype.create = function(callback) {
 ROT.Map.DividedMaze = function(width, height) {
 	ROT.Map.call(this, width, height);
 	this._stack = [];
-}
+};
 ROT.Map.DividedMaze.extend(ROT.Map);
 
 ROT.Map.DividedMaze.prototype.create = function(callback) {
@@ -2014,14 +2049,14 @@ ROT.Map.DividedMaze.prototype.create = function(callback) {
 	}
 	this._map = null;
 	return this;
-}
+};
 
 ROT.Map.DividedMaze.prototype._process = function() {
 	while (this._stack.length) {
 		var room = this._stack.shift(); /* [left, top, right, bottom] */
 		this._partitionRoom(room);
 	}
-}
+};
 
 ROT.Map.DividedMaze.prototype._partitionRoom = function(room) {
 	var availX = [];
@@ -2085,7 +2120,7 @@ ROT.Map.DividedMaze.prototype._partitionRoom = function(room) {
 	this._stack.push([x+1, room[1], room[2], y-1]); /* right top */
 	this._stack.push([room[0], y+1, x-1, room[3]]); /* left bottom */
 	this._stack.push([x+1, y+1, room[2], room[3]]); /* right bottom */
-}
+};
 /**
  * @class Icey's Maze generator
  * See http://www.roguebasin.roguelikedevelopment.org/index.php?title=Simple_maze for explanation
@@ -2094,7 +2129,7 @@ ROT.Map.DividedMaze.prototype._partitionRoom = function(room) {
 ROT.Map.IceyMaze = function(width, height, regularity) {
 	ROT.Map.call(this, width, height);
 	this._regularity = regularity || 0;
-}
+};
 ROT.Map.IceyMaze.extend(ROT.Map);
 
 ROT.Map.IceyMaze.prototype.create = function(callback) {
@@ -2155,7 +2190,7 @@ ROT.Map.IceyMaze.prototype.create = function(callback) {
 	}
 	this._map = null;
 	return this;
-}
+};
 
 ROT.Map.IceyMaze.prototype._randomize = function(dirs) {
 	for (var i=0;i<4;i++) {
@@ -2181,12 +2216,12 @@ ROT.Map.IceyMaze.prototype._randomize = function(dirs) {
 			dirs[3][1] = -1; dirs[2][1] = 1;
 		break;
 	}
-}
+};
 
 ROT.Map.IceyMaze.prototype._isFree = function(map, x, y, width, height) {
 	if (x < 1 || y < 1 || x >= width || y >= height) { return false; }
 	return map[x][y];
-}
+};
 /**
  * @class Maze generator - Eller's algorithm
  * See http://homepages.cwi.nl/~tromp/maze.html for explanation
@@ -2194,7 +2229,7 @@ ROT.Map.IceyMaze.prototype._isFree = function(map, x, y, width, height) {
  */
 ROT.Map.EllerMaze = function(width, height) {
 	ROT.Map.call(this, width, height);
-}
+};
 ROT.Map.EllerMaze.extend(ROT.Map);
 
 ROT.Map.EllerMaze.prototype.create = function(callback) {
@@ -2261,7 +2296,7 @@ ROT.Map.EllerMaze.prototype.create = function(callback) {
 	}
 	
 	return this;
-}
+};
 
 /**
  * Remove "i" from its list
@@ -2271,7 +2306,7 @@ ROT.Map.EllerMaze.prototype._removeFromList = function(i, L, R) {
 	L[R[i]] = L[i];
 	R[i] = i;
 	L[i] = i;
-}
+};
 
 /**
  * Join lists with "i" and "i+1"
@@ -2281,7 +2316,7 @@ ROT.Map.EllerMaze.prototype._addToList = function(i, L, R) {
 	L[R[i]] = L[i+1];
 	R[i] = i+1;
 	L[i+1] = i;
-}
+};
 /**
  * @class Cellular automaton map generator
  * @augments ROT.Map
@@ -2303,7 +2338,7 @@ ROT.Map.Cellular = function(width, height, options) {
 
 	this._dirs = ROT.DIRS[this._options.topology];
 	this._map = this._fillMap(0);
-}
+};
 ROT.Map.Cellular.extend(ROT.Map);
 
 /**
@@ -2317,7 +2352,7 @@ ROT.Map.Cellular.prototype.randomize = function(probability) {
 		}
 	}
 	return this;
-}
+};
 
 /**
  * Change options.
@@ -2325,11 +2360,11 @@ ROT.Map.Cellular.prototype.randomize = function(probability) {
  */
 ROT.Map.Cellular.prototype.setOptions = function(options) {
 	for (var p in options) { this._options[p] = options[p]; }
-}
+};
 
 ROT.Map.Cellular.prototype.set = function(x, y, value) {
 	this._map[x][y] = value;
-}
+};
 
 ROT.Map.Cellular.prototype.create = function(callback) {
 	var newMap = this._fillMap(0);
@@ -2361,7 +2396,7 @@ ROT.Map.Cellular.prototype.create = function(callback) {
 	this._map = newMap;
 
 	this.serviceCallback(callback);
-}
+};
 
 ROT.Map.Cellular.prototype.serviceCallback = function(callback) {
 	if (!callback) { return; }
@@ -2377,7 +2412,7 @@ ROT.Map.Cellular.prototype.serviceCallback = function(callback) {
 			callback(i, j, this._map[i][j]);
 		}
 	}
-}
+};
 
 /**
  * Get neighbor count at [i,j] in this._map
@@ -2394,7 +2429,7 @@ ROT.Map.Cellular.prototype._getNeighbors = function(cx, cy) {
 	}
 
 	return result;
-}
+};
 
 /**
  * Make sure every non-wall space is accessible.
@@ -2422,7 +2457,7 @@ ROT.Map.Cellular.prototype.connect = function(callback, value, connectionCallbac
 	var key = this._pointKey(start);
 	var connected = {};
 	connected[key] = start;
-	delete notConnected[key]
+	delete notConnected[key];
 
 	// find what's connected to the starting point
 	this._findConnected(connected, notConnected, [start], false, value);
@@ -2452,7 +2487,7 @@ ROT.Map.Cellular.prototype.connect = function(callback, value, connectionCallbac
 	}
 
 	this.serviceCallback(callback);
-}
+};
 
 /**
  * Find random points to connect. Search for the closest point in the larger space.
@@ -2465,11 +2500,11 @@ ROT.Map.Cellular.prototype._getFromTo = function(connected, notConnected) {
 	for (var i = 0; i < 5; i++) {
 		if (connectedKeys.length < notConnectedKeys.length) {
 			var keys = connectedKeys;
-			to = connected[keys[ROT.RNG.getUniformInt(0, keys.length - 1)]]
+			to = connected[keys[ROT.RNG.getUniformInt(0, keys.length - 1)]];
 			from = this._getClosest(to, notConnected);
 		} else {
 			var keys = notConnectedKeys;
-			from = notConnected[keys[ROT.RNG.getUniformInt(0, keys.length - 1)]]
+			from = notConnected[keys[ROT.RNG.getUniformInt(0, keys.length - 1)]];
 			to = this._getClosest(from, connected);
 		}
 		d = (from[0] - to[0]) * (from[0] - to[0]) + (from[1] - to[1]) * (from[1] - to[1]);
@@ -2479,7 +2514,7 @@ ROT.Map.Cellular.prototype._getFromTo = function(connected, notConnected) {
 	}
 	// console.log(">>> connected=" + to + " notConnected=" + from + " dist=" + d);
 	return [from, to];
-}
+};
 
 ROT.Map.Cellular.prototype._getClosest = function(point, space) {
 	var minPoint = null;
@@ -2493,7 +2528,7 @@ ROT.Map.Cellular.prototype._getClosest = function(point, space) {
 		}
 	}
 	return minPoint;
-}
+};
 
 ROT.Map.Cellular.prototype._findConnected = function(connected, notConnected, stack, keepNotConnected, value) {
 	while(stack.length > 0) {
@@ -2515,7 +2550,7 @@ ROT.Map.Cellular.prototype._findConnected = function(connected, notConnected, st
 			}
 		}
 	}
-}
+};
 
 ROT.Map.Cellular.prototype._tunnelToConnected = function(to, from, connected, notConnected, value, connectionCallback) {
 	var key = this._pointKey(from);
@@ -2558,15 +2593,15 @@ ROT.Map.Cellular.prototype._tunnelToConnected = function(to, from, connected, no
 	if (connectionCallback && a[1] < b[1]) {
 		connectionCallback([b[0], a[1]], [b[0], b[1]]);
 	}
-}
+};
 
 ROT.Map.Cellular.prototype._freeSpace = function(x, y, value) {
 	return x >= 0 && x < this._width && y >= 0 && y < this._height && this._map[x][y] == value;
-}
+};
 
 ROT.Map.Cellular.prototype._pointKey = function(p) {
 	return p[0] + "." + p[1];
-}
+};
 /**
  * @class Dungeon map: has rooms and corridors
  * @augments ROT.Map
@@ -2575,7 +2610,7 @@ ROT.Map.Dungeon = function(width, height) {
 	ROT.Map.call(this, width, height);
 	this._rooms = []; /* list of all rooms */
 	this._corridors = [];
-}
+};
 ROT.Map.Dungeon.extend(ROT.Map);
 
 /**
@@ -2584,7 +2619,7 @@ ROT.Map.Dungeon.extend(ROT.Map);
  */
 ROT.Map.Dungeon.prototype.getRooms = function() {
 	return this._rooms;
-}
+};
 
 /**
  * Get all generated corridors
@@ -2592,7 +2627,7 @@ ROT.Map.Dungeon.prototype.getRooms = function() {
  */
 ROT.Map.Dungeon.prototype.getCorridors = function() {
 	return this._corridors;
-}
+};
 /**
  * @class Random dungeon generator using human-like digging patterns.
  * Heavily based on Mike Anderson's ideas from the "Tyrant" algo, mentioned at 
@@ -2608,13 +2643,13 @@ ROT.Map.Digger = function(width, height, options) {
 		corridorLength: [3, 10], /* corridor minimum and maximum length */
 		dugPercentage: 0.2, /* we stop after this percentage of level area has been dug out */
 		timeLimit: 1000 /* we stop after this much time has passed (msec) */
-	}
+	};
 	for (var p in options) { this._options[p] = options[p]; }
 	
 	this._features = {
 		"Room": 4,
 		"Corridor": 4
-	}
+	};
 	this._featureAttempts = 20; /* how many times do we try to create a feature on a suitable wall */
 	this._walls = {}; /* these are available for digging */
 	
@@ -2622,7 +2657,7 @@ ROT.Map.Digger = function(width, height, options) {
 	this._canBeDugCallback = this._canBeDugCallback.bind(this);
 	this._isWallCallback = this._isWallCallback.bind(this);
 	this._priorityWallCallback = this._priorityWallCallback.bind(this);
-}
+};
 ROT.Map.Digger.extend(ROT.Map.Dungeon);
 
 /**
@@ -2690,7 +2725,7 @@ ROT.Map.Digger.prototype.create = function(callback) {
 	this._map = null;
 
 	return this;
-}
+};
 
 ROT.Map.Digger.prototype._digCallback = function(x, y, value) {
 	if (value == 0 || value == 2) { /* empty */
@@ -2699,21 +2734,21 @@ ROT.Map.Digger.prototype._digCallback = function(x, y, value) {
 	} else { /* wall */
 		this._walls[x+","+y] = 1;
 	}
-}
+};
 
 ROT.Map.Digger.prototype._isWallCallback = function(x, y) {
 	if (x < 0 || y < 0 || x >= this._width || y >= this._height) { return false; }
 	return (this._map[x][y] == 1);
-}
+};
 
 ROT.Map.Digger.prototype._canBeDugCallback = function(x, y) {
 	if (x < 1 || y < 1 || x+1 >= this._width || y+1 >= this._height) { return false; }
 	return (this._map[x][y] == 1);
-}
+};
 
 ROT.Map.Digger.prototype._priorityWallCallback = function(x, y) {
 	this._walls[x+","+y] = 2;
-}
+};
 
 ROT.Map.Digger.prototype._firstRoom = function() {
 	var cx = Math.floor(this._width/2);
@@ -2721,7 +2756,7 @@ ROT.Map.Digger.prototype._firstRoom = function() {
 	var room = ROT.Map.Feature.Room.createRandomCenter(cx, cy, this._options);
 	this._rooms.push(room);
 	room.create(this._digCallback);
-}
+};
 
 /**
  * Get a suitable wall
@@ -2745,7 +2780,7 @@ ROT.Map.Digger.prototype._findWall = function() {
 	delete this._walls[id];
 
 	return id;
-}
+};
 
 /**
  * Tries adding a feature
@@ -2771,7 +2806,7 @@ ROT.Map.Digger.prototype._tryFeature = function(x, y, dx, dy) {
 	}
 	
 	return true;
-}
+};
 
 ROT.Map.Digger.prototype._removeSurroundingWalls = function(cx, cy) {
 	var deltas = ROT.DIRS[4];
@@ -2785,7 +2820,7 @@ ROT.Map.Digger.prototype._removeSurroundingWalls = function(cx, cy) {
 		var y = cy + 2*delta[1];
 		delete this._walls[x+","+y];
 	}
-}
+};
 
 /**
  * Returns vector in "digging" direction, or false, if this does not exist (or is not unique)
@@ -2811,7 +2846,7 @@ ROT.Map.Digger.prototype._getDiggingDirection = function(cx, cy) {
 	if (!result) { return null; }
 	
 	return [-result[0], -result[1]];
-}
+};
 
 /**
  * Find empty spaces surrounding rooms, and apply doors.
@@ -2820,13 +2855,13 @@ ROT.Map.Digger.prototype._addDoors = function() {
 	var data = this._map;
 	var isWallCallback = function(x, y) {
 		return (data[x][y] == 1);
-	}
+	};
 	for (var i = 0; i < this._rooms.length; i++ ) {
 		var room = this._rooms[i];
 		room.clearDoors();
 		room.addDoors(isWallCallback);
 	}
-}
+};
 /**
  * @class Dungeon generator which tries to fill the space evenly. Generates independent rooms and tries to connect them.
  * @augments ROT.Map.Dungeon
@@ -2839,7 +2874,7 @@ ROT.Map.Uniform = function(width, height, options) {
 		roomHeight: [3, 5], /* room minimum and maximum height */
 		roomDugPercentage: 0.1, /* we stop after this percentage of level area has been dug out by rooms */
 		timeLimit: 1000 /* we stop after this much time has passed (msec) */
-	}
+	};
 	for (var p in options) { this._options[p] = options[p]; }
 
 	this._roomAttempts = 20; /* new room is created N-times until is considered as impossible to generate */
@@ -2851,7 +2886,7 @@ ROT.Map.Uniform = function(width, height, options) {
 	this._digCallback = this._digCallback.bind(this);
 	this._canBeDugCallback = this._canBeDugCallback.bind(this);
 	this._isWallCallback = this._isWallCallback.bind(this);
-}
+};
 ROT.Map.Uniform.extend(ROT.Map.Dungeon);
 
 /**
@@ -2882,7 +2917,7 @@ ROT.Map.Uniform.prototype.create = function(callback) {
 	}
 	
 	return this;
-}
+};
 
 /**
  * Generates a suitable amount of rooms
@@ -2897,7 +2932,7 @@ ROT.Map.Uniform.prototype._generateRooms = function() {
 	} while (room);
 
 	/* either enough rooms, or not able to generate more of them :) */
-}
+};
 
 /**
  * Try to generate one room
@@ -2917,7 +2952,7 @@ ROT.Map.Uniform.prototype._generateRoom = function() {
 
 	/* no room was generated in a given number of attempts */
 	return null;
-}
+};
 
 /**
  * Generates connectors beween rooms
@@ -2958,7 +2993,7 @@ ROT.Map.Uniform.prototype._generateCorridors = function() {
 		}
 	}
 	return false;
-}
+};
 
 /**
  * For a given room, find the closest one from the list
@@ -2982,7 +3017,7 @@ ROT.Map.Uniform.prototype._closestRoom = function(rooms, room) {
 	}
 	
 	return result;
-}
+};
 
 ROT.Map.Uniform.prototype._connectRooms = function(room1, room2) {
 	/*
@@ -3077,7 +3112,7 @@ ROT.Map.Uniform.prototype._connectRooms = function(room1, room2) {
 	}
 	
 	return true;
-}
+};
 
 ROT.Map.Uniform.prototype._placeInWall = function(room, dirIndex) {
 	var start = [0, 0];
@@ -3128,7 +3163,7 @@ ROT.Map.Uniform.prototype._placeInWall = function(room, dirIndex) {
 		if (!avail[i]) { avail.splice(i, 1); }
 	}
 	return (avail.length ? avail.random() : null);
-}
+};
 
 /**
  * Dig a polyline.
@@ -3141,22 +3176,22 @@ ROT.Map.Uniform.prototype._digLine = function(points) {
 		corridor.create(this._digCallback);
 		this._corridors.push(corridor);
 	}
-}
+};
 
 ROT.Map.Uniform.prototype._digCallback = function(x, y, value) {
 	this._map[x][y] = value;
 	if (value == 0) { this._dug++; }
-}
+};
 
 ROT.Map.Uniform.prototype._isWallCallback = function(x, y) {
 	if (x < 0 || y < 0 || x >= this._width || y >= this._height) { return false; }
 	return (this._map[x][y] == 1);
-}
+};
 
 ROT.Map.Uniform.prototype._canBeDugCallback = function(x, y) {
 	if (x < 1 || y < 1 || x+1 >= this._width || y+1 >= this._height) { return false; }
 	return (this._map[x][y] == 1);
-}
+};
 
 /**
  * @author hyakugei
@@ -3577,11 +3612,11 @@ ROT.Map.Rogue.prototype._createCorridors = function () {
 /**
  * @class Dungeon feature; has own .create() method
  */
-ROT.Map.Feature = function() {}
-ROT.Map.Feature.prototype.isValid = function(canBeDugCallback) {}
-ROT.Map.Feature.prototype.create = function(digCallback) {}
-ROT.Map.Feature.prototype.debug = function() {}
-ROT.Map.Feature.createRandomAt = function(x, y, dx, dy, options) {}
+ROT.Map.Feature = function() {};
+ROT.Map.Feature.prototype.isValid = function(canBeDugCallback) {};
+ROT.Map.Feature.prototype.create = function(digCallback) {};
+ROT.Map.Feature.prototype.debug = function() {};
+ROT.Map.Feature.createRandomAt = function(x, y, dx, dy, options) {};
 
 /**
  * @class Room
@@ -3600,7 +3635,7 @@ ROT.Map.Feature.Room = function(x1, y1, x2, y2, doorX, doorY) {
 	this._y2 = y2;
 	this._doors = {};
 	if (arguments.length > 4) { this.addDoor(doorX, doorY); }
-}
+};
 ROT.Map.Feature.Room.extend(ROT.Map.Feature);
 
 /**
@@ -3636,7 +3671,7 @@ ROT.Map.Feature.Room.createRandomAt = function(x, y, dx, dy, options) {
 	}
 
         throw new Error("dx or dy must be 1 or -1");
-}
+};
 
 /**
  * Room of random size, positioned around center coords
@@ -3656,7 +3691,7 @@ ROT.Map.Feature.Room.createRandomCenter = function(cx, cy, options) {
 	var y2 = y1 + height - 1;
 
 	return new this(x1, y1, x2, y2);
-}
+};
 
 /**
  * Room of random size within a given dimensions
@@ -3679,12 +3714,12 @@ ROT.Map.Feature.Room.createRandom = function(availWidth, availHeight, options) {
 	var y2 = y1 + height - 1;
 
 	return new this(x1, y1, x2, y2);
-}
+};
 
 ROT.Map.Feature.Room.prototype.addDoor = function(x, y) {
 	this._doors[x+","+y] = 1;
 	return this;
-}
+};
 
 /**
  * @param {function}
@@ -3695,12 +3730,12 @@ ROT.Map.Feature.Room.prototype.getDoors = function(callback) {
 		callback(parseInt(parts[0]), parseInt(parts[1]));
 	}
 	return this;
-}
+};
 
 ROT.Map.Feature.Room.prototype.clearDoors = function() {
 	this._doors = {};
 	return this;
-}
+};
 
 ROT.Map.Feature.Room.prototype.addDoors = function(isWallCallback) {
 	var left = this._x1-1;
@@ -3718,11 +3753,11 @@ ROT.Map.Feature.Room.prototype.addDoors = function(isWallCallback) {
 	}
 
 	return this;
-}
+};
 
 ROT.Map.Feature.Room.prototype.debug = function() {
 	console.log("room", this._x1, this._y1, this._x2, this._y2);
-}
+};
 
 ROT.Map.Feature.Room.prototype.isValid = function(isWallCallback, canBeDugCallback) { 
 	var left = this._x1-1;
@@ -3741,7 +3776,7 @@ ROT.Map.Feature.Room.prototype.isValid = function(isWallCallback, canBeDugCallba
 	}
 
 	return true;
-}
+};
 
 /**
  * @param {function} digCallback Dig callback with a signature (x, y, value). Values: 0 = empty, 1 = wall, 2 = door. Multiple doors are allowed.
@@ -3765,27 +3800,27 @@ ROT.Map.Feature.Room.prototype.create = function(digCallback) {
 			digCallback(x, y, value);
 		}
 	}
-}
+};
 
 ROT.Map.Feature.Room.prototype.getCenter = function() {
 	return [Math.round((this._x1 + this._x2)/2), Math.round((this._y1 + this._y2)/2)];
-}
+};
 
 ROT.Map.Feature.Room.prototype.getLeft = function() {
 	return this._x1;
-}
+};
 
 ROT.Map.Feature.Room.prototype.getRight = function() {
 	return this._x2;
-}
+};
 
 ROT.Map.Feature.Room.prototype.getTop = function() {
 	return this._y1;
-}
+};
 
 ROT.Map.Feature.Room.prototype.getBottom = function() {
 	return this._y2;
-}
+};
 
 /**
  * @class Corridor
@@ -3801,7 +3836,7 @@ ROT.Map.Feature.Corridor = function(startX, startY, endX, endY) {
 	this._endX = endX; 
 	this._endY = endY;
 	this._endsWithAWall = true;
-}
+};
 ROT.Map.Feature.Corridor.extend(ROT.Map.Feature);
 
 ROT.Map.Feature.Corridor.createRandomAt = function(x, y, dx, dy, options) {
@@ -3810,11 +3845,11 @@ ROT.Map.Feature.Corridor.createRandomAt = function(x, y, dx, dy, options) {
 	var length = ROT.RNG.getUniformInt(min, max);
 	
 	return new this(x, y, x + dx*length, y + dy*length);
-}
+};
 
 ROT.Map.Feature.Corridor.prototype.debug = function() {
 	console.log("corridor", this._startX, this._startY, this._endX, this._endY);
-}
+};
 
 ROT.Map.Feature.Corridor.prototype.isValid = function(isWallCallback, canBeDugCallback){ 
 	var sx = this._startX;
@@ -3873,7 +3908,7 @@ ROT.Map.Feature.Corridor.prototype.isValid = function(isWallCallback, canBeDugCa
 	if ((firstCornerBad || secondCornerBad) && this._endsWithAWall) { return false; }
 
 	return true;
-}
+};
 
 /**
  * @param {function} digCallback Dig callback with a signature (x, y, value). Values: 0 = empty.
@@ -3897,7 +3932,7 @@ ROT.Map.Feature.Corridor.prototype.create = function(digCallback) {
 	}
 	
 	return true;
-}
+};
 
 ROT.Map.Feature.Corridor.prototype.createPriorityWalls = function(priorityWallCallback) {
 	if (!this._endsWithAWall) { return; }
@@ -3915,14 +3950,14 @@ ROT.Map.Feature.Corridor.prototype.createPriorityWalls = function(priorityWallCa
 	priorityWallCallback(this._endX + dx, this._endY + dy);
 	priorityWallCallback(this._endX + nx, this._endY + ny);
 	priorityWallCallback(this._endX - nx, this._endY - ny);
-}
+};
 /**
  * @class Base noise generator
  */
 ROT.Noise = function() {
 };
 
-ROT.Noise.prototype.get = function(x, y) {}
+ROT.Noise.prototype.get = function(x, y) {};
 /**
  * A simple 2d implementation of simplex noise by Ondrej Zara
  *
@@ -4049,7 +4084,7 @@ ROT.FOV = function(lightPassesCallback, options) {
 	this._lightPasses = lightPassesCallback;
 	this._options = {
 		topology: 8
-	}
+	};
 	for (var p in options) { this._options[p] = options[p]; }
 };
 
@@ -4060,7 +4095,7 @@ ROT.FOV = function(lightPassesCallback, options) {
  * @param {int} R Maximum visibility radius
  * @param {function} callback
  */
-ROT.FOV.prototype.compute = function(x, y, R, callback) {}
+ROT.FOV.prototype.compute = function(x, y, R, callback) {};
 
 /**
  * Return all neighbors in a concentric ring
@@ -4081,7 +4116,7 @@ ROT.FOV.prototype._getCircle = function(cx, cy, r) {
 				ROT.DIRS[8][1],
 				ROT.DIRS[8][3],
 				ROT.DIRS[8][5]
-			]
+			];
 		break;
 
 		case 6:
@@ -4112,14 +4147,14 @@ ROT.FOV.prototype._getCircle = function(cx, cy, r) {
 	}
 
 	return result;
-}
+};
 /**
  * @class Discrete shadowcasting algorithm. Obsoleted by Precise shadowcasting.
  * @augments ROT.FOV
  */
 ROT.FOV.DiscreteShadowcasting = function(lightPassesCallback, options) {
 	ROT.FOV.call(this, lightPassesCallback, options);
-}
+};
 ROT.FOV.DiscreteShadowcasting.extend(ROT.FOV);
 
 /**
@@ -4158,7 +4193,7 @@ ROT.FOV.DiscreteShadowcasting.prototype.compute = function(x, y, R, callback) {
 
 		} /* for all cells in this ring */
 	} /* for all rings */
-}
+};
 
 /**
  * @param {int} A start angle
@@ -4220,14 +4255,14 @@ ROT.FOV.DiscreteShadowcasting.prototype._visibleCoords = function(A, B, blocks, 
 			
 		return true;
 	}
-}
+};
 /**
  * @class Precise shadowcasting algorithm
  * @augments ROT.FOV
  */
 ROT.FOV.PreciseShadowcasting = function(lightPassesCallback, options) {
 	ROT.FOV.call(this, lightPassesCallback, options);
-}
+};
 ROT.FOV.PreciseShadowcasting.extend(ROT.FOV);
 
 /**
@@ -4265,7 +4300,7 @@ ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback) {
 
 		} /* for all cells in this ring */
 	} /* for all rings */
-}
+};
 
 /**
  * @param {int[2]} A1 arc start
@@ -4343,7 +4378,7 @@ ROT.FOV.PreciseShadowcasting.prototype._checkVisibility = function(A1, A2, block
 	var arcLength = (A2[0]*A1[1] - A1[0]*A2[1]) / (A1[1] * A2[1]);
 
 	return visibleLength/arcLength;
-}
+};
 /**
  * @class Recursive shadowcasting algorithm
  * Currently only supports 4/8 topologies, not hexagonal.
@@ -4352,7 +4387,7 @@ ROT.FOV.PreciseShadowcasting.prototype._checkVisibility = function(A1, A2, block
  */
 ROT.FOV.RecursiveShadowcasting = function(lightPassesCallback, options) {
 	ROT.FOV.call(this, lightPassesCallback, options);
-}
+};
 ROT.FOV.RecursiveShadowcasting.extend(ROT.FOV);
 
 /** Octants used for translating recursive shadowcasting offsets */
@@ -4380,7 +4415,7 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute = function(x, y, R, callback) {
 	for(var i = 0; i < ROT.FOV.RecursiveShadowcasting.OCTANTS.length; i++) {
 		this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[i], R, callback);
 	}
-}
+};
 
 /**
  * Compute visibility for a 180-degree arc
@@ -4400,7 +4435,7 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute180 = function(x, y, R, dir, cal
 	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[previousOctant], R, callback);
 	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[dir], R, callback);
 	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[nextOctant], R, callback);
-}
+};
 
 /**
  * Compute visibility for a 90-degree arc
@@ -4416,7 +4451,7 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute90 = function(x, y, R, dir, call
 	var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 90 degrees
 	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[dir], R, callback);
 	this._renderOctant(x, y, ROT.FOV.RecursiveShadowcasting.OCTANTS[previousOctant], R, callback);
-}
+};
 
 /**
  * Render one octant (45-degree arc) of the viewshed
@@ -4429,7 +4464,7 @@ ROT.FOV.RecursiveShadowcasting.prototype.compute90 = function(x, y, R, dir, call
 ROT.FOV.RecursiveShadowcasting.prototype._renderOctant = function(x, y, octant, R, callback) {
 	//Radius incremented by 1 to provide same coverage area as other shadowcasting radiuses
 	this._castVisibility(x, y, 1, 1.0, 0.0, R + 1, octant[0], octant[1], octant[2], octant[3], callback);
-}
+};
 
 /**
  * Actually calculates the visibility
@@ -4497,7 +4532,7 @@ ROT.FOV.RecursiveShadowcasting.prototype._castVisibility = function(startX, star
 		}
 		if(blocked) { break; }
 	}
-}
+};
 /**
  * @namespace Color operations
  */
@@ -4874,7 +4909,7 @@ ROT.Color = {
 		"ivory": [255,255,240],
 		"white": [255,255,255]
 	}
-}
+};
 /**
  * @class Lighting computation, based on a traditional FOV for multiple light sources and multiple passes.
  * @param {function} reflectivityCallback Callback to retrieve cell reflectivity (0..1)
@@ -4897,7 +4932,7 @@ ROT.Lighting = function(reflectivityCallback, options) {
 	this._fovCache = {};
 
 	this.setOptions(options);
-}
+};
 
 /**
  * Adjust options at runtime
@@ -4908,7 +4943,7 @@ ROT.Lighting.prototype.setOptions = function(options) {
 	for (var p in options) { this._options[p] = options[p]; }
 	if (options && options.range) { this.reset(); }
 	return this;
-}
+};
 
 /**
  * Set the used Field-Of-View algo
@@ -4918,7 +4953,7 @@ ROT.Lighting.prototype.setFOV = function(fov) {
 	this._fov = fov;
 	this._fovCache = {};
 	return this;
-}
+};
 
 /**
  * Set (or remove) a light source
@@ -4927,22 +4962,22 @@ ROT.Lighting.prototype.setFOV = function(fov) {
  * @param {null || string || number[3]} color
  */
 ROT.Lighting.prototype.setLight = function(x, y, color) {
-	var key = x+","+y;
+  var key = x + "," + y;
 
-	if (color) {
-		this._lights[key] = (typeof(color) == "string" ? ROT.Color.fromString(color) : color);
-	} else {
-		delete this._lights[key];
-	}
-	return this;
-}
+  if (color) {
+    this._lights[key] = (typeof(color) == "string" ? ROT.Color.fromString(color) : color);
+  } else {
+    delete this._lights[key];
+  }
+  return this;
+};
 
 /**
  * Remove all light sources
  */
 ROT.Lighting.prototype.clearLights = function() {
     this._lights = {};
-}
+};
 
 /**
  * Reset the pre-computed topology values. Call whenever the underlying map changes its light-passability.
@@ -4952,7 +4987,7 @@ ROT.Lighting.prototype.reset = function() {
 	this._fovCache = {};
 
 	return this;
-}
+};
 
 /**
  * Compute the lighting
@@ -4983,7 +5018,7 @@ ROT.Lighting.prototype.compute = function(lightingCallback) {
 	}
 
 	return this;
-}
+};
 
 /**
  * Compute one iteration from all emitting cells
@@ -5000,7 +5035,7 @@ ROT.Lighting.prototype._emitLight = function(emittingCells, litCells, doneCells)
 		doneCells[key] = 1;
 	}
 	return this;
-}
+};
 
 /**
  * Prepare a list of emitters for next pass
@@ -5040,7 +5075,7 @@ ROT.Lighting.prototype._computeEmitters = function(litCells, doneCells) {
 	}
 
 	return result;
-}
+};
 
 /**
  * Compute one iteration from one cell
@@ -5071,7 +5106,7 @@ ROT.Lighting.prototype._emitLightFromCell = function(x, y, color, litCells) {
 	}
 
 	return this;
-}
+};
 
 /**
  * Compute FOV ("form factor") for a potential light source at [x,y]
@@ -5089,11 +5124,11 @@ ROT.Lighting.prototype._updateFOV = function(x, y) {
 		var formFactor = vis * (1-r/range);
 		if (formFactor == 0) { return; }
 		cache[key2] = formFactor;
-	}
+	};
 	this._fov.compute(x, y, range, cb.bind(this));
 
 	return cache;
-}
+};
 /**
  * @class Abstract pathfinder
  * @param {int} toX Target X coord
@@ -5110,7 +5145,7 @@ ROT.Path = function(toX, toY, passableCallback, options) {
 	this._passableCallback = passableCallback;
 	this._options = {
 		topology: 8
-	}
+	};
 	for (var p in options) { this._options[p] = options[p]; }
 
 	this._dirs = ROT.DIRS[this._options.topology];
@@ -5126,7 +5161,7 @@ ROT.Path = function(toX, toY, passableCallback, options) {
 			this._dirs[7]
 		]
 	}
-}
+};
 
 /**
  * Compute a path from a given point
@@ -5135,7 +5170,7 @@ ROT.Path = function(toX, toY, passableCallback, options) {
  * @param {function} callback Will be called for every path item with arguments "x" and "y"
  */
 ROT.Path.prototype.compute = function(fromX, fromY, callback) {
-}
+};
 
 ROT.Path.prototype._getNeighbors = function(cx, cy) {
 	var result = [];
@@ -5149,7 +5184,7 @@ ROT.Path.prototype._getNeighbors = function(cx, cy) {
 	}
 	
 	return result;
-}
+};
 /**
  * @class Simplified Dijkstra's algorithm: all edges have a value of 1
  * @augments ROT.Path
@@ -5161,7 +5196,7 @@ ROT.Path.Dijkstra = function(toX, toY, passableCallback, options) {
 	this._computed = {};
 	this._todo = [];
 	this._add(toX, toY, null);
-}
+};
 ROT.Path.Dijkstra.extend(ROT.Path);
 
 /**
@@ -5178,7 +5213,7 @@ ROT.Path.Dijkstra.prototype.compute = function(fromX, fromY, callback) {
 		callback(item.x, item.y);
 		item = item.prev;
 	}
-}
+};
 
 /**
  * Compute a non-cached value
@@ -5199,17 +5234,17 @@ ROT.Path.Dijkstra.prototype._compute = function(fromX, fromY) {
 			this._add(x, y, item); 
 		}
 	}
-}
+};
 
 ROT.Path.Dijkstra.prototype._add = function(x, y, prev) {
 	var obj = {
 		x: x,
 		y: y,
 		prev: prev
-	}
+	};
 	this._computed[x+","+y] = obj;
 	this._todo.push(obj);
-}
+};
 /**
  * @class Simplified A* algorithm: all edges have a value of 1
  * @augments ROT.Path
@@ -5222,7 +5257,7 @@ ROT.Path.AStar = function(toX, toY, passableCallback, options) {
 	this._done = {};
 	this._fromX = null;
 	this._fromY = null;
-}
+};
 ROT.Path.AStar.extend(ROT.Path);
 
 /**
@@ -5258,7 +5293,7 @@ ROT.Path.AStar.prototype.compute = function(fromX, fromY, callback) {
 		callback(item.x, item.y);
 		item = item.prev;
 	}
-}
+};
 
 ROT.Path.AStar.prototype._add = function(x, y, prev) {
 	var h = this._distance(x, y);
@@ -5268,7 +5303,7 @@ ROT.Path.AStar.prototype._add = function(x, y, prev) {
 		prev: prev,
 		g: (prev ? prev.g+1 : 0),
 		h: h
-	}
+	};
 	this._done[x+","+y] = obj;
 	
 	/* insert into priority queue */
@@ -5284,7 +5319,7 @@ ROT.Path.AStar.prototype._add = function(x, y, prev) {
 	}
 	
 	this._todo.push(obj);
-}
+};
 
 ROT.Path.AStar.prototype._distance = function(x, y) {
 	switch (this._options.topology) {
@@ -5304,4 +5339,6 @@ ROT.Path.AStar.prototype._distance = function(x, y) {
 	}
 
         throw new Error("Illegal topology");
-}
+};
+  return ROT;
+}));
