@@ -12,6 +12,7 @@ SOURCES = 	src/rot.js \
 			src/display/rect.js \
 			src/display/hex.js \
 			src/display/tile.js \
+			src/display/tilediv.js \
 			src/rng.js \
 			src/stringgenerator.js \
 			src/eventqueue.js \

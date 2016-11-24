@@ -6,6 +6,11 @@ ROT.Display.Backend = function(context) {
 	this._context = context;
 }
 
+ROT.Display.Backend.prototype.clear = function() {
+	this._context.fillStyle = this._options.bg;
+	this._context.fillRect(0, 0, this._context.canvas.width, this._context.canvas.height);
+}
+
 ROT.Display.Backend.prototype.compute = function(options) {
 }
 
