@@ -9,7 +9,7 @@ ROT.Display.Rect = function(context) {
 	this._spacingY = 0;
 	this._canvasCache = {};
 	this._options = {};
-}
+};
 ROT.Display.Rect.extend(ROT.Display.Backend);
 
 ROT.Display.Rect.cache = false;
@@ -28,7 +28,7 @@ ROT.Display.Rect.prototype.compute = function(options) {
 
 	this._context.canvas.width = options.width * this._spacingX;
 	this._context.canvas.height = options.height * this._spacingY;
-}
+};
 
 ROT.Display.Rect.prototype.draw = function(data, clearBefore) {
 	if (this.constructor.cache) {
@@ -36,7 +36,7 @@ ROT.Display.Rect.prototype.draw = function(data, clearBefore) {
 	} else {
 		this._drawNoCache(data, clearBefore);
 	}
-}
+};
 
 ROT.Display.Rect.prototype._drawWithCache = function(data, clearBefore) {
 	var x = data[0];
@@ -72,7 +72,7 @@ ROT.Display.Rect.prototype._drawWithCache = function(data, clearBefore) {
 	}
 	
 	this._context.drawImage(canvas, x*this._spacingX, y*this._spacingY);
-}
+};
 
 ROT.Display.Rect.prototype._drawNoCache = function(data, clearBefore) {
 	var x = data[0];
@@ -95,13 +95,13 @@ ROT.Display.Rect.prototype._drawNoCache = function(data, clearBefore) {
 	for (var i=0;i<chars.length;i++) {
 		this._context.fillText(chars[i], (x+0.5) * this._spacingX, Math.ceil((y+0.5) * this._spacingY));
 	}
-}
+};
 
 ROT.Display.Rect.prototype.computeSize = function(availWidth, availHeight) {
 	var width = Math.floor(availWidth / this._spacingX);
 	var height = Math.floor(availHeight / this._spacingY);
 	return [width, height];
-}
+};
 
 ROT.Display.Rect.prototype.computeFontSize = function(availWidth, availHeight) {
 	var boxWidth = Math.floor(availWidth / this._options.width);
@@ -119,8 +119,8 @@ ROT.Display.Rect.prototype.computeFontSize = function(availWidth, availHeight) {
 		boxHeight = Math.floor(boxHeight / widthFraction);
 	}
 	return Math.floor(boxHeight / this._options.spacing);
-}
+};
 
 ROT.Display.Rect.prototype.eventToPosition = function(x, y) {
 	return [Math.floor(x/this._spacingX), Math.floor(y/this._spacingY)];
-}
+};

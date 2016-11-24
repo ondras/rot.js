@@ -6,7 +6,7 @@
 ROT.Map.IceyMaze = function(width, height, regularity) {
 	ROT.Map.call(this, width, height);
 	this._regularity = regularity || 0;
-}
+};
 ROT.Map.IceyMaze.extend(ROT.Map);
 
 ROT.Map.IceyMaze.prototype.create = function(callback) {
@@ -67,7 +67,7 @@ ROT.Map.IceyMaze.prototype.create = function(callback) {
 	}
 	this._map = null;
 	return this;
-}
+};
 
 ROT.Map.IceyMaze.prototype._randomize = function(dirs) {
 	for (var i=0;i<4;i++) {
@@ -93,9 +93,9 @@ ROT.Map.IceyMaze.prototype._randomize = function(dirs) {
 			dirs[3][1] = -1; dirs[2][1] = 1;
 		break;
 	}
-}
+};
 
 ROT.Map.IceyMaze.prototype._isFree = function(map, x, y, width, height) {
 	if (x < 1 || y < 1 || x >= width || y >= height) { return false; }
 	return map[x][y];
-}
+};

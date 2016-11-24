@@ -80,7 +80,7 @@ ROT.Text = {
 
 	/* insert line breaks into first-pass tokenized data */
 	_breakLines: function(tokens, maxWidth) {
-		if (!maxWidth) { maxWidth = Infinity; };
+		if (!maxWidth) { maxWidth = Infinity; }
 
 		var i = 0;
 		var lineLength = 0;
@@ -183,12 +183,12 @@ ROT.Text = {
 	_breakInsideToken: function(tokens, tokenIndex, breakIndex, removeBreakChar) {
 		var newBreakToken = {
 			type: ROT.Text.TYPE_NEWLINE
-		}
+		};
 		var newTextToken = {
 			type: ROT.Text.TYPE_TEXT,
 			value: tokens[tokenIndex].value.substring(breakIndex + (removeBreakChar ? 1 : 0))
-		}
+		};
 		tokens.splice(tokenIndex+1, 0, newBreakToken, newTextToken);
 		return tokens[tokenIndex].value.substring(0, breakIndex);
 	}
-}
+};

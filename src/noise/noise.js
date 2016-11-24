@@ -4,4 +4,4 @@
 ROT.Noise = function() {
 };
 
-ROT.Noise.prototype.get = function(x, y) {}
+ROT.Noise.prototype.get = function(x, y) {};

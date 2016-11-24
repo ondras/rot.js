@@ -4,7 +4,7 @@
  */
 ROT.FOV.PreciseShadowcasting = function(lightPassesCallback, options) {
 	ROT.FOV.call(this, lightPassesCallback, options);
-}
+};
 ROT.FOV.PreciseShadowcasting.extend(ROT.FOV);
 
 /**
@@ -42,7 +42,7 @@ ROT.FOV.PreciseShadowcasting.prototype.compute = function(x, y, R, callback) {
 
 		} /* for all cells in this ring */
 	} /* for all rings */
-}
+};
 
 /**
  * @param {int[2]} A1 arc start
@@ -120,4 +120,4 @@ ROT.FOV.PreciseShadowcasting.prototype._checkVisibility = function(A1, A2, block
 	var arcLength = (A2[0]*A1[1] - A1[0]*A2[1]) / (A1[1] * A2[1]);
 
 	return visibleLength/arcLength;
-}
+};

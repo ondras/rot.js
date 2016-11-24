@@ -8,7 +8,7 @@ ROT.FOV = function(lightPassesCallback, options) {
 	this._lightPasses = lightPassesCallback;
 	this._options = {
 		topology: 8
-	}
+	};
 	for (var p in options) { this._options[p] = options[p]; }
 };
 
@@ -19,7 +19,7 @@ ROT.FOV = function(lightPassesCallback, options) {
  * @param {int} R Maximum visibility radius
  * @param {function} callback
  */
-ROT.FOV.prototype.compute = function(x, y, R, callback) {}
+ROT.FOV.prototype.compute = function(x, y, R, callback) {};
 
 /**
  * Return all neighbors in a concentric ring
@@ -40,7 +40,7 @@ ROT.FOV.prototype._getCircle = function(cx, cy, r) {
 				ROT.DIRS[8][1],
 				ROT.DIRS[8][3],
 				ROT.DIRS[8][5]
-			]
+			];
 		break;
 
 		case 6:
@@ -71,4 +71,4 @@ ROT.FOV.prototype._getCircle = function(cx, cy, r) {
 	}
 
 	return result;
-}
+};

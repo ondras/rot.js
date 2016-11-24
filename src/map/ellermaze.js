@@ -5,7 +5,7 @@
  */
 ROT.Map.EllerMaze = function(width, height) {
 	ROT.Map.call(this, width, height);
-}
+};
 ROT.Map.EllerMaze.extend(ROT.Map);
 
 ROT.Map.EllerMaze.prototype.create = function(callback) {
@@ -72,7 +72,7 @@ ROT.Map.EllerMaze.prototype.create = function(callback) {
 	}
 	
 	return this;
-}
+};
 
 /**
  * Remove "i" from its list
@@ -82,7 +82,7 @@ ROT.Map.EllerMaze.prototype._removeFromList = function(i, L, R) {
 	L[R[i]] = L[i];
 	R[i] = i;
 	L[i] = i;
-}
+};
 
 /**
  * Join lists with "i" and "i+1"
@@ -92,4 +92,4 @@ ROT.Map.EllerMaze.prototype._addToList = function(i, L, R) {
 	L[R[i]] = L[i+1];
 	R[i] = i+1;
 	L[i+1] = i;
-}
+};

@@ -3,7 +3,7 @@
  */
 String.prototype.capitalize = String.prototype.capitalize || function() {
 	return this.charAt(0).toUpperCase() + this.substring(1);
-}
+};
 
 /** 
  * Left pad
@@ -18,7 +18,7 @@ String.prototype.lpad = String.prototype.lpad || function(character, count) {
 	while (s.length < (cnt - this.length)) { s += ch; }
 	s = s.substring(0, cnt-this.length);
 	return s+this;
-}
+};
 
 /** 
  * Right pad
@@ -33,7 +33,7 @@ String.prototype.rpad = String.prototype.rpad || function(character, count) {
 	while (s.length < (cnt - this.length)) { s += ch; }
 	s = s.substring(0, cnt-this.length);
 	return this+s;
-}
+};
 
 /**
  * Format a string in a flexible way. Scans for %s strings and replaces them with arguments. List of patterns is modifiable via String.format.map.
@@ -62,13 +62,13 @@ String.format = String.format || function(template) {
 		if (first != first.toLowerCase()) { replaced = replaced.capitalize(); }
 
 		return replaced;
-	}
+	};
 	return template.replace(/%(?:([a-z]+)|(?:{([^}]+)}))/gi, replacer);
-}
+};
 
 String.format.map = String.format.map || {
 	"s": "toString"
-}
+};
 
 /**
  * Convenience shortcut to String.format(this)
@@ -77,5 +77,5 @@ String.prototype.format = String.prototype.format || function() {
 	var args = Array.prototype.slice.call(arguments);
 	args.unshift(this);
 	return String.format.apply(String, args);
-}
+};
 

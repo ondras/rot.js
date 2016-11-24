@@ -4,7 +4,7 @@
  */
 ROT.Map.Arena = function(width, height) {
 	ROT.Map.call(this, width, height);
-}
+};
 ROT.Map.Arena.extend(ROT.Map);
 
 ROT.Map.Arena.prototype.create = function(callback) {
@@ -17,4 +17,4 @@ ROT.Map.Arena.prototype.create = function(callback) {
 		}
 	}
 	return this;
-}
+};

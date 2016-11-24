@@ -14,7 +14,7 @@ ROT.Path = function(toX, toY, passableCallback, options) {
 	this._passableCallback = passableCallback;
 	this._options = {
 		topology: 8
-	}
+	};
 	for (var p in options) { this._options[p] = options[p]; }
 
 	this._dirs = ROT.DIRS[this._options.topology];
@@ -30,7 +30,7 @@ ROT.Path = function(toX, toY, passableCallback, options) {
 			this._dirs[7]
 		]
 	}
-}
+};
 
 /**
  * Compute a path from a given point
@@ -39,7 +39,7 @@ ROT.Path = function(toX, toY, passableCallback, options) {
  * @param {function} callback Will be called for every path item with arguments "x" and "y"
  */
 ROT.Path.prototype.compute = function(fromX, fromY, callback) {
-}
+};
 
 ROT.Path.prototype._getNeighbors = function(cx, cy) {
 	var result = [];
@@ -53,4 +53,4 @@ ROT.Path.prototype._getNeighbors = function(cx, cy) {
 	}
 	
 	return result;
-}
+};

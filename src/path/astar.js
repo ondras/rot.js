@@ -10,7 +10,7 @@ ROT.Path.AStar = function(toX, toY, passableCallback, options) {
 	this._done = {};
 	this._fromX = null;
 	this._fromY = null;
-}
+};
 ROT.Path.AStar.extend(ROT.Path);
 
 /**
@@ -46,7 +46,7 @@ ROT.Path.AStar.prototype.compute = function(fromX, fromY, callback) {
 		callback(item.x, item.y);
 		item = item.prev;
 	}
-}
+};
 
 ROT.Path.AStar.prototype._add = function(x, y, prev) {
 	var h = this._distance(x, y);
@@ -56,7 +56,7 @@ ROT.Path.AStar.prototype._add = function(x, y, prev) {
 		prev: prev,
 		g: (prev ? prev.g+1 : 0),
 		h: h
-	}
+	};
 	this._done[x+","+y] = obj;
 	
 	/* insert into priority queue */
@@ -72,7 +72,7 @@ ROT.Path.AStar.prototype._add = function(x, y, prev) {
 	}
 	
 	this._todo.push(obj);
-}
+};
 
 ROT.Path.AStar.prototype._distance = function(x, y) {
 	switch (this._options.topology) {
@@ -92,4 +92,4 @@ ROT.Path.AStar.prototype._distance = function(x, y) {
 	}
 
         throw new Error("Illegal topology");
-}
+};

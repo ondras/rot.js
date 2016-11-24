@@ -4,7 +4,7 @@
  */
 ROT.FOV.DiscreteShadowcasting = function(lightPassesCallback, options) {
 	ROT.FOV.call(this, lightPassesCallback, options);
-}
+};
 ROT.FOV.DiscreteShadowcasting.extend(ROT.FOV);
 
 /**
@@ -43,7 +43,7 @@ ROT.FOV.DiscreteShadowcasting.prototype.compute = function(x, y, R, callback) {
 
 		} /* for all cells in this ring */
 	} /* for all rings */
-}
+};
 
 /**
  * @param {int} A start angle
@@ -105,4 +105,4 @@ ROT.FOV.DiscreteShadowcasting.prototype._visibleCoords = function(A, B, blocks, 
 			
 		return true;
 	}
-}
+};

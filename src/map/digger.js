@@ -13,13 +13,13 @@ ROT.Map.Digger = function(width, height, options) {
 		corridorLength: [3, 10], /* corridor minimum and maximum length */
 		dugPercentage: 0.2, /* we stop after this percentage of level area has been dug out */
 		timeLimit: 1000 /* we stop after this much time has passed (msec) */
-	}
+	};
 	for (var p in options) { this._options[p] = options[p]; }
 	
 	this._features = {
 		"Room": 4,
 		"Corridor": 4
-	}
+	};
 	this._featureAttempts = 20; /* how many times do we try to create a feature on a suitable wall */
 	this._walls = {}; /* these are available for digging */
 	
@@ -27,7 +27,7 @@ ROT.Map.Digger = function(width, height, options) {
 	this._canBeDugCallback = this._canBeDugCallback.bind(this);
 	this._isWallCallback = this._isWallCallback.bind(this);
 	this._priorityWallCallback = this._priorityWallCallback.bind(this);
-}
+};
 ROT.Map.Digger.extend(ROT.Map.Dungeon);
 
 /**
@@ -95,7 +95,7 @@ ROT.Map.Digger.prototype.create = function(callback) {
 	this._map = null;
 
 	return this;
-}
+};
 
 ROT.Map.Digger.prototype._digCallback = function(x, y, value) {
 	if (value == 0 || value == 2) { /* empty */
@@ -104,21 +104,21 @@ ROT.Map.Digger.prototype._digCallback = function(x, y, value) {
 	} else { /* wall */
 		this._walls[x+","+y] = 1;
 	}
-}
+};
 
 ROT.Map.Digger.prototype._isWallCallback = function(x, y) {
 	if (x < 0 || y < 0 || x >= this._width || y >= this._height) { return false; }
 	return (this._map[x][y] == 1);
-}
+};
 
 ROT.Map.Digger.prototype._canBeDugCallback = function(x, y) {
 	if (x < 1 || y < 1 || x+1 >= this._width || y+1 >= this._height) { return false; }
 	return (this._map[x][y] == 1);
-}
+};
 
 ROT.Map.Digger.prototype._priorityWallCallback = function(x, y) {
 	this._walls[x+","+y] = 2;
-}
+};
 
 ROT.Map.Digger.prototype._firstRoom = function() {
 	var cx = Math.floor(this._width/2);
@@ -126,7 +126,7 @@ ROT.Map.Digger.prototype._firstRoom = function() {
 	var room = ROT.Map.Feature.Room.createRandomCenter(cx, cy, this._options);
 	this._rooms.push(room);
 	room.create(this._digCallback);
-}
+};
 
 /**
  * Get a suitable wall
@@ -150,7 +150,7 @@ ROT.Map.Digger.prototype._findWall = function() {
 	delete this._walls[id];
 
 	return id;
-}
+};
 
 /**
  * Tries adding a feature
@@ -176,7 +176,7 @@ ROT.Map.Digger.prototype._tryFeature = function(x, y, dx, dy) {
 	}
 	
 	return true;
-}
+};
 
 ROT.Map.Digger.prototype._removeSurroundingWalls = function(cx, cy) {
 	var deltas = ROT.DIRS[4];
@@ -190,7 +190,7 @@ ROT.Map.Digger.prototype._removeSurroundingWalls = function(cx, cy) {
 		var y = cy + 2*delta[1];
 		delete this._walls[x+","+y];
 	}
-}
+};
 
 /**
  * Returns vector in "digging" direction, or false, if this does not exist (or is not unique)
@@ -216,7 +216,7 @@ ROT.Map.Digger.prototype._getDiggingDirection = function(cx, cy) {
 	if (!result) { return null; }
 	
 	return [-result[0], -result[1]];
-}
+};
 
 /**
  * Find empty spaces surrounding rooms, and apply doors.
@@ -225,10 +225,10 @@ ROT.Map.Digger.prototype._addDoors = function() {
 	var data = this._map;
 	var isWallCallback = function(x, y) {
 		return (data[x][y] == 1);
-	}
+	};
 	for (var i = 0; i < this._rooms.length; i++ ) {
 		var room = this._rooms[i];
 		room.clearDoors();
 		room.addDoors(isWallCallback);
 	}
-}
+};

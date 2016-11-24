@@ -1,11 +1,11 @@
 /**
  * @class Dungeon feature; has own .create() method
  */
-ROT.Map.Feature = function() {}
-ROT.Map.Feature.prototype.isValid = function(canBeDugCallback) {}
-ROT.Map.Feature.prototype.create = function(digCallback) {}
-ROT.Map.Feature.prototype.debug = function() {}
-ROT.Map.Feature.createRandomAt = function(x, y, dx, dy, options) {}
+ROT.Map.Feature = function() {};
+ROT.Map.Feature.prototype.isValid = function(canBeDugCallback) {};
+ROT.Map.Feature.prototype.create = function(digCallback) {};
+ROT.Map.Feature.prototype.debug = function() {};
+ROT.Map.Feature.createRandomAt = function(x, y, dx, dy, options) {};
 
 /**
  * @class Room
@@ -24,7 +24,7 @@ ROT.Map.Feature.Room = function(x1, y1, x2, y2, doorX, doorY) {
 	this._y2 = y2;
 	this._doors = {};
 	if (arguments.length > 4) { this.addDoor(doorX, doorY); }
-}
+};
 ROT.Map.Feature.Room.extend(ROT.Map.Feature);
 
 /**
@@ -60,7 +60,7 @@ ROT.Map.Feature.Room.createRandomAt = function(x, y, dx, dy, options) {
 	}
 
         throw new Error("dx or dy must be 1 or -1");
-}
+};
 
 /**
  * Room of random size, positioned around center coords
@@ -80,7 +80,7 @@ ROT.Map.Feature.Room.createRandomCenter = function(cx, cy, options) {
 	var y2 = y1 + height - 1;
 
 	return new this(x1, y1, x2, y2);
-}
+};
 
 /**
  * Room of random size within a given dimensions
@@ -103,12 +103,12 @@ ROT.Map.Feature.Room.createRandom = function(availWidth, availHeight, options) {
 	var y2 = y1 + height - 1;
 
 	return new this(x1, y1, x2, y2);
-}
+};
 
 ROT.Map.Feature.Room.prototype.addDoor = function(x, y) {
 	this._doors[x+","+y] = 1;
 	return this;
-}
+};
 
 /**
  * @param {function}
@@ -119,12 +119,12 @@ ROT.Map.Feature.Room.prototype.getDoors = function(callback) {
 		callback(parseInt(parts[0]), parseInt(parts[1]));
 	}
 	return this;
-}
+};
 
 ROT.Map.Feature.Room.prototype.clearDoors = function() {
 	this._doors = {};
 	return this;
-}
+};
 
 ROT.Map.Feature.Room.prototype.addDoors = function(isWallCallback) {
 	var left = this._x1-1;
@@ -142,11 +142,11 @@ ROT.Map.Feature.Room.prototype.addDoors = function(isWallCallback) {
 	}
 
 	return this;
-}
+};
 
 ROT.Map.Feature.Room.prototype.debug = function() {
 	console.log("room", this._x1, this._y1, this._x2, this._y2);
-}
+};
 
 ROT.Map.Feature.Room.prototype.isValid = function(isWallCallback, canBeDugCallback) { 
 	var left = this._x1-1;
@@ -165,7 +165,7 @@ ROT.Map.Feature.Room.prototype.isValid = function(isWallCallback, canBeDugCallba
 	}
 
 	return true;
-}
+};
 
 /**
  * @param {function} digCallback Dig callback with a signature (x, y, value). Values: 0 = empty, 1 = wall, 2 = door. Multiple doors are allowed.
@@ -189,27 +189,27 @@ ROT.Map.Feature.Room.prototype.create = function(digCallback) {
 			digCallback(x, y, value);
 		}
 	}
-}
+};
 
 ROT.Map.Feature.Room.prototype.getCenter = function() {
 	return [Math.round((this._x1 + this._x2)/2), Math.round((this._y1 + this._y2)/2)];
-}
+};
 
 ROT.Map.Feature.Room.prototype.getLeft = function() {
 	return this._x1;
-}
+};
 
 ROT.Map.Feature.Room.prototype.getRight = function() {
 	return this._x2;
-}
+};
 
 ROT.Map.Feature.Room.prototype.getTop = function() {
 	return this._y1;
-}
+};
 
 ROT.Map.Feature.Room.prototype.getBottom = function() {
 	return this._y2;
-}
+};
 
 /**
  * @class Corridor
@@ -225,7 +225,7 @@ ROT.Map.Feature.Corridor = function(startX, startY, endX, endY) {
 	this._endX = endX; 
 	this._endY = endY;
 	this._endsWithAWall = true;
-}
+};
 ROT.Map.Feature.Corridor.extend(ROT.Map.Feature);
 
 ROT.Map.Feature.Corridor.createRandomAt = function(x, y, dx, dy, options) {
@@ -234,11 +234,11 @@ ROT.Map.Feature.Corridor.createRandomAt = function(x, y, dx, dy, options) {
 	var length = ROT.RNG.getUniformInt(min, max);
 	
 	return new this(x, y, x + dx*length, y + dy*length);
-}
+};
 
 ROT.Map.Feature.Corridor.prototype.debug = function() {
 	console.log("corridor", this._startX, this._startY, this._endX, this._endY);
-}
+};
 
 ROT.Map.Feature.Corridor.prototype.isValid = function(isWallCallback, canBeDugCallback){ 
 	var sx = this._startX;
@@ -297,7 +297,7 @@ ROT.Map.Feature.Corridor.prototype.isValid = function(isWallCallback, canBeDugCa
 	if ((firstCornerBad || secondCornerBad) && this._endsWithAWall) { return false; }
 
 	return true;
-}
+};
 
 /**
  * @param {function} digCallback Dig callback with a signature (x, y, value). Values: 0 = empty.
@@ -321,7 +321,7 @@ ROT.Map.Feature.Corridor.prototype.create = function(digCallback) {
 	}
 	
 	return true;
-}
+};
 
 ROT.Map.Feature.Corridor.prototype.createPriorityWalls = function(priorityWallCallback) {
 	if (!this._endsWithAWall) { return; }
@@ -339,4 +339,4 @@ ROT.Map.Feature.Corridor.prototype.createPriorityWalls = function(priorityWallCa
 	priorityWallCallback(this._endX + dx, this._endY + dy);
 	priorityWallCallback(this._endX + nx, this._endY + ny);
 	priorityWallCallback(this._endX - nx, this._endY - ny);
-}
+};

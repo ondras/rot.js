@@ -10,7 +10,7 @@ ROT.Map.Uniform = function(width, height, options) {
 		roomHeight: [3, 5], /* room minimum and maximum height */
 		roomDugPercentage: 0.1, /* we stop after this percentage of level area has been dug out by rooms */
 		timeLimit: 1000 /* we stop after this much time has passed (msec) */
-	}
+	};
 	for (var p in options) { this._options[p] = options[p]; }
 
 	this._roomAttempts = 20; /* new room is created N-times until is considered as impossible to generate */
@@ -22,7 +22,7 @@ ROT.Map.Uniform = function(width, height, options) {
 	this._digCallback = this._digCallback.bind(this);
 	this._canBeDugCallback = this._canBeDugCallback.bind(this);
 	this._isWallCallback = this._isWallCallback.bind(this);
-}
+};
 ROT.Map.Uniform.extend(ROT.Map.Dungeon);
 
 /**
@@ -53,7 +53,7 @@ ROT.Map.Uniform.prototype.create = function(callback) {
 	}
 	
 	return this;
-}
+};
 
 /**
  * Generates a suitable amount of rooms
@@ -68,7 +68,7 @@ ROT.Map.Uniform.prototype._generateRooms = function() {
 	} while (room);
 
 	/* either enough rooms, or not able to generate more of them :) */
-}
+};
 
 /**
  * Try to generate one room
@@ -88,7 +88,7 @@ ROT.Map.Uniform.prototype._generateRoom = function() {
 
 	/* no room was generated in a given number of attempts */
 	return null;
-}
+};
 
 /**
  * Generates connectors beween rooms
@@ -129,7 +129,7 @@ ROT.Map.Uniform.prototype._generateCorridors = function() {
 		}
 	}
 	return false;
-}
+};
 
 /**
  * For a given room, find the closest one from the list
@@ -153,7 +153,7 @@ ROT.Map.Uniform.prototype._closestRoom = function(rooms, room) {
 	}
 	
 	return result;
-}
+};
 
 ROT.Map.Uniform.prototype._connectRooms = function(room1, room2) {
 	/*
@@ -248,7 +248,7 @@ ROT.Map.Uniform.prototype._connectRooms = function(room1, room2) {
 	}
 	
 	return true;
-}
+};
 
 ROT.Map.Uniform.prototype._placeInWall = function(room, dirIndex) {
 	var start = [0, 0];
@@ -299,7 +299,7 @@ ROT.Map.Uniform.prototype._placeInWall = function(room, dirIndex) {
 		if (!avail[i]) { avail.splice(i, 1); }
 	}
 	return (avail.length ? avail.random() : null);
-}
+};
 
 /**
  * Dig a polyline.
@@ -312,20 +312,20 @@ ROT.Map.Uniform.prototype._digLine = function(points) {
 		corridor.create(this._digCallback);
 		this._corridors.push(corridor);
 	}
-}
+};
 
 ROT.Map.Uniform.prototype._digCallback = function(x, y, value) {
 	this._map[x][y] = value;
 	if (value == 0) { this._dug++; }
-}
+};
 
 ROT.Map.Uniform.prototype._isWallCallback = function(x, y) {
 	if (x < 0 || y < 0 || x >= this._width || y >= this._height) { return false; }
 	return (this._map[x][y] == 1);
-}
+};
 
 ROT.Map.Uniform.prototype._canBeDugCallback = function(x, y) {
 	if (x < 1 || y < 1 || x+1 >= this._width || y+1 >= this._height) { return false; }
 	return (this._map[x][y] == 1);
-}
+};
 

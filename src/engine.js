@@ -5,14 +5,14 @@
 ROT.Engine = function(scheduler) {
 	this._scheduler = scheduler;
 	this._lock = 1;
-}
+};
 
 /**
  * Start the main loop. When this call returns, the loop is locked.
  */
 ROT.Engine.prototype.start = function() {
 	return this.unlock();
-}
+};
 
 /**
  * Interrupt the engine by an asynchronous action
@@ -20,7 +20,7 @@ ROT.Engine.prototype.start = function() {
 ROT.Engine.prototype.lock = function() {
 	this._lock++;
 	return this;
-}
+};
 
 /**
  * Resume execution (paused by a previous lock)
@@ -40,4 +40,4 @@ ROT.Engine.prototype.unlock = function() {
 	}
 
 	return this;
-}
+};
