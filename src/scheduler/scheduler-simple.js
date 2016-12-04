@@ -10,7 +10,7 @@ ROT.Scheduler.Simple.extend(ROT.Scheduler);
 /**
  * @see ROT.Scheduler#add
  */
-ROT.Scheduler.Simple.prototype.add = function(item, repeat) {
+ROT.Scheduler.Simple.prototype.add = function(item, repeat=true) {
 	this._queue.add(item, 0);
 	return ROT.Scheduler.prototype.add.call(this, item, repeat);
 };
