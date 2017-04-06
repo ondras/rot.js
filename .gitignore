@@ -6,3 +6,5 @@
 
 # exclude idea based editors
 .idea/
+.DS_Store
+

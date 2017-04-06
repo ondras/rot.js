@@ -1,5 +1,6 @@
 VERSION = $(shell head -1 < VERSION)
-SOURCES = 	src/rot.js \
+SOURCES = 	umd/pre.txt \
+            src/rot.js \
 			src/text.js \
 			src/js/array.js \
 			src/js/number.js \
@@ -41,7 +42,8 @@ SOURCES = 	src/rot.js \
 			src/lighting.js \
 			src/path/path.js \
 			src/path/dijkstra.js \
-			src/path/astar.js
+			src/path/astar.js \
+			umd/post.txt
 
 NODE_VERSION = "$(shell head -1 < NODE_VERSION)"
 NODE_PRE_SOURCES = 	node/node-shim.js
