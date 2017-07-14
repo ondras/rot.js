@@ -27,6 +27,9 @@ ROT.Path.AStar.prototype.compute = function(fromX, fromY, callback) {
 	while (this._todo.length) {
 		var item = this._todo.shift();
 		if (item.x == fromX && item.y == fromY) { break; }
+		var id = item.x+","+item.y;
+		if (id in this._done) { continue; }
+		this._done[id] = item;
 		var neighbors = this._getNeighbors(item.x, item.y);
 
 		for (var i=0;i<neighbors.length;i++) {
@@ -57,7 +60,6 @@ ROT.Path.AStar.prototype._add = function(x, y, prev) {
 		g: (prev ? prev.g+1 : 0),
 		h: h
 	};
-	this._done[x+","+y] = obj;
 	
 	/* insert into priority queue */
 	
