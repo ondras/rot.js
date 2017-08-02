@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.7~dev, generated on Thu 24 Nov 2016 08:07:39 MST.
+	Version 0.7~dev, generated on Wed Aug  2 12:45:18 CEST 2017.
 */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -2424,7 +2424,7 @@ ROT.Map.Cellular.prototype._getNeighbors = function(cx, cy) {
 		var x = cx + dir[0];
 		var y = cy + dir[1];
 
-		if (x < 0 || x >= this._width || y < 0 || y >= this._width) { continue; }
+		if (x < 0 || x >= this._width || y < 0 || y >= this._height) { continue; }
 		result += (this._map[x][y] == 1 ? 1 : 0);
 	}
 
@@ -2776,7 +2776,7 @@ ROT.Map.Digger.prototype._findWall = function() {
 	var arr = (prio2.length ? prio2 : prio1);
 	if (!arr.length) { return null; } /* no walls :/ */
 	
-	var id = arr.random();
+	var id = arr.sort().random(); // sort to make the order deterministic
 	delete this._walls[id];
 
 	return id;
@@ -5274,6 +5274,9 @@ ROT.Path.AStar.prototype.compute = function(fromX, fromY, callback) {
 	while (this._todo.length) {
 		var item = this._todo.shift();
 		if (item.x == fromX && item.y == fromY) { break; }
+		var id = item.x+","+item.y;
+		if (id in this._done) { continue; }
+		this._done[id] = item;
 		var neighbors = this._getNeighbors(item.x, item.y);
 
 		for (var i=0;i<neighbors.length;i++) {
@@ -5304,7 +5307,6 @@ ROT.Path.AStar.prototype._add = function(x, y, prev) {
 		g: (prev ? prev.g+1 : 0),
 		h: h
 	};
-	this._done[x+","+y] = obj;
 	
 	/* insert into priority queue */
 	
