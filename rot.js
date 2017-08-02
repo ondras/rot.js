@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.7~dev, generated on Wed Aug  2 12:45:18 CEST 2017.
+	Version 0.7~dev, generated on Wed Aug  2 16:32:49 CEST 2017.
 */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -4203,8 +4203,8 @@ ROT.FOV.DiscreteShadowcasting.prototype.compute = function(x, y, R, callback) {
  */
 ROT.FOV.DiscreteShadowcasting.prototype._visibleCoords = function(A, B, blocks, DATA) {
 	if (A < 0) { 
-		var v1 = arguments.callee(0, B, blocks, DATA);
-		var v2 = arguments.callee(360+A, 360, blocks, DATA);
+		var v1 = this._visibleCoords(0, B, blocks, DATA);
+		var v2 = this._visibleCoords(360+A, 360, blocks, DATA);
 		return v1 || v2;
 	}
 	

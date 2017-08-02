@@ -53,8 +53,8 @@ ROT.FOV.DiscreteShadowcasting.prototype.compute = function(x, y, R, callback) {
  */
 ROT.FOV.DiscreteShadowcasting.prototype._visibleCoords = function(A, B, blocks, DATA) {
 	if (A < 0) { 
-		var v1 = arguments.callee(0, B, blocks, DATA);
-		var v2 = arguments.callee(360+A, 360, blocks, DATA);
+		var v1 = this._visibleCoords(0, B, blocks, DATA);
+		var v2 = this._visibleCoords(360+A, 360, blocks, DATA);
 		return v1 || v2;
 	}
 	
