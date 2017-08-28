@@ -1,6 +1,5 @@
 VERSION = $(shell head -1 < VERSION)
-SOURCES = 	umd/pre.txt \
-            src/rot.js \
+SOURCES = 	src/rot.js \
 			src/text.js \
 			src/js/array.js \
 			src/js/number.js \
@@ -42,17 +41,18 @@ SOURCES = 	umd/pre.txt \
 			src/lighting.js \
 			src/path/path.js \
 			src/path/dijkstra.js \
-			src/path/astar.js \
-			umd/post.txt
+			src/path/astar.js
 
+PRE = umd/pre.txt
+POST = umd/post.txt
 NODE_VERSION = "$(shell head -1 < NODE_VERSION)"
-NODE_PRE_SOURCES = 	node/node-shim.js
-NODE_POST_SOURCES =	node/term.js \
+NODE_SHIM = node/node-shim.js
+NODE_SOURCES =	node/term.js \
 			node/term-color.js \
 			node/xterm-color.js \
 			node/node-export.js
 
-rot.js: $(SOURCES)
+rot.js: $(PRE) $(SOURCES) $(POST)
 	@echo Current rot.js version is $(VERSION)
 	@echo "/*\n\
 	\tThis is rot.js, the ROguelike Toolkit in JavaScript.\n\
@@ -77,7 +77,7 @@ package.json: node/package.node NODE_VERSION
 	@echo "{\n\t\"name\": \"rot-js\",\n\t\"version\": \"$(NODE_VERSION)\"," > $@
 	@cat node/package.node >> $@
 
-rot.js.node: $(NODE_PRE_SOURCES) $(SOURCES) $(NODE_POST_SOURCES)
+rot.js.node: $(NODE_SHIM) $(PRE) $(SOURCES) $(NODE_SOURCES) $(POST)
 	@echo Current rot.js version is $(VERSION)
 	@echo Current rot.js version for Node.js is $(NODE_VERSION)
 	@mkdir -p lib
