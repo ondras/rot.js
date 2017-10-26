@@ -146,7 +146,7 @@ ROT.Map.Digger.prototype._findWall = function() {
 	var arr = (prio2.length ? prio2 : prio1);
 	if (!arr.length) { return null; } /* no walls :/ */
 	
-	var id = arr.sort().random(); // sort to make the order deterministic
+	var id = getRandomItem(arr.sort()); // sort to make the order deterministic
 	delete this._walls[id];
 
 	return id;
