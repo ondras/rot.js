@@ -62,7 +62,6 @@ ROT.Map.Cellular.prototype.create = function(callback) {
 		}
 
 		for (var i=widthStart; i<this._width; i+=widthStep) {
-
 			var cur = this._map[i][j];
 			var ncount = this._getNeighbors(i, j);
 
@@ -75,13 +74,10 @@ ROT.Map.Cellular.prototype.create = function(callback) {
 	}
 
 	this._map = newMap;
-
-	this.serviceCallback(callback);
+	callback && this._serviceCallback(callback);
 };
 
-ROT.Map.Cellular.prototype.serviceCallback = function(callback) {
-	if (!callback) { return; }
-
+ROT.Map.Cellular.prototype._serviceCallback = function(callback) {
 	for (var j=0;j<this._height;j++) {
 		var widthStep = 1;
 		var widthStart = 0;
@@ -125,14 +121,14 @@ ROT.Map.Cellular.prototype.connect = function(callback, value, connectionCallbac
 	var notConnected = {};
 
 	// find all free space
-  var widthStep = 1;
-  var widthStarts = [0, 0];
-  if (this._options.topology == 6) {
-    widthStep = 2;
-    widthStarts = [0, 1];
-  }
-  for (var y = 0; y < this._height; y++) {
-    for (var x = widthStarts[y % 2]; x < this._width; x += widthStep) {
+	var widthStep = 1;
+	var widthStarts = [0, 0];
+	if (this._options.topology == 6) {
+		widthStep = 2;
+		widthStarts = [0, 1];
+	}
+	for (var y = 0; y < this._height; y++) {
+		for (var x = widthStarts[y % 2]; x < this._width; x += widthStep) {
 			if (this._freeSpace(x, y, value)) {
 				var p = [x, y];
 				notConnected[this._pointKey(p)] = p;
@@ -151,7 +147,6 @@ ROT.Map.Cellular.prototype.connect = function(callback, value, connectionCallbac
 	this._findConnected(connected, notConnected, [start], false, value);
 
 	while (Object.keys(notConnected).length > 0) {
-
 		// find two points from notConnected to connected
 		var p = this._getFromTo(connected, notConnected);
 		var from = p[0]; // notConnected
@@ -163,8 +158,8 @@ ROT.Map.Cellular.prototype.connect = function(callback, value, connectionCallbac
 		this._findConnected(local, notConnected, [from], true, value);
 
 		// connect to a connected cell
-    var tunnelFn = this._options.topology == 6 ? this._tunnelToConnected6 : this._tunnelToConnected;
-    tunnelFn.call(this, to, from, connected, notConnected, value, connectionCallback);
+		var tunnelFn = (this._options.topology == 6 ? this._tunnelToConnected6 : this._tunnelToConnected);
+		tunnelFn.call(this, to, from, connected, notConnected, value, connectionCallback);
 
 		// now all of local is connected
 		for (var k in local) {
@@ -175,7 +170,7 @@ ROT.Map.Cellular.prototype.connect = function(callback, value, connectionCallbac
 		}
 	}
 
-	this.serviceCallback(callback);
+	callback && this._serviceCallback(callback);
 };
 
 /**
@@ -222,22 +217,26 @@ ROT.Map.Cellular.prototype._getClosest = function(point, space) {
 ROT.Map.Cellular.prototype._findConnected = function(connected, notConnected, stack, keepNotConnected, value) {
 	while(stack.length > 0) {
 		var p = stack.splice(0, 1)[0];
-		var tests = [
-			[p[0] + 1, p[1]],
-			[p[0] - 1, p[1]],
-			[p[0],     p[1] + 1],
-			[p[0],     p[1] - 1]
-		];
-    if (this._options.topology == 6) {
-      tests = [
-        [p[0] + 2, p[1]],
-        [p[0] + 1, p[1] - 1],
-        [p[0] - 1, p[1] - 1],
-        [p[0] - 2, p[1]],
-        [p[0] - 1, p[1] + 1],
-        [p[0] + 1, p[1] + 1],
-      ];
-    }
+		var tests;
+
+		if (this._options.topology == 6) {
+			tests = [
+				[p[0] + 2, p[1]],
+				[p[0] + 1, p[1] - 1],
+				[p[0] - 1, p[1] - 1],
+				[p[0] - 2, p[1]],
+				[p[0] - 1, p[1] + 1],
+				[p[0] + 1, p[1] + 1],
+			];
+		} else {
+			tests = [
+				[p[0] + 1, p[1]],
+				[p[0] - 1, p[1]],
+				[p[0],     p[1] + 1],
+				[p[0],     p[1] - 1]
+			];
+		}
+
 		for (var i = 0; i < tests.length; i++) {
 			var key = this._pointKey(tests[i]);
 			if (connected[key] == null && this._freeSpace(tests[i][0], tests[i][1], value)) {
@@ -289,13 +288,10 @@ ROT.Map.Cellular.prototype._tunnelToConnected = function(to, from, connected, no
 		connected[pkey] = p;
 		delete notConnected[pkey];
 	}
-	if (connectionCallback && a[1] < b[1]) {
-		connectionCallback([b[0], a[1]], [b[0], b[1]]);
-	}
-};
+	if (connectionCallback && a[1] < b[1]) { connectionCallback([b[0], a[1]], [b[0], b[1]]); }
+}
 
 ROT.Map.Cellular.prototype._tunnelToConnected6 = function(to, from, connected, notConnected, value, connectionCallback) {
-
 	var a, b;
 	if (from[0] < to[0]) {
 		a = from;
@@ -305,45 +301,43 @@ ROT.Map.Cellular.prototype._tunnelToConnected6 = function(to, from, connected, n
 		b = from;
 	}
 
-  // tunnel diagonally until horizontally level
-  var xx = a[0];
-  var yy = a[1];
-  while (!(xx == b[0] && yy == b[1])) {
-    var stepWidth = 2;
-    if (yy < b[1]) {
-      yy++;
-      stepWidth = 1;
-    } else if (yy > b[1]) {
-      yy--;
-      stepWidth = 1;
-    }
-    if (xx < b[0]) {
-      xx += stepWidth
-    } else if (xx > b[0]) {
-      xx -= stepWidth
-    } else if (b[1] % 2) {
-      // Won't step outside map if destination on is map's right edge
-      xx -= stepWidth;
-    } else {
-      // ditto for left edge
-      xx += stepWidth;
-    }
-    this._map[xx][yy] = value;
-    var p = [xx, yy]
-    var pkey = this._pointKey(p);
-    connected[pkey] = p;
-    delete notConnected[pkey];
-  }
+	// tunnel diagonally until horizontally level
+	var xx = a[0];
+	var yy = a[1];
+	while (!(xx == b[0] && yy == b[1])) {
+		var stepWidth = 2;
+		if (yy < b[1]) {
+			yy++;
+			stepWidth = 1;
+		} else if (yy > b[1]) {
+			yy--;
+			stepWidth = 1;
+		}
+		if (xx < b[0]) {
+			xx += stepWidth
+		} else if (xx > b[0]) {
+			xx -= stepWidth
+		} else if (b[1] % 2) {
+			// Won't step outside map if destination on is map's right edge
+			xx -= stepWidth;
+		} else {
+			// ditto for left edge
+			xx += stepWidth;
+		}
+		this._map[xx][yy] = value;
+		var p = [xx, yy]
+		var pkey = this._pointKey(p);
+		connected[pkey] = p;
+		delete notConnected[pkey];
+	}
 
-  if (connectionCallback) {
-    connectionCallback(from, to);
-  }
+	if (connectionCallback) { connectionCallback(from, to); }
 }
 
 ROT.Map.Cellular.prototype._freeSpace = function(x, y, value) {
 	return x >= 0 && x < this._width && y >= 0 && y < this._height && this._map[x][y] == value;
-};
+}
 
 ROT.Map.Cellular.prototype._pointKey = function(p) {
 	return p[0] + "." + p[1];
-};
+}
