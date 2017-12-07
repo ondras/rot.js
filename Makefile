@@ -62,13 +62,13 @@ rot.js: $(PRE) $(SOURCES) $(POST)
 
 rot.min.js: rot.js
 	@echo "Calling closure compiler's REST API, this might take a while"
-	@curl -s \
+	curl -s \
 		-d compilation_level=SIMPLE_OPTIMIZATIONS \
 		-d output_format=text \
 		-d output_info=compiled_code \
 		-d charset=utf-8 \
 		--data-urlencode "js_code@-" \
-		http://closure-compiler.appspot.com/compile < $^ > $@
+		https://closure-compiler.appspot.com/compile < $^ > $@
 
 node: package.json rot.js.node
 
