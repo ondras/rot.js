@@ -62,7 +62,7 @@ rot.js: $(PRE) $(SOURCES) $(POST)
 
 rot.min.js: rot.js
 	@echo "Calling closure compiler's REST API, this might take a while"
-	curl -s \
+	@curl -s \
 		-d compilation_level=SIMPLE_OPTIMIZATIONS \
 		-d output_format=text \
 		-d output_info=compiled_code \
