@@ -5,7 +5,7 @@ if (typeof window != "undefined") {
 		|| window.webkitRequestAnimationFrame
 		|| window.oRequestAnimationFrame
 		|| window.msRequestAnimationFrame
-		|| function(cb) { return setTimeout(cb, 1000/60); };
+		|| function(cb) { return setTimeout(function() { cb(Date.now()); }, 1000/60); };
 
 	window.cancelAnimationFrame =
 		window.cancelAnimationFrame

@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.7~dev, generated on Thu Dec  7 08:47:59 CET 2017.
+	Version 0.7~dev, generated on Tue Dec 12 13:31:09 CET 2017.
 */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -698,7 +698,7 @@ if (typeof window != "undefined") {
 		|| window.webkitRequestAnimationFrame
 		|| window.oRequestAnimationFrame
 		|| window.msRequestAnimationFrame
-		|| function(cb) { return setTimeout(cb, 1000/60); };
+		|| function(cb) { return setTimeout(function() { cb(Date.now()); }, 1000/60); };
 
 	window.cancelAnimationFrame =
 		window.cancelAnimationFrame

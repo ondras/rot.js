@@ -2,7 +2,7 @@
  * Add objects for Node.js environment
  */
 global.requestAnimationFrame = function(cb) {
-	return setTimeout(cb, 1000/60);
+	return setTimeout(function() { cb(Date.now()); }, 1000/60);
 };
 
 global.document = {
