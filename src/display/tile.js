@@ -40,6 +40,9 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 	if (!ch) { return; }
 
 	var chars = [].concat(ch);
+	var fgs = [].concat(fg);
+	var bgs = [].concat(bg);
+
 	for (var i=0;i<chars.length;i++) {
 		var tile = this._options.tileMap[chars[i]];
 		if (!tile) { throw new Error("Char '" + chars[i] + "' not found in tileMap"); }
@@ -47,7 +50,11 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 		if (this._options.tileColorize) { /* apply colorization */
 			var canvas = this._colorCanvas;
 			var context = canvas.getContext("2d");
+			context.globalCompositeOperation = "source-over";
 			context.clearRect(0, 0, tileWidth, tileHeight);
+
+			var fg = fgs[i];
+			var bg = bgs[i];
 
 			context.drawImage(
 				this._options.tileSet,
@@ -68,7 +75,6 @@ ROT.Display.Tile.prototype.draw = function(data, clearBefore) {
 			}
 
 			this._context.drawImage(canvas, x*tileWidth, y*tileHeight, tileWidth, tileHeight);
-
 		} else { /* no colorizing, easy */
 			this._context.drawImage(
 				this._options.tileSet,

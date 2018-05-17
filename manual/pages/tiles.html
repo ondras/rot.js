@@ -100,3 +100,36 @@ tileSet.onload = function() {
     display.draw(2, 1, "#", "transparent", "rgba(250, 250, 0, 0.5)");
 }
 </div>
+
+<h2>Colorized tile stacks</h2>
+
+<p>You can apply colorization to multiple tiles as well. Just make sure you pass foreground/background colors as arrays.
+
+<div class="example">
+var tileSet = document.createElement("img");
+tileSet.src = "tiles.png";
+
+var options = {
+	layout: "tile",
+	bg: "transparent",
+	tileWidth: 64,
+	tileHeight: 64,
+	tileSet: tileSet,
+	tileColorize: true,
+	tileMap: {
+		"@": [0, 0],
+		"#": [0, 64]
+	},
+	width: 1,
+	height: 1
+}
+var display = new ROT.Display(options);
+SHOW(display.getContainer());
+
+tileSet.onload = function() {
+	var ch = ["#", "@"];
+	var fg = ["rgba(255, 0, 0, 0.5)", "rgba(0, 0, 255, 0.5)"];
+	var bg = ["transparent", "transparent"];
+	display.draw(0, 0, ch, fg, bg);
+}
+</div>
