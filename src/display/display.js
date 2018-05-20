@@ -4,6 +4,7 @@
  * @param {int} [options.width=ROT.DEFAULT_WIDTH]
  * @param {int} [options.height=ROT.DEFAULT_HEIGHT]
  * @param {int} [options.fontSize=15]
+ * @param {int} [options.resolution=1]
  * @param {string} [options.fontFamily="monospace"]
  * @param {string} [options.fontStyle=""] bold/italic/none/both
  * @param {string} [options.fg="#ccc"]
@@ -25,7 +26,7 @@ ROT.Display = function(options) {
 	this._dirty = false; /* false = nothing, true = all, object = dirty cells */
 	this._options = {};
 	this._backend = null;
-	
+
 	var defaultOptions = {
 		width: ROT.DEFAULT_WIDTH,
 		height: ROT.DEFAULT_HEIGHT,
@@ -34,6 +35,7 @@ ROT.Display = function(options) {
 		fontSize: 15,
 		spacing: 1,
 		border: 0,
+		resolution: 1,
 		forceSquareRatio: false,
 		fontFamily: "monospace",
 		fontStyle: "",
@@ -49,6 +51,12 @@ ROT.Display = function(options) {
 	for (var p in options) { defaultOptions[p] = options[p]; }
 	this.setOptions(defaultOptions);
 	this.DEBUG = this.DEBUG.bind(this);
+
+	// high pixel density screen support, not for tile layout yet
+	if (options.resolution > 1 && options.layout !== "tile") {
+		canvas.style.width = this._context.canvas.width / this._options.resolution + "px";
+		canvas.style.height = this._context.canvas.height / this._options.resolution + "px";
+	}
 
 	this._tick = this._tick.bind(this);
 	requestAnimationFrame(this._tick);
@@ -78,8 +86,13 @@ ROT.Display.prototype.clear = function() {
  */
 ROT.Display.prototype.setOptions = function(options) {
 	for (var p in options) { this._options[p] = options[p]; }
+	if (options.resolution > 1 && options.layout !== "tile") {
+		// high pixel density screen support, not for tile layout yet
+		this._options.fontSize = this._options.fontSize * this._options.resolution;
+	}
+
 	if (options.width || options.height || options.fontSize || options.fontFamily || options.spacing || options.layout) {
-		if (options.layout) { 
+		if (options.layout) {
 			this._backend = new ROT.Display[options.layout.capitalize()](this._context);
 		}
 
@@ -96,7 +109,7 @@ ROT.Display.prototype.setOptions = function(options) {
 
 /**
  * Returns currently set options
- * @returns {object} Current options object 
+ * @returns {object} Current options object
  */
 ROT.Display.prototype.getOptions = function() {
 	return this._options;
@@ -147,7 +160,7 @@ ROT.Display.prototype.eventToPosition = function(e) {
 	var rect = this._context.canvas.getBoundingClientRect();
 	x -= rect.left;
 	y -= rect.top;
-	
+
 	x *= this._context.canvas.width / this._context.canvas.clientWidth;
 	y *= this._context.canvas.height / this._context.canvas.clientHeight;
 
@@ -167,7 +180,7 @@ ROT.Display.prototype.draw = function(x, y, ch, fg, bg) {
 	if (!fg) { fg = this._options.fg; }
 	if (!bg) { bg = this._options.bg; }
 	this._data[x+","+y] = [x, y, ch, fg, bg];
-	
+
 	if (this._dirty === true) { return; } /* will already redraw everything */
 	if (!this._dirty) { this._dirty = {}; } /* first! */
 	this._dirty[x+","+y] = true;
