@@ -150,6 +150,10 @@ ROT.Display.prototype.eventToPosition = function(e) {
 	
 	x *= this._context.canvas.width / this._context.canvas.clientWidth;
 	y *= this._context.canvas.height / this._context.canvas.clientHeight;
+	
+	//this takes into account canvas scale 
+	x *= this._context.canvas.offsetWidth / rect.width;
+        y *= this._context.canvas.offsetHeight / rect.height;
 
 	if (x < 0 || y < 0 || x >= this._context.canvas.width || y >= this._context.canvas.height) { return [-1, -1]; }
 
