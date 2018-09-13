@@ -1,6 +1,6 @@
 /*
 	This is rot.js, the ROguelike Toolkit in JavaScript.
-	Version 0.7~dev, generated on Thu May 17 14:29:02 CEST 2018.
+	Version 0.7~dev, generated on Thu Sep 13 12:51:19 CEST 2018.
 */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -858,8 +858,8 @@ ROT.Display.prototype.eventToPosition = function(e) {
 	x -= rect.left;
 	y -= rect.top;
 	
-	x *= this._context.canvas.width / this._context.canvas.clientWidth;
-	y *= this._context.canvas.height / this._context.canvas.clientHeight;
+	x *= this._context.canvas.width / rect.width;
+	y *= this._context.canvas.height / rect.height;
 
 	if (x < 0 || y < 0 || x >= this._context.canvas.width || y >= this._context.canvas.height) { return [-1, -1]; }
 

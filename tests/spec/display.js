@@ -63,6 +63,41 @@ describe("Display", function() {
 				expect(pos[1]).toBe(-1);
 				unlink(d);
 			});
+			it("should work with css width/height scaling", function() {
+				var d = new ROT.Display({width:10, height:10});
+				appendToBody(d);
+				var node = d.getContainer();
+				var scale = 2;
+				node.style.width = (node.width*scale)+"px";
+				node.style.height = (node.height*scale)+"px";
+
+				var cellW = node.offsetWidth/10;
+				var cellH = node.offsetHeight/10;
+
+				var e = {clientX: 100 + node.width*scale - 1, clientY: 100 + node.height*scale - 1};
+				var pos = d.eventToPosition(e);
+				expect(pos[0]).toBe(9);
+				expect(pos[1]).toBe(9);
+				unlink(d);
+			});
+
+			it("should work with css transform scaling", function() {
+				var d = new ROT.Display({width:10, height:10});
+				appendToBody(d);
+				var node = d.getContainer();
+				var scale = 2;
+				node.style.transform = "scale(" + scale + ")";
+				node.style.transformOrigin = "0 0";
+
+				var cellW = node.offsetWidth/10;
+				var cellH = node.offsetHeight/10;
+
+				var e = {clientX: 100 + node.width*scale - 1, clientY: 100 + node.height*scale - 1};
+				var pos = d.eventToPosition(e);
+				expect(pos[0]).toBe(9);
+				expect(pos[1]).toBe(9);
+				unlink(d);
+			});
 		});
 
 		describe("hex layout", function() {
