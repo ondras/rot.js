@@ -45,7 +45,7 @@ pre {
 	pre { font-size: 23px; }
 }
 
-pre span {
+pre * {
 	opacity: 0.5;
 }
 
@@ -59,33 +59,33 @@ a:hover {
 	background-color: #333;
 }
 
-.text {
+r-text {
 	color: #bbb;
 	opacity: 1;
 }
 
-.text:first-child {
+r-text:first-child {
 	color: #fff;
 	text-decoration: underline;
 }
 
-.wall { color: #666; }
-.corridor { color: #ccc; }
-.staircase { color: #aaa; }
-.door { color: #a60; }
-.trap { color: #f0f; }
-.scroll { color: #fff; }
-.water { color: #33f; }
-.potion { color: #3ff; }
+r-wall { color: #666; }
+r-corridor { color: #ccc; }
+r-staircase { color: #aaa; }
+r-door { color: #a60; }
+r-trap { color: #f0f; }
+r-scroll { color: #fff; }
+r-water { color: #33f; }
+r-potion { color: #3ff; }
 
-.money, .money a {
+r-money, r-money a {
 	color: #fe0;
 	opacity: 1;
 }
 
-.player { color:#f00; }
-.kobold { color:#3f3; }
-.orc { color:#3f3; }
-.goblin { color:#00f; }
-.ogre { color:#3a3; }
-.dragon { color:#f33; }
+r-player { color:#f00; }
+r-kobold { color:#3f3; }
+r-orc { color:#3f3; }
+r-goblin { color:#00f; }
+r-ogre { color:#3a3; }
+r-dragon { color:#f33; }
