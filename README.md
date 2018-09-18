@@ -12,7 +12,7 @@ You can get rot.js using either of these methods:
 
   - clone this repository to gain full source code access;
   - `npm install rot-js`;
-  - download the [prebuilt rot.js file](blob/master/dist/rot.js) (or the [minified rot.min.js file](blob/master/dist/rot.min.js)) to include it in your project.
+  - download the [prebuilt rot.js file](dist/rot.js) (or the [minified rot.min.js file](dist/rot.min.js)) to include it in your project.
 
 ### Usage
 
