@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"target": "es2017",
+		"outDir": "lib"
+	},
+
+	"files": ["src/index.ts"]
+}
