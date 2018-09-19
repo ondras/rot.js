@@ -8,7 +8,7 @@ import { DisplayOptions, DisplayData } from "./types.js";
 export default class Rect extends Backend {
 	_spacingX: number;
 	_spacingY: number;
-	_canvasCache: any;
+	_canvasCache: {[key:string]: HTMLCanvasElement};
 	_options!: DisplayOptions;
 
 	static cache = false;

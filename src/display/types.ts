@@ -15,7 +15,7 @@ export interface DisplayOptions {
 	bg: string,
 	tileWidth: number,
 	tileHeight: number,
-	tileMap: any,
+	tileMap: { [key: string]: [number, number] },
 	tileSet: null | HTMLCanvasElement | HTMLImageElement | HTMLVideoElement | ImageBitmap,
 	tileColorize: Boolean,
 	termColor: string
