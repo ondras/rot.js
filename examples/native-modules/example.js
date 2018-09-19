@@ -1,6 +1,17 @@
-import { RNG, Display } from "../../lib/index.js";
+import { Display } from "../../lib/index.js";
 
-let value = RNG.getUniform();
+let o = {
+	width: 11,
+	height: 5
+}
+let d = new Display(o);
+document.body.appendChild(d.getContainer());
 
-console.log(value);
-alert(value);
+for (let i=0; i<o.width; i++) {
+	for (let j=0; j<o.width; j++) {
+		if (!i || !j || i+1 == o.width || j+1 == o.height) {
+			d.draw(i, j, "#", "gray");
+		}
+	}
+}
+d.draw(o.width >> 1, o.height >> 1, "@", "goldenrod");
