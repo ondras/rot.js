@@ -38,13 +38,13 @@ export default class Rect extends Backend {
 
 	draw(data: DisplayData, clearBefore: boolean) {
 		if (Rect.cache) {
-			this._drawWithCache(data, clearBefore);
+			this._drawWithCache(data);
 		} else {
 			this._drawNoCache(data, clearBefore);
 		}
 	}
 
-	_drawWithCache(data: DisplayData, clearBefore: boolean) {
+	_drawWithCache(data: DisplayData) {
 		let [x, y, ch, fg, bg] = data;
 
 		let hash = ""+ch+fg+bg;
@@ -96,7 +96,7 @@ export default class Rect extends Backend {
 		}
 	}
 
-	computeSize(availWidth: number, availHeight: number) {
+	computeSize(availWidth: number, availHeight: number): [number, number] {
 		let width = Math.floor(availWidth / this._spacingX);
 		let height = Math.floor(availHeight / this._spacingY);
 		return [width, height];
@@ -120,7 +120,7 @@ export default class Rect extends Backend {
 		return Math.floor(boxHeight / this._options.spacing);
 	}
 
-	eventToPosition(x:number, y:number) {
+	eventToPosition(x:number, y:number): [number, number] {
 		return [Math.floor(x/this._spacingX), Math.floor(y/this._spacingY)];
 	}
 }

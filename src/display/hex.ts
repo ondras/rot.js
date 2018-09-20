@@ -65,7 +65,7 @@ export default class Hex extends Backend {
 		}
 	}
 
-	computeSize(availWidth: number, availHeight: number) {
+	computeSize(availWidth: number, availHeight: number): [number, number] {
 		if (this._options.transpose) {
 			availWidth += availHeight;
 			availHeight = availWidth - availHeight;
@@ -104,7 +104,7 @@ export default class Hex extends Backend {
 		return Math.ceil(fontSize)-1;
 	}
 
-	eventToPosition(x: number, y: number) {
+	eventToPosition(x: number, y: number): [number, number] {
 		let nodeSize;
 		if (this._options.transpose) {
 			x += y;

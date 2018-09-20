@@ -146,10 +146,6 @@ var ROT = (function (exports) {
     class Backend {
         constructor(context) { this._context = context; }
         compute(options) { this._options = options; }
-        draw(data, clearBefore) { }
-        computeSize(availWidth, availHeight) { }
-        computeFontSize(availWidth, availHeight) { }
-        eventToPosition(x, y) { }
     }
 
     /**
@@ -374,13 +370,13 @@ var ROT = (function (exports) {
         }
         draw(data, clearBefore) {
             if (Rect.cache) {
-                this._drawWithCache(data, clearBefore);
+                this._drawWithCache(data);
             }
             else {
                 this._drawNoCache(data, clearBefore);
             }
         }
-        _drawWithCache(data, clearBefore) {
+        _drawWithCache(data) {
             let [x, y, ch, fg, bg] = data;
             let hash = "" + ch + fg + bg;
             let canvas;
@@ -521,10 +517,8 @@ var ROT = (function (exports) {
             let height = Math.floor(availHeight / this._options.tileHeight);
             return [width, height];
         }
-        computeFontSize(availWidth, availHeight) {
-            let width = Math.floor(availWidth / this._options.width);
-            let height = Math.floor(availHeight / this._options.height);
-            return [width, height];
+        computeFontSize() {
+            throw new Error("Tile backend does not understand font size");
         }
         eventToPosition(x, y) {
             return [Math.floor(x / this._options.tileWidth), Math.floor(y / this._options.tileHeight)];
@@ -1346,14 +1340,12 @@ var ROT = (function (exports) {
         getStats() {
             let parts = [];
             let priorCount = Object.keys(this._priorValues).length;
-            priorCount--; /* boundary */
+            priorCount--; // boundary
             parts.push("distinct samples: " + priorCount);
             let dataCount = Object.keys(this._data).length;
             let eventCount = 0;
             for (let p in this._data) {
-                for (let key in this._data[p]) {
-                    eventCount++;
-                }
+                eventCount += Object.keys(this._data[p]).length;
             }
             parts.push("dictionary size (contexts): " + dataCount);
             parts.push("dictionary size (events): " + eventCount);

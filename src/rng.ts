@@ -15,7 +15,7 @@ class RNG {
 	getSeed() { return this._seed; }
 
 	/**
-	 * @param {number} seed Seed the number generator
+	 * Seed the number generator
 	 */
 	setSeed(seed: number) {
 		seed = (seed < 1 ? 1/seed : seed);
@@ -34,7 +34,7 @@ class RNG {
 	}
 
 	/**
-	 * @returns {float} Pseudorandom value [0,1), uniformly distributed
+	 * @returns Pseudorandom value [0,1), uniformly distributed
 	 */
 	getUniform() {
 		let t = 2091639 * this._s0 + this._c * FRAC;
@@ -46,9 +46,9 @@ class RNG {
 	}
 
 	/**
-	 * @param {int} lowerBound The lower end of the range to return a value from, inclusive
-	 * @param {int} upperBound The upper end of the range to return a value from, inclusive
-	 * @returns {int} Pseudorandom value [lowerBound, upperBound], using ROT.RNG.getUniform() to distribute the value
+	 * @param lowerBound The lower end of the range to return a value from, inclusive
+	 * @param upperBound The upper end of the range to return a value from, inclusive
+	 * @returns Pseudorandom value [lowerBound, upperBound], using ROT.RNG.getUniform() to distribute the value
 	 */
 	getUniformInt(lowerBound: number, upperBound: number) {
 		let max = Math.max(lowerBound, upperBound);
@@ -57,11 +57,11 @@ class RNG {
 	}
 
 	/**
-	 * @param {float} [mean=0] Mean value
-	 * @param {float} [stddev=1] Standard deviation. ~95% of the absolute values will be lower than 2*stddev.
-	 * @returns {float} A normally distributed pseudorandom value
+	 * @param mean Mean value
+	 * @param stddev Standard deviation. ~95% of the absolute values will be lower than 2*stddev.
+	 * @returns A normally distributed pseudorandom value
 	 */
-	getNormal(mean: number, stddev: number) {
+	getNormal(mean = 0, stddev = 1) {
 		let u, v, r;
 		do {
 			u = 2*this.getUniform()-1;
@@ -70,18 +70,18 @@ class RNG {
 		} while (r > 1 || r == 0);
 
 		let gauss = u * Math.sqrt(-2*Math.log(r)/r);
-		return (mean || 0) + gauss*(stddev || 1);
+		return mean + gauss*stddev;
 	}
 
 	/**
-	 * @returns {int} Pseudorandom value [1,100] inclusive, uniformly distributed
+	 * @returns Pseudorandom value [1,100] inclusive, uniformly distributed
 	 */
 	getPercentage() {
 		return 1 + Math.floor(this.getUniform()*100);
 	}
 
 	/**
-	 * @returns {any} Randomly picked item, null when length=0
+	 * @returns Randomly picked item, null when length=0
 	 */
 	getItem<T>(array: Array<T>) {
 		if (!array.length) { return null; }
@@ -89,7 +89,7 @@ class RNG {
 	}
 
 	/**
-	 * @returns {array} New array with randomized items
+	 * @returns New array with randomized items
 	 */
 	shuffle<T>(array: Array<T>) {
 		let result = [];
@@ -102,8 +102,8 @@ class RNG {
 	}
 
 	/**
-	 * @param {object} data key=whatever, value=weight (relative probability)
-	 * @returns {string} whatever
+	 * @param data key=whatever, value=weight (relative probability)
+	 * @returns whatever
 	 */
 	getWeightedValue(data: any) {
 		let total = 0;
@@ -126,13 +126,12 @@ class RNG {
 
 	/**
 	 * Get RNG state. Useful for storing the state and re-setting it via setState.
-	 * @returns {?} Internal state
+	 * @returns Internal state
 	 */
 	getState() { return [this._s0, this._s1, this._s2, this._c]; }
 
 	/**
 	 * Set a previously retrieved state.
-	 * @param {?} state
 	 */
 	setState(state: number[]) {
 		this._s0 = state[0];

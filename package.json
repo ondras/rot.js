@@ -24,7 +24,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "tsc": "tsc",
-    "rollup": "rollup -c"
+    "rollup": "rollup -c",
+    "doc": "typedoc --out doc --readme none src/**/*.ts src/*.ts"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,7 @@
   },
   "devDependencies": {
     "rollup": "^0.66.0",
+    "typedoc": "^0.12.0",
     "typescript": "^3.0.3"
   }
 }

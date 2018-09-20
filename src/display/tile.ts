@@ -84,19 +84,17 @@ export default class Tile extends Backend {
 		}
 	}
 
-	computeSize(availWidth: number, availHeight: number) {
+	computeSize(availWidth: number, availHeight: number): [number, number] {
 		let width = Math.floor(availWidth / this._options.tileWidth);
 		let height = Math.floor(availHeight / this._options.tileHeight);
 		return [width, height];
 	}
 
-	computeFontSize(availWidth: number, availHeight: number) {
-		let width = Math.floor(availWidth / this._options.width);
-		let height = Math.floor(availHeight / this._options.height);
-		return [width, height];
+	computeFontSize(): number {
+		throw new Error("Tile backend does not understand font size");
 	}
 
-	eventToPosition(x:number, y:number) {
+	eventToPosition(x:number, y:number): [number, number] {
 		return [Math.floor(x/this._options.tileWidth), Math.floor(y/this._options.tileHeight)];
 	}
 }
