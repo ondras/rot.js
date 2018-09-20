@@ -61,6 +61,10 @@ export default class Display {
 	_options!: DisplayOptions;
 	_backend!: Backend;
 
+	static Rect = Rect;
+	static Hex = Hex;
+	static Tile = Tile;
+
 	constructor(options: Partial<DisplayOptions> = {}) {
 		let canvas = document.createElement("canvas");
 		this._context = canvas.getContext("2d") as CanvasRenderingContext2D;

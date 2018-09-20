@@ -1,22 +1,21 @@
 <h2>String formatting</h2>
 
-<p>The <code>String.format</code> function is used to perform complex replacements within string templates. This functionality is also available in <code>String.prototype</code> for your convenience:</p>
+<p>The <code>ROT.Util.format</code> function is used to perform complex replacements within string templates:</p>
 
 <div class="example">
 SHOW(
-	String.format("%s %s", "hello", "world"),
-	"%s %s".format("hello", "world")
+	ROT.Util.format("%s %s", "hello", "world")
 );</div>
 
-<p>It is possible to alter and enrich the behavior of this function by adding mappings to the <code>String.format.map</code> object. Keys correspond to individual formatting specifiers; values are method names to be called. The default value of <code>String.format.map</code> is <code>{s:"toString"}</code>.</p>
+<p>It is possible to alter and enrich the behavior of this function by adding mappings to the <code>format.map</code> object. Keys correspond to individual formatting specifiers; values are method names to be called. The default value of <code>format.map</code> is <code>{s:"toString"}</code>.</p>
 
 <div class="example">
 var myObj = {
 	foo: function() { return "bar"; }
 }
-String.format.map.f = "foo";
+ROT.Util.format.map.f = "foo";
 
-SHOW( "%f".format(myObj) );
+SHOW( ROT.Util.format("%f", myObj) );
 </div>
 
 <p>Finally, using formatting specifier with an upper-case letter will result in a capitalized replacement. Let's show a more convoluted example:</p>
@@ -33,15 +32,15 @@ Item.prototype.the = function() {
 	return "the " + this._name;
 }
 
-String.format.map.a = "a";
-String.format.map.the = "the";
+ROT.Util.format.map.a = "a";
+ROT.Util.format.map.the = "the";
 
 var apple = new Item("apple");
 var banana = new Item("banana");
 var template = "You eat %a. %The was delicious.";
 
-SHOW( template.format(apple, apple) );
-SHOW( template.format(banana, banana) );
+SHOW( ROT.Util.format(template, apple, apple) );
+SHOW( ROT.Util.format(template, banana, banana) );
 </div>
 
 <p>It is possible to pass additional arguments to the formatting function, using the <em>{,}</em> notation.</p>
@@ -55,10 +54,10 @@ Animal.prototype.adjective = function(x) {
 	return x + " " + this._name;
 }
 
-String.format.map.adjective = "adjective";
+ROT.Util.format.map.adjective = "adjective";
 
 var cat = new Animal("cat");
 var template = "You see a %{adjective,black}.";
 
-SHOW( template.format(cat) );
+SHOW( ROT.Util.format(template, cat) );
 </div>

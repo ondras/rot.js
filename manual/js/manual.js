@@ -64,7 +64,7 @@ Example.prototype._useCode = function(code) {
 	var t1 = Date.now();
 	this._eval(code, show);
 	var t2 = Date.now();
-	this._time.innerHTML = ROT.util.format("executed in %{s}ms", t2-t1);
+	this._time.innerHTML = ROT.Util.format("executed in %{s}ms", t2-t1);
 }
 
 Example.prototype._eval = function(code, SHOW) {

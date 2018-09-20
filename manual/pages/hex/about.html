@@ -31,7 +31,7 @@ SHOW(display.getContainer());
 
 for (var y = 0; y &lt; 5; y++) {
 	for (var x = y%2; x &lt; 8; x += 2) {
-		var bg = ["#333", "#666", "#999", "#ccc", "#fff"].random();
+		var bg = ROT.RNG.getItem(["#333", "#666", "#999", "#ccc", "#fff"]);
 		display.draw(x, y, "&bull;", "#000", bg);
 	}
 }
@@ -48,7 +48,7 @@ SHOW(display.getContainer());
 
 for (var y = 0; y &lt; 4; y++) {
 	for (var x = y%2; x &lt; 10; x += 2) {
-		var bg = ["#333", "#666", "#999", "#ccc", "#fff"].random();
+		var bg = ROT.RNG.getItem(["#333", "#666", "#999", "#ccc", "#fff"]);
 		display.draw(x, y, x+","+y, "#000", bg);
 	}
 }

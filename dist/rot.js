@@ -137,7 +137,7 @@ var ROT = (function (exports) {
             return clone.setState(this.getState());
         }
     }
-    var rng = new RNG().setSeed(Date.now());
+    var RNG$1 = new RNG().setSeed(Date.now());
 
     /**
      * @class Abstract display backend module
@@ -206,6 +206,13 @@ var ROT = (function (exports) {
     format.map = {
         "s": "toString"
     };
+
+    var util = /*#__PURE__*/Object.freeze({
+        mod: mod,
+        clamp: clamp,
+        capitalize: capitalize,
+        format: format
+    });
 
     /**
      * @class Hexagonal backend
@@ -688,6 +695,321 @@ var ROT = (function (exports) {
     let DEFAULT_WIDTH = 80;
     /** Default height for display and map generators */
     let DEFAULT_HEIGHT = 25;
+    const DIRS = {
+        4: [[0, -1], [1, 0], [0, 1], [-1, 0]],
+        8: [[0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1]],
+        6: [[-1, -1], [1, -1], [2, 0], [1, 1], [-1, 1], [-2, 0]]
+    };
+    const KEYS = {
+        /** Cancel key. */
+        VK_CANCEL: 3,
+        /** Help key. */
+        VK_HELP: 6,
+        /** Backspace key. */
+        VK_BACK_SPACE: 8,
+        /** Tab key. */
+        VK_TAB: 9,
+        /** 5 key on Numpad when NumLock is unlocked. Or on Mac, clear key which is positioned at NumLock key. */
+        VK_CLEAR: 12,
+        /** Return/enter key on the main keyboard. */
+        VK_RETURN: 13,
+        /** Reserved, but not used. */
+        VK_ENTER: 14,
+        /** Shift key. */
+        VK_SHIFT: 16,
+        /** Control key. */
+        VK_CONTROL: 17,
+        /** Alt (Option on Mac) key. */
+        VK_ALT: 18,
+        /** Pause key. */
+        VK_PAUSE: 19,
+        /** Caps lock. */
+        VK_CAPS_LOCK: 20,
+        /** Escape key. */
+        VK_ESCAPE: 27,
+        /** Space bar. */
+        VK_SPACE: 32,
+        /** Page Up key. */
+        VK_PAGE_UP: 33,
+        /** Page Down key. */
+        VK_PAGE_DOWN: 34,
+        /** End key. */
+        VK_END: 35,
+        /** Home key. */
+        VK_HOME: 36,
+        /** Left arrow. */
+        VK_LEFT: 37,
+        /** Up arrow. */
+        VK_UP: 38,
+        /** Right arrow. */
+        VK_RIGHT: 39,
+        /** Down arrow. */
+        VK_DOWN: 40,
+        /** Print Screen key. */
+        VK_PRINTSCREEN: 44,
+        /** Ins(ert) key. */
+        VK_INSERT: 45,
+        /** Del(ete) key. */
+        VK_DELETE: 46,
+        /***/
+        VK_0: 48,
+        /***/
+        VK_1: 49,
+        /***/
+        VK_2: 50,
+        /***/
+        VK_3: 51,
+        /***/
+        VK_4: 52,
+        /***/
+        VK_5: 53,
+        /***/
+        VK_6: 54,
+        /***/
+        VK_7: 55,
+        /***/
+        VK_8: 56,
+        /***/
+        VK_9: 57,
+        /** Colon (:) key. Requires Gecko 15.0 */
+        VK_COLON: 58,
+        /** Semicolon (;) key. */
+        VK_SEMICOLON: 59,
+        /** Less-than (<) key. Requires Gecko 15.0 */
+        VK_LESS_THAN: 60,
+        /** Equals (=) key. */
+        VK_EQUALS: 61,
+        /** Greater-than (>) key. Requires Gecko 15.0 */
+        VK_GREATER_THAN: 62,
+        /** Question mark (?) key. Requires Gecko 15.0 */
+        VK_QUESTION_MARK: 63,
+        /** Atmark (@) key. Requires Gecko 15.0 */
+        VK_AT: 64,
+        /***/
+        VK_A: 65,
+        /***/
+        VK_B: 66,
+        /***/
+        VK_C: 67,
+        /***/
+        VK_D: 68,
+        /***/
+        VK_E: 69,
+        /***/
+        VK_F: 70,
+        /***/
+        VK_G: 71,
+        /***/
+        VK_H: 72,
+        /***/
+        VK_I: 73,
+        /***/
+        VK_J: 74,
+        /***/
+        VK_K: 75,
+        /***/
+        VK_L: 76,
+        /***/
+        VK_M: 77,
+        /***/
+        VK_N: 78,
+        /***/
+        VK_O: 79,
+        /***/
+        VK_P: 80,
+        /***/
+        VK_Q: 81,
+        /***/
+        VK_R: 82,
+        /***/
+        VK_S: 83,
+        /***/
+        VK_T: 84,
+        /***/
+        VK_U: 85,
+        /***/
+        VK_V: 86,
+        /***/
+        VK_W: 87,
+        /***/
+        VK_X: 88,
+        /***/
+        VK_Y: 89,
+        /***/
+        VK_Z: 90,
+        /***/
+        VK_CONTEXT_MENU: 93,
+        /** 0 on the numeric keypad. */
+        VK_NUMPAD0: 96,
+        /** 1 on the numeric keypad. */
+        VK_NUMPAD1: 97,
+        /** 2 on the numeric keypad. */
+        VK_NUMPAD2: 98,
+        /** 3 on the numeric keypad. */
+        VK_NUMPAD3: 99,
+        /** 4 on the numeric keypad. */
+        VK_NUMPAD4: 100,
+        /** 5 on the numeric keypad. */
+        VK_NUMPAD5: 101,
+        /** 6 on the numeric keypad. */
+        VK_NUMPAD6: 102,
+        /** 7 on the numeric keypad. */
+        VK_NUMPAD7: 103,
+        /** 8 on the numeric keypad. */
+        VK_NUMPAD8: 104,
+        /** 9 on the numeric keypad. */
+        VK_NUMPAD9: 105,
+        /** * on the numeric keypad. */
+        VK_MULTIPLY: 106,
+        /** + on the numeric keypad. */
+        VK_ADD: 107,
+        /***/
+        VK_SEPARATOR: 108,
+        /** - on the numeric keypad. */
+        VK_SUBTRACT: 109,
+        /** Decimal point on the numeric keypad. */
+        VK_DECIMAL: 110,
+        /** / on the numeric keypad. */
+        VK_DIVIDE: 111,
+        /** F1 key. */
+        VK_F1: 112,
+        /** F2 key. */
+        VK_F2: 113,
+        /** F3 key. */
+        VK_F3: 114,
+        /** F4 key. */
+        VK_F4: 115,
+        /** F5 key. */
+        VK_F5: 116,
+        /** F6 key. */
+        VK_F6: 117,
+        /** F7 key. */
+        VK_F7: 118,
+        /** F8 key. */
+        VK_F8: 119,
+        /** F9 key. */
+        VK_F9: 120,
+        /** F10 key. */
+        VK_F10: 121,
+        /** F11 key. */
+        VK_F11: 122,
+        /** F12 key. */
+        VK_F12: 123,
+        /** F13 key. */
+        VK_F13: 124,
+        /** F14 key. */
+        VK_F14: 125,
+        /** F15 key. */
+        VK_F15: 126,
+        /** F16 key. */
+        VK_F16: 127,
+        /** F17 key. */
+        VK_F17: 128,
+        /** F18 key. */
+        VK_F18: 129,
+        /** F19 key. */
+        VK_F19: 130,
+        /** F20 key. */
+        VK_F20: 131,
+        /** F21 key. */
+        VK_F21: 132,
+        /** F22 key. */
+        VK_F22: 133,
+        /** F23 key. */
+        VK_F23: 134,
+        /** F24 key. */
+        VK_F24: 135,
+        /** Num Lock key. */
+        VK_NUM_LOCK: 144,
+        /** Scroll Lock key. */
+        VK_SCROLL_LOCK: 145,
+        /** Circumflex (^) key. Requires Gecko 15.0 */
+        VK_CIRCUMFLEX: 160,
+        /** Exclamation (!) key. Requires Gecko 15.0 */
+        VK_EXCLAMATION: 161,
+        /** Double quote () key. Requires Gecko 15.0 */
+        VK_DOUBLE_QUOTE: 162,
+        /** Hash (#) key. Requires Gecko 15.0 */
+        VK_HASH: 163,
+        /** Dollar sign ($) key. Requires Gecko 15.0 */
+        VK_DOLLAR: 164,
+        /** Percent (%) key. Requires Gecko 15.0 */
+        VK_PERCENT: 165,
+        /** Ampersand (&) key. Requires Gecko 15.0 */
+        VK_AMPERSAND: 166,
+        /** Underscore (_) key. Requires Gecko 15.0 */
+        VK_UNDERSCORE: 167,
+        /** Open parenthesis (() key. Requires Gecko 15.0 */
+        VK_OPEN_PAREN: 168,
+        /** Close parenthesis ()) key. Requires Gecko 15.0 */
+        VK_CLOSE_PAREN: 169,
+        /* Asterisk (*) key. Requires Gecko 15.0 */
+        VK_ASTERISK: 170,
+        /** Plus (+) key. Requires Gecko 15.0 */
+        VK_PLUS: 171,
+        /** Pipe (|) key. Requires Gecko 15.0 */
+        VK_PIPE: 172,
+        /** Hyphen-US/docs/Minus (-) key. Requires Gecko 15.0 */
+        VK_HYPHEN_MINUS: 173,
+        /** Open curly bracket ({) key. Requires Gecko 15.0 */
+        VK_OPEN_CURLY_BRACKET: 174,
+        /** Close curly bracket (}) key. Requires Gecko 15.0 */
+        VK_CLOSE_CURLY_BRACKET: 175,
+        /** Tilde (~) key. Requires Gecko 15.0 */
+        VK_TILDE: 176,
+        /** Comma (,) key. */
+        VK_COMMA: 188,
+        /** Period (.) key. */
+        VK_PERIOD: 190,
+        /** Slash (/) key. */
+        VK_SLASH: 191,
+        /** Back tick (`) key. */
+        VK_BACK_QUOTE: 192,
+        /** Open square bracket ([) key. */
+        VK_OPEN_BRACKET: 219,
+        /** Back slash (\) key. */
+        VK_BACK_SLASH: 220,
+        /** Close square bracket (]) key. */
+        VK_CLOSE_BRACKET: 221,
+        /** Quote (''') key. */
+        VK_QUOTE: 222,
+        /** Meta key on Linux, Command key on Mac. */
+        VK_META: 224,
+        /** AltGr key on Linux. Requires Gecko 15.0 */
+        VK_ALTGR: 225,
+        /** Windows logo key on Windows. Or Super or Hyper key on Linux. Requires Gecko 15.0 */
+        VK_WIN: 91,
+        /** Linux support for this keycode was added in Gecko 4.0. */
+        VK_KANA: 21,
+        /** Linux support for this keycode was added in Gecko 4.0. */
+        VK_HANGUL: 21,
+        /** 英数 key on Japanese Mac keyboard. Requires Gecko 15.0 */
+        VK_EISU: 22,
+        /** Linux support for this keycode was added in Gecko 4.0. */
+        VK_JUNJA: 23,
+        /** Linux support for this keycode was added in Gecko 4.0. */
+        VK_FINAL: 24,
+        /** Linux support for this keycode was added in Gecko 4.0. */
+        VK_HANJA: 25,
+        /** Linux support for this keycode was added in Gecko 4.0. */
+        VK_KANJI: 25,
+        /** Linux support for this keycode was added in Gecko 4.0. */
+        VK_CONVERT: 28,
+        /** Linux support for this keycode was added in Gecko 4.0. */
+        VK_NONCONVERT: 29,
+        /** Linux support for this keycode was added in Gecko 4.0. */
+        VK_ACCEPT: 30,
+        /** Linux support for this keycode was added in Gecko 4.0. */
+        VK_MODECHANGE: 31,
+        /** Linux support for this keycode was added in Gecko 4.0. */
+        VK_SELECT: 41,
+        /** Linux support for this keycode was added in Gecko 4.0. */
+        VK_PRINT: 42,
+        /** Linux support for this keycode was added in Gecko 4.0. */
+        VK_EXECUTE: 43,
+        /** Linux support for this keycode was added in Gecko 4.0.	 */
+        VK_SLEEP: 95
+    };
 
     const BACKENDS = {
         "hex": Hex,
@@ -955,14 +1277,546 @@ var ROT = (function (exports) {
             this._backend.draw(data, clearBefore);
         }
     }
+    Display.Rect = Rect;
+    Display.Hex = Hex;
+    Display.Tile = Tile;
 
-    const util = { clamp, mod, capitalize, format };
+    /**
+     * @class (Markov process)-based string generator.
+     * Copied from a <a href="http://www.roguebasin.roguelikedevelopment.org/index.php?title=Names_from_a_high_order_Markov_Process_and_a_simplified_Katz_back-off_scheme">RogueBasin article</a>.
+     * Offers configurable order and prior.
+     * @param {object} [options]
+     * @param {bool} [options.words=false] Use word mode?
+     * @param {int} [options.order=3]
+     * @param {float} [options.prior=0.001]
+     */
+    class StringGenerator {
+        constructor(options) {
+            this._options = {
+                words: false,
+                order: 3,
+                prior: 0.001
+            };
+            Object.assign(this._options, options);
+            this._boundary = String.fromCharCode(0);
+            this._suffix = this._boundary;
+            this._prefix = [];
+            for (let i = 0; i < this._options.order; i++) {
+                this._prefix.push(this._boundary);
+            }
+            this._priorValues = {};
+            this._priorValues[this._boundary] = this._options.prior;
+            this._data = {};
+        }
+        /**
+         * Remove all learning data
+         */
+        clear() {
+            this._data = {};
+            this._priorValues = {};
+        }
+        /**
+         * @returns {string} Generated string
+         */
+        generate() {
+            let result = [this._sample(this._prefix)];
+            while (result[result.length - 1] != this._boundary) {
+                result.push(this._sample(result));
+            }
+            return this._join(result.slice(0, -1));
+        }
+        /**
+         * Observe (learn) a string from a training set
+         */
+        observe(string) {
+            let tokens = this._split(string);
+            for (let i = 0; i < tokens.length; i++) {
+                this._priorValues[tokens[i]] = this._options.prior;
+            }
+            tokens = this._prefix.concat(tokens).concat(this._suffix); /* add boundary symbols */
+            for (let i = this._options.order; i < tokens.length; i++) {
+                let context = tokens.slice(i - this._options.order, i);
+                let event = tokens[i];
+                for (let j = 0; j < context.length; j++) {
+                    let subcontext = context.slice(j);
+                    this._observeEvent(subcontext, event);
+                }
+            }
+        }
+        getStats() {
+            let parts = [];
+            let priorCount = Object.keys(this._priorValues).length;
+            priorCount--; /* boundary */
+            parts.push("distinct samples: " + priorCount);
+            let dataCount = Object.keys(this._data).length;
+            let eventCount = 0;
+            for (let p in this._data) {
+                for (let key in this._data[p]) {
+                    eventCount++;
+                }
+            }
+            parts.push("dictionary size (contexts): " + dataCount);
+            parts.push("dictionary size (events): " + eventCount);
+            return parts.join(", ");
+        }
+        /**
+         * @param {string}
+         * @returns {string[]}
+         */
+        _split(str) {
+            return str.split(this._options.words ? /\s+/ : "");
+        }
+        /**
+         * @param {string[]}
+         * @returns {string}
+         */
+        _join(arr) {
+            return arr.join(this._options.words ? " " : "");
+        }
+        /**
+         * @param {string[]} context
+         * @param {string} event
+         */
+        _observeEvent(context, event) {
+            let key = this._join(context);
+            if (!(key in this._data)) {
+                this._data[key] = {};
+            }
+            let data = this._data[key];
+            if (!(event in data)) {
+                data[event] = 0;
+            }
+            data[event]++;
+        }
+        /**
+         * @param {string[]}
+         * @returns {string}
+         */
+        _sample(context) {
+            context = this._backoff(context);
+            let key = this._join(context);
+            let data = this._data[key];
+            let available = {};
+            if (this._options.prior) {
+                for (let event in this._priorValues) {
+                    available[event] = this._priorValues[event];
+                }
+                for (let event in data) {
+                    available[event] += data[event];
+                }
+            }
+            else {
+                available = data;
+            }
+            return RNG$1.getWeightedValue(available);
+        }
+        /**
+         * @param {string[]}
+         * @returns {string[]}
+         */
+        _backoff(context) {
+            if (context.length > this._options.order) {
+                context = context.slice(-this._options.order);
+            }
+            else if (context.length < this._options.order) {
+                context = this._prefix.slice(0, this._options.order - context.length).concat(context);
+            }
+            while (!(this._join(context) in this._data) && context.length > 0) {
+                context = context.slice(1);
+            }
+            return context;
+        }
+    }
 
-    exports.util = util;
-    exports.RNG = rng;
+    function fromString(str) {
+        let cached, r;
+        if (str in CACHE) {
+            cached = CACHE[str];
+        }
+        else {
+            if (str.charAt(0) == "#") { // hex rgb
+                let matched = str.match(/[0-9a-f]/gi) || [];
+                let values = matched.map((x) => parseInt(x, 16));
+                if (values.length == 3) {
+                    cached = values.map((x) => x * 17);
+                }
+                else {
+                    for (let i = 0; i < 3; i++) {
+                        values[i + 1] += 16 * values[i];
+                        values.splice(i, 1);
+                    }
+                    cached = values;
+                }
+            }
+            else if ((r = str.match(/rgb\(([0-9, ]+)\)/i))) { // decimal rgb
+                cached = r[1].split(/\s*,\s*/).map((x) => parseInt(x));
+            }
+            else { // html name
+                cached = [0, 0, 0];
+            }
+            CACHE[str] = cached;
+        }
+        return cached.slice();
+    }
+    /**
+     * Add two or more colors
+     * @param {number[]} color1
+     * @param {number[]} color2
+     * @returns {number[]}
+     */
+    function add(color1, ...colors) {
+        let result = color1.slice();
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < colors.length; j++) {
+                result[i] += colors[j][i];
+            }
+        }
+        return result;
+    }
+    /**
+     * Add two or more colors, MODIFIES FIRST ARGUMENT
+     * @param {number[]} color1
+     * @param {number[]} color2
+     * @returns {number[]}
+     */
+    function add_(color1, ...colors) {
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < colors.length; j++) {
+                color1[i] += colors[j][i];
+            }
+        }
+        return color1;
+    }
+    /**
+     * Multiply (mix) two or more colors
+     * @param {number[]} color1
+     * @param {number[]} color2
+     * @returns {number[]}
+     */
+    function multiply(color1, ...colors) {
+        let result = color1.slice();
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < colors.length; j++) {
+                result[i] *= colors[j][i] / 255;
+            }
+            result[i] = Math.round(result[i]);
+        }
+        return result;
+    }
+    /**
+     * Multiply (mix) two or more colors, MODIFIES FIRST ARGUMENT
+     * @param {number[]} color1
+     * @param {number[]} color2
+     * @returns {number[]}
+     */
+    function multiply_(color1, ...colors) {
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < colors.length; j++) {
+                color1[i] *= colors[j][i] / 255;
+            }
+            color1[i] = Math.round(color1[i]);
+        }
+        return color1;
+    }
+    /**
+     * Interpolate (blend) two colors with a given factor
+     * @param {number[]} color1
+     * @param {number[]} color2
+     * @param {float} [factor=0.5] 0..1
+     * @returns {number[]}
+     */
+    function interpolate(color1, color2, factor = 0.5) {
+        let result = color1.slice();
+        for (let i = 0; i < 3; i++) {
+            result[i] = Math.round(result[i] + factor * (color2[i] - color1[i]));
+        }
+        return result;
+    }
+    const lerp = interpolate;
+    /**
+     * Interpolate (blend) two colors with a given factor in HSL mode
+     * @param {number[]} color1
+     * @param {number[]} color2
+     * @param {float} [factor=0.5] 0..1
+     * @returns {number[]}
+     */
+    function interpolateHSL(color1, color2, factor = 0.5) {
+        let hsl1 = rgb2hsl(color1);
+        let hsl2 = rgb2hsl(color2);
+        for (let i = 0; i < 3; i++) {
+            hsl1[i] += factor * (hsl2[i] - hsl1[i]);
+        }
+        return hsl2rgb(hsl1);
+    }
+    const lerpHSL = interpolateHSL;
+    /**
+     * Create a new random color based on this one
+     * @param {number[]} color
+     * @param {number[]} diff Set of standard deviations
+     * @returns {number[]}
+     */
+    function randomize(color, diff) {
+        if (!(diff instanceof Array)) {
+            diff = Math.round(RNG$1.getNormal(0, diff));
+        }
+        let result = color.slice();
+        for (let i = 0; i < 3; i++) {
+            result[i] += (diff instanceof Array ? Math.round(RNG$1.getNormal(0, diff[i])) : diff);
+        }
+        return result;
+    }
+    /**
+     * Converts an RGB color value to HSL. Expects 0..255 inputs, produces 0..1 outputs.
+     * @param {number[]} color
+     * @returns {number[]}
+     */
+    function rgb2hsl(color) {
+        let r = color[0] / 255;
+        let g = color[1] / 255;
+        let b = color[2] / 255;
+        let max = Math.max(r, g, b), min = Math.min(r, g, b);
+        let h = 0, s, l = (max + min) / 2;
+        if (max == min) {
+            s = 0; // achromatic
+        }
+        else {
+            let d = max - min;
+            s = (l > 0.5 ? d / (2 - max - min) : d / (max + min));
+            switch (max) {
+                case r:
+                    h = (g - b) / d + (g < b ? 6 : 0);
+                    break;
+                case g:
+                    h = (b - r) / d + 2;
+                    break;
+                case b:
+                    h = (r - g) / d + 4;
+                    break;
+            }
+            h /= 6;
+        }
+        return [h, s, l];
+    }
+    function hue2rgb(p, q, t) {
+        if (t < 0)
+            t += 1;
+        if (t > 1)
+            t -= 1;
+        if (t < 1 / 6)
+            return p + (q - p) * 6 * t;
+        if (t < 1 / 2)
+            return q;
+        if (t < 2 / 3)
+            return p + (q - p) * (2 / 3 - t) * 6;
+        return p;
+    }
+    /**
+     * Converts an HSL color value to RGB. Expects 0..1 inputs, produces 0..255 outputs.
+     * @param {number[]} color
+     * @returns {number[]}
+     */
+    function hsl2rgb(color) {
+        let l = color[2];
+        if (color[1] == 0) {
+            l = Math.round(l * 255);
+            return [l, l, l];
+        }
+        else {
+            var s = color[1];
+            var q = (l < 0.5 ? l * (1 + s) : l + s - l * s);
+            var p = 2 * l - q;
+            var r = hue2rgb(p, q, color[0] + 1 / 3);
+            var g = hue2rgb(p, q, color[0]);
+            var b = hue2rgb(p, q, color[0] - 1 / 3);
+            return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+        }
+    }
+    function toRGB(color) {
+        let clamped = color.map(x => clamp(x, 0, 255));
+        return `rgb(${clamped.join(",")})`;
+    }
+    function toHex(color) {
+        let clamped = color.map(x => clamp(x, 0, 255).toString(16).padStart(2, "0"));
+        return `#${clamped.join("")}`;
+    }
+    const CACHE = {
+        "black": [0, 0, 0],
+        "navy": [0, 0, 128],
+        "darkblue": [0, 0, 139],
+        "mediumblue": [0, 0, 205],
+        "blue": [0, 0, 255],
+        "darkgreen": [0, 100, 0],
+        "green": [0, 128, 0],
+        "teal": [0, 128, 128],
+        "darkcyan": [0, 139, 139],
+        "deepskyblue": [0, 191, 255],
+        "darkturquoise": [0, 206, 209],
+        "mediumspringgreen": [0, 250, 154],
+        "lime": [0, 255, 0],
+        "springgreen": [0, 255, 127],
+        "aqua": [0, 255, 255],
+        "cyan": [0, 255, 255],
+        "midnightblue": [25, 25, 112],
+        "dodgerblue": [30, 144, 255],
+        "forestgreen": [34, 139, 34],
+        "seagreen": [46, 139, 87],
+        "darkslategray": [47, 79, 79],
+        "darkslategrey": [47, 79, 79],
+        "limegreen": [50, 205, 50],
+        "mediumseagreen": [60, 179, 113],
+        "turquoise": [64, 224, 208],
+        "royalblue": [65, 105, 225],
+        "steelblue": [70, 130, 180],
+        "darkslateblue": [72, 61, 139],
+        "mediumturquoise": [72, 209, 204],
+        "indigo": [75, 0, 130],
+        "darkolivegreen": [85, 107, 47],
+        "cadetblue": [95, 158, 160],
+        "cornflowerblue": [100, 149, 237],
+        "mediumaquamarine": [102, 205, 170],
+        "dimgray": [105, 105, 105],
+        "dimgrey": [105, 105, 105],
+        "slateblue": [106, 90, 205],
+        "olivedrab": [107, 142, 35],
+        "slategray": [112, 128, 144],
+        "slategrey": [112, 128, 144],
+        "lightslategray": [119, 136, 153],
+        "lightslategrey": [119, 136, 153],
+        "mediumslateblue": [123, 104, 238],
+        "lawngreen": [124, 252, 0],
+        "chartreuse": [127, 255, 0],
+        "aquamarine": [127, 255, 212],
+        "maroon": [128, 0, 0],
+        "purple": [128, 0, 128],
+        "olive": [128, 128, 0],
+        "gray": [128, 128, 128],
+        "grey": [128, 128, 128],
+        "skyblue": [135, 206, 235],
+        "lightskyblue": [135, 206, 250],
+        "blueviolet": [138, 43, 226],
+        "darkred": [139, 0, 0],
+        "darkmagenta": [139, 0, 139],
+        "saddlebrown": [139, 69, 19],
+        "darkseagreen": [143, 188, 143],
+        "lightgreen": [144, 238, 144],
+        "mediumpurple": [147, 112, 216],
+        "darkviolet": [148, 0, 211],
+        "palegreen": [152, 251, 152],
+        "darkorchid": [153, 50, 204],
+        "yellowgreen": [154, 205, 50],
+        "sienna": [160, 82, 45],
+        "brown": [165, 42, 42],
+        "darkgray": [169, 169, 169],
+        "darkgrey": [169, 169, 169],
+        "lightblue": [173, 216, 230],
+        "greenyellow": [173, 255, 47],
+        "paleturquoise": [175, 238, 238],
+        "lightsteelblue": [176, 196, 222],
+        "powderblue": [176, 224, 230],
+        "firebrick": [178, 34, 34],
+        "darkgoldenrod": [184, 134, 11],
+        "mediumorchid": [186, 85, 211],
+        "rosybrown": [188, 143, 143],
+        "darkkhaki": [189, 183, 107],
+        "silver": [192, 192, 192],
+        "mediumvioletred": [199, 21, 133],
+        "indianred": [205, 92, 92],
+        "peru": [205, 133, 63],
+        "chocolate": [210, 105, 30],
+        "tan": [210, 180, 140],
+        "lightgray": [211, 211, 211],
+        "lightgrey": [211, 211, 211],
+        "palevioletred": [216, 112, 147],
+        "thistle": [216, 191, 216],
+        "orchid": [218, 112, 214],
+        "goldenrod": [218, 165, 32],
+        "crimson": [220, 20, 60],
+        "gainsboro": [220, 220, 220],
+        "plum": [221, 160, 221],
+        "burlywood": [222, 184, 135],
+        "lightcyan": [224, 255, 255],
+        "lavender": [230, 230, 250],
+        "darksalmon": [233, 150, 122],
+        "violet": [238, 130, 238],
+        "palegoldenrod": [238, 232, 170],
+        "lightcoral": [240, 128, 128],
+        "khaki": [240, 230, 140],
+        "aliceblue": [240, 248, 255],
+        "honeydew": [240, 255, 240],
+        "azure": [240, 255, 255],
+        "sandybrown": [244, 164, 96],
+        "wheat": [245, 222, 179],
+        "beige": [245, 245, 220],
+        "whitesmoke": [245, 245, 245],
+        "mintcream": [245, 255, 250],
+        "ghostwhite": [248, 248, 255],
+        "salmon": [250, 128, 114],
+        "antiquewhite": [250, 235, 215],
+        "linen": [250, 240, 230],
+        "lightgoldenrodyellow": [250, 250, 210],
+        "oldlace": [253, 245, 230],
+        "red": [255, 0, 0],
+        "fuchsia": [255, 0, 255],
+        "magenta": [255, 0, 255],
+        "deeppink": [255, 20, 147],
+        "orangered": [255, 69, 0],
+        "tomato": [255, 99, 71],
+        "hotpink": [255, 105, 180],
+        "coral": [255, 127, 80],
+        "darkorange": [255, 140, 0],
+        "lightsalmon": [255, 160, 122],
+        "orange": [255, 165, 0],
+        "lightpink": [255, 182, 193],
+        "pink": [255, 192, 203],
+        "gold": [255, 215, 0],
+        "peachpuff": [255, 218, 185],
+        "navajowhite": [255, 222, 173],
+        "moccasin": [255, 228, 181],
+        "bisque": [255, 228, 196],
+        "mistyrose": [255, 228, 225],
+        "blanchedalmond": [255, 235, 205],
+        "papayawhip": [255, 239, 213],
+        "lavenderblush": [255, 240, 245],
+        "seashell": [255, 245, 238],
+        "cornsilk": [255, 248, 220],
+        "lemonchiffon": [255, 250, 205],
+        "floralwhite": [255, 250, 240],
+        "snow": [255, 250, 250],
+        "yellow": [255, 255, 0],
+        "lightyellow": [255, 255, 224],
+        "ivory": [255, 255, 240],
+        "white": [255, 255, 255]
+    };
+
+    var color = /*#__PURE__*/Object.freeze({
+        fromString: fromString,
+        add: add,
+        add_: add_,
+        multiply: multiply,
+        multiply_: multiply_,
+        interpolate: interpolate,
+        lerp: lerp,
+        interpolateHSL: interpolateHSL,
+        lerpHSL: lerpHSL,
+        randomize: randomize,
+        rgb2hsl: rgb2hsl,
+        hsl2rgb: hsl2rgb,
+        toRGB: toRGB,
+        toHex: toHex
+    });
+
+    const Util = util;
+    const Color = color;
+
+    exports.Util = Util;
+    exports.Color = Color;
+    exports.RNG = RNG$1;
     exports.Display = Display;
+    exports.StringGenerator = StringGenerator;
     exports.DEFAULT_WIDTH = DEFAULT_WIDTH;
     exports.DEFAULT_HEIGHT = DEFAULT_HEIGHT;
+    exports.DIRS = DIRS;
+    exports.KEYS = KEYS;
 
     return exports;
 

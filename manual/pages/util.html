@@ -1,0 +1,34 @@
+<h2>Utilities</h2>
+
+<p>Historically, <strong>rot.js</strong> was adding several new methods to JavaScript primordial objects: <code>Array</code>, <code>String</code>, <code>Number</code>, <code>Date</code>, <code>Object</code> and <code>Function</code>. This behavior is now frowned upon, so some of the provided functionality is now moved to the dedicated <code>ROT.Util</code> namespace.</p>
+
+
+<h3>String</h3>
+
+<p>A more verbose explanation about how <code>ROT.Util.format</code> works is available on a dedicated <a href="#format">string formatting page</a>.
+
+<div class="example">
+SHOW(
+	ROT.Util.capitalize("hello world")
+);</div>
+
+<h3>Number</h3>
+
+<p>The built-in modulus operator (%) yields negative results for negative arguments. <code>Number.prototype.mod</code> is guaranteed to return a positive value.</p>
+
+<div class="example">
+SHOW(
+	( 15) % 7,
+	(-15) % 7,
+	ROT.Util.mod( 15, 7),
+	ROT.Util.mod(-15, 7)
+);</div>
+
+<p>A numeric value often needs to be clamped into a useful range:</p>
+
+<div class="example">
+SHOW(
+	ROT.Util.clamp( 15), // default range 0..1
+	ROT.Util.clamp( 15, 0, 255), // custom range
+	ROT.Util.clamp(-15, 0, 255)
+);</div>
