@@ -72,6 +72,27 @@ var ROT = (function (exports) {
             return 1 + Math.floor(this.getUniform() * 100);
         }
         /**
+         * @returns {any} Randomly picked item, null when length=0
+         */
+        getItem(array) {
+            if (!array.length) {
+                return null;
+            }
+            return array[Math.floor(this.getUniform() * array.length)];
+        }
+        /**
+         * @returns {array} New array with randomized items
+         */
+        shuffle(array) {
+            let result = [];
+            let clone = array.slice();
+            while (clone.length) {
+                let index = clone.indexOf(this.getItem(clone));
+                result.push(clone.splice(index, 1)[0]);
+            }
+            return result;
+        }
+        /**
          * @param {object} data key=whatever, value=weight (relative probability)
          * @returns {string} whatever
          */
@@ -147,6 +168,44 @@ var ROT = (function (exports) {
             return max;
         return val;
     }
+    function capitalize(string) {
+        return string.charAt(0).toUpperCase() + string.substring(1);
+    }
+    /**
+     * Format a string in a flexible way. Scans for %s strings and replaces them with arguments. List of patterns is modifiable via String.format.map.
+     * @param {string} template
+     * @param {any} [argv]
+     */
+    function format(template, ...args) {
+        let map = format.map;
+        let replacer = function (match, group1, group2, index) {
+            if (template.charAt(index - 1) == "%") {
+                return match.substring(1);
+            }
+            if (!args.length) {
+                return match;
+            }
+            let obj = args[0];
+            let group = group1 || group2;
+            let parts = group.split(",");
+            let name = parts.shift() || "";
+            let method = map[name.toLowerCase()];
+            if (!method) {
+                return match;
+            }
+            obj = args.shift();
+            let replaced = obj[method].apply(obj, parts);
+            let first = name.charAt(0);
+            if (first != first.toLowerCase()) {
+                replaced = capitalize(replaced);
+            }
+            return replaced;
+        };
+        return template.replace(/%(?:([a-z]+)|(?:{([^}]+)}))/gi, replacer);
+    }
+    format.map = {
+        "s": "toString"
+    };
 
     /**
      * @class Hexagonal backend
@@ -897,11 +956,13 @@ var ROT = (function (exports) {
         }
     }
 
-    const util = { clamp, mod };
+    const util = { clamp, mod, capitalize, format };
 
     exports.util = util;
     exports.RNG = rng;
     exports.Display = Display;
+    exports.DEFAULT_WIDTH = DEFAULT_WIDTH;
+    exports.DEFAULT_HEIGHT = DEFAULT_HEIGHT;
 
     return exports;
 

@@ -1,0 +1,19 @@
+<h2>Event queue</h2>
+
+<p><code>ROT.EventQueue</code> is a very simple tool to maintain a sorted priority list. It offers basic API for adding, removing and retrieving stuff. For most scenarios, the Event queue is too low-level and you might want to use a specific <a href="#timing/scheduler">scheduler</a> instead.</p>
+
+<p>Time units in Event queue are abstract and do not need to be integers. The <code>getTime()</code> method can be used to retrieve the amount of already elapsed time units.</p>
+
+<div class="example">
+var queue = new ROT.EventQueue();
+
+queue.add("event 1", 100); /* queued after 100 time units */
+queue.add("event 2", 10);  /* queued after 10 time units */
+queue.add("event 3", 50);  /* queued after 50 time units */
+
+queue.remove("event 2");
+SHOW(
+	queue.get(),
+	queue.get(),
+	queue.getTime()
+);</div>

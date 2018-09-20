@@ -79,7 +79,28 @@ class RNG {
 	getPercentage() {
 		return 1 + Math.floor(this.getUniform()*100);
 	}
-	
+
+	/**
+	 * @returns {any} Randomly picked item, null when length=0
+	 */
+	getItem<T>(array: Array<T>) {
+		if (!array.length) { return null; }
+		return array[Math.floor(this.getUniform() * array.length)];
+	}
+
+	/**
+	 * @returns {array} New array with randomized items
+	 */
+	shuffle<T>(array: Array<T>) {
+		let result = [];
+		let clone = array.slice();
+		while (clone.length) {
+			let index = clone.indexOf(this.getItem(clone) as T);
+			result.push(clone.splice(index, 1)[0]);
+		}
+		return result;
+	}
+
 	/**
 	 * @param {object} data key=whatever, value=weight (relative probability)
 	 * @returns {string} whatever

@@ -1,0 +1,10 @@
+<h2>Timing &amp; scheduling</h2>
+
+<p>Both realtime and turn-based games need to maintain the notion of a time: to manage events, schedule turns, perform correct timing and related measurements. <strong>rot.js</strong> offers several helper tools at varying levels of abstraction to help with these tasks. Click on individual sub-chapters to read more detailed information.</p>
+
+<ol>
+	<li><a href="#timing/eventqueue">Event queue</a> is the most low-level approach: a simple priority queue that maintains a correct order of time-based data.</li>
+	<li><a href="#timing/scheduler">Scheduler</a> maintains a list of entities and picks them repeatedly based on a scheduling strategy. There are three built-in scheduling strategies available.</li>
+	<li><a href="#timing/engine">Engine</a> takes an existing scheduler and automatically executes scheduled actions. Asynchronous actions are supported via recursive engine locking.</li>
+</ol>
+

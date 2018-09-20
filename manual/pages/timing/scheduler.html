@@ -1,0 +1,94 @@
+<h2>Scheduler</h2>
+
+<p>There are many ways and strategies of scheduling game turns and/or actors. The <code>ROT.Scheduler</code> API is meant as a general scheduling abstraction; there are also three distinct implementations for commonly used scheduling approaches.</p>
+
+<p>All available schedulers share these common methods:</p>
+
+<ul>
+	<li><code>add(item, repeat)</code> to add a new schedulable item. There are no specific requirements for the <code>item</code> argument. The second argument specifies whether the scheduler shall treat the item as a repeated actor (such as a being or player), or a one-time event (such as an earthquake or a messenger appearing from nowhere).</li>
+	<li><code>remove(item)</code> to remove a previously added item</li>
+	<li><code>clear()</code> to remove all items</li>
+	<li><code>getTime()</code> to retrieve the elapsed time from the (internally) used <a href="#timing/eventqueue">Event queue</a></li>
+	<li><code>next()</code> to get an item that should act (this is the most important part of a scheduler)</li>
+</ul>
+
+<h3>Simple scheduler</h3>
+
+<p>The easiest scheduler is called <code>ROT.Scheduler.Simple</code> &ndash; it rotates all items evenly in a round-robin fashion.</p>
+
+<div class="example">
+var scheduler = new ROT.Scheduler.Simple();
+
+/* generate some actors */
+for (var i=0;i&lt;4;i++) {
+	scheduler.add(i+1, true); /* true = recurring actor */
+}
+
+/* simulate several turns */
+var turns = [];
+for (var i=0;i&lt;20;i++) {
+	var current = scheduler.next();
+	turns.push(current);
+}
+
+SHOW("\nGenerated order of actors:");
+SHOW(turns.join(" ") + " ...");
+</div>
+
+<h3>Speed scheduler</h3>
+
+<p>In a more realistic game, your actors might want to act based on their speed. Due to the turn-based nature of the game, the speed is more accurately described as a frequency in which turns happen for a particular actor. <code>ROT.Scheduler.Speed</code> plans turns based on this fact: your actors must implement the <code>getSpeed()</code> method, which returns the relative actor speed (an actor with speed=100 will get twice as many turns as actor with speed=50).<br/>
+
+<div class="example">
+var scheduler = new ROT.Scheduler.Speed();
+
+/* generate some actors */
+for (var i=0;i&lt;4;i++) {
+	var actor = {
+		speed: ROT.RNG.getPercentage(),
+		number: i+1,
+		getSpeed: function() { return this.speed; }
+	}
+	scheduler.add(actor, true);
+	SHOW("Object #%s has speed %s.".format(actor.number, actor.speed));
+}
+
+/* simulate several turns */
+var turns = [];
+for (var i=0;i&lt;40;i++) {
+	var current = scheduler.next();
+	turns.push(current.number);
+}
+
+SHOW("\nGenerated order of turns:");
+SHOW(turns.join(" ") + " ...");
+</div>
+
+<h3>Action-duration scheduler</h3>
+
+<p>The most complex scheduling strategy expects individual actors to perform time-dependent actions. Every action takes a different amount of time, so the "speed" of an actor varies from action to action. Every time an actor is picked, the scheduler needs to be told about the current action's duration &ndash; to properly schedule a next turn for this actor.</p>
+
+<p>To use the <code>ROT.Scheduler.Action</code>, make sure you call its <code>setDuration()</code> method after calling <code>next()</code>: this sets the delay for current actor's next turn.</p>
+
+<p>Finally, you can specify the initial scheduling delay as an optional third argument to <code>add()</code>. The default value is "1".</p>
+
+<div class="example">
+var scheduler = new ROT.Scheduler.Action();
+
+/* generate some actors */
+for (var i=0;i&lt;4;i++) {
+	scheduler.add(i+1, true, i); /* last argument - initial delay */
+}
+
+/* simulate several turns */
+var template = "Actor %s performing action for %s time units (current time: %s)";
+for (var i=0;i&lt;20;i++) {
+	var current = scheduler.next();
+
+	var actionDuration = Math.ceil(ROT.RNG.getUniform() * 20);
+	scheduler.setDuration(actionDuration);
+
+	var padded = actionDuration.toString().lpad("0");
+	SHOW(template.format(current, padded, scheduler.getTime()))
+}
+</div>

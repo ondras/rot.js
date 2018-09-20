@@ -1,0 +1,122 @@
+<h2>Field of View (FOV) computation</h2>
+
+<p>FOV algorithms return a set coordinates, visible from a starting place. Computing these works in the same fashion 
+as <a href="#map">Map generators</a> do: using a user-supplied callback function. This time, however, user has to supply two callbacks:</p>
+
+<ul>
+	<li>Input callback, passed as a constructor argument, which provides visiblity information;</li>
+	<li>Output callback, passed as an argument to the <code>compute</code> method, which receives FOV data.</li>
+</ul>
+
+<p>Input callback is called by the FOV algorithm to retrieve visibility information for a given coordinate pair. This callback must return <code>true</code> (light passes) 
+or <code>false</code> (light does not pass). Output callback is called with these arguments: <code>x</code>, <code>y</code>, <code>r</code> and <code>visibility</code>: 
+the meaning is that "the place at [x,y] is visible with a distance of r". The last argument specifies the amount of visibility (0..1).</p>
+
+<p>Currently there are these FOV algorithms available: </p>
+<ol>
+	<li><a href="http://www.roguebasin.roguelikedevelopment.org/index.php?title=Precise_Shadowcasting_in_JavaScript">Precise Shadowcasting</a></li>
+	<li><a href="http://www.roguebasin.com/index.php?title=FOV_using_recursive_shadowcasting">Recursive Shadowcasting</a></li>
+</ol>
+
+<h3>Precise shadowcasting</h3>
+
+<p>Precise shadowcasting FOV computations currently support 360-degree viewsheds and are initiated by calling the <code>compute</code> method with the following arguments:</p>
+
+<ol>
+	<li><code>x</code></li>
+	<li><code>y</code></li>
+	<li><code>r</code> &ndash; maximum visibility radius</li>
+	<li><code>callback</code> &ndash; output callback function</li>
+</ol>
+
+<div class="example">
+ROT.RNG.setSeed(12345);
+ROT.DEFAULT_WIDTH = 80;
+ROT.DEFAULT_HEIGHT = 30;
+
+var display = new ROT.Display({fontSize:12});
+SHOW(display.getContainer());
+
+/* create a map */
+var data = {};
+new ROT.Map.Uniform().create(function(x, y, type) {
+	data[x+","+y] = type;
+	display.DEBUG(x, y, type);
+});
+
+/* input callback */
+var lightPasses = function(x, y) {
+	var key = x+","+y;
+	if (key in data) { return (data[key] == 0); }
+	return false;
+}
+
+var fov = new ROT.FOV.PreciseShadowcasting(lightPasses);
+
+/* output callback */
+fov.compute(50, 22, 10, function(x, y, r, visibility) {
+	var ch = (r ? "" : "@");
+	var color = (data[x+","+y] ? "#aa0": "#660");
+	display.draw(x, y, ch, "#fff", color);
+});
+</div>
+
+<h3>Recursive shadowcasting</h3>
+
+<p>Recursive shadowcasting FOV computations are initiated by calling one of its three <code>compute</code> methods. It currently supports viewing an entire 360-degree circle (<code>compute</code>), as well as half-circles (<code>compute180</code>) and quadrants (<code>compute90</code>). While the <code>compute</code> method behaves the same as with Precise and Discrete shadowcasting, the two partial views require an additional argument noting the direction to look in:</p>
+
+<ol>
+	<li><code>x</code></li>
+	<li><code>y</code></li>
+	<li><code>r</code> &ndash; maximum visibility radius</li>
+	<li><code>dir</code> &ndash; direction to face in from ROT.DIRS[8]</li>
+	<li><code>callback</code> &ndash; output callback function</li>
+</ol>
+
+<div class="example">
+ROT.RNG.setSeed(12345);
+ROT.DEFAULT_WIDTH  = 80;
+ROT.DEFAULT_HEIGHT = 30;
+DIR_NORTH = 0;
+DIR_WEST  = 6;
+
+var display = new ROT.Display({fontSize:12});
+SHOW(display.getContainer());
+
+/* create a map */
+var data = {};
+new ROT.Map.Uniform().create(function(x, y, type) {
+	data[x+","+y] = type;
+	display.DEBUG(x, y, type);
+});
+
+/* input callback */
+var lightPasses = function(x, y) {
+	var key = x+","+y;
+	if (key in data) { return (data[key] == 0); }
+	return false;
+}
+
+var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses);
+
+/* output callback for mob with bad vision */
+fov.compute90(50, 22, 10, DIR_WEST, function(x, y, r, visibility) {
+	var ch = (r ? "1" : "@");
+	var color = (data[x+","+y] ? "#aa0": "#660");
+	display.draw(x, y, ch, "#fff", color);
+});
+
+/* output callback for second mob with better vision */
+fov.compute180(57, 14, 10, DIR_NORTH, function(x, y, r, visibility) {
+	var ch = (r ? "2" : "@");
+	var color = (data[x+","+y] ? "#aa0": "#660");
+	display.draw(x, y, ch, "#fff", color);
+});
+
+/* output callback for third mob with supernatural vision */
+fov.compute(65, 5, 10, function(x, y, r, visibility) {
+	var ch = (r ? "3" : "@");
+	var color = (data[x+","+y] ? "#aa0": "#660");
+	display.draw(x, y, ch, "#fff", color);
+});
+</div>
