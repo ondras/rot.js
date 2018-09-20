@@ -1,17 +1,23 @@
+function elm(name, attrs) {
+	var node = document.createElement(name);
+	Object.assign(node, attrs);
+	return node;
+}
+
 var Example = function(node) {
 	this._node = node;
 	
-	this._source = OZ.DOM.elm("pre", {className:"code"});
+	this._source = elm("pre", {className:"code"});
 	this._source.setAttribute("data-syntax", "js");
 	this._source.addEventListener("click", this);
 	
-	this._ta = OZ.DOM.elm("textarea", {className:"code"});
+	this._ta = elm("textarea", {className:"code"});
 	this._ta.spellcheck = false;
 	this._ta.addEventListener("click", this);
 	
-	this._result = OZ.DOM.elm("pre", {className:"result"});
+	this._result = elm("pre", {className:"result"});
 
-	this._time = OZ.DOM.elm("div", {className:"time"});
+	this._time = elm("div", {className:"time"});
 
 	this._useCode(node.textContent);
 }
@@ -24,7 +30,7 @@ Example.prototype.handleEvent = function(e) {
 Example.prototype.open = function() {
 	this.constructor.current = this;
 
-	var height = OZ.Style.get(this._source, "height");
+	var height = this._source.offsetHeight;
 	this._ta.style.height = height;
 	this._ta.value = this._source.textContent.trim();
 	this._source.parentNode.replaceChild(this._ta, this._source);
@@ -47,7 +53,7 @@ Example.prototype._useCode = function(code) {
 	this._node.appendChild(this._source);
 	this._node.appendChild(this._result);
 	this._node.appendChild(this._time);
-	this._source.appendChild(OZ.DOM.text(code));
+	this._source.appendChild(document.createTextNode(code));
 	Syntax.apply(this._source);
 	
 	var result = this._result;
@@ -55,7 +61,7 @@ Example.prototype._useCode = function(code) {
 		for (var i=0;i<arguments.length;i++) {
 			var arg = arguments[i];
 			if (!arg.nodeType) {
-				arg = OZ.DOM.elm("div", {innerHTML:arg});
+				arg = elm("div", {innerHTML:arg});
 			}
 			result.appendChild(arg);
 		}
@@ -89,19 +95,24 @@ var Manual = {
 	},
 	
 	_switchTo: function(what) {
-		OZ.Request("pages/" + what + ".html?" + Math.random(), this._response.bind(this));
+		var xhr = new XMLHttpRequest();
+		xhr.open("get", "pages/" + what + ".html?" + Math.random(), true);
+		xhr.onload = function() {
+			this._response(xhr.responseText, xhr.status);
+		}.bind(this);
+		xhr.send();
 		
 		var links = document.querySelectorAll("#menu a");
 		for (var i=0;i<links.length;i++) {
 			var link = links[i];
 			if (link.href.lastIndexOf(what) == link.href.length - what.length) {
-				OZ.DOM.addClass(link, "active");
+				link.classList.add(link, "active");
 				var parent = link.parentNode.parentNode.parentNode;
 				if (parent.nodeName.toLowerCase() == "li") {
-					OZ.DOM.addClass(parent.querySelector("a"), "active");
+					parent.querySelector("a").classList.add("active");
 				}
 			} else {
-				OZ.DOM.removeClass(link, "active");
+				link.classList.remove("active");
 			}
 		}
 	},
@@ -128,7 +139,7 @@ var Manual = {
 		}
 		xhr.send();
 		
-		OZ.Event.add(window, "hashchange", this._hashChange.bind(this));
+		window.addEventListener("hashchange", this._hashChange.bind(this));
 		this._hashChange();
 	}
 	
