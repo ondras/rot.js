@@ -1,6 +1,9 @@
 interface Options {
+    /** Use word mode? */
     words: boolean;
+    /** Order, default = 3 */
     order: number;
+    /** Prior value, default = 0.001 */
     prior: number;
 }
 declare type Events = {
@@ -10,10 +13,6 @@ declare type Events = {
  * @class (Markov process)-based string generator.
  * Copied from a <a href="http://www.roguebasin.roguelikedevelopment.org/index.php?title=Names_from_a_high_order_Markov_Process_and_a_simplified_Katz_back-off_scheme">RogueBasin article</a>.
  * Offers configurable order and prior.
- * @param {object} [options]
- * @param {bool} [options.words=false] Use word mode?
- * @param {int} [options.order=3]
- * @param {float} [options.prior=0.001]
  */
 export default class StringGenerator {
     _options: Options;
