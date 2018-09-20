@@ -66,7 +66,7 @@ export default class Rect extends Backend {
 				ctx.textAlign = "center";
 				ctx.textBaseline = "middle";
 
-				let chars = ([] as any).concat(ch);
+				let chars = ([] as string[]).concat(ch);
 				for (var i=0;i<chars.length;i++) {
 					ctx.fillText(chars[i], this._spacingX/2, Math.ceil(this._spacingY/2));
 				}
@@ -90,7 +90,7 @@ export default class Rect extends Backend {
 
 		this._context.fillStyle = fg;
 
-		let chars = ([] as any).concat(ch);
+		let chars = ([] as string[]).concat(ch);
 		for (let i=0;i<chars.length;i++) {
 			this._context.fillText(chars[i], (x+0.5) * this._spacingX, Math.ceil((y+0.5) * this._spacingY));
 		}

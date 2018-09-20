@@ -38,9 +38,9 @@ export default class Tile extends Backend {
 
 		if (!ch) { return; }
 
-		let chars = ([] as any).concat(ch);
-		let fgs = ([] as any).concat(fg);
-		let bgs = ([] as any).concat(bg);
+		let chars = ([] as string[]).concat(ch);
+		let fgs = ([] as string[]).concat(fg);
+		let bgs = ([] as string[]).concat(bg);
 
 		for (let i=0;i<chars.length;i++) {
 			let tile = this._options.tileMap[chars[i]];

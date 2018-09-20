@@ -59,7 +59,7 @@ export default class Hex extends Backend {
 
 		this._context.fillStyle = fg;
 
-		let chars = ([] as any).concat(ch);
+		let chars = ([] as string[]).concat(ch);
 		for (let i=0;i<chars.length;i++) {
 			this._context.fillText(chars[i], px[0], Math.ceil(px[1]));
 		}
