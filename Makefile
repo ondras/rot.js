@@ -4,6 +4,7 @@ ROLLUP := $(BIN)/rollup
 TYPEDOC := $(BIN)/typedoc
 TSC := $(BIN)/tsc
 GCC := $(BIN)/google-closure-compiler
+JASMINE := $(BIN)/jasmine
 
 ES5 := dist/rot.js
 ES5_MIN := dist/rot.min.js
@@ -34,9 +35,12 @@ clean:
 	rm -rf lib/*
 	rm -rf $(TS_FLAG)
 
+test:
+	$(JASMINE) --helper=tests/helper.js tests/spec/*.js
+
 watch: all
 	while inotifywait -e MODIFY -r src; do make $^ ; done
 
-.PHONY: clean dot watch
+.PHONY: clean dot watch test
 
 .DELETE_ON_ERROR:
