@@ -12,7 +12,7 @@ describe("Scheduler", function() {
 					}
 
 					var notText = pass ? " not" : "";
-					var message "Expected " + actual + notText + " to be scheduled as " + expected;
+					var message = "Expected " + actual + notText + " to be scheduled as " + expected;
 
 					return { pass: pass, message: message };
 				}
