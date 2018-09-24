@@ -12,3 +12,6 @@ export const Util = util;
 
 import * as color from "./color.js";
 export const Color = color;
+
+import * as text from "./text.js";
+export const Text = text;

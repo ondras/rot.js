@@ -822,8 +822,40 @@ var ROT = function (exports) {
   var TYPE_FG = 2;
   var TYPE_BG = 3;
   /**
+   * Measure size of a resulting text block
+   */
+
+  function measure(str, maxWidth) {
+    var result = {
+      width: 0,
+      height: 1
+    };
+    var tokens = tokenize(str, maxWidth);
+    var lineWidth = 0;
+
+    for (var i = 0; i < tokens.length; i++) {
+      var token = tokens[i];
+
+      switch (token.type) {
+        case TYPE_TEXT:
+          lineWidth += token.value.length;
+          break;
+
+        case TYPE_NEWLINE:
+          result.height++;
+          result.width = Math.max(result.width, lineWidth);
+          lineWidth = 0;
+          break;
+      }
+    }
+
+    result.width = Math.max(result.width, lineWidth);
+    return result;
+  }
+  /**
    * Convert string to a series of a formatting commands
    */
+
 
   function tokenize(str, maxWidth) {
     var result = [];
@@ -1029,8 +1061,18 @@ var ROT = function (exports) {
     tokens.splice(tokenIndex + 1, 0, newBreakToken, newTextToken);
     return tokens[tokenIndex].value.substring(0, breakIndex);
   }
-  /** Default with for display and map generators */
 
+  var text =
+  /*#__PURE__*/
+  Object.freeze({
+    TYPE_TEXT: TYPE_TEXT,
+    TYPE_NEWLINE: TYPE_NEWLINE,
+    TYPE_FG: TYPE_FG,
+    TYPE_BG: TYPE_BG,
+    measure: measure,
+    tokenize: tokenize
+  });
+  /** Default with for display and map generators */
 
   var DEFAULT_WIDTH = 80;
   /** Default height for display and map generators */
@@ -3000,8 +3042,10 @@ var ROT = function (exports) {
   });
   var Util = util;
   var Color = color;
+  var Text = text;
   exports.Util = Util;
   exports.Color = Color;
+  exports.Text = Text;
   exports.RNG = RNG$1;
   exports.Display = Display;
   exports.StringGenerator = StringGenerator;

@@ -9,3 +9,5 @@ import * as util from "./util.js";
 export declare const Util: typeof util;
 import * as color from "./color.js";
 export declare const Color: typeof color;
+import * as text from "./text.js";
+export declare const Text: typeof text;

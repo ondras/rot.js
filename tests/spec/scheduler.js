@@ -1,17 +1,22 @@
 describe("Scheduler", function() {
 	beforeEach(function() {
-		this.addMatchers({
-			toSchedule: function(expected) {
-				this.message = function() {
-					var notText = this.isNot ? " not" : "";
-					var actual = this.actual.map(JSON.stringify);
+		jasmine.addMatchers({
+			toSchedule: function(util, customEqualityTesters) {
+				var compare = function(actual, expected) {
+					actual = actual.map(JSON.stringify);
 					expected = expected.map(JSON.stringify);
-					return "Expected " + actual + notText + " to be scheduled as " + expected;
+
+					var pass = true;
+					for (var i=0;i<Math.max(expected.length, actual.length);i++) {
+						if (actual[i] !== expected[i]) { pass = false; }
+					}
+
+					var notText = pass ? " not" : "";
+					var message "Expected " + actual + notText + " to be scheduled as " + expected;
+
+					return { pass: pass, message: message };
 				}
-				for (var i=0;i<Math.max(expected.length, this.actual.length);i++) {
-					if (this.actual[i] !== expected[i]) { return false; }
-				}
-				return true;
+				return { compare: compare };
 			}
 		});
 	});
