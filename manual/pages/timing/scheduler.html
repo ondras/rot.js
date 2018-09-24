@@ -50,7 +50,7 @@ for (var i=0;i&lt;4;i++) {
 		getSpeed: function() { return this.speed; }
 	}
 	scheduler.add(actor, true);
-	SHOW("Object #%s has speed %s.".format(actor.number, actor.speed));
+	SHOW(ROT.Util.format("Object #%s has speed %s.", actor.number, actor.speed));
 }
 
 /* simulate several turns */
@@ -88,7 +88,7 @@ for (var i=0;i&lt;20;i++) {
 	var actionDuration = Math.ceil(ROT.RNG.getUniform() * 20);
 	scheduler.setDuration(actionDuration);
 
-	var padded = actionDuration.toString().lpad("0");
-	SHOW(template.format(current, padded, scheduler.getTime()))
+	var padded = actionDuration.toString().padStart(2, "0");
+	SHOW(ROT.Util.format(template, current, padded, scheduler.getTime()))
 }
 </div>
