@@ -278,7 +278,6 @@ describe("Display", function() {
 		describe("hex layout", function() {
 			var d1 = new ROT.Display({width:100, height:5, spacing:1, layout:"hex"});
 			var d2 = new ROT.Display({width:100, height:5, spacing:1.3, layout:"hex"});
-			window.d1 = d1;
 
 			it("should compute size for spacing 1", function() {
 				var size = d1.computeFontSize(1/0, 96);
