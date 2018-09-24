@@ -1,6 +1,6 @@
 class Player extends Being {
-	constrcutor() {
-		super.call({ch:"@", fg:"#fff"});
+	constructor() {
+		super({ch:"@", fg:"#fff"});
 		
 		this._keys = {};
 		this._keys[ROT.KEYS.VK_K] = 0;

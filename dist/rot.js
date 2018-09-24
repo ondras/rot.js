@@ -157,8 +157,9 @@ var ROT = function (exports) {
         var clone = array.slice();
 
         while (clone.length) {
-          var index = clone.indexOf(this.getItem(clone));
-          result.push(clone.splice(index, 1)[0]);
+          var _index = clone.indexOf(this.getItem(clone));
+
+          result.push(clone.splice(_index, 1)[0]);
         }
 
         return result;
@@ -898,10 +899,10 @@ var ROT = function (exports) {
       /* forced newline? insert two new tokens after this one */
 
 
-      var index = token.value.indexOf("\n");
+      var _index2 = token.value.indexOf("\n");
 
-      if (index != -1) {
-        token.value = breakInsideToken(tokens, i, index, true);
+      if (_index2 != -1) {
+        token.value = breakInsideToken(tokens, i, _index2, true);
         /* if there are spaces at the end, we must remove them (we do not want the line too long) */
 
         var arr = token.value.split("");
@@ -924,10 +925,10 @@ var ROT = function (exports) {
         /* line too long, find a suitable breaking spot */
 
         /* is it possible to break within this token? */
-        var _index = -1;
+        var _index3 = -1;
 
         while (1) {
-          var nextIndex = token.value.indexOf(" ", _index + 1);
+          var nextIndex = token.value.indexOf(" ", _index3 + 1);
 
           if (nextIndex == -1) {
             break;
@@ -937,12 +938,12 @@ var ROT = function (exports) {
             break;
           }
 
-          _index = nextIndex;
+          _index3 = nextIndex;
         }
 
-        if (_index != -1) {
+        if (_index3 != -1) {
           /* break at space within this one */
-          token.value = breakInsideToken(tokens, i, _index, true);
+          token.value = breakInsideToken(tokens, i, _index3, true);
         } else if (lastTokenWithSpace != -1) {
           /* is there a previous token where a break can occur? */
           var _token = tokens[lastTokenWithSpace];
@@ -2068,6 +2069,486 @@ var ROT = function (exports) {
     return StringGenerator;
   }();
 
+  var EventQueue =
+  /*#__PURE__*/
+  function () {
+    /**
+     * @class Generic event queue: stores events and retrieves them based on their time
+     */
+    function EventQueue() {
+      _classCallCheck(this, EventQueue);
+
+      this._time = 0;
+      this._events = [];
+      this._eventTimes = [];
+    }
+    /**
+     * @returns {number} Elapsed time
+     */
+
+
+    _createClass(EventQueue, [{
+      key: "getTime",
+      value: function getTime() {
+        return this._time;
+      }
+      /**
+       * Clear all scheduled events
+       */
+
+    }, {
+      key: "clear",
+      value: function clear() {
+        this._events = [];
+        this._eventTimes = [];
+        return this;
+      }
+      /**
+       * @param {?} event
+       * @param {number} time
+       */
+
+    }, {
+      key: "add",
+      value: function add(event, time) {
+        var index = this._events.length;
+
+        for (var i = 0; i < this._eventTimes.length; i++) {
+          if (this._eventTimes[i] > time) {
+            index = i;
+            break;
+          }
+        }
+
+        this._events.splice(index, 0, event);
+
+        this._eventTimes.splice(index, 0, time);
+      }
+      /**
+       * Locates the nearest event, advances time if necessary. Returns that event and removes it from the queue.
+       * @returns {? || null} The event previously added by addEvent, null if no event available
+       */
+
+    }, {
+      key: "get",
+      value: function get() {
+        if (!this._events.length) {
+          return null;
+        }
+
+        var time = this._eventTimes.splice(0, 1)[0];
+
+        if (time > 0) {
+          /* advance */
+          this._time += time;
+
+          for (var i = 0; i < this._eventTimes.length; i++) {
+            this._eventTimes[i] -= time;
+          }
+        }
+
+        return this._events.splice(0, 1)[0];
+      }
+      /**
+       * Get the time associated with the given event
+       * @param {?} event
+       * @returns {number} time
+       */
+
+    }, {
+      key: "getEventTime",
+      value: function getEventTime(event) {
+        var index = this._events.indexOf(event);
+
+        if (index == -1) {
+          return undefined;
+        }
+
+        return this._eventTimes[index];
+      }
+      /**
+       * Remove an event from the queue
+       * @param {?} event
+       * @returns {bool} success?
+       */
+
+    }, {
+      key: "remove",
+      value: function remove(event) {
+        var index = this._events.indexOf(event);
+
+        if (index == -1) {
+          return false;
+        }
+
+        this._remove(index);
+
+        return true;
+      }
+    }, {
+      key: "_remove",
+
+      /**
+       * Remove an event from the queue
+       * @param {int} index
+       */
+      value: function _remove(index) {
+        this._events.splice(index, 1);
+
+        this._eventTimes.splice(index, 1);
+      }
+    }]);
+
+    return EventQueue;
+  }();
+
+  var Scheduler =
+  /*#__PURE__*/
+  function () {
+    /**
+     * @class Abstract scheduler
+     */
+    function Scheduler() {
+      _classCallCheck(this, Scheduler);
+
+      this._queue = new EventQueue();
+      this._repeat = [];
+      this._current = null;
+    }
+    /**
+     * @see ROT.EventQueue#getTime
+     */
+
+
+    _createClass(Scheduler, [{
+      key: "getTime",
+      value: function getTime() {
+        return this._queue.getTime();
+      }
+      /**
+       * @param {?} item
+       * @param {bool} repeat
+       */
+
+    }, {
+      key: "add",
+      value: function add(item, repeat) {
+        if (repeat) {
+          this._repeat.push(item);
+        }
+
+        return this;
+      }
+      /**
+       * Get the time the given item is scheduled for
+       * @param {?} item
+       * @returns {number} time
+       */
+
+    }, {
+      key: "getTimeOf",
+      value: function getTimeOf(item) {
+        return this._queue.getEventTime(item);
+      }
+      /**
+       * Clear all items
+       */
+
+    }, {
+      key: "clear",
+      value: function clear() {
+        this._queue.clear();
+
+        this._repeat = [];
+        this._current = null;
+        return this;
+      }
+      /**
+       * Remove a previously added item
+       * @param {?} item
+       * @returns {bool} successful?
+       */
+
+    }, {
+      key: "remove",
+      value: function remove(item) {
+        var result = this._queue.remove(item);
+
+        var index = this._repeat.indexOf(item);
+
+        if (index != -1) {
+          this._repeat.splice(index, 1);
+        }
+
+        if (this._current == item) {
+          this._current = null;
+        }
+
+        return result;
+      }
+      /**
+       * Schedule next item
+       * @returns {?}
+       */
+
+    }, {
+      key: "next",
+      value: function next() {
+        this._current = this._queue.get();
+        return this._current;
+      }
+    }]);
+
+    return Scheduler;
+  }();
+  /**
+   * @class Simple fair scheduler (round-robin style)
+   */
+
+
+  var Simple =
+  /*#__PURE__*/
+  function (_Scheduler) {
+    _inherits(Simple, _Scheduler);
+
+    function Simple() {
+      _classCallCheck(this, Simple);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Simple).apply(this, arguments));
+    }
+
+    _createClass(Simple, [{
+      key: "add",
+      value: function add(item, repeat) {
+        this._queue.add(item, 0);
+
+        return _get(_getPrototypeOf(Simple.prototype), "add", this).call(this, item, repeat);
+      }
+    }, {
+      key: "next",
+      value: function next() {
+        if (this._current && this._repeat.indexOf(this._current) != -1) {
+          this._queue.add(this._current, 0);
+        }
+
+        return _get(_getPrototypeOf(Simple.prototype), "next", this).call(this);
+      }
+    }]);
+
+    return Simple;
+  }(Scheduler);
+  /**
+   * @class Speed-based scheduler
+   */
+
+
+  var Speed =
+  /*#__PURE__*/
+  function (_Scheduler2) {
+    _inherits(Speed, _Scheduler2);
+
+    function Speed() {
+      _classCallCheck(this, Speed);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Speed).apply(this, arguments));
+    }
+
+    _createClass(Speed, [{
+      key: "add",
+
+      /**
+       * @param {object} item anything with "getSpeed" method
+       * @param {bool} repeat
+       * @param {number} [time=1/item.getSpeed()]
+       * @see ROT.Scheduler#add
+       */
+      value: function add(item, repeat, time) {
+        this._queue.add(item, time !== undefined ? time : 1 / item.getSpeed());
+
+        return _get(_getPrototypeOf(Speed.prototype), "add", this).call(this, item, repeat);
+      }
+      /**
+       * @see ROT.Scheduler#next
+       */
+
+    }, {
+      key: "next",
+      value: function next() {
+        if (this._current && this._repeat.indexOf(this._current) != -1) {
+          this._queue.add(this._current, 1 / this._current.getSpeed());
+        }
+
+        return _get(_getPrototypeOf(Speed.prototype), "next", this).call(this);
+      }
+    }]);
+
+    return Speed;
+  }(Scheduler);
+  /**
+   * @class Action-based scheduler
+   * @augments ROT.Scheduler
+   */
+
+
+  var Action =
+  /*#__PURE__*/
+  function (_Scheduler3) {
+    _inherits(Action, _Scheduler3);
+
+    function Action() {
+      var _this4;
+
+      _classCallCheck(this, Action);
+
+      _this4 = _possibleConstructorReturn(this, _getPrototypeOf(Action).call(this));
+      _this4._defaultDuration = 1;
+      /* for newly added */
+
+      _this4._duration = _this4._defaultDuration;
+      /* for this._current */
+
+      return _this4;
+    }
+    /**
+     * @param {object} item
+     * @param {bool} repeat
+     * @param {number} [time=1]
+     * @see ROT.Scheduler#add
+     */
+
+
+    _createClass(Action, [{
+      key: "add",
+      value: function add(item, repeat, time) {
+        this._queue.add(item, time || this._defaultDuration);
+
+        return _get(_getPrototypeOf(Action.prototype), "add", this).call(this, item, repeat);
+      }
+    }, {
+      key: "clear",
+      value: function clear() {
+        this._duration = this._defaultDuration;
+        return _get(_getPrototypeOf(Action.prototype), "clear", this).call(this);
+      }
+    }, {
+      key: "remove",
+      value: function remove(item) {
+        if (item == this._current) {
+          this._duration = this._defaultDuration;
+        }
+
+        return _get(_getPrototypeOf(Action.prototype), "remove", this).call(this, item);
+      }
+      /**
+       * @see ROT.Scheduler#next
+       */
+
+    }, {
+      key: "next",
+      value: function next() {
+        if (this._current && this._repeat.indexOf(this._current) != -1) {
+          this._queue.add(this._current, this._duration || this._defaultDuration);
+
+          this._duration = this._defaultDuration;
+        }
+
+        return _get(_getPrototypeOf(Action.prototype), "next", this).call(this);
+      }
+      /**
+       * Set duration for the active item
+       */
+
+    }, {
+      key: "setDuration",
+      value: function setDuration(time) {
+        if (this._current) {
+          this._duration = time;
+        }
+
+        return this;
+      }
+    }]);
+
+    return Action;
+  }(Scheduler);
+
+  var index = {
+    Simple: Simple,
+    Speed: Speed,
+    Action: Action
+  };
+  /**
+   * @class Asynchronous main loop
+   * @param {ROT.Scheduler} scheduler
+   */
+
+  var Engine =
+  /*#__PURE__*/
+  function () {
+    function Engine(scheduler) {
+      _classCallCheck(this, Engine);
+
+      this._scheduler = scheduler;
+      this._lock = 1;
+    }
+    /**
+     * Start the main loop. When this call returns, the loop is locked.
+     */
+
+
+    _createClass(Engine, [{
+      key: "start",
+      value: function start() {
+        return this.unlock();
+      }
+      /**
+       * Interrupt the engine by an asynchronous action
+       */
+
+    }, {
+      key: "lock",
+      value: function lock() {
+        this._lock++;
+        return this;
+      }
+      /**
+       * Resume execution (paused by a previous lock)
+       */
+
+    }, {
+      key: "unlock",
+      value: function unlock() {
+        if (!this._lock) {
+          throw new Error("Cannot unlock unlocked engine");
+        }
+
+        this._lock--;
+
+        while (!this._lock) {
+          var actor = this._scheduler.next();
+
+          if (!actor) {
+            return this.lock();
+          }
+          /* no actors */
+
+
+          var result = actor.act();
+
+          if (result && result.then) {
+            /* actor returned a "thenable", looks like a Promise */
+            this.lock();
+            result.then(this.unlock.bind(this));
+          }
+        }
+
+        return this;
+      }
+    }]);
+
+    return Engine;
+  }();
+
   function fromString(str) {
     var cached, r;
 
@@ -2524,6 +3005,9 @@ var ROT = function (exports) {
   exports.RNG = RNG$1;
   exports.Display = Display;
   exports.StringGenerator = StringGenerator;
+  exports.EventQueue = EventQueue;
+  exports.Scheduler = index;
+  exports.Engine = Engine;
   exports.DEFAULT_WIDTH = DEFAULT_WIDTH;
   exports.DEFAULT_HEIGHT = DEFAULT_HEIGHT;
   exports.DIRS = DIRS;

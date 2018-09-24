@@ -34,6 +34,9 @@ clean:
 	rm -rf lib/*
 	rm -rf $(TS_FLAG)
 
-.PHONY: clean dot
+watch: all
+	while inotifywait -e MODIFY -r src; do make $^ ; done
+
+.PHONY: clean dot watch
 
 .DELETE_ON_ERROR:
