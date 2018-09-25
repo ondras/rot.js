@@ -3135,6 +3135,84 @@ var ROT = function (exports) {
     PreciseShadowcasting: PreciseShadowcasting,
     RecursiveShadowcasting: RecursiveShadowcasting
   };
+
+  var Map =
+  /*#__PURE__*/
+  function () {
+    /**
+     * @class Base map generator
+     * @param {int} [width=ROT.DEFAULT_WIDTH]
+     * @param {int} [height=ROT.DEFAULT_HEIGHT]
+     */
+    function Map() {
+      var width = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : DEFAULT_WIDTH;
+      var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : DEFAULT_HEIGHT;
+
+      _classCallCheck(this, Map);
+
+      this._width = width;
+      this._height = height;
+    }
+
+    _createClass(Map, [{
+      key: "_fillMap",
+      value: function _fillMap(value) {
+        var map = [];
+
+        for (var i = 0; i < this._width; i++) {
+          map.push([]);
+
+          for (var j = 0; j < this._height; j++) {
+            map[i].push(value);
+          }
+        }
+
+        return map;
+      }
+    }]);
+
+    return Map;
+  }();
+  /**
+   * @class Simple empty rectangular room
+   * @augments ROT.Map
+   */
+
+
+  var Arena =
+  /*#__PURE__*/
+  function (_Map) {
+    _inherits(Arena, _Map);
+
+    function Arena() {
+      _classCallCheck(this, Arena);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Arena).apply(this, arguments));
+    }
+
+    _createClass(Arena, [{
+      key: "create",
+      value: function create(callback) {
+        var w = this._width - 1;
+        var h = this._height - 1;
+
+        for (var i = 0; i <= w; i++) {
+          for (var j = 0; j <= h; j++) {
+            var empty = i && j && i < w && j < h;
+            callback(i, j, empty ? 0 : 1);
+          }
+        }
+
+        return this;
+      }
+    }]);
+
+    return Arena;
+  }(Map);
+
+  var index$2 = {
+    Arena: Arena
+  };
   /**
    * @class Asynchronous main loop
    * @param {ROT.Scheduler} scheduler
@@ -3963,6 +4041,7 @@ var ROT = function (exports) {
   exports.EventQueue = EventQueue;
   exports.Scheduler = index;
   exports.FOV = index$1;
+  exports.Map = index$2;
   exports.Engine = Engine;
   exports.Lighting = Lighting;
   exports.DEFAULT_WIDTH = DEFAULT_WIDTH;
