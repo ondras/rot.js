@@ -289,12 +289,14 @@ describe("Display", function() {
 				expect(size).toBe(14);
 			});
 		});
+	});
 
+	describe("computeTileSize", function() {
 		describe("tile layout", function() {
 			var d = new ROT.Display({layout:"tile", width:6, height:18});
 
-			it("should compute proper size", function() {
-				var size = d.computeFontSize(200, 300);
+			it("should compute proper tile size", function() {
+				var size = d.computeTileSize(200, 300);
 				expect(size[0]).toBe(33);
 				expect(size[1]).toBe(16);
 			});

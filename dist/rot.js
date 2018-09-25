@@ -1708,6 +1708,13 @@ var ROT = function (exports) {
       value: function computeFontSize(availWidth, availHeight) {
         return this._backend.computeFontSize(availWidth, availHeight);
       }
+    }, {
+      key: "computeTileSize",
+      value: function computeTileSize(availWidth, availHeight) {
+        var width = Math.floor(availWidth / this._options.width);
+        var height = Math.floor(availHeight / this._options.height);
+        return [width, height];
+      }
       /**
        * Convert a DOM event (mouse or touch) to map coordinates. Uses first touch for multi-touch.
        * @param {Event} e event
@@ -2519,6 +2526,615 @@ var ROT = function (exports) {
     Speed: Speed,
     Action: Action
   };
+
+  var FOV =
+  /*#__PURE__*/
+  function () {
+    /**
+     * @class Abstract FOV algorithm
+     * @param {function} lightPassesCallback Does the light pass through x,y?
+     * @param {object} [options]
+     * @param {int} [options.topology=8] 4/6/8
+     */
+    function FOV(lightPassesCallback) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      _classCallCheck(this, FOV);
+
+      this._lightPasses = lightPassesCallback;
+      this._options = Object.assign({
+        topology: 8
+      }, options);
+    }
+    /**
+     * Return all neighbors in a concentric ring
+     * @param {int} cx center-x
+     * @param {int} cy center-y
+     * @param {int} r range
+     */
+
+
+    _createClass(FOV, [{
+      key: "_getCircle",
+      value: function _getCircle(cx, cy, r) {
+        var result = [];
+        var dirs, countFactor, startOffset;
+
+        switch (this._options.topology) {
+          case 4:
+            countFactor = 1;
+            startOffset = [0, 1];
+            dirs = [DIRS[8][7], DIRS[8][1], DIRS[8][3], DIRS[8][5]];
+            break;
+
+          case 6:
+            dirs = DIRS[6];
+            countFactor = 1;
+            startOffset = [-1, 1];
+            break;
+
+          case 8:
+            dirs = DIRS[4];
+            countFactor = 2;
+            startOffset = [-1, 1];
+            break;
+
+          default:
+            throw new Error("Incorrect topology for FOV computation");
+            break;
+        }
+        /* starting neighbor */
+
+
+        var x = cx + startOffset[0] * r;
+        var y = cy + startOffset[1] * r;
+        /* circle */
+
+        for (var i = 0; i < dirs.length; i++) {
+          for (var j = 0; j < r * countFactor; j++) {
+            result.push([x, y]);
+            x += dirs[i][0];
+            y += dirs[i][1];
+          }
+        }
+
+        return result;
+      }
+    }]);
+
+    return FOV;
+  }();
+  /**
+   * @class Discrete shadowcasting algorithm. Obsoleted by Precise shadowcasting.
+   * @augments ROT.FOV
+   */
+
+
+  var DiscreteShadowcasting =
+  /*#__PURE__*/
+  function (_FOV) {
+    _inherits(DiscreteShadowcasting, _FOV);
+
+    function DiscreteShadowcasting() {
+      _classCallCheck(this, DiscreteShadowcasting);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(DiscreteShadowcasting).apply(this, arguments));
+    }
+
+    _createClass(DiscreteShadowcasting, [{
+      key: "compute",
+      value: function compute(x, y, R, callback) {
+        /* this place is always visible */
+        callback(x, y, 0, 1);
+        /* standing in a dark place. FIXME is this a good idea?  */
+
+        if (!this._lightPasses(x, y)) {
+          return;
+        }
+        /* start and end angles */
+
+
+        var DATA = [];
+        var A, B, cx, cy, blocks;
+        /* analyze surrounding cells in concentric rings, starting from the center */
+
+        for (var r = 1; r <= R; r++) {
+          var neighbors = this._getCircle(x, y, r);
+
+          var angle = 360 / neighbors.length;
+
+          for (var i = 0; i < neighbors.length; i++) {
+            cx = neighbors[i][0];
+            cy = neighbors[i][1];
+            A = angle * (i - 0.5);
+            B = A + angle;
+            blocks = !this._lightPasses(cx, cy);
+
+            if (this._visibleCoords(Math.floor(A), Math.ceil(B), blocks, DATA)) {
+              callback(cx, cy, r, 1);
+            }
+
+            if (DATA.length == 2 && DATA[0] == 0 && DATA[1] == 360) {
+              return;
+            }
+            /* cutoff? */
+
+          }
+          /* for all cells in this ring */
+
+        }
+        /* for all rings */
+
+      }
+      /**
+       * @param {int} A start angle
+       * @param {int} B end angle
+       * @param {bool} blocks Does current cell block visibility?
+       * @param {int[][]} DATA shadowed angle pairs
+       */
+
+    }, {
+      key: "_visibleCoords",
+      value: function _visibleCoords(A, B, blocks, DATA) {
+        if (A < 0) {
+          var v1 = this._visibleCoords(0, B, blocks, DATA);
+
+          var v2 = this._visibleCoords(360 + A, 360, blocks, DATA);
+
+          return v1 || v2;
+        }
+
+        var index = 0;
+
+        while (index < DATA.length && DATA[index] < A) {
+          index++;
+        }
+
+        if (index == DATA.length) {
+          /* completely new shadow */
+          if (blocks) {
+            DATA.push(A, B);
+          }
+
+          return true;
+        }
+
+        var count = 0;
+
+        if (index % 2) {
+          /* this shadow starts in an existing shadow, or within its ending boundary */
+          while (index < DATA.length && DATA[index] < B) {
+            index++;
+            count++;
+          }
+
+          if (count == 0) {
+            return false;
+          }
+
+          if (blocks) {
+            if (count % 2) {
+              DATA.splice(index - count, count, B);
+            } else {
+              DATA.splice(index - count, count);
+            }
+          }
+
+          return true;
+        } else {
+          /* this shadow starts outside an existing shadow, or within a starting boundary */
+          while (index < DATA.length && DATA[index] < B) {
+            index++;
+            count++;
+          }
+          /* visible when outside an existing shadow, or when overlapping */
+
+
+          if (A == DATA[index - count] && count == 1) {
+            return false;
+          }
+
+          if (blocks) {
+            if (count % 2) {
+              DATA.splice(index - count, count, A);
+            } else {
+              DATA.splice(index - count, count, A, B);
+            }
+          }
+
+          return true;
+        }
+      }
+    }]);
+
+    return DiscreteShadowcasting;
+  }(FOV);
+  /**
+   * @class Precise shadowcasting algorithm
+   * @augments ROT.FOV
+   */
+
+
+  var PreciseShadowcasting =
+  /*#__PURE__*/
+  function (_FOV2) {
+    _inherits(PreciseShadowcasting, _FOV2);
+
+    function PreciseShadowcasting() {
+      _classCallCheck(this, PreciseShadowcasting);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(PreciseShadowcasting).apply(this, arguments));
+    }
+
+    _createClass(PreciseShadowcasting, [{
+      key: "compute",
+      value: function compute(x, y, R, callback) {
+        /* this place is always visible */
+        callback(x, y, 0, 1);
+        /* standing in a dark place. FIXME is this a good idea?  */
+
+        if (!this._lightPasses(x, y)) {
+          return;
+        }
+        /* list of all shadows */
+
+
+        var SHADOWS = [];
+        var cx, cy, blocks, A1, A2, visibility;
+        /* analyze surrounding cells in concentric rings, starting from the center */
+
+        for (var r = 1; r <= R; r++) {
+          var neighbors = this._getCircle(x, y, r);
+
+          var neighborCount = neighbors.length;
+
+          for (var i = 0; i < neighborCount; i++) {
+            cx = neighbors[i][0];
+            cy = neighbors[i][1];
+            /* shift half-an-angle backwards to maintain consistency of 0-th cells */
+
+            A1 = [i ? 2 * i - 1 : 2 * neighborCount - 1, 2 * neighborCount];
+            A2 = [2 * i + 1, 2 * neighborCount];
+            blocks = !this._lightPasses(cx, cy);
+            visibility = this._checkVisibility(A1, A2, blocks, SHADOWS);
+
+            if (visibility) {
+              callback(cx, cy, r, visibility);
+            }
+
+            if (SHADOWS.length == 2 && SHADOWS[0][0] == 0 && SHADOWS[1][0] == SHADOWS[1][1]) {
+              return;
+            }
+            /* cutoff? */
+
+          }
+          /* for all cells in this ring */
+
+        }
+        /* for all rings */
+
+      }
+      /**
+       * @param {int[2]} A1 arc start
+       * @param {int[2]} A2 arc end
+       * @param {bool} blocks Does current arc block visibility?
+       * @param {int[][]} SHADOWS list of active shadows
+       */
+
+    }, {
+      key: "_checkVisibility",
+      value: function _checkVisibility(A1, A2, blocks, SHADOWS) {
+        if (A1[0] > A2[0]) {
+          /* split into two sub-arcs */
+          var v1 = this._checkVisibility(A1, [A1[1], A1[1]], blocks, SHADOWS);
+
+          var v2 = this._checkVisibility([0, 1], A2, blocks, SHADOWS);
+
+          return (v1 + v2) / 2;
+        }
+        /* index1: first shadow >= A1 */
+
+
+        var index1 = 0,
+            edge1 = false;
+
+        while (index1 < SHADOWS.length) {
+          var old = SHADOWS[index1];
+          var diff = old[0] * A1[1] - A1[0] * old[1];
+
+          if (diff >= 0) {
+            /* old >= A1 */
+            if (diff == 0 && !(index1 % 2)) {
+              edge1 = true;
+            }
+
+            break;
+          }
+
+          index1++;
+        }
+        /* index2: last shadow <= A2 */
+
+
+        var index2 = SHADOWS.length,
+            edge2 = false;
+
+        while (index2--) {
+          var _old = SHADOWS[index2];
+
+          var _diff = A2[0] * _old[1] - _old[0] * A2[1];
+
+          if (_diff >= 0) {
+            /* old <= A2 */
+            if (_diff == 0 && index2 % 2) {
+              edge2 = true;
+            }
+
+            break;
+          }
+        }
+
+        var visible = true;
+
+        if (index1 == index2 && (edge1 || edge2)) {
+          /* subset of existing shadow, one of the edges match */
+          visible = false;
+        } else if (edge1 && edge2 && index1 + 1 == index2 && index2 % 2) {
+          /* completely equivalent with existing shadow */
+          visible = false;
+        } else if (index1 > index2 && index1 % 2) {
+          /* subset of existing shadow, not touching */
+          visible = false;
+        }
+
+        if (!visible) {
+          return 0;
+        }
+        /* fast case: not visible */
+
+
+        var visibleLength;
+        /* compute the length of visible arc, adjust list of shadows (if blocking) */
+
+        var remove = index2 - index1 + 1;
+
+        if (remove % 2) {
+          if (index1 % 2) {
+            /* first edge within existing shadow, second outside */
+            var P = SHADOWS[index1];
+            visibleLength = (A2[0] * P[1] - P[0] * A2[1]) / (P[1] * A2[1]);
+
+            if (blocks) {
+              SHADOWS.splice(index1, remove, A2);
+            }
+          } else {
+            /* second edge within existing shadow, first outside */
+            var _P = SHADOWS[index2];
+            visibleLength = (_P[0] * A1[1] - A1[0] * _P[1]) / (A1[1] * _P[1]);
+
+            if (blocks) {
+              SHADOWS.splice(index1, remove, A1);
+            }
+          }
+        } else {
+          if (index1 % 2) {
+            /* both edges within existing shadows */
+            var P1 = SHADOWS[index1];
+            var P2 = SHADOWS[index2];
+            visibleLength = (P2[0] * P1[1] - P1[0] * P2[1]) / (P1[1] * P2[1]);
+
+            if (blocks) {
+              SHADOWS.splice(index1, remove);
+            }
+          } else {
+            /* both edges outside existing shadows */
+            if (blocks) {
+              SHADOWS.splice(index1, remove, A1, A2);
+            }
+
+            return 1;
+            /* whole arc visible! */
+          }
+        }
+
+        var arcLength = (A2[0] * A1[1] - A1[0] * A2[1]) / (A1[1] * A2[1]);
+        return visibleLength / arcLength;
+      }
+    }]);
+
+    return PreciseShadowcasting;
+  }(FOV);
+  /** Octants used for translating recursive shadowcasting offsets */
+
+
+  var OCTANTS = [[-1, 0, 0, 1], [0, -1, 1, 0], [0, -1, -1, 0], [-1, 0, 0, -1], [1, 0, 0, -1], [0, 1, -1, 0], [0, 1, 1, 0], [1, 0, 0, 1]];
+  /**
+   * @class Recursive shadowcasting algorithm
+   * Currently only supports 4/8 topologies, not hexagonal.
+   * Based on Peter Harkins' implementation of Björn Bergström's algorithm described here: http://www.roguebasin.com/index.php?title=FOV_using_recursive_shadowcasting
+   * @augments ROT.FOV
+   */
+
+  var RecursiveShadowcasting =
+  /*#__PURE__*/
+  function (_FOV3) {
+    _inherits(RecursiveShadowcasting, _FOV3);
+
+    function RecursiveShadowcasting() {
+      _classCallCheck(this, RecursiveShadowcasting);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(RecursiveShadowcasting).apply(this, arguments));
+    }
+
+    _createClass(RecursiveShadowcasting, [{
+      key: "compute",
+
+      /**
+       * Compute visibility for a 360-degree circle
+       * @param {int} x
+       * @param {int} y
+       * @param {int} R Maximum visibility radius
+       * @param {function} callback
+       */
+      value: function compute(x, y, R, callback) {
+        //You can always see your own tile
+        callback(x, y, 0, 1);
+
+        for (var i = 0; i < OCTANTS.length; i++) {
+          this._renderOctant(x, y, OCTANTS[i], R, callback);
+        }
+      }
+      /**
+       * Compute visibility for a 180-degree arc
+       * @param {int} x
+       * @param {int} y
+       * @param {int} R Maximum visibility radius
+       * @param {int} dir Direction to look in (expressed in a ROT.DIRS value);
+       * @param {function} callback
+       */
+
+    }, {
+      key: "compute180",
+      value: function compute180(x, y, R, dir, callback) {
+        //You can always see your own tile
+        callback(x, y, 0, 1);
+        var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 180 degrees
+
+        var nextPreviousOctant = (dir - 2 + 8) % 8; //Need to retrieve the previous two octants to render a full 180 degrees
+
+        var nextOctant = (dir + 1 + 8) % 8; //Need to grab to next octant to render a full 180 degrees
+
+        this._renderOctant(x, y, OCTANTS[nextPreviousOctant], R, callback);
+
+        this._renderOctant(x, y, OCTANTS[previousOctant], R, callback);
+
+        this._renderOctant(x, y, OCTANTS[dir], R, callback);
+
+        this._renderOctant(x, y, OCTANTS[nextOctant], R, callback);
+      }
+    }, {
+      key: "compute90",
+
+      /**
+       * Compute visibility for a 90-degree arc
+       * @param {int} x
+       * @param {int} y
+       * @param {int} R Maximum visibility radius
+       * @param {int} dir Direction to look in (expressed in a ROT.DIRS value);
+       * @param {function} callback
+       */
+      value: function compute90(x, y, R, dir, callback) {
+        //You can always see your own tile
+        callback(x, y, 0, 1);
+        var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 90 degrees
+
+        this._renderOctant(x, y, OCTANTS[dir], R, callback);
+
+        this._renderOctant(x, y, OCTANTS[previousOctant], R, callback);
+      }
+      /**
+       * Render one octant (45-degree arc) of the viewshed
+       * @param {int} x
+       * @param {int} y
+       * @param {int} octant Octant to be rendered
+       * @param {int} R Maximum visibility radius
+       * @param {function} callback
+       */
+
+    }, {
+      key: "_renderOctant",
+      value: function _renderOctant(x, y, octant, R, callback) {
+        //Radius incremented by 1 to provide same coverage area as other shadowcasting radiuses
+        this._castVisibility(x, y, 1, 1.0, 0.0, R + 1, octant[0], octant[1], octant[2], octant[3], callback);
+      }
+      /**
+       * Actually calculates the visibility
+       * @param {int} startX The starting X coordinate
+       * @param {int} startY The starting Y coordinate
+       * @param {int} row The row to render
+       * @param {float} visSlopeStart The slope to start at
+       * @param {float} visSlopeEnd The slope to end at
+       * @param {int} radius The radius to reach out to
+       * @param {int} xx
+       * @param {int} xy
+       * @param {int} yx
+       * @param {int} yy
+       * @param {function} callback The callback to use when we hit a block that is visible
+       */
+
+    }, {
+      key: "_castVisibility",
+      value: function _castVisibility(startX, startY, row, visSlopeStart, visSlopeEnd, radius, xx, xy, yx, yy, callback) {
+        if (visSlopeStart < visSlopeEnd) {
+          return;
+        }
+
+        for (var i = row; i <= radius; i++) {
+          var dx = -i - 1;
+          var dy = -i;
+          var blocked = false;
+          var newStart = 0; //'Row' could be column, names here assume octant 0 and would be flipped for half the octants
+
+          while (dx <= 0) {
+            dx += 1; //Translate from relative coordinates to map coordinates
+
+            var mapX = startX + dx * xx + dy * xy;
+            var mapY = startY + dx * yx + dy * yy; //Range of the row
+
+            var slopeStart = (dx - 0.5) / (dy + 0.5);
+            var slopeEnd = (dx + 0.5) / (dy - 0.5); //Ignore if not yet at left edge of Octant
+
+            if (slopeEnd > visSlopeStart) {
+              continue;
+            } //Done if past right edge
+
+
+            if (slopeStart < visSlopeEnd) {
+              break;
+            } //If it's in range, it's visible
+
+
+            if (dx * dx + dy * dy < radius * radius) {
+              callback(mapX, mapY, i, 1);
+            }
+
+            if (!blocked) {
+              //If tile is a blocking tile, cast around it
+              if (!this._lightPasses(mapX, mapY) && i < radius) {
+                blocked = true;
+
+                this._castVisibility(startX, startY, i + 1, visSlopeStart, slopeStart, radius, xx, xy, yx, yy, callback);
+
+                newStart = slopeEnd;
+              }
+            } else {
+              //Keep narrowing if scanning across a block
+              if (!this._lightPasses(mapX, mapY)) {
+                newStart = slopeEnd;
+                continue;
+              } //Block has ended
+
+
+              blocked = false;
+              visSlopeStart = newStart;
+            }
+          }
+
+          if (blocked) {
+            break;
+          }
+        }
+      }
+    }]);
+
+    return RecursiveShadowcasting;
+  }(FOV);
+
+  var index$1 = {
+    DiscreteShadowcasting: DiscreteShadowcasting,
+    PreciseShadowcasting: PreciseShadowcasting,
+    RecursiveShadowcasting: RecursiveShadowcasting
+  };
   /**
    * @class Asynchronous main loop
    * @param {ROT.Scheduler} scheduler
@@ -3040,6 +3656,301 @@ var ROT = function (exports) {
     toRGB: toRGB,
     toHex: toHex
   });
+
+  var Lighting =
+  /*#__PURE__*/
+  function () {
+    /**
+     * @class Lighting computation, based on a traditional FOV for multiple light sources and multiple passes.
+     * @param {function} reflectivityCallback Callback to retrieve cell reflectivity (0..1)
+     * @param {object} [options]
+     * @param {int} [options.passes=1] Number of passes. 1 equals to simple FOV of all light sources, >1 means a *highly simplified* radiosity-like algorithm.
+     * @param {int} [options.emissionThreshold=100] Cells with emissivity > threshold will be treated as light source in the next pass.
+     * @param {int} [options.range=10] Max light range
+     */
+    function Lighting(reflectivityCallback) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      _classCallCheck(this, Lighting);
+
+      this._reflectivityCallback = reflectivityCallback;
+      options = Object.assign({
+        passes: 1,
+        emissionThreshold: 100,
+        range: 10
+      }, options);
+      this._lights = {};
+      this._reflectivityCache = {};
+      this._fovCache = {};
+      this.setOptions(options);
+    }
+    /**
+     * Adjust options at runtime
+     * @see ROT.Lighting
+     * @param {object} [options]
+     */
+
+
+    _createClass(Lighting, [{
+      key: "setOptions",
+      value: function setOptions(options) {
+        Object.assign(this._options, options);
+
+        if (options && options.range) {
+          this.reset();
+        }
+
+        return this;
+      }
+      /**
+       * Set the used Field-Of-View algo
+       * @param {ROT.FOV} fov
+       */
+
+    }, {
+      key: "setFOV",
+      value: function setFOV(fov) {
+        this._fov = fov;
+        this._fovCache = {};
+        return this;
+      }
+      /**
+       * Set (or remove) a light source
+       * @param {int} x
+       * @param {int} y
+       * @param {null || string || number[3]} color
+       */
+
+    }, {
+      key: "setLight",
+      value: function setLight(x, y, color) {
+        var key = x + "," + y;
+
+        if (color) {
+          this._lights[key] = typeof color == "string" ? fromString(color) : color;
+        } else {
+          delete this._lights[key];
+        }
+
+        return this;
+      }
+      /**
+       * Remove all light sources
+       */
+
+    }, {
+      key: "clearLights",
+      value: function clearLights() {
+        this._lights = {};
+      }
+      /**
+       * Reset the pre-computed topology values. Call whenever the underlying map changes its light-passability.
+       */
+
+    }, {
+      key: "reset",
+      value: function reset() {
+        this._reflectivityCache = {};
+        this._fovCache = {};
+        return this;
+      }
+      /**
+       * Compute the lighting
+       * @param {function} lightingCallback Will be called with (x, y, color) for every lit cell
+       */
+
+    }, {
+      key: "compute",
+      value: function compute(lightingCallback) {
+        var doneCells = {};
+        var emittingCells = {};
+        var litCells = {};
+
+        for (var key in this._lights) {
+          /* prepare emitters for first pass */
+          var light = this._lights[key];
+          emittingCells[key] = [0, 0, 0];
+          add_(emittingCells[key], light);
+        }
+
+        for (var i = 0; i < this._options.passes; i++) {
+          /* main loop */
+          this._emitLight(emittingCells, litCells, doneCells);
+
+          if (i + 1 == this._options.passes) {
+            continue;
+          }
+          /* not for the last pass */
+
+
+          emittingCells = this._computeEmitters(litCells, doneCells);
+        }
+
+        for (var litKey in litCells) {
+          /* let the user know what and how is lit */
+          var parts = litKey.split(",");
+          var x = parseInt(parts[0]);
+          var y = parseInt(parts[1]);
+          lightingCallback(x, y, litCells[litKey]);
+        }
+
+        return this;
+      }
+      /**
+       * Compute one iteration from all emitting cells
+       * @param {object} emittingCells These emit light
+       * @param {object} litCells Add projected light to these
+       * @param {object} doneCells These already emitted, forbid them from further calculations
+       */
+
+    }, {
+      key: "_emitLight",
+      value: function _emitLight(emittingCells, litCells, doneCells) {
+        for (var key in emittingCells) {
+          var parts = key.split(",");
+          var x = parseInt(parts[0]);
+          var y = parseInt(parts[1]);
+
+          this._emitLightFromCell(x, y, emittingCells[key], litCells);
+
+          doneCells[key] = 1;
+        }
+
+        return this;
+      }
+      /**
+       * Prepare a list of emitters for next pass
+       * @param {object} litCells
+       * @param {object} doneCells
+       * @returns {object}
+       */
+
+    }, {
+      key: "_computeEmitters",
+      value: function _computeEmitters(litCells, doneCells) {
+        var result = {};
+
+        for (var key in litCells) {
+          if (key in doneCells) {
+            continue;
+          }
+          /* already emitted */
+
+
+          var _color = litCells[key];
+          var reflectivity = void 0;
+
+          if (key in this._reflectivityCache) {
+            reflectivity = this._reflectivityCache[key];
+          } else {
+            var parts = key.split(",");
+            var x = parseInt(parts[0]);
+            var y = parseInt(parts[1]);
+            reflectivity = this._reflectivityCallback(x, y);
+            this._reflectivityCache[key] = reflectivity;
+          }
+
+          if (reflectivity == 0) {
+            continue;
+          }
+          /* will not reflect at all */
+
+          /* compute emission color */
+
+
+          var emission = [0, 0, 0];
+          var intensity = 0;
+
+          for (var i = 0; i < 3; i++) {
+            var part = Math.round(_color[i] * reflectivity);
+            emission[i] = part;
+            intensity += part;
+          }
+
+          if (intensity > this._options.emissionThreshold) {
+            result[key] = emission;
+          }
+        }
+
+        return result;
+      }
+      /**
+       * Compute one iteration from one cell
+       * @param {int} x
+       * @param {int} y
+       * @param {number[]} color
+       * @param {object} litCells Cell data to by updated
+       */
+
+    }, {
+      key: "_emitLightFromCell",
+      value: function _emitLightFromCell(x, y, color, litCells) {
+        var key = x + "," + y;
+        var fov;
+
+        if (key in this._fovCache) {
+          fov = this._fovCache[key];
+        } else {
+          fov = this._updateFOV(x, y);
+        }
+
+        for (var fovKey in fov) {
+          var formFactor = fov[fovKey];
+          var result = void 0;
+
+          if (fovKey in litCells) {
+            /* already lit */
+            result = litCells[fovKey];
+          } else {
+            /* newly lit */
+            result = [0, 0, 0];
+            litCells[fovKey] = result;
+          }
+
+          for (var i = 0; i < 3; i++) {
+            result[i] += Math.round(color[i] * formFactor);
+          }
+          /* add light color */
+
+        }
+
+        return this;
+      }
+      /**
+       * Compute FOV ("form factor") for a potential light source at [x,y]
+       * @param {int} x
+       * @param {int} y
+       * @returns {object}
+       */
+
+    }, {
+      key: "_updateFOV",
+      value: function _updateFOV(x, y) {
+        var key1 = x + "," + y;
+        var cache = {};
+        this._fovCache[key1] = cache;
+        var range = this._options.range;
+
+        function cb(x, y, r, vis) {
+          var key2 = x + "," + y;
+          var formFactor = vis * (1 - r / range);
+
+          if (formFactor == 0) {
+            return;
+          }
+
+          cache[key2] = formFactor;
+        }
+
+        this._fov.compute(x, y, range, cb.bind(this));
+
+        return cache;
+      }
+    }]);
+
+    return Lighting;
+  }();
+
   var Util = util;
   var Color = color;
   var Text = text;
@@ -3051,7 +3962,9 @@ var ROT = function (exports) {
   exports.StringGenerator = StringGenerator;
   exports.EventQueue = EventQueue;
   exports.Scheduler = index;
+  exports.FOV = index$1;
   exports.Engine = Engine;
+  exports.Lighting = Lighting;
   exports.DEFAULT_WIDTH = DEFAULT_WIDTH;
   exports.DEFAULT_HEIGHT = DEFAULT_HEIGHT;
   exports.DIRS = DIRS;

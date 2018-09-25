@@ -155,6 +155,12 @@ export default class Display {
 		return this._backend.computeFontSize(availWidth, availHeight);
 	}
 
+	computeTileSize(availWidth: number, availHeight: number) {
+		let width = Math.floor(availWidth / this._options.width);
+		let height = Math.floor(availHeight / this._options.height);
+		return [width, height];		
+	}
+
 	/**
 	 * Convert a DOM event (mouse or touch) to map coordinates. Uses first touch for multi-touch.
 	 * @param {Event} e event

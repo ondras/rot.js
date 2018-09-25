@@ -76,6 +76,7 @@ export default class Display {
      * @returns {int} fontSize
      */
     computeFontSize(availWidth: number, availHeight: number): number;
+    computeTileSize(availWidth: number, availHeight: number): number[];
     /**
      * Convert a DOM event (mouse or touch) to map coordinates. Uses first touch for multi-touch.
      * @param {Event} e event
