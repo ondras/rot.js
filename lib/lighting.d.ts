@@ -6,12 +6,12 @@ interface ReflectivityCallback {
 interface LightingCallback {
     (x: number, y: number, color: LightColor): void;
 }
-declare type LightingMap = {
+interface LightingMap {
     [key: string]: LightColor;
-};
-declare type NumberMap = {
+}
+interface NumberMap {
     [key: string]: number;
-};
+}
 interface Options {
     passes: number;
     emissionThreshold: number;

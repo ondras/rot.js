@@ -2,17 +2,17 @@ import FOV from "fov/fov.js";
 import * as Color from "./color.js";
 
 type LightColor = [number, number, number];
+
 interface ReflectivityCallback { (x:number, y:number ): number };
 interface LightingCallback { (x:number, y:number, color: LightColor ): void };
-type LightingMap = { [key:string]: LightColor };
-type NumberMap = { [key:string]: number };
+interface LightingMap { [key:string]: LightColor };
+interface NumberMap { [key:string]: number };
 
 interface Options {
 	passes: number,
 	emissionThreshold: number,
 	range: 10
 }
-
 
 export default class Lighting {
 	_reflectivityCallback: ReflectivityCallback;
@@ -32,6 +32,7 @@ export default class Lighting {
 	 */
 	constructor(reflectivityCallback: ReflectivityCallback, options: Partial<Options> = {}) {
 		this._reflectivityCallback = reflectivityCallback;
+		this._options = {} as Options;
 		options = Object.assign({
 			passes: 1,
 			emissionThreshold: 100,
