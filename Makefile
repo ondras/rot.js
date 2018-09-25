@@ -14,7 +14,7 @@ TS_SRC :=  $(shell find src -name '*.ts')
 all: $(ES5) $(ES5_MIN) doc
 
 doc: $(TS_FLAG)
-	$(TYPEDOC) --out doc --readme none $(TS_SRC)
+	$(TYPEDOC) --out doc --readme none --excludePrivate --excludeProtected --listInvalidSymbolLinks --name "rot.js" $(TS_SRC)
 
 $(ES5_MIN): $(ES5)
 	$(GCC) < $^ > $@

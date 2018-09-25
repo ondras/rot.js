@@ -1,8 +1,4 @@
 import { DisplayOptions, DisplayData } from "./types.js";
-/**
- * @class Abstract display backend module
- * @private
- */
 export default abstract class Backend {
     _context: CanvasRenderingContext2D;
     _options: DisplayOptions;

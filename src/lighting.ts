@@ -3,33 +3,35 @@ import * as Color from "./color.js";
 
 type LightColor = [number, number, number];
 
+/** Callback to retrieve cell reflectivity (0..1) */
 interface ReflectivityCallback { (x:number, y:number ): number };
+
+/** Will be called  for every lit cell */
 interface LightingCallback { (x:number, y:number, color: LightColor ): void };
+
 interface LightingMap { [key:string]: LightColor };
 interface NumberMap { [key:string]: number };
 
 interface Options {
+	/** Number of passes. 1 equals to simple FOV of all light sources, >1 means a *highly simplified* radiosity-like algorithm. Default = 1 */
 	passes: number,
+	/** Cells with emissivity > threshold will be treated as light source in the next pass. Default = 100 */
 	emissionThreshold: number,
-	range: 10
+	/** Max light range, default = 10 */
+	range: number
 }
 
+/**
+ * Lighting computation, based on a traditional FOV for multiple light sources and multiple passes.
+ */
 export default class Lighting {
-	_reflectivityCallback: ReflectivityCallback;
-	_options!: Options;
-	_fov!: FOV;
-	_lights: LightingMap;
-	_reflectivityCache: NumberMap;
-	_fovCache: { [key:string]: NumberMap };
+	private _reflectivityCallback: ReflectivityCallback;
+	private _options!: Options;
+	private _fov!: FOV;
+	private _lights: LightingMap;
+	private _reflectivityCache: NumberMap;
+	private _fovCache: { [key:string]: NumberMap };
 
-	/**
-	 * @class Lighting computation, based on a traditional FOV for multiple light sources and multiple passes.
-	 * @param {function} reflectivityCallback Callback to retrieve cell reflectivity (0..1)
-	 * @param {object} [options]
-	 * @param {int} [options.passes=1] Number of passes. 1 equals to simple FOV of all light sources, >1 means a *highly simplified* radiosity-like algorithm.
-	 * @param {int} [options.emissionThreshold=100] Cells with emissivity > threshold will be treated as light source in the next pass.
-	 * @param {int} [options.range=10] Max light range
-	 */
 	constructor(reflectivityCallback: ReflectivityCallback, options: Partial<Options> = {}) {
 		this._reflectivityCallback = reflectivityCallback;
 		this._options = {} as Options;
@@ -48,8 +50,6 @@ export default class Lighting {
 
 	/**
 	 * Adjust options at runtime
-	 * @see ROT.Lighting
-	 * @param {object} [options]
 	 */
 	setOptions(options: Partial<Options>) {
 		Object.assign(this._options, options);
@@ -59,7 +59,6 @@ export default class Lighting {
 
 	/**
 	 * Set the used Field-Of-View algo
-	 * @param {ROT.FOV} fov
 	 */
 	setFOV(fov: FOV) {
 		this._fov = fov;
@@ -69,9 +68,6 @@ export default class Lighting {
 
 	/**
 	 * Set (or remove) a light source
-	 * @param {int} x
-	 * @param {int} y
-	 * @param {null || string || number[3]} color
 	 */
 	setLight(x: number, y: number, color: null | string | LightColor) {
 		let key = x + "," + y;
@@ -101,7 +97,6 @@ export default class Lighting {
 
 	/**
 	 * Compute the lighting
-	 * @param {function} lightingCallback Will be called with (x, y, color) for every lit cell
 	 */
 	compute(lightingCallback: LightingCallback) {
 		let doneCells: {[key:string]:number} = {};
@@ -132,11 +127,11 @@ export default class Lighting {
 
 	/**
 	 * Compute one iteration from all emitting cells
-	 * @param {object} emittingCells These emit light
-	 * @param {object} litCells Add projected light to these
-	 * @param {object} doneCells These already emitted, forbid them from further calculations
+	 * @param emittingCells These emit light
+	 * @param litCells Add projected light to these
+	 * @param doneCells These already emitted, forbid them from further calculations
 	 */
-	_emitLight(emittingCells: LightingMap, litCells: LightingMap, doneCells: {[key:string]:number}) {
+	private _emitLight(emittingCells: LightingMap, litCells: LightingMap, doneCells: {[key:string]:number}) {
 		for (let key in emittingCells) {
 			let parts = key.split(",");
 			let x = parseInt(parts[0]);
@@ -149,11 +144,8 @@ export default class Lighting {
 
 	/**
 	 * Prepare a list of emitters for next pass
-	 * @param {object} litCells
-	 * @param {object} doneCells
-	 * @returns {object}
 	 */
-	_computeEmitters(litCells: LightingMap, doneCells: {[key:string]:number}) {
+	private _computeEmitters(litCells: LightingMap, doneCells: {[key:string]:number}) {
 		let result: LightingMap = {};
 
 		for (let key in litCells) {
@@ -190,12 +182,8 @@ export default class Lighting {
 
 	/**
 	 * Compute one iteration from one cell
-	 * @param {int} x
-	 * @param {int} y
-	 * @param {number[]} color
-	 * @param {object} litCells Cell data to by updated
 	 */
-	_emitLightFromCell(x: number, y: number, color: LightColor, litCells: LightingMap) {
+	private _emitLightFromCell(x: number, y: number, color: LightColor, litCells: LightingMap) {
 		let key = x+","+y;
 		let fov : NumberMap;
 		if (key in this._fovCache) {
@@ -223,11 +211,8 @@ export default class Lighting {
 
 	/**
 	 * Compute FOV ("form factor") for a potential light source at [x,y]
-	 * @param {int} x
-	 * @param {int} y
-	 * @returns {object}
 	 */
-	_updateFOV(x: number, y: number) {
+	private _updateFOV(x: number, y: number) {
 		let key1 = x+","+y;
 		let cache: NumberMap = {};
 		this._fovCache[key1] = cache;

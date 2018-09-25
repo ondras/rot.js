@@ -1,9 +1,5 @@
 import Backend from "./backend.js";
 import { DisplayOptions, DisplayData } from "./types.js";
-/**
- * @class Rectangular backend
- * @private
- */
 export default class Rect extends Backend {
     _spacingX: number;
     _spacingY: number;

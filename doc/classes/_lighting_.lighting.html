@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Lighting | rot-js</title>
+	<title>Lighting | rot.js</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="../index.html" class="title">rot-js</a>
+					<a href="../index.html" class="title">rot.js</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -69,6 +69,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Lighting computation, based on a traditional FOV for multiple light sources and multiple passes.</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -88,23 +95,8 @@
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
-							<h3>Properties</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_lighting_.lighting.html#_fov" class="tsd-kind-icon">_fov</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_lighting_.lighting.html#_fovcache" class="tsd-kind-icon">_fov<wbr>Cache</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_lighting_.lighting.html#_lights" class="tsd-kind-icon">_lights</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_lighting_.lighting.html#_options" class="tsd-kind-icon">_options</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_lighting_.lighting.html#_reflectivitycache" class="tsd-kind-icon">_reflectivity<wbr>Cache</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_lighting_.lighting.html#_reflectivitycallback" class="tsd-kind-icon">_reflectivity<wbr>Callback</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_lighting_.lighting.html#_computeemitters" class="tsd-kind-icon">_compute<wbr>Emitters</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_lighting_.lighting.html#_emitlight" class="tsd-kind-icon">_emit<wbr>Light</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_lighting_.lighting.html#_emitlightfromcell" class="tsd-kind-icon">_emit<wbr>Light<wbr>From<wbr>Cell</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_lighting_.lighting.html#_updatefov" class="tsd-kind-icon">_updateFOV</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_lighting_.lighting.html#clearlights" class="tsd-kind-icon">clear<wbr>Lights</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_lighting_.lighting.html#compute" class="tsd-kind-icon">compute</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_lighting_.lighting.html#reset" class="tsd-kind-icon">reset</a></li>
@@ -128,25 +120,13 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/67d2436/src/lighting.ts#L23">lighting.ts:23</a></li>
+									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/8c66e36/src/lighting.ts#L33">lighting.ts:33</a></li>
 								</ul>
 							</aside>
-							<div class="tsd-comment tsd-typography">
-								<dl class="tsd-comment-tags">
-									<dt>class</dt>
-									<dd><p>Lighting computation, based on a traditional FOV for multiple light sources and multiple passes.</p>
-									</dd>
-								</dl>
-							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>reflectivityCallback: <a href="../interfaces/_lighting_.reflectivitycallback.html" class="tsd-signature-type">ReflectivityCallback</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<div class="lead">
-											<p>Callback to retrieve cell reflectivity (0..1)</p>
-										</div>
-									</div>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_lighting_.options.html" class="tsd-signature-type">Options</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
@@ -158,233 +138,7 @@
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_fov" class="tsd-anchor"></a>
-					<h3>_fov</h3>
-					<div class="tsd-signature tsd-kind-icon">_fov<span class="tsd-signature-symbol">:</span> <a href="_fov_fov_.fov.html" class="tsd-signature-type">FOV</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/ondras/rot.js/blob/67d2436/src/lighting.ts#L20">lighting.ts:20</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_fovcache" class="tsd-anchor"></a>
-					<h3>_fov<wbr>Cache</h3>
-					<div class="tsd-signature tsd-kind-icon">_fov<wbr>Cache<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/ondras/rot.js/blob/67d2436/src/lighting.ts#L23">lighting.ts:23</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter-index-signature">
-								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><a href="../interfaces/_lighting_.numbermap.html" class="tsd-signature-type">NumberMap</a></h5>
-							</li>
-						</ul>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_lights" class="tsd-anchor"></a>
-					<h3>_lights</h3>
-					<div class="tsd-signature tsd-kind-icon">_lights<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_lighting_.lightingmap.html" class="tsd-signature-type">LightingMap</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/ondras/rot.js/blob/67d2436/src/lighting.ts#L21">lighting.ts:21</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_options" class="tsd-anchor"></a>
-					<h3>_options</h3>
-					<div class="tsd-signature tsd-kind-icon">_options<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_lighting_.options.html" class="tsd-signature-type">Options</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/ondras/rot.js/blob/67d2436/src/lighting.ts#L19">lighting.ts:19</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_reflectivitycache" class="tsd-anchor"></a>
-					<h3>_reflectivity<wbr>Cache</h3>
-					<div class="tsd-signature tsd-kind-icon">_reflectivity<wbr>Cache<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_lighting_.numbermap.html" class="tsd-signature-type">NumberMap</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/ondras/rot.js/blob/67d2436/src/lighting.ts#L22">lighting.ts:22</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_reflectivitycallback" class="tsd-anchor"></a>
-					<h3>_reflectivity<wbr>Callback</h3>
-					<div class="tsd-signature tsd-kind-icon">_reflectivity<wbr>Callback<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_lighting_.reflectivitycallback.html" class="tsd-signature-type">ReflectivityCallback</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/ondras/rot.js/blob/67d2436/src/lighting.ts#L18">lighting.ts:18</a></li>
-						</ul>
-					</aside>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="_computeemitters" class="tsd-anchor"></a>
-					<h3>_compute<wbr>Emitters</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_compute<wbr>Emitters<span class="tsd-signature-symbol">(</span>litCells<span class="tsd-signature-symbol">: </span><a href="../interfaces/_lighting_.lightingmap.html" class="tsd-signature-type">LightingMap</a>, doneCells<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_lighting_.lightingmap.html" class="tsd-signature-type">LightingMap</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/67d2436/src/lighting.ts#L156">lighting.ts:156</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Prepare a list of emitters for next pass</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>litCells: <a href="../interfaces/_lighting_.lightingmap.html" class="tsd-signature-type">LightingMap</a></h5>
-								</li>
-								<li>
-									<h5>doneCells: <span class="tsd-signature-type">object</span></h5>
-									<ul class="tsd-parameters">
-										<li class="tsd-parameter-index-signature">
-											<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">number</span></h5>
-										</li>
-									</ul>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_lighting_.lightingmap.html" class="tsd-signature-type">LightingMap</a></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="_emitlight" class="tsd-anchor"></a>
-					<h3>_emit<wbr>Light</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_emit<wbr>Light<span class="tsd-signature-symbol">(</span>emittingCells<span class="tsd-signature-symbol">: </span><a href="../interfaces/_lighting_.lightingmap.html" class="tsd-signature-type">LightingMap</a>, litCells<span class="tsd-signature-symbol">: </span><a href="../interfaces/_lighting_.lightingmap.html" class="tsd-signature-type">LightingMap</a>, doneCells<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/67d2436/src/lighting.ts#L139">lighting.ts:139</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Compute one iteration from all emitting cells</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>emittingCells: <a href="../interfaces/_lighting_.lightingmap.html" class="tsd-signature-type">LightingMap</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>These emit light</p>
-									</div>
-								</li>
-								<li>
-									<h5>litCells: <a href="../interfaces/_lighting_.lightingmap.html" class="tsd-signature-type">LightingMap</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Add projected light to these</p>
-									</div>
-								</li>
-								<li>
-									<h5>doneCells: <span class="tsd-signature-type">object</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>These already emitted, forbid them from further calculations</p>
-									</div>
-									<ul class="tsd-parameters">
-										<li class="tsd-parameter-index-signature">
-											<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">number</span></h5>
-										</li>
-									</ul>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="_emitlightfromcell" class="tsd-anchor"></a>
-					<h3>_emit<wbr>Light<wbr>From<wbr>Cell</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_emit<wbr>Light<wbr>From<wbr>Cell<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, y<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, color<span class="tsd-signature-symbol">: </span><a href="../modules/_lighting_.html#lightcolor" class="tsd-signature-type">LightColor</a>, litCells<span class="tsd-signature-symbol">: </span><a href="../interfaces/_lighting_.lightingmap.html" class="tsd-signature-type">LightingMap</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/67d2436/src/lighting.ts#L198">lighting.ts:198</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Compute one iteration from one cell</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>x: <span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li>
-									<h5>y: <span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li>
-									<h5>color: <a href="../modules/_lighting_.html#lightcolor" class="tsd-signature-type">LightColor</a></h5>
-								</li>
-								<li>
-									<h5>litCells: <a href="../interfaces/_lighting_.lightingmap.html" class="tsd-signature-type">LightingMap</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Cell data to by updated</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="_updatefov" class="tsd-anchor"></a>
-					<h3>_updateFOV</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_updateFOV<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, y<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_lighting_.numbermap.html" class="tsd-signature-type">NumberMap</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/67d2436/src/lighting.ts#L230">lighting.ts:230</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Compute FOV (&quot;form factor&quot;) for a potential light source at [x,y]</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>x: <span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li>
-									<h5>y: <span class="tsd-signature-type">number</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_lighting_.numbermap.html" class="tsd-signature-type">NumberMap</a></h4>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="clearlights" class="tsd-anchor"></a>
 					<h3>clear<wbr>Lights</h3>
@@ -395,7 +149,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/67d2436/src/lighting.ts#L90">lighting.ts:90</a></li>
+									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/8c66e36/src/lighting.ts#L86">lighting.ts:86</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -417,7 +171,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/67d2436/src/lighting.ts#L106">lighting.ts:106</a></li>
+									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/8c66e36/src/lighting.ts#L101">lighting.ts:101</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -429,9 +183,6 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5>lightingCallback: <a href="../interfaces/_lighting_.lightingcallback.html" class="tsd-signature-type">LightingCallback</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Will be called with (x, y, color) for every lit cell</p>
-									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
@@ -448,7 +199,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/67d2436/src/lighting.ts#L95">lighting.ts:95</a></li>
+									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/8c66e36/src/lighting.ts#L91">lighting.ts:91</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -470,7 +221,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/67d2436/src/lighting.ts#L64">lighting.ts:64</a></li>
+									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/8c66e36/src/lighting.ts#L63">lighting.ts:63</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -482,8 +233,6 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5>fov: <a href="_fov_fov_.fov.html" class="tsd-signature-type">FOV</a></h5>
-									<div class="tsd-comment tsd-typography">
-									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
@@ -500,7 +249,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/67d2436/src/lighting.ts#L76">lighting.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/8c66e36/src/lighting.ts#L72">lighting.ts:72</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -518,8 +267,6 @@
 								</li>
 								<li>
 									<h5>color: <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../modules/_lighting_.html#lightcolor" class="tsd-signature-type">LightColor</a></h5>
-									<div class="tsd-comment tsd-typography">
-									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
@@ -536,18 +283,13 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/67d2436/src/lighting.ts#L54">lighting.ts:54</a></li>
+									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/8c66e36/src/lighting.ts#L54">lighting.ts:54</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Adjust options at runtime</p>
 								</div>
-								<dl class="tsd-comment-tags">
-									<dt>see</dt>
-									<dd><p>ROT.Lighting</p>
-									</dd>
-								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -581,36 +323,6 @@
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="_lighting_.lighting.html#constructor" class="tsd-kind-icon">constructor</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_lighting_.lighting.html#_fov" class="tsd-kind-icon">_fov</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_lighting_.lighting.html#_fovcache" class="tsd-kind-icon">_fov<wbr>Cache</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_lighting_.lighting.html#_lights" class="tsd-kind-icon">_lights</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_lighting_.lighting.html#_options" class="tsd-kind-icon">_options</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_lighting_.lighting.html#_reflectivitycache" class="tsd-kind-icon">_reflectivity<wbr>Cache</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_lighting_.lighting.html#_reflectivitycallback" class="tsd-kind-icon">_reflectivity<wbr>Callback</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_lighting_.lighting.html#_computeemitters" class="tsd-kind-icon">_compute<wbr>Emitters</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_lighting_.lighting.html#_emitlight" class="tsd-kind-icon">_emit<wbr>Light</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_lighting_.lighting.html#_emitlightfromcell" class="tsd-kind-icon">_emit<wbr>Light<wbr>From<wbr>Cell</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_lighting_.lighting.html#_updatefov" class="tsd-kind-icon">_updateFOV</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_lighting_.lighting.html#clearlights" class="tsd-kind-icon">clear<wbr>Lights</a>
