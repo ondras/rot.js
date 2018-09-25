@@ -3483,10 +3483,285 @@ var ROT = function (exports) {
     return Cellular;
   }(Map);
 
+  var FEATURES = {
+    "room": Room,
+    "corridor": Corridor
+  };
+
+  var Digger =
+  /*#__PURE__*/
+  function (_Dungeon2) {
+    _inherits(Digger, _Dungeon2);
+
+    function Digger(width, height) {
+      var _this10;
+
+      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+      _classCallCheck(this, Digger);
+
+      _this10 = _possibleConstructorReturn(this, _getPrototypeOf(Digger).call(this, width, height));
+      _this10._options = Object.assign({
+        roomWidth: [3, 9],
+        roomHeight: [3, 5],
+        corridorLength: [3, 10],
+        dugPercentage: 0.2,
+        timeLimit: 1000
+      }, options);
+      _this10._features = {
+        "room": 4,
+        "corridor": 4
+      };
+      _this10._map = [];
+      _this10._featureAttempts = 20;
+      _this10._walls = {};
+      _this10._dug = 0;
+      _this10._digCallback = _this10._digCallback.bind(_assertThisInitialized(_assertThisInitialized(_this10)));
+      _this10._canBeDugCallback = _this10._canBeDugCallback.bind(_assertThisInitialized(_assertThisInitialized(_this10)));
+      _this10._isWallCallback = _this10._isWallCallback.bind(_assertThisInitialized(_assertThisInitialized(_this10)));
+      _this10._priorityWallCallback = _this10._priorityWallCallback.bind(_assertThisInitialized(_assertThisInitialized(_this10)));
+      return _this10;
+    }
+
+    _createClass(Digger, [{
+      key: "create",
+      value: function create(callback) {
+        this._rooms = [];
+        this._corridors = [];
+        this._map = this._fillMap(1);
+        this._walls = {};
+        this._dug = 0;
+        var area = (this._width - 2) * (this._height - 2);
+
+        this._firstRoom();
+
+        var t1 = Date.now();
+        var priorityWalls;
+
+        do {
+          priorityWalls = 0;
+          var t2 = Date.now();
+
+          if (t2 - t1 > this._options.timeLimit) {
+            break;
+          }
+
+          var wall = this._findWall();
+
+          if (!wall) {
+            break;
+          }
+
+          var parts = wall.split(",");
+          var x = parseInt(parts[0]);
+          var y = parseInt(parts[1]);
+
+          var dir = this._getDiggingDirection(x, y);
+
+          if (!dir) {
+            continue;
+          }
+
+          var featureAttempts = 0;
+
+          do {
+            featureAttempts++;
+
+            if (this._tryFeature(x, y, dir[0], dir[1])) {
+              this._removeSurroundingWalls(x, y);
+
+              this._removeSurroundingWalls(x - dir[0], y - dir[1]);
+
+              break;
+            }
+          } while (featureAttempts < this._featureAttempts);
+
+          for (var id in this._walls) {
+            if (this._walls[id] > 1) {
+              priorityWalls++;
+            }
+          }
+        } while (this._dug / area < this._options.dugPercentage || priorityWalls);
+
+        this._addDoors();
+
+        if (callback) {
+          for (var i = 0; i < this._width; i++) {
+            for (var j = 0; j < this._height; j++) {
+              callback(i, j, this._map[i][j]);
+            }
+          }
+        }
+
+        this._walls = {};
+        this._map = [];
+        return this;
+      }
+    }, {
+      key: "_digCallback",
+      value: function _digCallback(x, y, value) {
+        if (value == 0 || value == 2) {
+          this._map[x][y] = 0;
+          this._dug++;
+        } else {
+          this._walls[x + "," + y] = 1;
+        }
+      }
+    }, {
+      key: "_isWallCallback",
+      value: function _isWallCallback(x, y) {
+        if (x < 0 || y < 0 || x >= this._width || y >= this._height) {
+          return false;
+        }
+
+        return this._map[x][y] == 1;
+      }
+    }, {
+      key: "_canBeDugCallback",
+      value: function _canBeDugCallback(x, y) {
+        if (x < 1 || y < 1 || x + 1 >= this._width || y + 1 >= this._height) {
+          return false;
+        }
+
+        return this._map[x][y] == 1;
+      }
+    }, {
+      key: "_priorityWallCallback",
+      value: function _priorityWallCallback(x, y) {
+        this._walls[x + "," + y] = 2;
+      }
+    }, {
+      key: "_firstRoom",
+      value: function _firstRoom() {
+        var cx = Math.floor(this._width / 2);
+        var cy = Math.floor(this._height / 2);
+        var room = Room.createRandomCenter(cx, cy, this._options);
+
+        this._rooms.push(room);
+
+        room.create(this._digCallback);
+      }
+    }, {
+      key: "_findWall",
+      value: function _findWall() {
+        var prio1 = [];
+        var prio2 = [];
+
+        for (var id in this._walls) {
+          var prio = this._walls[id];
+
+          if (prio == 2) {
+            prio2.push(id);
+          } else {
+            prio1.push(id);
+          }
+        }
+
+        var arr = prio2.length ? prio2 : prio1;
+
+        if (!arr.length) {
+          return null;
+        }
+
+        id = RNG$1.getItem(arr.sort());
+        delete this._walls[id];
+        return id;
+      }
+    }, {
+      key: "_tryFeature",
+      value: function _tryFeature(x, y, dx, dy) {
+        var featureName = RNG$1.getWeightedValue(this._features);
+        var ctor = FEATURES[featureName];
+        var feature = ctor.createRandomAt(x, y, dx, dy, this._options);
+
+        if (!feature.isValid(this._isWallCallback, this._canBeDugCallback)) {
+          return false;
+        }
+
+        feature.create(this._digCallback);
+
+        if (feature instanceof Room) {
+          this._rooms.push(feature);
+        }
+
+        if (feature instanceof Corridor) {
+          feature.createPriorityWalls(this._priorityWallCallback);
+
+          this._corridors.push(feature);
+        }
+
+        return true;
+      }
+    }, {
+      key: "_removeSurroundingWalls",
+      value: function _removeSurroundingWalls(cx, cy) {
+        var deltas = DIRS[4];
+
+        for (var i = 0; i < deltas.length; i++) {
+          var delta = deltas[i];
+          var x = cx + delta[0];
+          var y = cy + delta[1];
+          delete this._walls[x + "," + y];
+          var x = cx + 2 * delta[0];
+          var y = cy + 2 * delta[1];
+          delete this._walls[x + "," + y];
+        }
+      }
+    }, {
+      key: "_getDiggingDirection",
+      value: function _getDiggingDirection(cx, cy) {
+        if (cx <= 0 || cy <= 0 || cx >= this._width - 1 || cy >= this._height - 1) {
+          return null;
+        }
+
+        var result = null;
+        var deltas = DIRS[4];
+
+        for (var i = 0; i < deltas.length; i++) {
+          var delta = deltas[i];
+          var x = cx + delta[0];
+          var y = cy + delta[1];
+
+          if (!this._map[x][y]) {
+            if (result) {
+              return null;
+            }
+
+            result = delta;
+          }
+        }
+
+        if (!result) {
+          return null;
+        }
+
+        return [-result[0], -result[1]];
+      }
+    }, {
+      key: "_addDoors",
+      value: function _addDoors() {
+        var data = this._map;
+
+        function isWallCallback(x, y) {
+          return data[x][y] == 1;
+        }
+
+        for (var i = 0; i < this._rooms.length; i++) {
+          var room = this._rooms[i];
+          room.clearDoors();
+          room.addDoors(isWallCallback);
+        }
+      }
+    }]);
+
+    return Digger;
+  }(Dungeon);
+
   var index$2 = {
     Arena: Arena,
     Uniform: Uniform,
-    Cellular: Cellular
+    Cellular: Cellular,
+    Digger: Digger
   };
 
   var Engine =

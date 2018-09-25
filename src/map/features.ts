@@ -1,7 +1,7 @@
 import RNG from "../rng.js";
 
 export interface FeatureConstructor {
-	createRandomAt: (x: number, y: number, dx: number, dy: number, options: {[key:string]:any}) => void;
+	createRandomAt(x: number, y: number, dx: number, dy: number, options: {[key:string]:any}): Feature;
 }
 
 interface RoomOptions {

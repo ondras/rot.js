@@ -29,9 +29,8 @@ Example.prototype.handleEvent = function(e) {
 
 Example.prototype.open = function() {
 	this.constructor.current = this;
-
 	var height = this._source.offsetHeight;
-	this._ta.style.height = height;
+	this._ta.style.height = height + "px";
 	this._ta.value = this._source.textContent.trim();
 	this._source.parentNode.replaceChild(this._ta, this._source);
 	this._ta.focus();

@@ -1,5 +1,9 @@
 @import url(http://fonts.googleapis.com/css?family=Droid+Sans:400,700|Inconsolata:400,700);@import url(menu.css);
 
+* {
+	box-sizing: border-box;
+}
+
 body {
 	background-color: #606060;
 	color: #fff;
