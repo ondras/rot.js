@@ -1,4 +1,4 @@
 import Arena from "./arena.js";
-import Dungeon from "./dungeon.js";
+import Uniform from "./uniform.js";
 
-export default { Arena, Dungeon };
+export default { Arena, Uniform };

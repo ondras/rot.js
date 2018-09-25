@@ -1,7 +1,7 @@
 import Arena from "./arena.js";
-import Dungeon from "./dungeon.js";
+import Uniform from "./uniform.js";
 declare const _default: {
     Arena: typeof Arena;
-    Dungeon: typeof Dungeon;
+    Uniform: typeof Uniform;
 };
 export default _default;

@@ -1,6 +1,14 @@
+export interface FeatureConstructor {
+    createRandomAt: (x: number, y: number, dx: number, dy: number, options: {
+        [key: string]: any;
+    }) => void;
+}
 interface RoomOptions {
     roomWidth: [number, number];
     roomHeight: [number, number];
+}
+interface CorridorOptions {
+    corridorLength: [number, number];
 }
 interface DigCallback {
     (x: number, y: number, value: number): void;
@@ -15,7 +23,6 @@ declare abstract class Feature {
     abstract isValid(isWallCallback: TestPositionCallback, canBeDugCallback: TestPositionCallback): boolean;
     abstract create(digCallback: DigCallback): void;
     abstract debug(): void;
-    abstract static createRandomAt(x: number, y: number, dx: number, dy: number, options: any): void;
 }
 /**
  * @class Room
@@ -82,7 +89,7 @@ export declare class Corridor extends Feature {
     _endY: number;
     _endsWithAWall: boolean;
     constructor(startX: number, startY: number, endX: number, endY: number);
-    static createRandomAt(x: number, y: number, dx: number, dy: number, options: any): Corridor;
+    static createRandomAt(x: number, y: number, dx: number, dy: number, options: CorridorOptions): Corridor;
     debug(): void;
     isValid(isWallCallback: TestPositionCallback, canBeDugCallback: TestPositionCallback): boolean;
     /**
