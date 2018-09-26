@@ -19,7 +19,6 @@ interface Options {
 	timeLimit: number
 }
 
-
 /**
  * Random dungeon generator using human-like digging patterns.
  * Heavily based on Mike Anderson's ideas from the "Tyrant" algo, mentioned at 

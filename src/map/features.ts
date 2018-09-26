@@ -1,9 +1,5 @@
 import RNG from "../rng.js";
 
-export interface FeatureConstructor {
-	createRandomAt(x: number, y: number, dx: number, dy: number, options: {[key:string]:any}): Feature;
-}
-
 interface RoomOptions {
 	roomWidth: [number, number];
 	roomHeight: [number, number];
@@ -11,6 +7,12 @@ interface RoomOptions {
 
 interface CorridorOptions {
 	corridorLength: [number, number];
+}
+
+interface FeatureOptions extends RoomOptions, CorridorOptions {};
+
+export interface FeatureConstructor {
+	createRandomAt: (x: number, y: number, dx: number, dy: number, options: FeatureOptions) => Feature;
 }
 
 interface DigCallback { (x: number, y: number, value: number): void; }
