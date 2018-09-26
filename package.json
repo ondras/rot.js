@@ -45,7 +45,8 @@
         {
           "targets": {
             "ie": 10
-          }
+          },
+          "loose": true
         }
       ]
     ]

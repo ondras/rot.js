@@ -18,7 +18,7 @@ the map creator will call your function repeatedly and pass it the generated map
 <div class="example">
 var map = new ROT.Map.Arena(3, 3);
 var userCallback = function(x, y, value) {
-	SHOW("Value %s generated at [%s,%s]".format(value, x, y));
+	SHOW(ROT.Util.format("Value %s generated at [%s,%s]", value, x, y));
 }
 map.create(userCallback);
 </div>
