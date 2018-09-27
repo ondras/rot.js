@@ -5,6 +5,7 @@ export {default as EventQueue} from "./eventqueue.js";
 export {default as Scheduler} from "./scheduler/index.js";
 export {default as FOV} from "./fov/index.js";
 export {default as Map} from "./map/index.js";
+export {default as Noise} from "./noise/index.js";
 export {default as Engine} from "./engine.js";
 export {default as Lighting} from "./lighting.js";
 

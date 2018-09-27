@@ -4322,6 +4322,115 @@ var ROT = function (exports) {
     Rogue: Rogue
   };
 
+  var Noise = function Noise() {};
+
+  var F2 = 0.5 * (Math.sqrt(3) - 1);
+  var G2 = (3 - Math.sqrt(3)) / 6;
+
+  var Simplex =
+  /*#__PURE__*/
+  function (_Noise) {
+    _inheritsLoose(Simplex, _Noise);
+
+    function Simplex(gradients) {
+      var _this14;
+
+      if (gradients === void 0) {
+        gradients = 256;
+      }
+
+      _this14 = _Noise.call(this) || this;
+      _this14._gradients = [[0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1]];
+      var permutations = [];
+
+      for (var i = 0; i < gradients; i++) {
+        permutations.push(i);
+      }
+
+      permutations = RNG$1.shuffle(permutations);
+      _this14._perms = [];
+      _this14._indexes = [];
+
+      for (var _i11 = 0; _i11 < 2 * gradients; _i11++) {
+        _this14._perms.push(permutations[_i11 % gradients]);
+
+        _this14._indexes.push(_this14._perms[_i11] % _this14._gradients.length);
+      }
+
+      return _this14;
+    }
+
+    var _proto29 = Simplex.prototype;
+
+    _proto29.get = function get(xin, yin) {
+      var perms = this._perms;
+      var indexes = this._indexes;
+      var count = perms.length / 2;
+      var n0 = 0,
+          n1 = 0,
+          n2 = 0,
+          gi;
+      var s = (xin + yin) * F2;
+      var i = Math.floor(xin + s);
+      var j = Math.floor(yin + s);
+      var t = (i + j) * G2;
+      var X0 = i - t;
+      var Y0 = j - t;
+      var x0 = xin - X0;
+      var y0 = yin - Y0;
+      var i1, j1;
+
+      if (x0 > y0) {
+        i1 = 1;
+        j1 = 0;
+      } else {
+        i1 = 0;
+        j1 = 1;
+      }
+
+      var x1 = x0 - i1 + G2;
+      var y1 = y0 - j1 + G2;
+      var x2 = x0 - 1 + 2 * G2;
+      var y2 = y0 - 1 + 2 * G2;
+      var ii = mod(i, count);
+      var jj = mod(j, count);
+      var t0 = 0.5 - x0 * x0 - y0 * y0;
+
+      if (t0 >= 0) {
+        t0 *= t0;
+        gi = indexes[ii + perms[jj]];
+        var grad = this._gradients[gi];
+        n0 = t0 * t0 * (grad[0] * x0 + grad[1] * y0);
+      }
+
+      var t1 = 0.5 - x1 * x1 - y1 * y1;
+
+      if (t1 >= 0) {
+        t1 *= t1;
+        gi = indexes[ii + i1 + perms[jj + j1]];
+        var _grad = this._gradients[gi];
+        n1 = t1 * t1 * (_grad[0] * x1 + _grad[1] * y1);
+      }
+
+      var t2 = 0.5 - x2 * x2 - y2 * y2;
+
+      if (t2 >= 0) {
+        t2 *= t2;
+        gi = indexes[ii + 1 + perms[jj + 1]];
+        var _grad2 = this._gradients[gi];
+        n2 = t2 * t2 * (_grad2[0] * x2 + _grad2[1] * y2);
+      }
+
+      return 70 * (n0 + n1 + n2);
+    };
+
+    return Simplex;
+  }(Noise);
+
+  var index$3 = {
+    Simplex: Simplex
+  };
+
   var Engine =
   /*#__PURE__*/
   function () {
@@ -4330,18 +4439,18 @@ var ROT = function (exports) {
       this._lock = 1;
     }
 
-    var _proto29 = Engine.prototype;
+    var _proto30 = Engine.prototype;
 
-    _proto29.start = function start() {
+    _proto30.start = function start() {
       return this.unlock();
     };
 
-    _proto29.lock = function lock() {
+    _proto30.lock = function lock() {
       this._lock++;
       return this;
     };
 
-    _proto29.unlock = function unlock() {
+    _proto30.unlock = function unlock() {
       if (!this._lock) {
         throw new Error("Cannot unlock unlocked engine");
       }
@@ -4782,9 +4891,9 @@ var ROT = function (exports) {
       this.setOptions(options);
     }
 
-    var _proto30 = Lighting.prototype;
+    var _proto31 = Lighting.prototype;
 
-    _proto30.setOptions = function setOptions(options) {
+    _proto31.setOptions = function setOptions(options) {
       Object.assign(this._options, options);
 
       if (options && options.range) {
@@ -4794,13 +4903,13 @@ var ROT = function (exports) {
       return this;
     };
 
-    _proto30.setFOV = function setFOV(fov) {
+    _proto31.setFOV = function setFOV(fov) {
       this._fov = fov;
       this._fovCache = {};
       return this;
     };
 
-    _proto30.setLight = function setLight(x, y, color) {
+    _proto31.setLight = function setLight(x, y, color) {
       var key = x + "," + y;
 
       if (color) {
@@ -4812,17 +4921,17 @@ var ROT = function (exports) {
       return this;
     };
 
-    _proto30.clearLights = function clearLights() {
+    _proto31.clearLights = function clearLights() {
       this._lights = {};
     };
 
-    _proto30.reset = function reset() {
+    _proto31.reset = function reset() {
       this._reflectivityCache = {};
       this._fovCache = {};
       return this;
     };
 
-    _proto30.compute = function compute(lightingCallback) {
+    _proto31.compute = function compute(lightingCallback) {
       var doneCells = {};
       var emittingCells = {};
       var litCells = {};
@@ -4853,7 +4962,7 @@ var ROT = function (exports) {
       return this;
     };
 
-    _proto30._emitLight = function _emitLight(emittingCells, litCells, doneCells) {
+    _proto31._emitLight = function _emitLight(emittingCells, litCells, doneCells) {
       for (var key in emittingCells) {
         var parts = key.split(",");
         var x = parseInt(parts[0]);
@@ -4867,7 +4976,7 @@ var ROT = function (exports) {
       return this;
     };
 
-    _proto30._computeEmitters = function _computeEmitters(litCells, doneCells) {
+    _proto31._computeEmitters = function _computeEmitters(litCells, doneCells) {
       var result = {};
 
       for (var key in litCells) {
@@ -4909,7 +5018,7 @@ var ROT = function (exports) {
       return result;
     };
 
-    _proto30._emitLightFromCell = function _emitLightFromCell(x, y, color, litCells) {
+    _proto31._emitLightFromCell = function _emitLightFromCell(x, y, color, litCells) {
       var key = x + "," + y;
       var fov;
 
@@ -4938,7 +5047,7 @@ var ROT = function (exports) {
       return this;
     };
 
-    _proto30._updateFOV = function _updateFOV(x, y) {
+    _proto31._updateFOV = function _updateFOV(x, y) {
       var key1 = x + "," + y;
       var cache = {};
       this._fovCache[key1] = cache;
@@ -4976,6 +5085,7 @@ var ROT = function (exports) {
   exports.Scheduler = index;
   exports.FOV = index$1;
   exports.Map = index$2;
+  exports.Noise = index$3;
   exports.Engine = Engine;
   exports.Lighting = Lighting;
   exports.DEFAULT_WIDTH = DEFAULT_WIDTH;
