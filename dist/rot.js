@@ -4431,6 +4431,251 @@ var ROT = function (exports) {
     Simplex: Simplex
   };
 
+  var Path =
+  /*#__PURE__*/
+  function () {
+    function Path(toX, toY, passableCallback, options) {
+      if (options === void 0) {
+        options = {};
+      }
+
+      this._toX = toX;
+      this._toY = toY;
+      this._passableCallback = passableCallback;
+      this._options = Object.assign({
+        topology: 8
+      }, options);
+      this._dirs = DIRS[this._options.topology];
+
+      if (this._options.topology == 8) {
+        this._dirs = [this._dirs[0], this._dirs[2], this._dirs[4], this._dirs[6], this._dirs[1], this._dirs[3], this._dirs[5], this._dirs[7]];
+      }
+    }
+
+    var _proto30 = Path.prototype;
+
+    _proto30._getNeighbors = function _getNeighbors(cx, cy) {
+      var result = [];
+
+      for (var i = 0; i < this._dirs.length; i++) {
+        var dir = this._dirs[i];
+        var x = cx + dir[0];
+        var y = cy + dir[1];
+
+        if (!this._passableCallback(x, y)) {
+          continue;
+        }
+
+        result.push([x, y]);
+      }
+
+      return result;
+    };
+
+    return Path;
+  }();
+
+  var Dijkstra =
+  /*#__PURE__*/
+  function (_Path) {
+    _inheritsLoose(Dijkstra, _Path);
+
+    function Dijkstra(toX, toY, passableCallback, options) {
+      var _this15;
+
+      _this15 = _Path.call(this, toX, toY, passableCallback, options) || this;
+      _this15._computed = {};
+      _this15._todo = [];
+
+      _this15._add(toX, toY, null);
+
+      return _this15;
+    }
+
+    var _proto31 = Dijkstra.prototype;
+
+    _proto31.compute = function compute(fromX, fromY, callback) {
+      var key = fromX + "," + fromY;
+
+      if (!(key in this._computed)) {
+        this._compute(fromX, fromY);
+      }
+
+      if (!(key in this._computed)) {
+        return;
+      }
+
+      var item = this._computed[key];
+
+      while (item) {
+        callback(item.x, item.y);
+        item = item.prev;
+      }
+    };
+
+    _proto31._compute = function _compute(fromX, fromY) {
+      while (this._todo.length) {
+        var item = this._todo.shift();
+
+        if (item.x == fromX && item.y == fromY) {
+          return;
+        }
+
+        var neighbors = this._getNeighbors(item.x, item.y);
+
+        for (var i = 0; i < neighbors.length; i++) {
+          var neighbor = neighbors[i];
+          var x = neighbor[0];
+          var y = neighbor[1];
+          var id = x + "," + y;
+
+          if (id in this._computed) {
+            continue;
+          }
+
+          this._add(x, y, item);
+        }
+      }
+    };
+
+    _proto31._add = function _add(x, y, prev) {
+      var obj = {
+        x: x,
+        y: y,
+        prev: prev
+      };
+      this._computed[x + "," + y] = obj;
+
+      this._todo.push(obj);
+    };
+
+    return Dijkstra;
+  }(Path);
+
+  var AStar =
+  /*#__PURE__*/
+  function (_Path2) {
+    _inheritsLoose(AStar, _Path2);
+
+    function AStar(toX, toY, passableCallback, options) {
+      var _this16;
+
+      if (options === void 0) {
+        options = {};
+      }
+
+      _this16 = _Path2.call(this, toX, toY, passableCallback, options) || this;
+      _this16._todo = [];
+      _this16._done = {};
+      return _this16;
+    }
+
+    var _proto32 = AStar.prototype;
+
+    _proto32.compute = function compute(fromX, fromY, callback) {
+      this._todo = [];
+      this._done = {};
+      this._fromX = fromX;
+      this._fromY = fromY;
+
+      this._add(this._toX, this._toY, null);
+
+      while (this._todo.length) {
+        var _item = this._todo.shift();
+
+        var id = _item.x + "," + _item.y;
+
+        if (id in this._done) {
+          continue;
+        }
+
+        this._done[id] = _item;
+
+        if (_item.x == fromX && _item.y == fromY) {
+          break;
+        }
+
+        var neighbors = this._getNeighbors(_item.x, _item.y);
+
+        for (var i = 0; i < neighbors.length; i++) {
+          var neighbor = neighbors[i];
+          var x = neighbor[0];
+          var y = neighbor[1];
+
+          var _id2 = x + "," + y;
+
+          if (_id2 in this._done) {
+            continue;
+          }
+
+          this._add(x, y, _item);
+        }
+      }
+
+      var item = this._done[fromX + "," + fromY];
+
+      if (!item) {
+        return;
+      }
+
+      while (item) {
+        callback(item.x, item.y);
+        item = item.prev;
+      }
+    };
+
+    _proto32._add = function _add(x, y, prev) {
+      var h = this._distance(x, y);
+
+      var obj = {
+        x: x,
+        y: y,
+        prev: prev,
+        g: prev ? prev.g + 1 : 0,
+        h: h
+      };
+      var f = obj.g + obj.h;
+
+      for (var i = 0; i < this._todo.length; i++) {
+        var item = this._todo[i];
+        var itemF = item.g + item.h;
+
+        if (f < itemF || f == itemF && h < item.h) {
+          this._todo.splice(i, 0, obj);
+
+          return;
+        }
+      }
+
+      this._todo.push(obj);
+    };
+
+    _proto32._distance = function _distance(x, y) {
+      switch (this._options.topology) {
+        case 4:
+          return Math.abs(x - this._fromX) + Math.abs(y - this._fromY);
+          break;
+
+        case 6:
+          var dx = Math.abs(x - this._fromX);
+          var dy = Math.abs(y - this._fromY);
+          return dy + Math.max(0, (dx - dy) / 2);
+          break;
+
+        case 8:
+          return Math.max(Math.abs(x - this._fromX), Math.abs(y - this._fromY));
+          break;
+      }
+    };
+
+    return AStar;
+  }(Path);
+
+  var index$4 = {
+    Dijkstra: Dijkstra,
+    AStar: AStar
+  };
+
   var Engine =
   /*#__PURE__*/
   function () {
@@ -4439,18 +4684,18 @@ var ROT = function (exports) {
       this._lock = 1;
     }
 
-    var _proto30 = Engine.prototype;
+    var _proto33 = Engine.prototype;
 
-    _proto30.start = function start() {
+    _proto33.start = function start() {
       return this.unlock();
     };
 
-    _proto30.lock = function lock() {
+    _proto33.lock = function lock() {
       this._lock++;
       return this;
     };
 
-    _proto30.unlock = function unlock() {
+    _proto33.unlock = function unlock() {
       if (!this._lock) {
         throw new Error("Cannot unlock unlocked engine");
       }
@@ -4891,9 +5136,9 @@ var ROT = function (exports) {
       this.setOptions(options);
     }
 
-    var _proto31 = Lighting.prototype;
+    var _proto34 = Lighting.prototype;
 
-    _proto31.setOptions = function setOptions(options) {
+    _proto34.setOptions = function setOptions(options) {
       Object.assign(this._options, options);
 
       if (options && options.range) {
@@ -4903,13 +5148,13 @@ var ROT = function (exports) {
       return this;
     };
 
-    _proto31.setFOV = function setFOV(fov) {
+    _proto34.setFOV = function setFOV(fov) {
       this._fov = fov;
       this._fovCache = {};
       return this;
     };
 
-    _proto31.setLight = function setLight(x, y, color) {
+    _proto34.setLight = function setLight(x, y, color) {
       var key = x + "," + y;
 
       if (color) {
@@ -4921,17 +5166,17 @@ var ROT = function (exports) {
       return this;
     };
 
-    _proto31.clearLights = function clearLights() {
+    _proto34.clearLights = function clearLights() {
       this._lights = {};
     };
 
-    _proto31.reset = function reset() {
+    _proto34.reset = function reset() {
       this._reflectivityCache = {};
       this._fovCache = {};
       return this;
     };
 
-    _proto31.compute = function compute(lightingCallback) {
+    _proto34.compute = function compute(lightingCallback) {
       var doneCells = {};
       var emittingCells = {};
       var litCells = {};
@@ -4962,7 +5207,7 @@ var ROT = function (exports) {
       return this;
     };
 
-    _proto31._emitLight = function _emitLight(emittingCells, litCells, doneCells) {
+    _proto34._emitLight = function _emitLight(emittingCells, litCells, doneCells) {
       for (var key in emittingCells) {
         var parts = key.split(",");
         var x = parseInt(parts[0]);
@@ -4976,7 +5221,7 @@ var ROT = function (exports) {
       return this;
     };
 
-    _proto31._computeEmitters = function _computeEmitters(litCells, doneCells) {
+    _proto34._computeEmitters = function _computeEmitters(litCells, doneCells) {
       var result = {};
 
       for (var key in litCells) {
@@ -5018,7 +5263,7 @@ var ROT = function (exports) {
       return result;
     };
 
-    _proto31._emitLightFromCell = function _emitLightFromCell(x, y, color, litCells) {
+    _proto34._emitLightFromCell = function _emitLightFromCell(x, y, color, litCells) {
       var key = x + "," + y;
       var fov;
 
@@ -5047,7 +5292,7 @@ var ROT = function (exports) {
       return this;
     };
 
-    _proto31._updateFOV = function _updateFOV(x, y) {
+    _proto34._updateFOV = function _updateFOV(x, y) {
       var key1 = x + "," + y;
       var cache = {};
       this._fovCache[key1] = cache;
@@ -5086,6 +5331,7 @@ var ROT = function (exports) {
   exports.FOV = index$1;
   exports.Map = index$2;
   exports.Noise = index$3;
+  exports.Path = index$4;
   exports.Engine = Engine;
   exports.Lighting = Lighting;
   exports.DEFAULT_WIDTH = DEFAULT_WIDTH;
