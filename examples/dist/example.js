@@ -1,14 +1,12 @@
-import { Display } from "../../lib/index.js";
-
-let o = {
+var o = {
 	width: 11,
 	height: 5
 }
-let d = new Display(o);
+var d = new ROT.Display(o);
 document.body.appendChild(d.getContainer());
 
-for (let i=0; i<o.width; i++) {
-	for (let j=0; j<o.width; j++) {
+for (var i=0; i<o.width; i++) {
+	for (var j=0; j<o.width; j++) {
 		if (!i || !j || i+1 == o.width || j+1 == o.height) {
 			d.draw(i, j, "#", "gray");
 		} else {

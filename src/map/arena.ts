@@ -1,4 +1,4 @@
-import Map, { CreateCallback } from "./map";
+import Map, { CreateCallback } from "./map.js";
 
 /**
  * @class Simple empty rectangular room

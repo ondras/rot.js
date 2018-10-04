@@ -13,6 +13,7 @@ for (let i=0; i<o.width; i++) {
 			d.draw(i, j, "#", "gray");
 		} else {
 			d.draw(i, j, ".", "#666");
+
 		}
 	}
 }

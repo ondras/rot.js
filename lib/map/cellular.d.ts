@@ -1,4 +1,4 @@
-import Map, { CreateCallback } from "./map";
+import Map, { CreateCallback } from "./map.js";
 interface Options {
     born: number[];
     survive: number[];
