@@ -116,9 +116,9 @@ export default class Lighting {
 		}
 
 		for (let litKey in litCells) { /* let the user know what and how is lit */
-			var parts = litKey.split(",");
-			var x = parseInt(parts[0]);
-			var y = parseInt(parts[1]);
+			let parts = litKey.split(",");
+			let x = parseInt(parts[0]);
+			let y = parseInt(parts[1]);
 			lightingCallback(x, y, litCells[litKey]);
 		}
 

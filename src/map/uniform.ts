@@ -54,9 +54,9 @@ export default class Uniform extends Dungeon {
 	 * @see ROT.Map#create
 	 */
 	create(callback: CreateCallback) {
-		var t1 = Date.now();
+		let t1 = Date.now();
 		while (1) {
-			var t2 = Date.now();
+			let t2 = Date.now();
 			if (t2 - t1 > this._options.timeLimit) { return null; } /* time limit! */
 		
 			this._map = this._fillMap(1);
@@ -69,8 +69,8 @@ export default class Uniform extends Dungeon {
 		}
 		
 		if (callback) {
-			for (var i=0;i<this._width;i++) {
-				for (var j=0;j<this._height;j++) {
+			for (let i=0;i<this._width;i++) {
+				for (let j=0;j<this._height;j++) {
 					callback(i, j, this._map[i][j]);
 				}
 			}
@@ -83,11 +83,12 @@ export default class Uniform extends Dungeon {
 	 * Generates a suitable amount of rooms
 	 */
 	_generateRooms() {
-		var w = this._width-2;
-		var h = this._height-2;
+		let w = this._width-2;
+		let h = this._height-2;
 
+		let room;
 		do {
-			var room = this._generateRoom();
+			room = this._generateRoom();
 			if (this._dug/(w*h) > this._options.roomDugPercentage) { break; } /* achieved requested amount of free space */
 		} while (room);
 
@@ -98,11 +99,11 @@ export default class Uniform extends Dungeon {
 	 * Try to generate one room
 	 */
 	_generateRoom() {
-		var count = 0;
+		let count = 0;
 		while (count < this._roomAttempts) {
 			count++;
 			
-			var room = Room.createRandom(this._width, this._height, this._options);
+			let room = Room.createRandom(this._width, this._height, this._options);
 			if (!room.isValid(this._isWallCallback, this._canBeDugCallback)) { continue; }
 			
 			room.create(this._digCallback);
@@ -282,9 +283,9 @@ export default class Uniform extends Dungeon {
 	}
 
 	_placeInWall(room: Room, dirIndex: number): Point | null {
-		var start = [0, 0];
-		var dir = [0, 0];
-		var length = 0;
+		let start = [0, 0];
+		let dir = [0, 0];
+		let length = 0;
 		
 		switch (dirIndex) {
 			case 0:

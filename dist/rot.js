@@ -2609,9 +2609,10 @@ var ROT = function (exports) {
     _proto22._generateRooms = function _generateRooms() {
       var w = this._width - 2;
       var h = this._height - 2;
+      var room;
 
       do {
-        var room = this._generateRoom();
+        room = this._generateRoom();
 
         if (this._dug / (w * h) > this._options.roomDugPercentage) {
           break;
@@ -3449,13 +3450,13 @@ var ROT = function (exports) {
       var prio1 = [];
       var prio2 = [];
 
-      for (var id in this._walls) {
-        var prio = this._walls[id];
+      for (var _id2 in this._walls) {
+        var prio = this._walls[_id2];
 
         if (prio == 2) {
-          prio2.push(id);
+          prio2.push(_id2);
         } else {
-          prio1.push(id);
+          prio1.push(_id2);
         }
       }
 
@@ -3465,7 +3466,7 @@ var ROT = function (exports) {
         return null;
       }
 
-      id = RNG$1.getItem(arr.sort());
+      var id = RNG$1.getItem(arr.sort());
       delete this._walls[id];
       return id;
     };
@@ -3502,8 +3503,8 @@ var ROT = function (exports) {
         var x = cx + delta[0];
         var y = cy + delta[1];
         delete this._walls[x + "," + y];
-        var x = cx + 2 * delta[0];
-        var y = cy + 2 * delta[1];
+        x = cx + 2 * delta[0];
+        y = cy + 2 * delta[1];
         delete this._walls[x + "," + y];
       }
     };
@@ -3852,9 +3853,9 @@ var ROT = function (exports) {
         }
       } while (done + 1 < width * height / 4);
 
-      for (var i = 0; i < this._width; i++) {
+      for (var _i11 = 0; _i11 < this._width; _i11++) {
         for (var j = 0; j < this._height; j++) {
-          callback(i, j, map[i][j]);
+          callback(_i11, j, map[_i11][j]);
         }
       }
 
@@ -4351,10 +4352,10 @@ var ROT = function (exports) {
       _this14._perms = [];
       _this14._indexes = [];
 
-      for (var _i11 = 0; _i11 < 2 * gradients; _i11++) {
-        _this14._perms.push(permutations[_i11 % gradients]);
+      for (var _i12 = 0; _i12 < 2 * gradients; _i12++) {
+        _this14._perms.push(permutations[_i12 % gradients]);
 
-        _this14._indexes.push(_this14._perms[_i11] % _this14._gradients.length);
+        _this14._indexes.push(_this14._perms[_i12] % _this14._gradients.length);
       }
 
       return _this14;
@@ -4602,9 +4603,9 @@ var ROT = function (exports) {
           var x = neighbor[0];
           var y = neighbor[1];
 
-          var _id2 = x + "," + y;
+          var _id3 = x + "," + y;
 
-          if (_id2 in this._done) {
+          if (_id3 in this._done) {
             continue;
           }
 

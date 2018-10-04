@@ -64,32 +64,32 @@ export default class Digger extends Dungeon {
 		this._map = this._fillMap(1);
 		this._walls = {};
 		this._dug = 0;
-		var area = (this._width-2) * (this._height-2);
+		let area = (this._width-2) * (this._height-2);
 
 		this._firstRoom();
 		
-		var t1 = Date.now();
+		let t1 = Date.now();
 
 		let priorityWalls;
 		do {
 			priorityWalls = 0;
-			var t2 = Date.now();
+			let t2 = Date.now();
 			if (t2 - t1 > this._options.timeLimit) { break; }
 
 			/* find a good wall */
-			var wall = this._findWall();
+			let wall = this._findWall();
 			if (!wall) { break; } /* no more walls */
 			
-			var parts = wall.split(",");
-			var x = parseInt(parts[0]);
-			var y = parseInt(parts[1]);
-			var dir = this._getDiggingDirection(x, y);
+			let parts = wall.split(",");
+			let x = parseInt(parts[0]);
+			let y = parseInt(parts[1]);
+			let dir = this._getDiggingDirection(x, y);
 			if (!dir) { continue; } /* this wall is not suitable */
 			
 	//		console.log("wall", x, y);
 
 			/* try adding a feature */
-			var featureAttempts = 0;
+			let featureAttempts = 0;
 			do {
 				featureAttempts++;
 				if (this._tryFeature(x, y, dir[0], dir[1])) { /* feature added */
@@ -100,7 +100,7 @@ export default class Digger extends Dungeon {
 				}
 			} while (featureAttempts < this._featureAttempts);
 			
-			for (var id in this._walls) { 
+			for (let id in this._walls) { 
 				if (this._walls[id] > 1) { priorityWalls++; }
 			}
 
@@ -109,8 +109,8 @@ export default class Digger extends Dungeon {
 		this._addDoors();
 
 		if (callback) {
-			for (var i=0;i<this._width;i++) {
-				for (var j=0;j<this._height;j++) {
+			for (let i=0;i<this._width;i++) {
+				for (let j=0;j<this._height;j++) {
 					callback(i, j, this._map[i][j]);
 				}
 			}
@@ -144,9 +144,9 @@ export default class Digger extends Dungeon {
 	_priorityWallCallback(x: number, y: number) { this._walls[x+","+y] = 2; };
 
 	_firstRoom() {
-		var cx = Math.floor(this._width/2);
-		var cy = Math.floor(this._height/2);
-		var room = Room.createRandomCenter(cx, cy, this._options);
+		let cx = Math.floor(this._width/2);
+		let cy = Math.floor(this._height/2);
+		let room = Room.createRandomCenter(cx, cy, this._options);
 		this._rooms.push(room);
 		room.create(this._digCallback);
 	}
@@ -155,10 +155,10 @@ export default class Digger extends Dungeon {
 	 * Get a suitable wall
 	 */
 	_findWall() {
-		var prio1 = [];
-		var prio2 = [];
-		for (var id in this._walls) {
-			var prio = this._walls[id];
+		let prio1 = [];
+		let prio2 = [];
+		for (let id in this._walls) {
+			let prio = this._walls[id];
 			if (prio == 2) { 
 				prio2.push(id); 
 			} else {
@@ -166,10 +166,10 @@ export default class Digger extends Dungeon {
 			}
 		}
 		
-		var arr = (prio2.length ? prio2 : prio1);
+		let arr = (prio2.length ? prio2 : prio1);
 		if (!arr.length) { return null; } /* no walls :/ */
 		
-		id = RNG.getItem(arr.sort()) as string; // sort to make the order deterministic
+		let id = RNG.getItem(arr.sort()) as string; // sort to make the order deterministic
 		delete this._walls[id];
 
 		return id;
@@ -203,15 +203,15 @@ export default class Digger extends Dungeon {
 	}
 
 	_removeSurroundingWalls(cx: number, cy: number) {
-		var deltas = DIRS[4];
+		let deltas = DIRS[4];
 
-		for (var i=0;i<deltas.length;i++) {
-			var delta = deltas[i];
-			var x = cx + delta[0];
-			var y = cy + delta[1];
+		for (let i=0;i<deltas.length;i++) {
+			let delta = deltas[i];
+			let x = cx + delta[0];
+			let y = cy + delta[1];
 			delete this._walls[x+","+y];
-			var x = cx + 2*delta[0];
-			var y = cy + 2*delta[1];
+			x = cx + 2*delta[0];
+			y = cy + 2*delta[1];
 			delete this._walls[x+","+y];
 		}
 	}
@@ -222,13 +222,13 @@ export default class Digger extends Dungeon {
 	_getDiggingDirection(cx: number, cy: number) {
 		if (cx <= 0 || cy <= 0 || cx >= this._width - 1 || cy >= this._height - 1) { return null; }
 
-		var result = null;
-		var deltas = DIRS[4];
+		let result = null;
+		let deltas = DIRS[4];
 		
-		for (var i=0;i<deltas.length;i++) {
-			var delta = deltas[i];
-			var x = cx + delta[0];
-			var y = cy + delta[1];
+		for (let i=0;i<deltas.length;i++) {
+			let delta = deltas[i];
+			let x = cx + delta[0];
+			let y = cy + delta[1];
 			
 			if (!this._map[x][y]) { /* there already is another empty neighbor! */
 				if (result) { return null; }

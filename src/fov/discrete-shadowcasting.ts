@@ -50,7 +50,7 @@ export default class DiscreteShadowcasting extends FOV {
 			return v1 || v2;
 		}
 		
-		var index = 0;
+		let index = 0;
 		while (index < DATA.length && DATA[index] < A) { index++; }
 		
 		if (index == DATA.length) { /* completely new shadow */

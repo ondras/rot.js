@@ -53,9 +53,9 @@ export default class Scheduler<T = any> {
 	 * @returns {bool} successful?
 	 */
 	remove(item: any) {
-		var result = this._queue.remove(item);
+		let result = this._queue.remove(item);
 
-		var index = this._repeat.indexOf(item);
+		let index = this._repeat.indexOf(item);
 		if (index != -1) { this._repeat.splice(index, 1); }
 
 		if (this._current == item) { this._current = null; }

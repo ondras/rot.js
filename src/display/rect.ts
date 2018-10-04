@@ -67,7 +67,7 @@ export default class Rect extends Backend {
 				ctx.textBaseline = "middle";
 
 				let chars = ([] as string[]).concat(ch);
-				for (var i=0;i<chars.length;i++) {
+				for (let i=0;i<chars.length;i++) {
 					ctx.fillText(chars[i], this._spacingX/2, Math.ceil(this._spacingY/2));
 				}
 			}

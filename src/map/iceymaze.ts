@@ -47,7 +47,7 @@ export default class IceyMaze extends Map {
 				do {
 					if (Math.floor(RNG.getUniform()*(this._regularity+1)) == 0) { this._randomize(dirs); }
 					blocked = true;
-					for (var i=0;i<4;i++) {
+					for (let i=0;i<4;i++) {
 						nx = cx + dirs[i][0]*2;
 						ny = cy + dirs[i][1]*2;
 						if (this._isFree(map, nx, ny, width, height)) {
@@ -65,8 +65,8 @@ export default class IceyMaze extends Map {
 			}
 		} while (done+1 < width*height/4);
 		
-		for (var i=0;i<this._width;i++) {
-			for (var j=0;j<this._height;j++) {
+		for (let i=0;i<this._width;i++) {
+			for (let j=0;j<this._height;j++) {
 				callback(i, j, map[i][j]);
 			}
 		}
@@ -75,7 +75,7 @@ export default class IceyMaze extends Map {
 	}
 
 	_randomize(dirs: number[][]) {
-		for (var i=0;i<4;i++) {
+		for (let i=0;i<4;i++) {
 			dirs[i][0] = 0;
 			dirs[i][1] = 0;
 		}

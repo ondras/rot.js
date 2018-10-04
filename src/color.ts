@@ -200,12 +200,12 @@ export function hsl2rgb(color: Color) {
 		l = Math.round(l*255);
 		return [l, l, l];
 	} else {
-		var s = color[1];
-		var q = (l < 0.5 ? l * (1 + s) : l + s - l * s);
-		var p = 2 * l - q;
-		var r = hue2rgb(p, q, color[0] + 1/3);
-		var g = hue2rgb(p, q, color[0]);
-		var b = hue2rgb(p, q, color[0] - 1/3);
+		let s = color[1];
+		let q = (l < 0.5 ? l * (1 + s) : l + s - l * s);
+		let p = 2 * l - q;
+		let r = hue2rgb(p, q, color[0] + 1/3);
+		let g = hue2rgb(p, q, color[0]);
+		let b = hue2rgb(p, q, color[0] - 1/3);
 		return [Math.round(r*255), Math.round(g*255), Math.round(b*255)];
 	}
 }
