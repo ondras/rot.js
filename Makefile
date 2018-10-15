@@ -36,7 +36,7 @@ clean:
 	rm -rf $(TS_FLAG)
 
 test:
-	$(JASMINE) --helper=tests/helper.js tests/spec/*.js
+	node tests/run.js
 
 watch: all
 	while inotifywait -e MODIFY -r src; do make $^ ; done

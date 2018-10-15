@@ -12,13 +12,23 @@
 	<script src="spec/display.js"></script>
 	<script src="spec/dungeon.js"></script>
 	<script src="spec/engine.js"></script>
-	<script src="spec/evenqueue.js"></script>
+	<script src="spec/eventqueue.js"></script>
 	<script src="spec/fov.js"></script>
 	<script src="spec/path.js"></script>
 	<script src="spec/rng.js"></script>
 	<script src="spec/scheduler.js"></script>
 	<script src="spec/text.js"></script>
 	<script src="spec/util.js"></script>
+	<script>
+var reporter = {
+	specDone: console.log,
+	suiteDone: console.log,
+	jasmineDone: console.log
+}
+jasmine.getEnv().addReporter(reporter);
+	</script>
+
 </head>
-<body></body>
+<body>
+</body>
 </html>
