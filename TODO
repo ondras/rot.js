@@ -1,3 +1,4 @@
 remove FIXMEs
 fix drawText on hexes, how?
 transposed hexes: font size computations
+ROT.DEFAULT_WIDTH / ROT.DEFAULT_HEIGHT

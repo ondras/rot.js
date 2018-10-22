@@ -26,4 +26,21 @@ Rot.js is written in TypeScript, but its code is available in multiple formats. 
 
   1. Finally, the pre-built budle also comes with [a minified version](dist/rot.min.js) that works the same, but its size has been reduced. The usage is the same as in the previous example.
 
+## Node.js
+
+Most parts of rot.js are usable from within node.js (server-side JavaScript). The `Display` class needs to use the `"term"` layout backend:
+
+```js
+let display = new ROT.Display({width:40, height:9, layout:"term"});
+display.draw(5,  4, "@");
+display.draw(15, 4, "%", "#0f0");          // foreground color
+display.draw(25, 4, "#", "#f00", "#009");  // and background color
+```
+
+### Usage
+
+The pre-bundled rot.js package can be loaded as a CommonJS module. There is an [example](examples/node/) that shows basic usage.
+
+## Misc
+
 RogueBasin page (with links to some rot.js-based games): http://www.roguebasin.roguelikedevelopment.org/index.php?title=Rot.js

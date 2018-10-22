@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const ROT = require("../../dist/rot.js");
+const ROT = require("../..");
 
 const o = {
 	width: 11,
