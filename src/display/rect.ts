@@ -1,11 +1,11 @@
-import Backend from "./backend.js";
+import Canvas from "./canvas.js";
 import { DisplayOptions, DisplayData } from "./types.js";
 
 /**
  * @class Rectangular backend
  * @private
  */
-export default class Rect extends Backend {
+export default class Rect extends Canvas {
 	_spacingX: number;
 	_spacingY: number;
 	_canvasCache: {[key:string]: HTMLCanvasElement};
@@ -13,27 +13,16 @@ export default class Rect extends Backend {
 
 	static cache = false;
 
-	constructor(context: CanvasRenderingContext2D) {
-		super(context);
+	constructor() {
+		super();
 		this._spacingX = 0;
 		this._spacingY = 0;
 		this._canvasCache = {};
 	}
 
-	compute(options: DisplayOptions) {
-		super.compute(options);
+	setOptions(options: DisplayOptions) {
+		super.setOptions(options);
 		this._canvasCache = {};
-
-		let charWidth = Math.ceil(this._context.measureText("W").width);
-		this._spacingX = Math.ceil(options.spacing * charWidth);
-		this._spacingY = Math.ceil(options.spacing * options.fontSize);
-
-		if (this._options.forceSquareRatio) {
-			this._spacingX = this._spacingY = Math.max(this._spacingX, this._spacingY);
-		}
-
-		this._context.canvas.width = options.width * this._spacingX;
-		this._context.canvas.height = options.height * this._spacingY;
 	}
 
 	draw(data: DisplayData, clearBefore: boolean) {
@@ -62,7 +51,7 @@ export default class Rect extends Backend {
 			
 			if (ch) {
 				ctx.fillStyle = fg;
-				ctx.font = this._context.font;
+				ctx.font = this._ctx.font;
 				ctx.textAlign = "center";
 				ctx.textBaseline = "middle";
 
@@ -74,7 +63,7 @@ export default class Rect extends Backend {
 			this._canvasCache[hash] = canvas;
 		}
 		
-		this._context.drawImage(canvas, x*this._spacingX, y*this._spacingY);
+		this._ctx.drawImage(canvas, x*this._spacingX, y*this._spacingY);
 	}
 
 	_drawNoCache(data: DisplayData, clearBefore: boolean) {
@@ -82,17 +71,17 @@ export default class Rect extends Backend {
 
 		if (clearBefore) { 
 			let b = this._options.border;
-			this._context.fillStyle = bg;
-			this._context.fillRect(x*this._spacingX + b, y*this._spacingY + b, this._spacingX - b, this._spacingY - b);
+			this._ctx.fillStyle = bg;
+			this._ctx.fillRect(x*this._spacingX + b, y*this._spacingY + b, this._spacingX - b, this._spacingY - b);
 		}
 		
 		if (!ch) { return; }
 
-		this._context.fillStyle = fg;
+		this._ctx.fillStyle = fg;
 
 		let chars = ([] as string[]).concat(ch);
 		for (let i=0;i<chars.length;i++) {
-			this._context.fillText(chars[i], (x+0.5) * this._spacingX, Math.ceil((y+0.5) * this._spacingY));
+			this._ctx.fillText(chars[i], (x+0.5) * this._spacingX, Math.ceil((y+0.5) * this._spacingY));
 		}
 	}
 
@@ -107,10 +96,10 @@ export default class Rect extends Backend {
 		let boxHeight = Math.floor(availHeight / this._options.height);
 
 		/* compute char ratio */
-		let oldFont = this._context.font;
-		this._context.font = "100px " + this._options.fontFamily;
-		let width = Math.ceil(this._context.measureText("W").width);
-		this._context.font = oldFont;
+		let oldFont = this._ctx.font;
+		this._ctx.font = "100px " + this._options.fontFamily;
+		let width = Math.ceil(this._ctx.measureText("W").width);
+		this._ctx.font = oldFont;
 		let ratio = width / 100;
 			
 		let widthFraction = ratio * boxHeight / boxWidth;
@@ -120,7 +109,21 @@ export default class Rect extends Backend {
 		return Math.floor(boxHeight / this._options.spacing);
 	}
 
-	eventToPosition(x:number, y:number): [number, number] {
+	_normalizedEventToPosition(x:number, y:number): [number, number] {
 		return [Math.floor(x/this._spacingX), Math.floor(y/this._spacingY)];
+	}
+
+	_updateSize() {
+		const opts = this._options;
+		const charWidth = Math.ceil(this._ctx.measureText("W").width);
+		this._spacingX = Math.ceil(opts.spacing * charWidth);
+		this._spacingY = Math.ceil(opts.spacing * opts.fontSize);
+
+		if (opts.forceSquareRatio) {
+			this._spacingX = this._spacingY = Math.max(this._spacingX, this._spacingY);
+		}
+
+		this._ctx.canvas.width = opts.width * this._spacingX;
+		this._ctx.canvas.height = opts.height * this._spacingY;
 	}
 }

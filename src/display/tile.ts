@@ -1,24 +1,16 @@
-import Backend from "./backend.js";
-import { DisplayOptions, DisplayData } from "./types.js";
+import Canvas from "./canvas.js";
+import { DisplayData } from "./types.js";
 
 /**
  * @class Tile backend
  * @private
  */
-export default class Tile extends Backend {
+export default class Tile extends Canvas {
 	_colorCanvas: HTMLCanvasElement;
 
-	constructor(context: CanvasRenderingContext2D) {
-		super(context);
+	constructor() {
+		super();
 		this._colorCanvas = document.createElement("canvas");
-	}
-
-	compute(options: DisplayOptions) {
-		super.compute(options);
-		this._context.canvas.width = options.width * options.tileWidth;
-		this._context.canvas.height = options.height * options.tileHeight;
-		this._colorCanvas.width = options.tileWidth;
-		this._colorCanvas.height = options.tileHeight;
 	}
 
 	draw(data: DisplayData, clearBefore: boolean) {
@@ -29,10 +21,10 @@ export default class Tile extends Backend {
 
 		if (clearBefore) {
 			if (this._options.tileColorize) {
-				this._context.clearRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+				this._ctx.clearRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
 			} else {
-				this._context.fillStyle = bg;
-				this._context.fillRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+				this._ctx.fillStyle = bg;
+				this._ctx.fillRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
 			}
 		}
 
@@ -44,9 +36,9 @@ export default class Tile extends Backend {
 
 		for (let i=0;i<chars.length;i++) {
 			let tile = this._options.tileMap[chars[i]];
-			if (!tile) { throw new Error("Char '" + chars[i] + "' not found in tileMap"); }
+			if (!tile) { throw new Error(`Char "${chars[i]}" not found in tileMap`); }
 			
-			if (this._options.tileColorize) { /* apply colorization */
+			if (this._options.tileColorize) { // apply colorization
 				let canvas = this._colorCanvas;
 				let context = canvas.getContext("2d") as CanvasRenderingContext2D;
 				context.globalCompositeOperation = "source-over";
@@ -73,9 +65,9 @@ export default class Tile extends Backend {
 					context.fillRect(0, 0, tileWidth, tileHeight);
 				}
 
-				this._context.drawImage(canvas, x*tileWidth, y*tileHeight, tileWidth, tileHeight);
-			} else { /* no colorizing, easy */
-				this._context.drawImage(
+				this._ctx.drawImage(canvas, x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+			} else { // no colorizing, easy
+				this._ctx.drawImage(
 					this._options.tileSet!,
 					tile[0], tile[1], tileWidth, tileHeight,
 					x*tileWidth, y*tileHeight, tileWidth, tileHeight
@@ -94,7 +86,15 @@ export default class Tile extends Backend {
 		throw new Error("Tile backend does not understand font size");
 	}
 
-	eventToPosition(x:number, y:number): [number, number] {
+	_normalizedEventToPosition(x:number, y:number): [number, number] {
 		return [Math.floor(x/this._options.tileWidth), Math.floor(y/this._options.tileHeight)];
+	}
+
+	_updateSize() {
+		const opts = this._options;
+		this._ctx.canvas.width = opts.width * opts.tileWidth;
+		this._ctx.canvas.height = opts.height * opts.tileHeight;
+		this._colorCanvas.width = opts.tileWidth;
+		this._colorCanvas.height = opts.tileHeight;
 	}
 }

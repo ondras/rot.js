@@ -6,7 +6,7 @@ var d = new ROT.Display(o);
 document.body.appendChild(d.getContainer());
 
 for (var i=0; i<o.width; i++) {
-	for (var j=0; j<o.width; j++) {
+	for (var j=0; j<o.height; j++) {
 		if (!i || !j || i+1 == o.width || j+1 == o.height) {
 			d.draw(i, j, "#", "gray");
 		} else {

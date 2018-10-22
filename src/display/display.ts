@@ -2,6 +2,7 @@ import Backend from "./backend.js";
 import Hex from "./hex.js";
 import Rect from "./rect.js";
 import Tile from "./tile.js";
+import Term from "./term.js";
 
 import * as Text from "../text.js";
 import { DisplayOptions, DisplayData } from "./types.js";
@@ -10,7 +11,8 @@ import { DEFAULT_WIDTH, DEFAULT_HEIGHT } from "../constants.js";
 const BACKENDS = {
 	"hex": Hex,
 	"rect": Rect,
-	"tile": Tile
+	"tile": Tile,
+	"term": Term
 }
 
 const DEFAULT_OPTIONS: DisplayOptions = {
@@ -30,32 +32,13 @@ const DEFAULT_OPTIONS: DisplayOptions = {
 	tileHeight: 32,
 	tileMap: {},
 	tileSet: null,
-	tileColorize: false,
-	termColor: "xterm"
+	tileColorize: false
 }
 
 /**
  * @class Visual map display
- * @param {object} [options]
- * @param {int} [options.width=ROT.DEFAULT_WIDTH]
- * @param {int} [options.height=ROT.DEFAULT_HEIGHT]
- * @param {int} [options.fontSize=15]
- * @param {string} [options.fontFamily="monospace"]
- * @param {string} [options.fontStyle=""] bold/italic/none/both
- * @param {string} [options.fg="#ccc"]
- * @param {string} [options.bg="#000"]
- * @param {float} [options.spacing=1]
- * @param {float} [options.border=0]
- * @param {string} [options.layout="rect"]
- * @param {bool} [options.forceSquareRatio=false]
- * @param {int} [options.tileWidth=32]
- * @param {int} [options.tileHeight=32]
- * @param {object} [options.tileMap={}]
- * @param {image} [options.tileSet=null]
- * @param {image} [options.tileColorize=false]
  */
 export default class Display {
-	_context: CanvasRenderingContext2D;
 	_data: { [pos:string] : DisplayData };
 	_dirty: boolean | { [pos: string]: boolean };
 	_options!: DisplayOptions;
@@ -64,10 +47,9 @@ export default class Display {
 	static Rect = Rect;
 	static Hex = Hex;
 	static Tile = Tile;
+	static Term = Term;
 
 	constructor(options: Partial<DisplayOptions> = {}) {
-		let canvas = document.createElement("canvas");
-		this._context = canvas.getContext("2d") as CanvasRenderingContext2D;
 		this._data = {};
 		this._dirty = false; // false = nothing, true = all, object = dirty cells
 		this._options = {} as DisplayOptions;
@@ -77,7 +59,7 @@ export default class Display {
 		this.DEBUG = this.DEBUG.bind(this);
 
 		this._tick = this._tick.bind(this);
-		requestAnimationFrame(this._tick);
+		this._backend.schedule(this._tick);
 	}
 
 	/**
@@ -105,19 +87,13 @@ export default class Display {
 	setOptions(options: Partial<DisplayOptions>) {
 		Object.assign(this._options, options);
 
-
 		if (options.width || options.height || options.fontSize || options.fontFamily || options.spacing || options.layout) {
 			if (options.layout) {
 				let ctor = BACKENDS[options.layout];
-				this._backend = new ctor(this._context);
+				this._backend = new ctor();
 			}
 
-			let font = (this._options.fontStyle ? this._options.fontStyle + " " : "") + this._options.fontSize + "px " + this._options.fontFamily;
-			this._context.font = font;
-			this._backend.compute(this._options);
-			this._context.font = font;
-			this._context.textAlign = "center";
-			this._context.textBaseline = "middle";
+			this._backend.setOptions(this._options);
 			this._dirty = true;
 		}
 		return this;
@@ -125,15 +101,13 @@ export default class Display {
 
 	/**
 	 * Returns currently set options
-	 * @returns {object} Current options object 
 	 */
 	getOptions () { return this._options; }
 
 	/**
 	 * Returns the DOM node of this display
-	 * @returns {node} DOM node
 	 */
-	getContainer() { return this._context.canvas; }
+	getContainer() { return this._backend.getContainer(); }
 
 	/**
 	 * Compute the maximum width/height to fit into a set of given constraints
@@ -176,15 +150,6 @@ export default class Display {
 			y = e.clientY;
 		}
 
-		let rect = this._context.canvas.getBoundingClientRect();
-		x -= rect.left;
-		y -= rect.top;
-		
-		x *= this._context.canvas.width / rect.width;
-		y *= this._context.canvas.height / rect.height;
-
-		if (x < 0 || y < 0 || x >= this._context.canvas.width || y >= this._context.canvas.height) { return [-1, -1]; }
-
 		return this._backend.eventToPosition(x, y);
 	}
 
@@ -201,8 +166,8 @@ export default class Display {
 		let key = `${x},${y}`;
 		this._data[key] = [x, y, ch, fg, bg];
 		
-		if (this._dirty === true) { return; } /* will already redraw everything */
-		if (!this._dirty) { this._dirty = {}; } /* first! */
+		if (this._dirty === true) { return; } // will already redraw everything 
+		if (!this._dirty) { this._dirty = {}; } // first!
 		this._dirty[key] = true;
 	}
 
@@ -224,7 +189,7 @@ export default class Display {
 
 		let tokens = Text.tokenize(text, maxWidth);
 
-		while (tokens.length) { /* interpret tokenized opcode stream */
+		while (tokens.length) { // interpret tokenized opcode stream
 			let token = tokens.shift();
 			switch (token.type) {
 				case Text.TYPE_TEXT:
@@ -271,13 +236,12 @@ export default class Display {
 	 * Timer tick: update dirty parts
 	 */
 	_tick() {
-		requestAnimationFrame(this._tick);
+		this._backend.schedule(this._tick);
 
 		if (!this._dirty) { return; }
 
 		if (this._dirty === true) { // draw all
-			this._context.fillStyle = this._options.bg;
-			this._context.fillRect(0, 0, this._context.canvas.width, this._context.canvas.height);
+			this._backend.clear();
 			for (let id in this._data) { this._draw(id, false); } // redraw cached data 
 		} else { // draw only dirty 
 			for (let key in this._dirty) { this._draw(key, true); }

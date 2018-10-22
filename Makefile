@@ -11,7 +11,7 @@ ES5_MIN := dist/rot.min.js
 TS_FLAG := .ts.flag
 TS_SRC :=  $(shell find src -name '*.ts')
 
-all: $(ES5) $(ES5_MIN) doc
+all: $(ES5_MIN) doc
 
 doc: $(TS_FLAG)
 	$(TYPEDOC) --out doc --readme none --excludePrivate --excludeProtected --listInvalidSymbolLinks --name "rot.js" $(TS_SRC)

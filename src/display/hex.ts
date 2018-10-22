@@ -1,44 +1,21 @@
-import Backend from "./backend.js";
-import { DisplayOptions, DisplayData } from "./types.js";
+import Canvas from "./canvas.js";
+import { DisplayData } from "./types.js";
 import { mod } from "../util.js";
 
 /**
  * @class Hexagonal backend
  * @private
  */
-export default class Hex extends Backend {
+export default class Hex extends Canvas {
 	_spacingX: number;
 	_spacingY: number;
 	_hexSize: number;
 
-	constructor(context: CanvasRenderingContext2D) {
-		super(context);
-
+	constructor() {
+		super();
 		this._spacingX = 0;
 		this._spacingY = 0;
 		this._hexSize = 0;
-	}
-
-	compute(options: DisplayOptions) {
-		super.compute(options);
-
-		/* FIXME char size computation does not respect transposed hexes */
-		let charWidth = Math.ceil(this._context.measureText("W").width);
-		this._hexSize = Math.floor(options.spacing * (options.fontSize + charWidth/Math.sqrt(3)) / 2);
-		this._spacingX = this._hexSize * Math.sqrt(3) / 2;
-		this._spacingY = this._hexSize * 1.5;
-
-		let xprop: "width" | "height";
-		let yprop: "width" | "height";
-		if (options.transpose) {
-			xprop = "height";
-			yprop = "width";
-		} else {
-			xprop = "width";
-			yprop = "height";
-		}
-		this._context.canvas[xprop] = Math.ceil( (options.width + 1) * this._spacingX );
-		this._context.canvas[yprop] = Math.ceil( (options.height - 1) * this._spacingY + 2*this._hexSize );
 	}
 
 	draw(data: DisplayData, clearBefore: boolean) {
@@ -51,17 +28,17 @@ export default class Hex extends Backend {
 		if (this._options.transpose) { px.reverse(); }
 
 		if (clearBefore) {
-			this._context.fillStyle = bg;
+			this._ctx.fillStyle = bg;
 			this._fill(px[0], px[1]);
 		}
 
 		if (!ch) { return; }
 
-		this._context.fillStyle = fg;
+		this._ctx.fillStyle = fg;
 
 		let chars = ([] as string[]).concat(ch);
 		for (let i=0;i<chars.length;i++) {
-			this._context.fillText(chars[i], px[0], Math.ceil(px[1]));
+			this._ctx.fillText(chars[i], px[0], Math.ceil(px[1]));
 		}
 	}
 
@@ -88,31 +65,31 @@ export default class Hex extends Backend {
 		let hexSizeHeight = availHeight / (2 + 1.5*(this._options.height-1));
 		let hexSize = Math.min(hexSizeWidth, hexSizeHeight);
 
-		/* compute char ratio */
-		let oldFont = this._context.font;
-		this._context.font = "100px " + this._options.fontFamily;
-		let width = Math.ceil(this._context.measureText("W").width);
-		this._context.font = oldFont;
+		// compute char ratio
+		let oldFont = this._ctx.font;
+		this._ctx.font = "100px " + this._options.fontFamily;
+		let width = Math.ceil(this._ctx.measureText("W").width);
+		this._ctx.font = oldFont;
 		let ratio = width / 100;
 
-		hexSize = Math.floor(hexSize)+1; /* closest larger hexSize */
+		hexSize = Math.floor(hexSize)+1; // closest larger hexSize
 
-		/* FIXME char size computation does not respect transposed hexes */
+		// FIXME char size computation does not respect transposed hexes
 		let fontSize = 2*hexSize / (this._options.spacing * (1 + ratio / Math.sqrt(3)));
 
-		/* closest smaller fontSize */
+		// closest smaller fontSize
 		return Math.ceil(fontSize)-1;
 	}
 
-	eventToPosition(x: number, y: number): [number, number] {
+	_normalizedEventToPosition(x: number, y: number): [number, number] {
 		let nodeSize;
 		if (this._options.transpose) {
 			x += y;
 			y = x-y;
 			x -= y;
-			nodeSize = this._context.canvas.width;
+			nodeSize = this._ctx.canvas.width;
 		} else {
-			nodeSize = this._context.canvas.height;
+			nodeSize = this._ctx.canvas.height;
 		}
 		let size = nodeSize / this._options.height;
 		y = Math.floor(y/size);
@@ -133,26 +110,48 @@ export default class Hex extends Backend {
 	_fill(cx: number, cy: number) {
 		let a = this._hexSize;
 		let b = this._options.border;
+		const ctx = this._ctx;
 
-		this._context.beginPath();
+		ctx.beginPath();
 
 		if (this._options.transpose) {
-			this._context.moveTo(cx-a+b,	cy);
-			this._context.lineTo(cx-a/2+b,	cy+this._spacingX-b);
-			this._context.lineTo(cx+a/2-b,	cy+this._spacingX-b);
-			this._context.lineTo(cx+a-b,	cy);
-			this._context.lineTo(cx+a/2-b,	cy-this._spacingX+b);
-			this._context.lineTo(cx-a/2+b,	cy-this._spacingX+b);
-			this._context.lineTo(cx-a+b,	cy);
+			ctx.moveTo(cx-a+b,		cy);
+			ctx.lineTo(cx-a/2+b,	cy+this._spacingX-b);
+			ctx.lineTo(cx+a/2-b,	cy+this._spacingX-b);
+			ctx.lineTo(cx+a-b,		cy);
+			ctx.lineTo(cx+a/2-b,	cy-this._spacingX+b);
+			ctx.lineTo(cx-a/2+b,	cy-this._spacingX+b);
+			ctx.lineTo(cx-a+b,		cy);
 		} else {
-			this._context.moveTo(cx,					cy-a+b);
-			this._context.lineTo(cx+this._spacingX-b,	cy-a/2+b);
-			this._context.lineTo(cx+this._spacingX-b,	cy+a/2-b);
-			this._context.lineTo(cx,					cy+a-b);
-			this._context.lineTo(cx-this._spacingX+b,	cy+a/2-b);
-			this._context.lineTo(cx-this._spacingX+b,	cy-a/2+b);
-			this._context.lineTo(cx,					cy-a+b);
+			ctx.moveTo(cx,					cy-a+b);
+			ctx.lineTo(cx+this._spacingX-b,	cy-a/2+b);
+			ctx.lineTo(cx+this._spacingX-b,	cy+a/2-b);
+			ctx.lineTo(cx,					cy+a-b);
+			ctx.lineTo(cx-this._spacingX+b,	cy+a/2-b);
+			ctx.lineTo(cx-this._spacingX+b,	cy-a/2+b);
+			ctx.lineTo(cx,					cy-a+b);
 		}
-		this._context.fill();
+		ctx.fill();
+	}
+
+	_updateSize() {
+		const opts = this._options;
+		const charWidth = Math.ceil(this._ctx.measureText("W").width);
+		this._hexSize = Math.floor(opts.spacing * (opts.fontSize + charWidth/Math.sqrt(3)) / 2);
+		this._spacingX = this._hexSize * Math.sqrt(3) / 2;
+		this._spacingY = this._hexSize * 1.5;
+
+		let xprop: "width" | "height";
+		let yprop: "width" | "height";
+		if (opts.transpose) {
+			xprop = "height";
+			yprop = "width";
+		} else {
+			xprop = "width";
+			yprop = "height";
+		}
+		this._ctx.canvas[xprop] = Math.ceil( (opts.width + 1) * this._spacingX );
+		this._ctx.canvas[yprop] = Math.ceil( (opts.height - 1) * this._spacingY + 2*this._hexSize );
+
 	}
 }

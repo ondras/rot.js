@@ -82,7 +82,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="_display_backend_.backend.html" class="tsd-signature-type">Backend</a>
+						<a href="_display_canvas_.canvas.html" class="tsd-signature-type">Canvas</a>
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">Tile</span>
@@ -105,18 +105,23 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_display_tile_.tile.html#_colorcanvas" class="tsd-kind-icon">_color<wbr>Canvas</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_display_tile_.tile.html#_context" class="tsd-kind-icon">_context</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_display_tile_.tile.html#_ctx" class="tsd-kind-icon">_ctx</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_display_tile_.tile.html#_options" class="tsd-kind-icon">_options</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_display_tile_.tile.html#compute" class="tsd-kind-icon">compute</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_display_tile_.tile.html#_normalizedeventtoposition" class="tsd-kind-icon">_normalized<wbr>Event<wbr>ToPosition</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_display_tile_.tile.html#_updatesize" class="tsd-kind-icon">_update<wbr>Size</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="_display_tile_.tile.html#clear" class="tsd-kind-icon">clear</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_display_tile_.tile.html#computefontsize" class="tsd-kind-icon">compute<wbr>Font<wbr>Size</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_display_tile_.tile.html#computesize" class="tsd-kind-icon">compute<wbr>Size</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_display_tile_.tile.html#draw" class="tsd-kind-icon">draw</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_display_tile_.tile.html#eventtoposition" class="tsd-kind-icon">event<wbr>ToPosition</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="_display_tile_.tile.html#eventtoposition" class="tsd-kind-icon">event<wbr>ToPosition</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="_display_tile_.tile.html#getcontainer" class="tsd-kind-icon">get<wbr>Container</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="_display_tile_.tile.html#schedule" class="tsd-kind-icon">schedule</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="_display_tile_.tile.html#setoptions" class="tsd-kind-icon">set<wbr>Options</a></li>
 							</ul>
 						</section>
 					</div>
@@ -128,22 +133,16 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Tile<span class="tsd-signature-symbol">(</span>context<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">CanvasRenderingContext2D</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_display_tile_.tile.html" class="tsd-signature-type">Tile</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Tile<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_display_tile_.tile.html" class="tsd-signature-type">Tile</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="_display_backend_.backend.html">Backend</a>.<a href="_display_backend_.backend.html#constructor">constructor</a></p>
+								<p>Overrides <a href="_display_canvas_.canvas.html">Canvas</a>.<a href="_display_canvas_.canvas.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/754d796/src/display/tile.ts#L9">display/tile.ts:9</a></li>
+									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/496d287/src/display/tile.ts#L9">display/tile.ts:9</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>context: <span class="tsd-signature-type">CanvasRenderingContext2D</span></h5>
-								</li>
-							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_display_tile_.tile.html" class="tsd-signature-type">Tile</a></h4>
 						</li>
 					</ul>
@@ -157,18 +156,18 @@
 					<div class="tsd-signature tsd-kind-icon">_color<wbr>Canvas<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLCanvasElement</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ondras/rot.js/blob/754d796/src/display/tile.ts#L9">display/tile.ts:9</a></li>
+							<li>Defined in <a href="https://github.com/ondras/rot.js/blob/496d287/src/display/tile.ts#L9">display/tile.ts:9</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="_context" class="tsd-anchor"></a>
-					<h3>_context</h3>
-					<div class="tsd-signature tsd-kind-icon">_context<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">CanvasRenderingContext2D</span></div>
+					<a name="_ctx" class="tsd-anchor"></a>
+					<h3>_ctx</h3>
+					<div class="tsd-signature tsd-kind-icon">_ctx<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">CanvasRenderingContext2D</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="_display_backend_.backend.html">Backend</a>.<a href="_display_backend_.backend.html#_context">_context</a></p>
+						<p>Inherited from <a href="_display_canvas_.canvas.html">Canvas</a>.<a href="_display_canvas_.canvas.html#_ctx">_ctx</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/ondras/rot.js/blob/754d796/src/display/backend.ts#L8">display/backend.ts:8</a></li>
+							<li>Defined in display/canvas.ts:5</li>
 						</ul>
 					</aside>
 				</section>
@@ -179,7 +178,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_display_backend_.backend.html">Backend</a>.<a href="_display_backend_.backend.html#_options">_options</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/ondras/rot.js/blob/754d796/src/display/backend.ts#L9">display/backend.ts:9</a></li>
+							<li>Defined in <a href="https://github.com/ondras/rot.js/blob/496d287/src/display/backend.ts#L8">display/backend.ts:8</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -187,25 +186,65 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-					<a name="compute" class="tsd-anchor"></a>
-					<h3>compute</h3>
+					<a name="_normalizedeventtoposition" class="tsd-anchor"></a>
+					<h3>_normalized<wbr>Event<wbr>ToPosition</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">compute<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="../interfaces/_display_types_.displayoptions.html" class="tsd-signature-type">DisplayOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">_normalized<wbr>Event<wbr>ToPosition<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, y<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="_display_backend_.backend.html">Backend</a>.<a href="_display_backend_.backend.html#compute">compute</a></p>
+								<p>Overrides <a href="_display_canvas_.canvas.html">Canvas</a>.<a href="_display_canvas_.canvas.html#_normalizedeventtoposition">_normalizedEventToPosition</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/754d796/src/display/tile.ts#L16">display/tile.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/496d287/src/display/tile.ts#L89">display/tile.ts:89</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>options: <a href="../interfaces/_display_types_.displayoptions.html" class="tsd-signature-type">DisplayOptions</a></h5>
+									<h5>x: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>y: <span class="tsd-signature-type">number</span></h5>
 								</li>
 							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="_updatesize" class="tsd-anchor"></a>
+					<h3>_update<wbr>Size</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">_update<wbr>Size<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="_display_canvas_.canvas.html">Canvas</a>.<a href="_display_canvas_.canvas.html#_updatesize">_updateSize</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/496d287/src/display/tile.ts#L93">display/tile.ts:93</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="clear" class="tsd-anchor"></a>
+					<h3>clear</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">clear<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_display_canvas_.canvas.html">Canvas</a>.<a href="_display_canvas_.canvas.html#clear">clear</a></p>
+								<p>Overrides <a href="_display_backend_.backend.html">Backend</a>.<a href="_display_backend_.backend.html#clear">clear</a></p>
+								<ul>
+									<li>Defined in display/canvas.ts:28</li>
+								</ul>
+							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
@@ -221,7 +260,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_display_backend_.backend.html">Backend</a>.<a href="_display_backend_.backend.html#computefontsize">computeFontSize</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/754d796/src/display/tile.ts#L93">display/tile.ts:93</a></li>
+									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/496d287/src/display/tile.ts#L85">display/tile.ts:85</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -239,7 +278,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_display_backend_.backend.html">Backend</a>.<a href="_display_backend_.backend.html#computesize">computeSize</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/754d796/src/display/tile.ts#L87">display/tile.ts:87</a></li>
+									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/496d287/src/display/tile.ts#L79">display/tile.ts:79</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -266,7 +305,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_display_backend_.backend.html">Backend</a>.<a href="_display_backend_.backend.html#draw">draw</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/754d796/src/display/tile.ts#L24">display/tile.ts:24</a></li>
+									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/496d287/src/display/tile.ts#L16">display/tile.ts:16</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -282,18 +321,19 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 					<a name="eventtoposition" class="tsd-anchor"></a>
 					<h3>event<wbr>ToPosition</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon">event<wbr>ToPosition<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, y<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="_display_canvas_.canvas.html">Canvas</a>.<a href="_display_canvas_.canvas.html#eventtoposition">eventToPosition</a></p>
 								<p>Overrides <a href="_display_backend_.backend.html">Backend</a>.<a href="_display_backend_.backend.html#eventtoposition">eventToPosition</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/754d796/src/display/tile.ts#L97">display/tile.ts:97</a></li>
+									<li>Defined in display/canvas.ts:33</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -306,6 +346,87 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="getcontainer" class="tsd-anchor"></a>
+					<h3>get<wbr>Container</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Container<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLCanvasElement</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_display_canvas_.canvas.html">Canvas</a>.<a href="_display_canvas_.canvas.html#getcontainer">getContainer</a></p>
+								<p>Overrides <a href="_display_backend_.backend.html">Backend</a>.<a href="_display_backend_.backend.html#getcontainer">getContainer</a></p>
+								<ul>
+									<li>Defined in display/canvas.ts:13</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HTMLCanvasElement</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="schedule" class="tsd-anchor"></a>
+					<h3>schedule</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">schedule<span class="tsd-signature-symbol">(</span>cb<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_display_canvas_.canvas.html">Canvas</a>.<a href="_display_canvas_.canvas.html#schedule">schedule</a></p>
+								<p>Overrides <a href="_display_backend_.backend.html">Backend</a>.<a href="_display_backend_.backend.html#schedule">schedule</a></p>
+								<ul>
+									<li>Defined in display/canvas.ts:12</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>cb: <span class="tsd-signature-type">function</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="setoptions" class="tsd-anchor"></a>
+					<h3>set<wbr>Options</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Options<span class="tsd-signature-symbol">(</span>opts<span class="tsd-signature-symbol">: </span><a href="../interfaces/_display_types_.displayoptions.html" class="tsd-signature-type">DisplayOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_display_canvas_.canvas.html">Canvas</a>.<a href="_display_canvas_.canvas.html#setoptions">setOptions</a></p>
+								<p>Overrides <a href="_display_backend_.backend.html">Backend</a>.<a href="_display_backend_.backend.html#setoptions">setOptions</a></p>
+								<ul>
+									<li>Defined in display/canvas.ts:15</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>opts: <a href="../interfaces/_display_types_.displayoptions.html" class="tsd-signature-type">DisplayOptions</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -336,13 +457,19 @@
 								<a href="_display_tile_.tile.html#_colorcanvas" class="tsd-kind-icon">_color<wbr>Canvas</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="_display_tile_.tile.html#_context" class="tsd-kind-icon">_context</a>
+								<a href="_display_tile_.tile.html#_ctx" class="tsd-kind-icon">_ctx</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="_display_tile_.tile.html#_options" class="tsd-kind-icon">_options</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="_display_tile_.tile.html#compute" class="tsd-kind-icon">compute</a>
+								<a href="_display_tile_.tile.html#_normalizedeventtoposition" class="tsd-kind-icon">_normalized<wbr>Event<wbr>ToPosition</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="_display_tile_.tile.html#_updatesize" class="tsd-kind-icon">_update<wbr>Size</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="_display_tile_.tile.html#clear" class="tsd-kind-icon">clear</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_display_tile_.tile.html#computefontsize" class="tsd-kind-icon">compute<wbr>Font<wbr>Size</a>
@@ -353,8 +480,17 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_display_tile_.tile.html#draw" class="tsd-kind-icon">draw</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 								<a href="_display_tile_.tile.html#eventtoposition" class="tsd-kind-icon">event<wbr>ToPosition</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="_display_tile_.tile.html#getcontainer" class="tsd-kind-icon">get<wbr>Container</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="_display_tile_.tile.html#schedule" class="tsd-kind-icon">schedule</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="_display_tile_.tile.html#setoptions" class="tsd-kind-icon">set<wbr>Options</a>
 							</li>
 						</ul>
 					</li>

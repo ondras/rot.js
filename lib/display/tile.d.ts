@@ -1,11 +1,11 @@
-import Backend from "./backend.js";
-import { DisplayOptions, DisplayData } from "./types.js";
-export default class Tile extends Backend {
+import Canvas from "./canvas.js";
+import { DisplayData } from "./types.js";
+export default class Tile extends Canvas {
     _colorCanvas: HTMLCanvasElement;
-    constructor(context: CanvasRenderingContext2D);
-    compute(options: DisplayOptions): void;
+    constructor();
     draw(data: DisplayData, clearBefore: boolean): void;
     computeSize(availWidth: number, availHeight: number): [number, number];
     computeFontSize(): number;
-    eventToPosition(x: number, y: number): [number, number];
+    _normalizedEventToPosition(x: number, y: number): [number, number];
+    _updateSize(): void;
 }
