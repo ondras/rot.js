@@ -73,7 +73,14 @@ Example.prototype._useCode = function(code) {
 }
 
 Example.prototype._eval = function(code, SHOW) {
-	eval(code);
+	try {
+		eval(code);
+	} catch (e) {
+		let node = document.createElement("div");
+		node.className = "error";
+		node.textContent = e.toString();
+		SHOW(node);
+	}
 }
 
 Example.current = null;

@@ -28,7 +28,7 @@
 	var keywords = ["break", "case", "catch", "continue", "default", "delete", "do", "else",
 		"finally", "for", "function", "if", "in", "instanceof", "new", "return",
 		"switch", "this", "throw", "try", "typeof", "var", "void", "while", "with", "__proto__",
-		"true", "false", "null", "NaN", "prototype", "call", "apply", "constructor"];
+		"true", "false", "null", "NaN", "prototype", "call", "apply", "constructor", "let", "async", "await"];
 
 	var kw = new RegExp("(^|\\s|\\.|\\(|!)("+keywords.join("|")+")(?=\\s|\\.|\\(|\\)|\\[|\\]|;|$|,)","gm");
 	patterns.push({

@@ -1,5 +1,43 @@
 <h2>Asynchronous game engine</h2>
 
+<h3>async/await</h3>
+
+<p>The <code>ROT.Engine</code> API documented on this page is provided for backwards compatibility only. In a modern JavaScript, you shall use the <code>async/await</code> facility to coordinate individual asynchronous actors. The main game loop can be implemented (without <code>ROT.Engine</code>) in a trivial manner (the <code>mainLoop</code> function):
+
+<div class="example">
+async function mainLoop() {
+	while (1) {
+		let actor = scheduler.next();
+		if (!actor) { break; }
+		await actor.act();
+		SHOW(output.join(""));
+	}
+}
+
+let scheduler = new ROT.Scheduler.Simple();
+let output = [];
+
+let actor1 = { // sample actor: pauses the execution when dead
+	lives: 3,
+	act: function() {
+		output.push(".");
+		this.lives--;
+		if (!this.lives) { 
+			scheduler.remove(actor1);
+			scheduler.add(actor2);
+			return new Promise(resolve => setTimeout(resolve, 500)); // pause
+		}
+	}
+}
+
+let actor2 = {
+	act: function() { output.push("@"); }
+}
+
+scheduler.add(actor1, true);
+mainLoop();
+</div>
+
 <p>Client-side JavaScript is non-blocking: all long-running operations are asynchronous. The <code>ROT.Engine</code> loop is well suited to orchestrating the possibly-async coordination of various game actors.</p>
 
 <p>To use the engine, you first need a <a href="#timing/scheduler">scheduler</a> that stores your actors and manages their priority. This scheduler is passed to <code>ROT.Engine</code>'s constructor. Once the engine is started, it correctly calls the <code>act()</code> method on proper actors (picked by the scheduler). It is possible to recursively stop (lock) the engine, should some operation (such as displaying a dialog or waiting for user input) block the execution. Once all lock levels are unlocked, the engine continues its execution.</p>

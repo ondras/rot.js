@@ -80,6 +80,11 @@ li {
 	position: relative;
 }
 
+.example .result .error {
+	font-weight: bold;
+	color: #f55;
+}
+
 .example .result canvas {
 	margin-right: 5px;
 }
