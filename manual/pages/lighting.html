@@ -24,14 +24,14 @@
 <div class="example">
 ROT.RNG.setSeed(12345);
 
-ROT.DEFAULT_WIDTH = 60;
-ROT.DEFAULT_HEIGHT = 40;
 var mapData = {};
 var lightData = {};
+var W = 60;
+var H = 40;
 
 /* build a map */
-var map = new ROT.Map.Cellular().randomize(0.5);
-var createCallback = function(x, y, value) {
+var map = new ROT.Map.Cellular(W, H).randomize(0.5);
+function createCallback(x, y, value) {
 	mapData[x+","+y] = value;
 }
 for (var i=0; i&lt;4; i++) { 
@@ -39,13 +39,13 @@ for (var i=0; i&lt;4; i++) {
 }
 
 /* prepare a FOV algorithm */
-var lightPasses = function(x, y) { 
+function lightPasses(x, y) { 
 	return (mapData[x+","+y] == 1);
 }
 var fov = new ROT.FOV.PreciseShadowcasting(lightPasses, {topology:4});
 
 /* prepare a lighting algorithm */
-var reflectivity = function(x, y) {
+function reflectivity(x, y) {
 	return (mapData[x+","+y] == 1 ? 0.3 : 0);
 }
 var lighting = new ROT.Lighting(reflectivity, {range:12, passes:2});
@@ -54,13 +54,13 @@ lighting.setLight(12, 12, [240, 240, 30]);
 lighting.setLight(20, 20, [240, 60, 60]);
 lighting.setLight(45, 25, [200, 200, 200]);
 
-var lightingCallback = function(x, y, color) {
+function lightingCallback(x, y, color) {
 	lightData[x+","+y] = color;
 }
 lighting.compute(lightingCallback);
 
 /* draw the resulting mix of mapData and lightData */
-var display = new ROT.Display({fontSize:8});
+var display = new ROT.Display({fontSize:8, width:W, height:H});
 SHOW(display.getContainer());
 
 /* all cells are lit by ambient light; some are also lit by light sources */
