@@ -278,7 +278,6 @@ describe("Display", function() {
 		describe("hex layout", function() {
 			var d1 = new ROT.Display({width:100, height:5, spacing:1, layout:"hex"});
 			var d2 = new ROT.Display({width:100, height:5, spacing:1.3, layout:"hex"});
-			window.d1 = d1;
 
 			it("should compute size for spacing 1", function() {
 				var size = d1.computeFontSize(1/0, 96);
@@ -290,12 +289,14 @@ describe("Display", function() {
 				expect(size).toBe(14);
 			});
 		});
+	});
 
+	describe("computeTileSize", function() {
 		describe("tile layout", function() {
 			var d = new ROT.Display({layout:"tile", width:6, height:18});
 
-			it("should compute proper size", function() {
-				var size = d.computeFontSize(200, 300);
+			it("should compute proper tile size", function() {
+				var size = d.computeTileSize(200, 300);
 				expect(size[0]).toBe(33);
 				expect(size[1]).toBe(16);
 			});

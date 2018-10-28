@@ -1,0 +1,64 @@
+{
+  "name": "rot-js",
+  "version": "2.0.0",
+  "description": "A roguelike toolkit in JavaScript",
+  "keywords": [
+    "ascii",
+    "dungeon",
+    "fov",
+    "game",
+    "libtcod",
+    "lighting",
+    "los",
+    "rng",
+    "rogue",
+    "roguelike",
+    "tiles"
+  ],
+  "files": [
+  	"lib",
+  	"dist",
+  	"doc",
+  	"examples",
+  	"addons",
+  	"manual"
+  ],
+  "homepage": "http://ondras.github.io/rot.js/hp/",
+  "bugs": "https://github.com/ondras/rot.js/issues",
+  "license": "BSD-3-Clause",
+  "author": "Ondřej Žára <ondrej.zara@gmail.com> (http://ondras.zarovi.cz/)",
+  "main": "dist/rot.js",
+  "module": "lib/index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ondras/rot.js.git"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "google-closure-compiler": "^20180910.1.0",
+    "jasmine": "^3.2.0",
+    "puppeteer-core": "^1.9.0",
+    "rollup": "^0.66.6",
+    "typedoc": "^0.12.0",
+    "typescript": "^3.1.3"
+  },
+  "babel": {
+    "sourceType": "unambiguous",
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "ie": 10
+          },
+          "loose": true
+        }
+      ]
+    ]
+  }
+}

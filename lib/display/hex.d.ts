@@ -1,0 +1,14 @@
+import Canvas from "./canvas.js";
+import { DisplayData } from "./types.js";
+export default class Hex extends Canvas {
+    _spacingX: number;
+    _spacingY: number;
+    _hexSize: number;
+    constructor();
+    draw(data: DisplayData, clearBefore: boolean): void;
+    computeSize(availWidth: number, availHeight: number): [number, number];
+    computeFontSize(availWidth: number, availHeight: number): number;
+    _normalizedEventToPosition(x: number, y: number): [number, number];
+    _fill(cx: number, cy: number): void;
+    _updateSize(): void;
+}

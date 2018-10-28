@@ -31,7 +31,7 @@ SHOW(display.getContainer());
 
 for (var y = 0; y &lt; 5; y++) {
 	for (var x = y%2; x &lt; 8; x += 2) {
-		var bg = ["#333", "#666", "#999", "#ccc", "#fff"].random();
+		var bg = ROT.RNG.getItem(["#333", "#666", "#999", "#ccc", "#fff"]);
 		display.draw(x, y, "&bull;", "#000", bg);
 	}
 }
@@ -48,7 +48,7 @@ SHOW(display.getContainer());
 
 for (var y = 0; y &lt; 4; y++) {
 	for (var x = y%2; x &lt; 10; x += 2) {
-		var bg = ["#333", "#666", "#999", "#ccc", "#fff"].random();
+		var bg = ROT.RNG.getItem(["#333", "#666", "#999", "#ccc", "#fff"]);
 		display.draw(x, y, x+","+y, "#000", bg);
 	}
 }
@@ -135,15 +135,15 @@ display.draw(120, 64, "", "", "#f33");
 
 <div class="example">
 ROT.RNG.setSeed(12345);
-ROT.DEFAULT_WIDTH = 44;
-ROT.DEFAULT_HEIGHT = 28;
+var W = 44;
+var H = 28;
 
-var display = new ROT.Display({fontSize:12, layout:"hex"});
+var display = new ROT.Display({fontSize:12, layout:"hex", width:W, height:H});
 SHOW(display.getContainer());
 
 /* generate map and store its data */
 var data = {};
-var map = new ROT.Map.Cellular(null, null, {
+var map = new ROT.Map.Cellular(W, H, {
 	topology: 6,
 	born: [4, 5, 6],
 	survive: [3, 4, 5, 6]
@@ -154,9 +154,8 @@ map.create(function(x, y, value) {
 	display.DEBUG(x, y, value);
 });
 
-
 /* input callback */
-var lightPasses = function(x, y) {
+function lightPasses(x, y) {
 	var key = x+","+y;
 	if (key in data) { return (data[key] == 0); }
 	return false;

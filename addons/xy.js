@@ -1,38 +1,34 @@
-var XY = function(x, y) {
-	this.x = x || 0;
-	this.y = y || 0;
-}
+class XY {
+	constructor(x = 0, y = 0) {
+		this.x = x;
+		this.y = y;
+	}
 
-XY.prototype.toString = function() {
-	return this.x+","+this.y;
-}
+	toString() { return this.x+","+this.y; }
+	is(xy) { return (this.x==xy.x && this.y==xy.y); }
+	dist8(xy) {
+		let dx = xy.x-this.x;
+		let dy = xy.y-this.y;
+		return Math.max(Math.abs(dx), Math.abs(dy));
+	}
 
-XY.prototype.is = function(xy) {
-	return (this.x==xy.x && this.y==xy.y);
-}
+	dist4(xy) {
+		let dx = xy.x-this.x;
+		let dy = xy.y-this.y;
+		return Math.abs(dx) + Math.abs(dy);
+	}
 
-XY.prototype.dist8 = function(xy) {
-	var dx = xy.x-this.x;
-	var dy = xy.y-this.y;
-	return Math.max(Math.abs(dx), Math.abs(dy));
-}
+	dist(xy) {
+		let dx = xy.x-this.x;
+		let dy = xy.y-this.y;
+		return Math.sqrt(dx*dx+dy*dy);
+	}
 
-XY.prototype.dist4 = function(xy) {
-	var dx = xy.x-this.x;
-	var dy = xy.y-this.y;
-	return Math.abs(dx) + Math.abs(dy);
-}
+	plus(xy) {
+		return new XY(this.x+xy.x, this.y+xy.y);
+	}
 
-XY.prototype.dist = function(xy) {
-	var dx = xy.x-this.x;
-	var dy = xy.y-this.y;
-	return Math.sqrt(dx*dx+dy*dy);
-}
-
-XY.prototype.plus = function(xy) {
-	return new XY(this.x+xy.x, this.y+xy.y);
-}
-
-XY.prototype.minus = function(xy) {
-	return new XY(this.x-xy.x, this.y-xy.y);
+	minus(xy) {
+		return new XY(this.x-xy.x, this.y-xy.y);
+	}
 }

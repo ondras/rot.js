@@ -1,8 +1,8 @@
 ;(function() {
-	var _subscribers = {};
+	let _subscribers = {};
 	
 	window.publish = function(message, publisher, data) {
-		var subscribers = _subscribers[message] || [];
+		let subscribers = _subscribers[message] || [];
 		subscribers.forEach(function(subscriber) {
 			subscriber.handleMessage(message, publisher, data);
 		});
@@ -16,7 +16,7 @@
 	},
 	
 	window.unsubscribe = function(message, subscriber) {
-		var index = _subscribers[message].indexOf(subscriber);
+		let index = _subscribers[message].indexOf(subscriber);
 		_subscribers[message].splice(index, 1);
 	}
 })();

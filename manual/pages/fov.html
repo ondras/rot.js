@@ -31,21 +31,21 @@ the meaning is that "the place at [x,y] is visible with a distance of r". The la
 
 <div class="example">
 ROT.RNG.setSeed(12345);
-ROT.DEFAULT_WIDTH = 80;
-ROT.DEFAULT_HEIGHT = 30;
+var W = 80;
+var H = 30;
 
-var display = new ROT.Display({fontSize:12});
+var display = new ROT.Display({fontSize:12, width:W, height:H});
 SHOW(display.getContainer());
 
 /* create a map */
 var data = {};
-new ROT.Map.Uniform().create(function(x, y, type) {
+new ROT.Map.Uniform(W, H).create(function(x, y, type) {
 	data[x+","+y] = type;
 	display.DEBUG(x, y, type);
 });
 
 /* input callback */
-var lightPasses = function(x, y) {
+function lightPasses(x, y) {
 	var key = x+","+y;
 	if (key in data) { return (data[key] == 0); }
 	return false;
@@ -75,23 +75,23 @@ fov.compute(50, 22, 10, function(x, y, r, visibility) {
 
 <div class="example">
 ROT.RNG.setSeed(12345);
-ROT.DEFAULT_WIDTH  = 80;
-ROT.DEFAULT_HEIGHT = 30;
+var W = 80;
+var H = 30;
 DIR_NORTH = 0;
 DIR_WEST  = 6;
 
-var display = new ROT.Display({fontSize:12});
+var display = new ROT.Display({fontSize:12, width:W, height:H});
 SHOW(display.getContainer());
 
 /* create a map */
 var data = {};
-new ROT.Map.Uniform().create(function(x, y, type) {
+new ROT.Map.Uniform(W, H).create(function(x, y, type) {
 	data[x+","+y] = type;
 	display.DEBUG(x, y, type);
 });
 
 /* input callback */
-var lightPasses = function(x, y) {
+function lightPasses(x, y) {
 	var key = x+","+y;
 	if (key in data) { return (data[key] == 0); }
 	return false;

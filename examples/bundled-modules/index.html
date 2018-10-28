@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head>
+	<title>rot.js: bundled modules</title>
+</head>
+<body>
+	<h1>rot.js: bundled modules</h1>
+	<p>This example includes rot.js that is bundled together with your app. This is a recommended approach, as it allows you to tailor the build/compile process to your needs.</p>
+
+	<p>JavaScript code can be bundled/transpiled in many ways. This example uses:</p>
+	<ul>
+		<li><a href="https://rollupjs.org/">Rollup</a> to bundle (merge) individual source files</li>
+		<li><a href="https://babeljs.io/">Babel</a> to transpile (compile to older syntax) code for older browsers</li>
+		<li>A <a href="run.sh">small script</a> to orchestrate the process</li>
+	</ul>
+	<script type="module" src="example.bundle.js"></script>
+</body>
+</html>

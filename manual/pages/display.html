@@ -61,7 +61,7 @@ display.drawText(20, 5, "This line of text is very long.", 16);
 /* lines are broken at word boundaries; lines are trimmed */
 var words = ["lorem", "ipsum", "dolor", "sit", "amet"];
 var long = [];
-for (var i=0;i&lt;30;i++) { long.push(words.random()); }
+for (var i=0;i&lt;30;i++) { long.push(ROT.RNG.getItem(words)); }
 long = long.join(" ");
 
 display.drawText(1, 10, long, 38);

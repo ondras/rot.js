@@ -16,7 +16,7 @@ var drawDoor = function(x, y) {
 var rooms = map.getRooms();
 for (var i=0; i&lt;rooms.length; i++) {
 	var room = rooms[i];
-	SHOW("Room #%s: [%s, %s] => [%s, %s]".format(
+	SHOW(ROT.Util.format("Room #%s: [%s, %s] => [%s, %s]",
 		(i+1),
 		room.getLeft(), room.getTop(),
 		room.getRight(), room.getBottom()

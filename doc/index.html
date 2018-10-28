@@ -1,533 +1,348 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-	<head>
-		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		
-		<title>JsDoc Reference - Index</title>
-		<meta name="generator" content="JsDoc Toolkit" />
-		
-		<style type="text/css">
-		/* default.css */
-body
-{
-	font: 12px "Lucida Grande", Tahoma, Arial, Helvetica, sans-serif;
-	width: 800px;
-}
-
-.header
-{
-	clear: both;
-	background-color: #ccc;
-	padding: 8px;
-}
-
-h1
-{
-	font-size: 150%;
-	font-weight: bold;
-	padding: 0;
-	margin: 1em 0 0 .3em;
-}
-
-hr
-{
-	border: none 0;
-	border-top: 1px solid #7F8FB1;
-	height: 1px;
-}
-
-pre.code
-{
-	display: block;
-	padding: 8px;
-	border: 1px dashed #ccc;
-}
-
-#index
-{
-	margin-top: 24px;
-	float: left;
-	width: 160px;
-	position: absolute;
-	left: 8px;
-	background-color: #F3F3F3;
-	padding: 8px;
-}
-
-#content
-{
-	margin-left: 190px;
-	width: 600px;
-}
-
-.classList
-{
-	list-style-type: none;
-	padding: 0;
-	margin: 0 0 0 8px;
-	font-family: arial, sans-serif;
-	font-size: 1em;
-	overflow: auto;
-}
-
-.classList li
-{
-	padding: 0;
-	margin: 0 0 8px 0;
-}
-
-.summaryTable { width: 100%; }
-
-h1.classTitle
-{
-	font-size:170%;
-	line-height:130%;
-}
-
-h2 { font-size: 110%; }
-caption, div.sectionTitle
-{
-	background-color: #7F8FB1;
-	color: #fff;
-	font-size:130%;
-	text-align: left;
-	padding: 2px 6px 2px 6px;
-	border: 1px #7F8FB1 solid;
-}
-
-div.sectionTitle { margin-bottom: 8px; }
-.summaryTable thead { display: none; }
-
-.summaryTable td
-{
-	vertical-align: top;
-	padding: 4px;
-	border-bottom: 1px #7F8FB1 solid;
-	border-right: 1px #7F8FB1 solid;
-}
-
-/*col#summaryAttributes {}*/
-.summaryTable td.attributes
-{
-	border-left: 1px #7F8FB1 solid;
-	width: 140px;
-	text-align: right;
-}
-
-td.attributes, .fixedFont
-{
-	line-height: 15px;
-	color: #002EBE;
-	font-family: "Courier New",Courier,monospace;
-	font-size: 13px;
-}
-
-.summaryTable td.nameDescription
-{
-	text-align: left;
-	font-size: 13px;
-	line-height: 15px;
-}
-
-.summaryTable td.nameDescription, .description
-{
-	line-height: 15px;
-	padding: 4px;
-	padding-left: 4px;
-}
-
-.summaryTable { margin-bottom: 8px; }
-
-ul.inheritsList
-{
-	list-style: square;
-	margin-left: 20px;
-	padding-left: 0;
-}
-
-.detailList {
-	margin-left: 20px; 
-	line-height: 15px;
-}
-.detailList dt { margin-left: 20px; }
-
-.detailList .heading
-{
-	font-weight: bold;
-	padding-bottom: 6px;
-	margin-left: 0;
-}
-
-.light, td.attributes, .light a:link, .light a:visited
-{
-	color: #777;
-	font-style: italic;
-}
-
-.fineprint
-{
-	text-align: right;
-	font-size: 10px;
-}
-		</style>
-	</head>
-	
-	<body>
-		<div id="header">
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>rot.js</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">rot.js</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="index.html">Globals</a>
+				</li>
+			</ul>
+			<h1> rot.js</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>External modules</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-external-module"><a href="modules/_color_.html" class="tsd-kind-icon">"color"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_constants_.html" class="tsd-kind-icon">"constants"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_display_backend_.html" class="tsd-kind-icon">"display/backend"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_display_canvas_.html" class="tsd-kind-icon">"display/canvas"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_display_display_.html" class="tsd-kind-icon">"display/display"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_display_hex_.html" class="tsd-kind-icon">"display/hex"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_display_rect_.html" class="tsd-kind-icon">"display/rect"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_display_term_.html" class="tsd-kind-icon">"display/term"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_display_tile_.html" class="tsd-kind-icon">"display/tile"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_display_types_.html" class="tsd-kind-icon">"display/types"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_engine_.html" class="tsd-kind-icon">"engine"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_eventqueue_.html" class="tsd-kind-icon">"eventqueue"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_fov_discrete_shadowcasting_.html" class="tsd-kind-icon">"fov/discrete-<wbr>shadowcasting"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_fov_fov_.html" class="tsd-kind-icon">"fov/fov"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_fov_index_.html" class="tsd-kind-icon">"fov/index"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_fov_precise_shadowcasting_.html" class="tsd-kind-icon">"fov/precise-<wbr>shadowcasting"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_fov_recursive_shadowcasting_.html" class="tsd-kind-icon">"fov/recursive-<wbr>shadowcasting"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_index_.html" class="tsd-kind-icon">"index"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_lighting_.html" class="tsd-kind-icon">"lighting"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_map_arena_.html" class="tsd-kind-icon">"map/arena"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_map_cellular_.html" class="tsd-kind-icon">"map/cellular"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_map_digger_.html" class="tsd-kind-icon">"map/digger"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_map_dividedmaze_.html" class="tsd-kind-icon">"map/dividedmaze"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_map_dungeon_.html" class="tsd-kind-icon">"map/dungeon"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_map_ellermaze_.html" class="tsd-kind-icon">"map/ellermaze"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_map_features_.html" class="tsd-kind-icon">"map/features"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_map_iceymaze_.html" class="tsd-kind-icon">"map/iceymaze"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_map_index_.html" class="tsd-kind-icon">"map/index"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_map_map_.html" class="tsd-kind-icon">"map/map"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_map_rogue_.html" class="tsd-kind-icon">"map/rogue"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_map_uniform_.html" class="tsd-kind-icon">"map/uniform"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_noise_index_.html" class="tsd-kind-icon">"noise/index"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_noise_noise_.html" class="tsd-kind-icon">"noise/noise"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_noise_simplex_.html" class="tsd-kind-icon">"noise/simplex"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_path_astar_.html" class="tsd-kind-icon">"path/astar"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_path_dijkstra_.html" class="tsd-kind-icon">"path/dijkstra"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_path_index_.html" class="tsd-kind-icon">"path/index"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_path_path_.html" class="tsd-kind-icon">"path/path"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_rng_.html" class="tsd-kind-icon">"rng"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_scheduler_action_.html" class="tsd-kind-icon">"scheduler/action"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_scheduler_index_.html" class="tsd-kind-icon">"scheduler/index"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_scheduler_scheduler_.html" class="tsd-kind-icon">"scheduler/scheduler"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_scheduler_simple_.html" class="tsd-kind-icon">"scheduler/simple"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_scheduler_speed_.html" class="tsd-kind-icon">"scheduler/speed"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_stringgenerator_.html" class="tsd-kind-icon">"stringgenerator"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_text_.html" class="tsd-kind-icon">"text"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_util_.html" class="tsd-kind-icon">"util"</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals current ">
+						<a href="index.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_color_.html">"color"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_constants_.html">"constants"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_display_backend_.html">"display/backend"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_display_canvas_.html">"display/canvas"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_display_display_.html">"display/display"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_display_hex_.html">"display/hex"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_display_rect_.html">"display/rect"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_display_term_.html">"display/term"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_display_tile_.html">"display/tile"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_display_types_.html">"display/types"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_engine_.html">"engine"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_eventqueue_.html">"eventqueue"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_fov_discrete_shadowcasting_.html">"fov/discrete-<wbr>shadowcasting"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_fov_fov_.html">"fov/fov"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_fov_index_.html">"fov/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_fov_precise_shadowcasting_.html">"fov/precise-<wbr>shadowcasting"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_fov_recursive_shadowcasting_.html">"fov/recursive-<wbr>shadowcasting"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_index_.html">"index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_lighting_.html">"lighting"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_map_arena_.html">"map/arena"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_map_cellular_.html">"map/cellular"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_map_digger_.html">"map/digger"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_map_dividedmaze_.html">"map/dividedmaze"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_map_dungeon_.html">"map/dungeon"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_map_ellermaze_.html">"map/ellermaze"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_map_features_.html">"map/features"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_map_iceymaze_.html">"map/iceymaze"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_map_index_.html">"map/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_map_map_.html">"map/map"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_map_rogue_.html">"map/rogue"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_map_uniform_.html">"map/uniform"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_noise_index_.html">"noise/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_noise_noise_.html">"noise/noise"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_noise_simplex_.html">"noise/simplex"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_path_astar_.html">"path/astar"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_path_dijkstra_.html">"path/dijkstra"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_path_index_.html">"path/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_path_path_.html">"path/path"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_rng_.html">"rng"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_scheduler_action_.html">"scheduler/action"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_scheduler_index_.html">"scheduler/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_scheduler_scheduler_.html">"scheduler/scheduler"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_scheduler_simple_.html">"scheduler/simple"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_scheduler_speed_.html">"scheduler/speed"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_stringgenerator_.html">"stringgenerator"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_text_.html">"text"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_util_.html">"util"</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
 </div>
-		
-		<div id="index">
-			<div align="center"><a href="index.html">Class Index</a>
-| <a href="files.html">File Index</a></div>
-<hr />
-<h2>Classes</h2>
-<ul class="classList">
-	
-	<li><i><a href="symbols/_global_.html">_global_</a></i></li>
-	
-	<li><a href="symbols/Array.html">Array</a></li>
-	
-	<li><a href="symbols/Function.html">Function</a></li>
-	
-	<li><a href="symbols/Number.html">Number</a></li>
-	
-	<li><a href="symbols/Object.html">Object</a></li>
-	
-	<li><a href="symbols/ROT.html">ROT</a></li>
-	
-	<li><a href="symbols/ROT.Color.html">ROT.Color</a></li>
-	
-	<li><a href="symbols/ROT.Display.html">ROT.Display</a></li>
-	
-	<li><a href="symbols/ROT.Engine.html">ROT.Engine</a></li>
-	
-	<li><a href="symbols/ROT.EventQueue.html">ROT.EventQueue</a></li>
-	
-	<li><a href="symbols/ROT.FOV.html">ROT.FOV</a></li>
-	
-	<li><a href="symbols/ROT.FOV.DiscreteShadowcasting.html">ROT.FOV.DiscreteShadowcasting</a></li>
-	
-	<li><a href="symbols/ROT.FOV.PreciseShadowcasting.html">ROT.FOV.PreciseShadowcasting</a></li>
-	
-	<li><a href="symbols/ROT.FOV.RecursiveShadowcasting.html">ROT.FOV.RecursiveShadowcasting</a></li>
-	
-	<li><a href="symbols/ROT.Lighting.html">ROT.Lighting</a></li>
-	
-	<li><a href="symbols/ROT.Map.html">ROT.Map</a></li>
-	
-	<li><a href="symbols/ROT.Map.Arena.html">ROT.Map.Arena</a></li>
-	
-	<li><a href="symbols/ROT.Map.Cellular.html">ROT.Map.Cellular</a></li>
-	
-	<li><a href="symbols/ROT.Map.Digger.html">ROT.Map.Digger</a></li>
-	
-	<li><a href="symbols/ROT.Map.DividedMaze.html">ROT.Map.DividedMaze</a></li>
-	
-	<li><a href="symbols/ROT.Map.Dungeon.html">ROT.Map.Dungeon</a></li>
-	
-	<li><a href="symbols/ROT.Map.EllerMaze.html">ROT.Map.EllerMaze</a></li>
-	
-	<li><a href="symbols/ROT.Map.Feature.html">ROT.Map.Feature</a></li>
-	
-	<li><a href="symbols/ROT.Map.Feature.Corridor.html">ROT.Map.Feature.Corridor</a></li>
-	
-	<li><a href="symbols/ROT.Map.Feature.Room.html">ROT.Map.Feature.Room</a></li>
-	
-	<li><a href="symbols/ROT.Map.IceyMaze.html">ROT.Map.IceyMaze</a></li>
-	
-	<li><a href="symbols/ROT.Map.Rogue.html">ROT.Map.Rogue</a></li>
-	
-	<li><a href="symbols/ROT.Map.Uniform.html">ROT.Map.Uniform</a></li>
-	
-	<li><a href="symbols/ROT.Noise.html">ROT.Noise</a></li>
-	
-	<li><a href="symbols/ROT.Noise.Simplex.html">ROT.Noise.Simplex</a></li>
-	
-	<li><a href="symbols/ROT.Path.html">ROT.Path</a></li>
-	
-	<li><a href="symbols/ROT.Path.AStar.html">ROT.Path.AStar</a></li>
-	
-	<li><a href="symbols/ROT.Path.Dijkstra.html">ROT.Path.Dijkstra</a></li>
-	
-	<li><a href="symbols/ROT.RNG.html">ROT.RNG</a></li>
-	
-	<li><a href="symbols/ROT.Scheduler.html">ROT.Scheduler</a></li>
-	
-	<li><a href="symbols/ROT.Scheduler.Action.html">ROT.Scheduler.Action</a></li>
-	
-	<li><a href="symbols/ROT.Scheduler.Simple.html">ROT.Scheduler.Simple</a></li>
-	
-	<li><a href="symbols/ROT.Scheduler.Speed.html">ROT.Scheduler.Speed</a></li>
-	
-	<li><a href="symbols/ROT.StringGenerator.html">ROT.StringGenerator</a></li>
-	
-	<li><a href="symbols/ROT.Text.html">ROT.Text</a></li>
-	
-	<li><a href="symbols/String.html">String</a></li>
-	
-</ul>
-<hr />
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
 		</div>
-		
-		<div id="content">
-			<h1 class="classTitle">Class Index</h1>
-			
-			
-			<div>
-				<h2><a href="symbols/_global_.html">_global_</a></h2>
-				
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/Array.html">Array</a></h2>
-				
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/Function.html">Function</a></h2>
-				
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/Number.html">Number</a></h2>
-				
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/Object.html">Object</a></h2>
-				
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.html">ROT</a></h2>
-				Top-level ROT namespace
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Color.html">ROT.Color</a></h2>
-				Color operations
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Display.html">ROT.Display</a></h2>
-				Visual map display
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Engine.html">ROT.Engine</a></h2>
-				Asynchronous main loop
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.EventQueue.html">ROT.EventQueue</a></h2>
-				Generic event queue: stores events and retrieves them based on their time
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.FOV.html">ROT.FOV</a></h2>
-				Abstract FOV algorithm
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.FOV.DiscreteShadowcasting.html">ROT.FOV.DiscreteShadowcasting</a></h2>
-				Discrete shadowcasting algorithm.
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.FOV.PreciseShadowcasting.html">ROT.FOV.PreciseShadowcasting</a></h2>
-				Precise shadowcasting algorithm
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.FOV.RecursiveShadowcasting.html">ROT.FOV.RecursiveShadowcasting</a></h2>
-				Recursive shadowcasting algorithm
-Currently only supports 4/8 topologies, not hexagonal.
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Lighting.html">ROT.Lighting</a></h2>
-				Lighting computation, based on a traditional FOV for multiple light sources and multiple passes.
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Map.html">ROT.Map</a></h2>
-				Base map generator
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Map.Arena.html">ROT.Map.Arena</a></h2>
-				Simple empty rectangular room
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Map.Cellular.html">ROT.Map.Cellular</a></h2>
-				Cellular automaton map generator
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Map.Digger.html">ROT.Map.Digger</a></h2>
-				Random dungeon generator using human-like digging patterns.
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Map.DividedMaze.html">ROT.Map.DividedMaze</a></h2>
-				Recursively divided maze, http://en.wikipedia.org/wiki/Maze_generation_algorithm#Recursive_division_method
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Map.Dungeon.html">ROT.Map.Dungeon</a></h2>
-				Dungeon map: has rooms and corridors
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Map.EllerMaze.html">ROT.Map.EllerMaze</a></h2>
-				Maze generator - Eller's algorithm
-See http://homepages.cwi.nl/~tromp/maze.html for explanation
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Map.Feature.html">ROT.Map.Feature</a></h2>
-				Dungeon feature; has own .create() method
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Map.Feature.Corridor.html">ROT.Map.Feature.Corridor</a></h2>
-				Corridor
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Map.Feature.Room.html">ROT.Map.Feature.Room</a></h2>
-				Room
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Map.IceyMaze.html">ROT.Map.IceyMaze</a></h2>
-				Icey's Maze generator
-See http://www.roguebasin.roguelikedevelopment.org/index.php?title=Simple_maze for explanation
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Map.Rogue.html">ROT.Map.Rogue</a></h2>
-				Dungeon generator which uses the "orginal" Rogue dungeon generation algorithm.
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Map.Uniform.html">ROT.Map.Uniform</a></h2>
-				Dungeon generator which tries to fill the space evenly.
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Noise.html">ROT.Noise</a></h2>
-				Base noise generator
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Noise.Simplex.html">ROT.Noise.Simplex</a></h2>
-				2D simplex noise generator
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Path.html">ROT.Path</a></h2>
-				Abstract pathfinder
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Path.AStar.html">ROT.Path.AStar</a></h2>
-				Simplified A* algorithm: all edges have a value of 1
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Path.Dijkstra.html">ROT.Path.Dijkstra</a></h2>
-				Simplified Dijkstra's algorithm: all edges have a value of 1
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.RNG.html">ROT.RNG</a></h2>
-				This code is an implementation of Alea algorithm; (C) 2010 Johannes Baagøe.
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Scheduler.html">ROT.Scheduler</a></h2>
-				Abstract scheduler
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Scheduler.Action.html">ROT.Scheduler.Action</a></h2>
-				Action-based scheduler
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Scheduler.Simple.html">ROT.Scheduler.Simple</a></h2>
-				Simple fair scheduler (round-robin style)
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Scheduler.Speed.html">ROT.Scheduler.Speed</a></h2>
-				Speed-based scheduler
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.StringGenerator.html">ROT.StringGenerator</a></h2>
-				(Markov process)-based string generator.
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/ROT.Text.html">ROT.Text</a></h2>
-				Contains text tokenization and breaking routines
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/String.html">String</a></h2>
-				
-			</div>
-			<hr />
-			
-			
-		</div>
-		<div class="fineprint" style="clear:both">
-			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blankt">JsDoc Toolkit</a> 2.4.0 on Mon Jun 13 2016 11:14:42 GMT+0200 (CEST)
-		</div>
-	</body>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
 </html>

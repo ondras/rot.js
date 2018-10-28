@@ -1,0 +1,16 @@
+declare type Color = [number, number, number];
+export declare function fromString(str: string): number[];
+export declare function add(color1: Color, ...colors: Color[]): number[];
+export declare function add_(color1: Color, ...colors: Color[]): [number, number, number];
+export declare function multiply(color1: Color, ...colors: Color[]): number[];
+export declare function multiply_(color1: Color, ...colors: Color[]): [number, number, number];
+export declare function interpolate(color1: Color, color2: Color, factor?: number): number[];
+export declare const lerp: typeof interpolate;
+export declare function interpolateHSL(color1: Color, color2: Color, factor?: number): number[];
+export declare const lerpHSL: typeof interpolateHSL;
+export declare function randomize(color: Color, diff: number | number[]): number[];
+export declare function rgb2hsl(color: Color): Color;
+export declare function hsl2rgb(color: Color): number[];
+export declare function toRGB(color: Color): string;
+export declare function toHex(color: Color): string;
+export {};

@@ -46,6 +46,30 @@ for (var i=0;i&lt;data.length;i++) { /* plot histogram */
 }
 </div>
 
+<h2>Working with arrays</h2>
+
+<div class="example">
+SHOW(
+	ROT.RNG.getItem(["apples", "oranges", "zombies"]),
+	ROT.RNG.shuffle(["apples", "oranges", "zombies"])
+);</div>
+
+
+<h2>Picking a weighted value</h2>
+
+<p>Choosing from a list of values with uneven weights is a common operation in Roguelike development. The <code>getWeightedValue</code> method is useful for this task; just give it a JS object with numeric weight values (arbitrary numbers) and a corresponding key will be picked randomly.</p>
+
+<div class="example">
+var monsters = {
+	"orc": 3,
+	"ogre": 1,
+	"rat": 5
+}
+
+for (var i=0; i&lt;20; i++) {
+	SHOW(ROT.RNG.getWeightedValue(monsters));
+}
+</div>
 
 <h2>Working with RNG state</h2>
 
@@ -93,18 +117,3 @@ SHOW(ROT.RNG.getUniform());
 SHOW(clone.getUniform());
 </div>
 
-<h2>Picking a weighted value</h2>
-
-<p>Choosing from a list of values with uneven weights is a common operation in Roguelike development. The <code>getWeightedValue</code> method is useful for this task; just give it a JS object with numeric weight values (arbitrary numbers) and a corresponding key will be picked randomly.</p>
-
-<div class="example">
-var monsters = {
-	"orc": 3,
-	"ogre": 1,
-	"rat": 5
-}
-
-for (var i=0; i&lt;20; i++) {
-	SHOW(ROT.RNG.getWeightedValue(monsters));
-}
-</div>
