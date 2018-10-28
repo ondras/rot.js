@@ -10,39 +10,11 @@ pre {
 	text-align: left;
 	font-family: inconsolata, monospace;
 	margin: 0;
-	line-height: 100%;
+	line-height: 1;
 }
 
 pre {
-	font-size: 16px;
-}
-
-@media all and (min-height: 610px) {
-	pre { font-size: 17px; }
-}
-
-@media all and (min-height: 650px) {
-	pre { font-size: 18px; }
-}
-
-@media all and (min-height: 700px) {
-	pre { font-size: 19px; }
-}
-
-@media all and (min-height: 750px) {
-	pre { font-size: 20px; }
-}
-
-@media all and (min-height: 800px) {
-	pre { font-size: 21px; }
-}
-
-@media all and (min-height: 850px) {
-	pre { font-size: 22px; }
-}
-
-@media all and (min-height: 900px) {
-	pre { font-size: 23px; }
+	font-size: 2.75vh;
 }
 
 pre span {
