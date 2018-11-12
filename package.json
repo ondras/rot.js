@@ -60,5 +60,6 @@
         }
       ]
     ]
-  }
+  },
+  "types": "./lib/index.d.ts"
 }
