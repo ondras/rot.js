@@ -1,6 +1,6 @@
 {
   "name": "rot-js",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A roguelike toolkit in JavaScript",
   "keywords": [
     "ascii",
@@ -16,12 +16,12 @@
     "tiles"
   ],
   "files": [
-  	"lib",
-  	"dist",
-  	"doc",
-  	"examples",
-  	"addons",
-  	"manual"
+    "lib",
+    "dist",
+    "doc",
+    "examples",
+    "addons",
+    "manual"
   ],
   "homepage": "http://ondras.github.io/rot.js/hp/",
   "bugs": "https://github.com/ondras/rot.js/issues",
