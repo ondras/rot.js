@@ -62,7 +62,7 @@ export default class Cellular extends Map {
 
 	set(x: number, y: number, value: number) { this._map[x][y] = value; }
 
-	create(callback: CreateCallback) {
+	create(callback?: CreateCallback) {
 		let newMap = this._fillMap(0);
 		let born = this._options.born;
 		let survive = this._options.survive;

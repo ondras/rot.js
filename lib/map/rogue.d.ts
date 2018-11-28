@@ -21,7 +21,7 @@ export default class Rogue extends Map {
     private rooms;
     private connectedCells;
     constructor(width: number, height: number, options: Partial<Options>);
-    create(callback: CreateCallback): this;
+    create(callback?: CreateCallback): this;
     _calculateRoomSize(size: number, cell: number): [number, number];
     _initRooms(): void;
     _connectRooms(): void;

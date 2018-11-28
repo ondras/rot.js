@@ -19,7 +19,7 @@ export default class Digger extends Dungeon {
         [key: string]: number;
     };
     constructor(width: number, height: number, options?: Partial<Options>);
-    create(callback: CreateCallback): this;
+    create(callback?: CreateCallback): this;
     _digCallback(x: number, y: number, value: number): void;
     _isWallCallback(x: number, y: number): boolean;
     _canBeDugCallback(x: number, y: number): boolean;

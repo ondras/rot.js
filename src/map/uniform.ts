@@ -53,7 +53,7 @@ export default class Uniform extends Dungeon {
 	 * Create a map. If the time limit has been hit, returns null.
 	 * @see ROT.Map#create
 	 */
-	create(callback: CreateCallback) {
+	create(callback?: CreateCallback) {
 		let t1 = Date.now();
 		while (1) {
 			let t2 = Date.now();

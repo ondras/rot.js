@@ -58,7 +58,7 @@ export default class Digger extends Dungeon {
 		this._priorityWallCallback = this._priorityWallCallback.bind(this);
 	}
 
-	create(callback: CreateCallback) {
+	create(callback?: CreateCallback) {
 		this._rooms = [];
 		this._corridors = [];
 		this._map = this._fillMap(1);

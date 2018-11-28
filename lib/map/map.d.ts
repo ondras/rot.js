@@ -5,6 +5,6 @@ export default abstract class Map {
     _width: number;
     _height: number;
     constructor(width?: number, height?: number);
-    abstract create(callback: CreateCallback): void;
+    abstract create(callback?: CreateCallback): void;
     _fillMap(value: number): number[][];
 }

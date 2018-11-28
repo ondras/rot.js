@@ -61,7 +61,7 @@ export default class Rogue extends Map {
 		this._options = options as Options;
 	}
 
-	create(callback: CreateCallback) {
+	create(callback?: CreateCallback) {
 		this.map = this._fillMap(1);
 		this.rooms = [];
 		this.connectedCells = [];

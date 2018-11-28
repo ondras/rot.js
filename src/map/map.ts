@@ -16,7 +16,7 @@ export default abstract class Map {
 		this._height = height;
 	};
 
-	abstract create(callback: CreateCallback):void;
+	abstract create(callback?: CreateCallback): void;
 
 	_fillMap(value: number) {
 		let map: number[][] = [];

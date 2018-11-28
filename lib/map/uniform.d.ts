@@ -17,7 +17,7 @@ export default class Uniform extends Dungeon {
     _map: number[][];
     _dug: number;
     constructor(width: number, height: number, options: Partial<Options>);
-    create(callback: CreateCallback): this | null;
+    create(callback?: CreateCallback): this | null;
     _generateRooms(): void;
     _generateRoom(): Room | null;
     _generateCorridors(): boolean;

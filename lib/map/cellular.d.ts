@@ -19,7 +19,7 @@ export default class Cellular extends Map {
     randomize(probability: number): this;
     setOptions(options: Partial<Options>): void;
     set(x: number, y: number, value: number): void;
-    create(callback: CreateCallback): void;
+    create(callback?: CreateCallback): void;
     _serviceCallback(callback: CreateCallback): void;
     _getNeighbors(cx: number, cy: number): number;
     connect(callback: CreateCallback, value: number, connectionCallback?: ConnectionCallback): void;
