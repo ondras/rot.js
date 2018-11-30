@@ -105,7 +105,7 @@ class RNG {
 	 * @param data key=whatever, value=weight (relative probability)
 	 * @returns whatever
 	 */
-	getWeightedValue(data: any) {
+	getWeightedValue(data: { [key: string]: number, [key: number]: number }) {
 		let total = 0;
 		
 		for (let id in data) {
