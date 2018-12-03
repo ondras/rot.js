@@ -12,7 +12,10 @@ declare class RNG {
     getPercentage(): number;
     getItem<T>(array: Array<T>): T | null;
     shuffle<T>(array: Array<T>): T[];
-    getWeightedValue(data: any): string | undefined;
+    getWeightedValue(data: {
+        [key: string]: number;
+        [key: number]: number;
+    }): string | undefined;
     getState(): number[];
     setState(state: number[]): this;
     clone(): RNG;

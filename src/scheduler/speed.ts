@@ -1,6 +1,6 @@
 import Scheduler from "./scheduler.js";
 
-interface SpeedActor {
+export interface SpeedActor {
 	getSpeed: () => number;
 }
 

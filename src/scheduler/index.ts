@@ -3,3 +3,4 @@ import Speed from "./speed.js";
 import Action from "./action.js";
 
 export default { Simple, Speed, Action };
+export { SpeedActor } from "./speed.js"
