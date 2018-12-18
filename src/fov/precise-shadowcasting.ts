@@ -1,4 +1,4 @@
-import FOV, { VisibilityCallback } from "./fov.js";
+import { FOV, VisibilityCallback } from "./fov";
 
 type Arc = [number, number];
 
@@ -6,17 +6,17 @@ type Arc = [number, number];
  * @class Precise shadowcasting algorithm
  * @augments ROT.FOV
  */
-export default class PreciseShadowcasting extends FOV {
+export class PreciseShadowcasting extends FOV {
 	compute(x: number, y: number, R: number, callback: VisibilityCallback) {
 		/* this place is always visible */
 		callback(x, y, 0, 1);
 
 		/* standing in a dark place. FIXME is this a good idea?  */
 		if (!this._lightPasses(x, y)) { return; }
-		
+
 		/* list of all shadows */
 		let SHADOWS: Arc[] = [];
-		
+
 		let cx, cy, blocks, A1, A2, visibility;
 
 		/* analyze surrounding cells in concentric rings, starting from the center */
@@ -29,8 +29,8 @@ export default class PreciseShadowcasting extends FOV {
 				cy = neighbors[i][1];
 				/* shift half-an-angle backwards to maintain consistency of 0-th cells */
 				A1 = [i ? 2*i-1 : 2*neighborCount-1, 2*neighborCount];
-				A2 = [2*i+1, 2*neighborCount]; 
-				
+				A2 = [2*i+1, 2*neighborCount];
+
 				blocks = !this._lightPasses(cx, cy);
 				visibility = this._checkVisibility(A1 as Arc, A2 as Arc, blocks, SHADOWS);
 				if (visibility) { callback(cx, cy, r, visibility); }
@@ -79,15 +79,15 @@ export default class PreciseShadowcasting extends FOV {
 
 		let visible = true;
 		if (index1 == index2 && (edge1 || edge2)) {  /* subset of existing shadow, one of the edges match */
-			visible = false; 
+			visible = false;
 		} else if (edge1 && edge2 && index1+1==index2 && (index2 % 2)) { /* completely equivalent with existing shadow */
 			visible = false;
 		} else if (index1 > index2 && (index1 % 2)) { /* subset of existing shadow, not touching */
 			visible = false;
 		}
-		
+
 		if (!visible) { return 0; } /* fast case: not visible */
-		
+
 		let visibleLength;
 
 		/* compute the length of visible arc, adjust list of shadows (if blocking) */

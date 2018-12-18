@@ -1,5 +1,9 @@
-import DiscreteShadowcasting from "./discrete-shadowcasting.js";
-import PreciseShadowcasting from "./precise-shadowcasting.js";
-import RecursiveShadowcasting from "./recursive-shadowcasting.js";
+import { DiscreteShadowcasting } from "./discrete-shadowcasting";
+import { PreciseShadowcasting } from "./precise-shadowcasting";
+import { RecursiveShadowcasting } from "./recursive-shadowcasting";
 
-export default { DiscreteShadowcasting, PreciseShadowcasting, RecursiveShadowcasting };
+export const FOV = {
+	DiscreteShadowcasting,
+	PreciseShadowcasting,
+	RecursiveShadowcasting
+};
