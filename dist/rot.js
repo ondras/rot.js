@@ -6,8 +6,13 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) : typeof define === 'function' && define.amd ? define(['exports'], factory) : factory(global.ROT = {});
 })(this, function (exports) {
   'use strict';
+  /**
+   * This code is an implementation of Alea algorithm; (C) 2010 Johannes Baagøe.
+   * Alea is licensed according to the http://en.wikipedia.org/wiki/MIT_License.
+   */
 
   var FRAC = 2.3283064365386963e-10;
+  /* 2^-32 */
 
   var RNG =
   /*#__PURE__*/
@@ -25,6 +30,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     _proto.getSeed = function getSeed() {
       return this._seed;
     };
+    /**
+     * Seed the number generator
+     */
+
 
     _proto.setSeed = function setSeed(seed) {
       seed = seed < 1 ? 1 / seed : seed;
@@ -37,6 +46,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       this._c = 1;
       return this;
     };
+    /**
+     * @returns Pseudorandom value [0,1), uniformly distributed
+     */
+
 
     _proto.getUniform = function getUniform() {
       var t = 2091639 * this._s0 + this._c * FRAC;
@@ -46,12 +59,24 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       this._s2 = t - this._c;
       return this._s2;
     };
+    /**
+     * @param lowerBound The lower end of the range to return a value from, inclusive
+     * @param upperBound The upper end of the range to return a value from, inclusive
+     * @returns Pseudorandom value [lowerBound, upperBound], using ROT.RNG.getUniform() to distribute the value
+     */
+
 
     _proto.getUniformInt = function getUniformInt(lowerBound, upperBound) {
       var max = Math.max(lowerBound, upperBound);
       var min = Math.min(lowerBound, upperBound);
       return Math.floor(this.getUniform() * (max - min + 1)) + min;
     };
+    /**
+     * @param mean Mean value
+     * @param stddev Standard deviation. ~95% of the absolute values will be lower than 2*stddev.
+     * @returns A normally distributed pseudorandom value
+     */
+
 
     _proto.getNormal = function getNormal(mean, stddev) {
       if (mean === void 0) {
@@ -73,10 +98,18 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       var gauss = u * Math.sqrt(-2 * Math.log(r) / r);
       return mean + gauss * stddev;
     };
+    /**
+     * @returns Pseudorandom value [1,100] inclusive, uniformly distributed
+     */
+
 
     _proto.getPercentage = function getPercentage() {
       return 1 + Math.floor(this.getUniform() * 100);
     };
+    /**
+     * @returns Randomly picked item, null when length=0
+     */
+
 
     _proto.getItem = function getItem(array) {
       if (!array.length) {
@@ -85,6 +118,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return array[Math.floor(this.getUniform() * array.length)];
     };
+    /**
+     * @returns New array with randomized items
+     */
+
 
     _proto.shuffle = function shuffle(array) {
       var result = [];
@@ -98,6 +135,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return result;
     };
+    /**
+     * @param data key=whatever, value=weight (relative probability)
+     * @returns whatever
+     */
+
 
     _proto.getWeightedValue = function getWeightedValue(data) {
       var total = 0;
@@ -116,14 +158,25 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         if (random < part) {
           return id;
         }
-      }
+      } // If by some floating-point annoyance we have
+      // random >= total, just return the last id.
+
 
       return id;
     };
+    /**
+     * Get RNG state. Useful for storing the state and re-setting it via setState.
+     * @returns Internal state
+     */
+
 
     _proto.getState = function getState() {
       return [this._s0, this._s1, this._s2, this._c];
     };
+    /**
+     * Set a previously retrieved state.
+     */
+
 
     _proto.setState = function setState(state) {
       this._s0 = state[0];
@@ -132,6 +185,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       this._c = state[3];
       return this;
     };
+    /**
+     * Returns a cloned RNG
+     */
+
 
     _proto.clone = function clone() {
       var clone = new RNG();
@@ -142,6 +199,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
   }();
 
   var RNG$1 = new RNG().setSeed(Date.now());
+  /**
+   * @class Abstract display backend module
+   * @private
+   */
 
   var Backend =
   /*#__PURE__*/
@@ -221,6 +282,13 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return Canvas;
   }(Backend);
+  /**
+   * Always positive modulus
+   * @param x Operand
+   * @param n Modulus
+   * @returns x modulo n
+   */
+
 
   function mod(x, n) {
     return (x % n + n) % n;
@@ -243,6 +311,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
   function capitalize(string) {
     return string.charAt(0).toUpperCase() + string.substring(1);
   }
+  /**
+   * Format a string in a flexible way. Scans for %s strings and replaces them with arguments. List of patterns is modifiable via String.format.map.
+   * @param {string} template
+   * @param {any} [argv]
+   */
+
 
   function format(template) {
     for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -295,6 +369,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     capitalize: capitalize,
     format: format
   });
+  /**
+   * @class Hexagonal backend
+   * @private
+   */
 
   var Hex =
   /*#__PURE__*/
@@ -364,14 +442,18 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       var hexSizeWidth = 2 * availWidth / ((this._options.width + 1) * Math.sqrt(3)) - 1;
       var hexSizeHeight = availHeight / (2 + 1.5 * (this._options.height - 1));
-      var hexSize = Math.min(hexSizeWidth, hexSizeHeight);
+      var hexSize = Math.min(hexSizeWidth, hexSizeHeight); // compute char ratio
+
       var oldFont = this._ctx.font;
       this._ctx.font = "100px " + this._options.fontFamily;
       var width = Math.ceil(this._ctx.measureText("W").width);
       this._ctx.font = oldFont;
       var ratio = width / 100;
-      hexSize = Math.floor(hexSize) + 1;
-      var fontSize = 2 * hexSize / (this._options.spacing * (1 + ratio / Math.sqrt(3)));
+      hexSize = Math.floor(hexSize) + 1; // closest larger hexSize
+      // FIXME char size computation does not respect transposed hexes
+
+      var fontSize = 2 * hexSize / (this._options.spacing * (1 + ratio / Math.sqrt(3))); // closest smaller fontSize
+
       return Math.ceil(fontSize) - 1;
     };
 
@@ -391,6 +473,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       y = Math.floor(y / size);
 
       if (mod(y, 2)) {
+        /* odd row */
         x -= this._spacingX;
         x = 1 + 2 * Math.floor(x / (2 * this._spacingX));
       } else {
@@ -399,6 +482,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return [x, y];
     };
+    /**
+     * Arguments are pixel values. If "transposed" mode is enabled, then these two are already swapped.
+     */
+
 
     _proto4._fill = function _fill(cx, cy) {
       var a = this._hexSize;
@@ -450,6 +537,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return Hex;
   }(Canvas);
+  /**
+   * @class Rectangular backend
+   * @private
+   */
+
 
   var Rect =
   /*#__PURE__*/
@@ -555,6 +647,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     _proto5.computeFontSize = function computeFontSize(availWidth, availHeight) {
       var boxWidth = Math.floor(availWidth / this._options.width);
       var boxHeight = Math.floor(availHeight / this._options.height);
+      /* compute char ratio */
+
       var oldFont = this._ctx.font;
       this._ctx.font = "100px " + this._options.fontFamily;
       var width = Math.ceil(this._ctx.measureText("W").width);
@@ -563,6 +657,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       var widthFraction = ratio * boxHeight / boxWidth;
 
       if (widthFraction > 1) {
+        /* too wide with current aspect ratio */
         boxHeight = Math.floor(boxHeight / widthFraction);
       }
 
@@ -591,6 +686,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
   }(Canvas);
 
   Rect.cache = false;
+  /**
+   * @class Tile backend
+   * @private
+   */
 
   var Tile =
   /*#__PURE__*/
@@ -642,6 +741,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         }
 
         if (this._options.tileColorize) {
+          // apply colorization
           var canvas = this._colorCanvas;
           var context = canvas.getContext("2d");
           context.globalCompositeOperation = "source-over";
@@ -664,6 +764,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
           this._ctx.drawImage(canvas, x * tileWidth, y * tileHeight, tileWidth, tileHeight);
         } else {
+          // no colorizing, easy
           this._ctx.drawImage(this._options.tileSet, tile[0], tile[1], tileWidth, tileHeight, x * tileWidth, y * tileHeight, tileWidth, tileHeight);
         }
       }
@@ -701,6 +802,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       cached = CACHE[str];
     } else {
       if (str.charAt(0) == "#") {
+        // hex rgb
         var matched = str.match(/[0-9a-f]/gi) || [];
         var values = matched.map(function (x) {
           return parseInt(x, 16);
@@ -719,10 +821,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
           cached = values;
         }
       } else if (r = str.match(/rgb\(([0-9, ]+)\)/i)) {
+        // decimal rgb
         cached = r[1].split(/\s*,\s*/).map(function (x) {
           return parseInt(x);
         });
       } else {
+        // html name
         cached = [0, 0, 0];
       }
 
@@ -731,6 +835,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return cached.slice();
   }
+  /**
+   * Add two or more colors
+   */
+
 
   function add(color1) {
     var result = color1.slice();
@@ -747,6 +855,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return result;
   }
+  /**
+   * Add two or more colors, MODIFIES FIRST ARGUMENT
+   */
+
 
   function add_(color1) {
     for (var _len3 = arguments.length, colors = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
@@ -761,6 +873,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return color1;
   }
+  /**
+   * Multiply (mix) two or more colors
+   */
+
 
   function multiply(color1) {
     var result = color1.slice();
@@ -779,6 +895,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return result;
   }
+  /**
+   * Multiply (mix) two or more colors, MODIFIES FIRST ARGUMENT
+   */
+
 
   function multiply_(color1) {
     for (var _len5 = arguments.length, colors = new Array(_len5 > 1 ? _len5 - 1 : 0), _key5 = 1; _key5 < _len5; _key5++) {
@@ -795,6 +915,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return color1;
   }
+  /**
+   * Interpolate (blend) two colors with a given factor
+   */
+
 
   function interpolate(color1, color2, factor) {
     if (factor === void 0) {
@@ -811,6 +935,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
   }
 
   var lerp = interpolate;
+  /**
+   * Interpolate (blend) two colors with a given factor in HSL mode
+   */
 
   function interpolateHSL(color1, color2, factor) {
     if (factor === void 0) {
@@ -828,6 +955,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
   }
 
   var lerpHSL = interpolateHSL;
+  /**
+   * Create a new random color based on this one
+   * @param color
+   * @param diff Set of standard deviations
+   */
 
   function randomize(color, diff) {
     if (!(diff instanceof Array)) {
@@ -842,6 +974,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return result;
   }
+  /**
+   * Converts an RGB color value to HSL. Expects 0..255 inputs, produces 0..1 outputs.
+   */
+
 
   function rgb2hsl(color) {
     var r = color[0] / 255;
@@ -854,7 +990,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         l = (max + min) / 2;
 
     if (max == min) {
-      s = 0;
+      s = 0; // achromatic
     } else {
       var d = max - min;
       s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
@@ -887,6 +1023,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
     return p;
   }
+  /**
+   * Converts an HSL color value to RGB. Expects 0..1 inputs, produces 0..255 outputs.
+   */
+
 
   function hsl2rgb(color) {
     var l = color[2];
@@ -1145,11 +1285,13 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     };
 
     _proto7.draw = function draw(data, clearBefore) {
+      // determine where to draw what with what colors
       var x = data[0],
           y = data[1],
           ch = data[2],
           fg = data[3],
-          bg = data[4];
+          bg = data[4]; // determine if we need to move the terminal cursor
+
       var dx = this._offset[0] + x;
       var dy = this._offset[1] + y;
       var size = this.computeSize();
@@ -1166,27 +1308,33 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         process.stdout.write(positionToAnsi(dx, dy));
         this._cursor[0] = dx;
         this._cursor[1] = dy;
-      }
+      } // terminals automatically clear, but if we're clearing when we're
+      // not otherwise provided with a character, just use a space instead
+
 
       if (clearBefore) {
         if (!ch) {
           ch = " ";
         }
-      }
+      } // if we're not clearing and not provided with a character, do nothing
+
 
       if (!ch) {
         return;
-      }
+      } // determine if we need to change colors
+
 
       var newColor = colorToAnsi(fg, bg);
 
       if (newColor !== this._lastColor) {
         process.stdout.write(newColor);
         this._lastColor = newColor;
-      }
+      } // write the provided symbol to the display
+
 
       var chars = [].concat(ch);
-      process.stdout.write(chars[0]);
+      process.stdout.write(chars[0]); // update our position, given that we wrote a character
+
       this._cursor[0]++;
 
       if (this._cursor[0] >= size[0]) {
@@ -1209,12 +1357,21 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return Term;
   }(Backend);
+  /**
+   * @namespace
+   * Contains text tokenization and breaking routines
+   */
 
-  var RE_COLORS = /%([bc]){([^}]*)}/g;
+
+  var RE_COLORS = /%([bc]){([^}]*)}/g; // token types
+
   var TYPE_TEXT = 0;
   var TYPE_NEWLINE = 1;
   var TYPE_FG = 2;
   var TYPE_BG = 3;
+  /**
+   * Measure size of a resulting text block
+   */
 
   function measure(str, maxWidth) {
     var result = {
@@ -1243,11 +1400,18 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     result.width = Math.max(result.width, lineWidth);
     return result;
   }
+  /**
+   * Convert string to a series of a formatting commands
+   */
+
 
   function tokenize(str, maxWidth) {
     var result = [];
+    /* first tokenization pass - split texts and color formatting commands */
+
     var offset = 0;
     str.replace(RE_COLORS, function (match, type, name, index) {
+      /* string before */
       var part = str.substring(offset, index);
 
       if (part.length) {
@@ -1256,6 +1420,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
           value: part
         });
       }
+      /* color command */
+
 
       result.push({
         type: type == "c" ? TYPE_FG : TYPE_BG,
@@ -1264,6 +1430,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       offset = index + match.length;
       return "";
     });
+    /* last remaining part */
+
     var part = str.substring(offset);
 
     if (part.length) {
@@ -1275,6 +1443,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return breakLines(result, maxWidth);
   }
+  /* insert line breaks into first-pass tokenized data */
+
 
   function breakLines(tokens, maxWidth) {
     if (!maxWidth) {
@@ -1286,26 +1456,35 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     var lastTokenWithSpace = -1;
 
     while (i < tokens.length) {
+      /* take all text tokens, remove space, apply linebreaks */
       var token = tokens[i];
 
       if (token.type == TYPE_NEWLINE) {
+        /* reset */
         lineLength = 0;
         lastTokenWithSpace = -1;
       }
 
       if (token.type != TYPE_TEXT) {
+        /* skip non-text tokens */
         i++;
         continue;
       }
+      /* remove spaces at the beginning of line */
+
 
       while (lineLength == 0 && token.value.charAt(0) == " ") {
         token.value = token.value.substring(1);
       }
+      /* forced newline? insert two new tokens after this one */
+
 
       var _index2 = token.value.indexOf("\n");
 
       if (_index2 != -1) {
         token.value = breakInsideToken(tokens, i, _index2, true);
+        /* if there are spaces at the end, we must remove them (we do not want the line too long) */
+
         var arr = token.value.split("");
 
         while (arr.length && arr[arr.length - 1] == " ") {
@@ -1314,6 +1493,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
         token.value = arr.join("");
       }
+      /* token degenerated? */
+
 
       if (!token.value.length) {
         tokens.splice(i, 1);
@@ -1321,6 +1502,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
 
       if (lineLength + token.value.length > maxWidth) {
+        /* line too long, find a suitable breaking spot */
+
+        /* is it possible to break within this token? */
         var _index3 = -1;
 
         while (1) {
@@ -1338,8 +1522,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         }
 
         if (_index3 != -1) {
+          /* break at space within this one */
           token.value = breakInsideToken(tokens, i, _index3, true);
         } else if (lastTokenWithSpace != -1) {
+          /* is there a previous token where a break can occur? */
           var _token = tokens[lastTokenWithSpace];
 
           var breakIndex = _token.value.lastIndexOf(" ");
@@ -1347,9 +1533,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
           _token.value = breakInsideToken(tokens, lastTokenWithSpace, breakIndex, true);
           i = lastTokenWithSpace;
         } else {
+          /* force break in this token */
           token.value = breakInsideToken(tokens, i, maxWidth - lineLength, false);
         }
       } else {
+        /* line not long, continue */
         lineLength += token.value.length;
 
         if (token.value.indexOf(" ") != -1) {
@@ -1358,11 +1546,16 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
 
       i++;
+      /* advance to next token */
     }
 
     tokens.push({
       type: TYPE_NEWLINE
     });
+    /* insert fake newline to fix the last text line */
+
+    /* remove trailing space from text tokens before newlines */
+
     var lastTextToken = null;
 
     for (var _i = 0; _i < tokens.length; _i++) {
@@ -1375,6 +1568,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
         case TYPE_NEWLINE:
           if (lastTextToken) {
+            /* remove trailing space */
             var _arr = lastTextToken.value.split("");
 
             while (_arr.length && _arr[_arr.length - 1] == " ") {
@@ -1390,8 +1584,19 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     }
 
     tokens.pop();
+    /* remove fake token */
+
     return tokens;
   }
+  /**
+   * Create new tokens and insert them into the stream
+   * @param {object[]} tokens
+   * @param {int} tokenIndex Token being processed
+   * @param {int} breakIndex Index within current token's value
+   * @param {bool} removeBreakChar Do we want to remove the breaking character?
+   * @returns {string} remaining unbroken token value
+   */
+
 
   function breakInsideToken(tokens, tokenIndex, breakIndex, removeBreakChar) {
     var newBreakToken = {
@@ -1415,7 +1620,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     measure: measure,
     tokenize: tokenize
   });
+  /** Default with for display and map generators */
+
   var DEFAULT_WIDTH = 80;
+  /** Default height for display and map generators */
+
   var DEFAULT_HEIGHT = 25;
   var DIRS = {
     4: [[0, -1], [1, 0], [0, 1], [-1, 0]],
@@ -1423,159 +1632,466 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     6: [[-1, -1], [1, -1], [2, 0], [1, 1], [-1, 1], [-2, 0]]
   };
   var KEYS = {
+    /** Cancel key. */
     VK_CANCEL: 3,
+
+    /** Help key. */
     VK_HELP: 6,
+
+    /** Backspace key. */
     VK_BACK_SPACE: 8,
+
+    /** Tab key. */
     VK_TAB: 9,
+
+    /** 5 key on Numpad when NumLock is unlocked. Or on Mac, clear key which is positioned at NumLock key. */
     VK_CLEAR: 12,
+
+    /** Return/enter key on the main keyboard. */
     VK_RETURN: 13,
+
+    /** Reserved, but not used. */
     VK_ENTER: 14,
+
+    /** Shift key. */
     VK_SHIFT: 16,
+
+    /** Control key. */
     VK_CONTROL: 17,
+
+    /** Alt (Option on Mac) key. */
     VK_ALT: 18,
+
+    /** Pause key. */
     VK_PAUSE: 19,
+
+    /** Caps lock. */
     VK_CAPS_LOCK: 20,
+
+    /** Escape key. */
     VK_ESCAPE: 27,
+
+    /** Space bar. */
     VK_SPACE: 32,
+
+    /** Page Up key. */
     VK_PAGE_UP: 33,
+
+    /** Page Down key. */
     VK_PAGE_DOWN: 34,
+
+    /** End key. */
     VK_END: 35,
+
+    /** Home key. */
     VK_HOME: 36,
+
+    /** Left arrow. */
     VK_LEFT: 37,
+
+    /** Up arrow. */
     VK_UP: 38,
+
+    /** Right arrow. */
     VK_RIGHT: 39,
+
+    /** Down arrow. */
     VK_DOWN: 40,
+
+    /** Print Screen key. */
     VK_PRINTSCREEN: 44,
+
+    /** Ins(ert) key. */
     VK_INSERT: 45,
+
+    /** Del(ete) key. */
     VK_DELETE: 46,
+
+    /***/
     VK_0: 48,
+
+    /***/
     VK_1: 49,
+
+    /***/
     VK_2: 50,
+
+    /***/
     VK_3: 51,
+
+    /***/
     VK_4: 52,
+
+    /***/
     VK_5: 53,
+
+    /***/
     VK_6: 54,
+
+    /***/
     VK_7: 55,
+
+    /***/
     VK_8: 56,
+
+    /***/
     VK_9: 57,
+
+    /** Colon (:) key. Requires Gecko 15.0 */
     VK_COLON: 58,
+
+    /** Semicolon (;) key. */
     VK_SEMICOLON: 59,
+
+    /** Less-than (<) key. Requires Gecko 15.0 */
     VK_LESS_THAN: 60,
+
+    /** Equals (=) key. */
     VK_EQUALS: 61,
+
+    /** Greater-than (>) key. Requires Gecko 15.0 */
     VK_GREATER_THAN: 62,
+
+    /** Question mark (?) key. Requires Gecko 15.0 */
     VK_QUESTION_MARK: 63,
+
+    /** Atmark (@) key. Requires Gecko 15.0 */
     VK_AT: 64,
+
+    /***/
     VK_A: 65,
+
+    /***/
     VK_B: 66,
+
+    /***/
     VK_C: 67,
+
+    /***/
     VK_D: 68,
+
+    /***/
     VK_E: 69,
+
+    /***/
     VK_F: 70,
+
+    /***/
     VK_G: 71,
+
+    /***/
     VK_H: 72,
+
+    /***/
     VK_I: 73,
+
+    /***/
     VK_J: 74,
+
+    /***/
     VK_K: 75,
+
+    /***/
     VK_L: 76,
+
+    /***/
     VK_M: 77,
+
+    /***/
     VK_N: 78,
+
+    /***/
     VK_O: 79,
+
+    /***/
     VK_P: 80,
+
+    /***/
     VK_Q: 81,
+
+    /***/
     VK_R: 82,
+
+    /***/
     VK_S: 83,
+
+    /***/
     VK_T: 84,
+
+    /***/
     VK_U: 85,
+
+    /***/
     VK_V: 86,
+
+    /***/
     VK_W: 87,
+
+    /***/
     VK_X: 88,
+
+    /***/
     VK_Y: 89,
+
+    /***/
     VK_Z: 90,
+
+    /***/
     VK_CONTEXT_MENU: 93,
+
+    /** 0 on the numeric keypad. */
     VK_NUMPAD0: 96,
+
+    /** 1 on the numeric keypad. */
     VK_NUMPAD1: 97,
+
+    /** 2 on the numeric keypad. */
     VK_NUMPAD2: 98,
+
+    /** 3 on the numeric keypad. */
     VK_NUMPAD3: 99,
+
+    /** 4 on the numeric keypad. */
     VK_NUMPAD4: 100,
+
+    /** 5 on the numeric keypad. */
     VK_NUMPAD5: 101,
+
+    /** 6 on the numeric keypad. */
     VK_NUMPAD6: 102,
+
+    /** 7 on the numeric keypad. */
     VK_NUMPAD7: 103,
+
+    /** 8 on the numeric keypad. */
     VK_NUMPAD8: 104,
+
+    /** 9 on the numeric keypad. */
     VK_NUMPAD9: 105,
+
+    /** * on the numeric keypad. */
     VK_MULTIPLY: 106,
+
+    /** + on the numeric keypad. */
     VK_ADD: 107,
+
+    /***/
     VK_SEPARATOR: 108,
+
+    /** - on the numeric keypad. */
     VK_SUBTRACT: 109,
+
+    /** Decimal point on the numeric keypad. */
     VK_DECIMAL: 110,
+
+    /** / on the numeric keypad. */
     VK_DIVIDE: 111,
+
+    /** F1 key. */
     VK_F1: 112,
+
+    /** F2 key. */
     VK_F2: 113,
+
+    /** F3 key. */
     VK_F3: 114,
+
+    /** F4 key. */
     VK_F4: 115,
+
+    /** F5 key. */
     VK_F5: 116,
+
+    /** F6 key. */
     VK_F6: 117,
+
+    /** F7 key. */
     VK_F7: 118,
+
+    /** F8 key. */
     VK_F8: 119,
+
+    /** F9 key. */
     VK_F9: 120,
+
+    /** F10 key. */
     VK_F10: 121,
+
+    /** F11 key. */
     VK_F11: 122,
+
+    /** F12 key. */
     VK_F12: 123,
+
+    /** F13 key. */
     VK_F13: 124,
+
+    /** F14 key. */
     VK_F14: 125,
+
+    /** F15 key. */
     VK_F15: 126,
+
+    /** F16 key. */
     VK_F16: 127,
+
+    /** F17 key. */
     VK_F17: 128,
+
+    /** F18 key. */
     VK_F18: 129,
+
+    /** F19 key. */
     VK_F19: 130,
+
+    /** F20 key. */
     VK_F20: 131,
+
+    /** F21 key. */
     VK_F21: 132,
+
+    /** F22 key. */
     VK_F22: 133,
+
+    /** F23 key. */
     VK_F23: 134,
+
+    /** F24 key. */
     VK_F24: 135,
+
+    /** Num Lock key. */
     VK_NUM_LOCK: 144,
+
+    /** Scroll Lock key. */
     VK_SCROLL_LOCK: 145,
+
+    /** Circumflex (^) key. Requires Gecko 15.0 */
     VK_CIRCUMFLEX: 160,
+
+    /** Exclamation (!) key. Requires Gecko 15.0 */
     VK_EXCLAMATION: 161,
+
+    /** Double quote () key. Requires Gecko 15.0 */
     VK_DOUBLE_QUOTE: 162,
+
+    /** Hash (#) key. Requires Gecko 15.0 */
     VK_HASH: 163,
+
+    /** Dollar sign ($) key. Requires Gecko 15.0 */
     VK_DOLLAR: 164,
+
+    /** Percent (%) key. Requires Gecko 15.0 */
     VK_PERCENT: 165,
+
+    /** Ampersand (&) key. Requires Gecko 15.0 */
     VK_AMPERSAND: 166,
+
+    /** Underscore (_) key. Requires Gecko 15.0 */
     VK_UNDERSCORE: 167,
+
+    /** Open parenthesis (() key. Requires Gecko 15.0 */
     VK_OPEN_PAREN: 168,
+
+    /** Close parenthesis ()) key. Requires Gecko 15.0 */
     VK_CLOSE_PAREN: 169,
+
+    /* Asterisk (*) key. Requires Gecko 15.0 */
     VK_ASTERISK: 170,
+
+    /** Plus (+) key. Requires Gecko 15.0 */
     VK_PLUS: 171,
+
+    /** Pipe (|) key. Requires Gecko 15.0 */
     VK_PIPE: 172,
+
+    /** Hyphen-US/docs/Minus (-) key. Requires Gecko 15.0 */
     VK_HYPHEN_MINUS: 173,
+
+    /** Open curly bracket ({) key. Requires Gecko 15.0 */
     VK_OPEN_CURLY_BRACKET: 174,
+
+    /** Close curly bracket (}) key. Requires Gecko 15.0 */
     VK_CLOSE_CURLY_BRACKET: 175,
+
+    /** Tilde (~) key. Requires Gecko 15.0 */
     VK_TILDE: 176,
+
+    /** Comma (,) key. */
     VK_COMMA: 188,
+
+    /** Period (.) key. */
     VK_PERIOD: 190,
+
+    /** Slash (/) key. */
     VK_SLASH: 191,
+
+    /** Back tick (`) key. */
     VK_BACK_QUOTE: 192,
+
+    /** Open square bracket ([) key. */
     VK_OPEN_BRACKET: 219,
+
+    /** Back slash (\) key. */
     VK_BACK_SLASH: 220,
+
+    /** Close square bracket (]) key. */
     VK_CLOSE_BRACKET: 221,
+
+    /** Quote (''') key. */
     VK_QUOTE: 222,
+
+    /** Meta key on Linux, Command key on Mac. */
     VK_META: 224,
+
+    /** AltGr key on Linux. Requires Gecko 15.0 */
     VK_ALTGR: 225,
+
+    /** Windows logo key on Windows. Or Super or Hyper key on Linux. Requires Gecko 15.0 */
     VK_WIN: 91,
+
+    /** Linux support for this keycode was added in Gecko 4.0. */
     VK_KANA: 21,
+
+    /** Linux support for this keycode was added in Gecko 4.0. */
     VK_HANGUL: 21,
+
+    /** 英数 key on Japanese Mac keyboard. Requires Gecko 15.0 */
     VK_EISU: 22,
+
+    /** Linux support for this keycode was added in Gecko 4.0. */
     VK_JUNJA: 23,
+
+    /** Linux support for this keycode was added in Gecko 4.0. */
     VK_FINAL: 24,
+
+    /** Linux support for this keycode was added in Gecko 4.0. */
     VK_HANJA: 25,
+
+    /** Linux support for this keycode was added in Gecko 4.0. */
     VK_KANJI: 25,
+
+    /** Linux support for this keycode was added in Gecko 4.0. */
     VK_CONVERT: 28,
+
+    /** Linux support for this keycode was added in Gecko 4.0. */
     VK_NONCONVERT: 29,
+
+    /** Linux support for this keycode was added in Gecko 4.0. */
     VK_ACCEPT: 30,
+
+    /** Linux support for this keycode was added in Gecko 4.0. */
     VK_MODECHANGE: 31,
+
+    /** Linux support for this keycode was added in Gecko 4.0. */
     VK_SELECT: 41,
+
+    /** Linux support for this keycode was added in Gecko 4.0. */
     VK_PRINT: 42,
+
+    /** Linux support for this keycode was added in Gecko 4.0. */
     VK_EXECUTE: 43,
+
+    /** Linux support for this keycode was added in Gecko 4.0.	 */
     VK_SLEEP: 95
   };
   var BACKENDS = {
@@ -1603,6 +2119,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     tileSet: null,
     tileColorize: false
   };
+  /**
+   * @class Visual map display
+   */
 
   var Display =
   /*#__PURE__*/
@@ -1613,7 +2132,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
 
       this._data = {};
-      this._dirty = false;
+      this._dirty = false; // false = nothing, true = all, object = dirty cells
+
       this._options = {};
       options = Object.assign({}, DEFAULT_OPTIONS, options);
       this.setOptions(options);
@@ -1622,6 +2142,13 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       this._backend.schedule(this._tick);
     }
+    /**
+     * Debug helper, ideal as a map generator callback. Always bound to this.
+     * @param {int} x
+     * @param {int} y
+     * @param {int} what
+     */
+
 
     var _proto8 = Display.prototype;
 
@@ -1629,11 +2156,19 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       var colors = [this._options.bg, this._options.fg];
       this.draw(x, y, null, null, colors[what % colors.length]);
     };
+    /**
+     * Clear the whole display (cover it with background color)
+     */
+
 
     _proto8.clear = function clear() {
       this._data = {};
       this._dirty = true;
     };
+    /**
+     * @see ROT.Display
+     */
+
 
     _proto8.setOptions = function setOptions(options) {
       Object.assign(this._options, options);
@@ -1651,18 +2186,40 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return this;
     };
+    /**
+     * Returns currently set options
+     */
+
 
     _proto8.getOptions = function getOptions() {
       return this._options;
     };
+    /**
+     * Returns the DOM node of this display
+     */
+
 
     _proto8.getContainer = function getContainer() {
       return this._backend.getContainer();
     };
+    /**
+     * Compute the maximum width/height to fit into a set of given constraints
+     * @param {int} availWidth Maximum allowed pixel width
+     * @param {int} availHeight Maximum allowed pixel height
+     * @returns {int[2]} cellWidth,cellHeight
+     */
+
 
     _proto8.computeSize = function computeSize(availWidth, availHeight) {
       return this._backend.computeSize(availWidth, availHeight);
     };
+    /**
+     * Compute the maximum font size to fit into a set of given constraints
+     * @param {int} availWidth Maximum allowed pixel width
+     * @param {int} availHeight Maximum allowed pixel height
+     * @returns {int} fontSize
+     */
+
 
     _proto8.computeFontSize = function computeFontSize(availWidth, availHeight) {
       return this._backend.computeFontSize(availWidth, availHeight);
@@ -1673,6 +2230,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       var height = Math.floor(availHeight / this._options.height);
       return [width, height];
     };
+    /**
+     * Convert a DOM event (mouse or touch) to map coordinates. Uses first touch for multi-touch.
+     * @param {Event} e event
+     * @returns {int[2]} -1 for values outside of the canvas
+     */
+
 
     _proto8.eventToPosition = function eventToPosition(e) {
       var x, y;
@@ -1687,6 +2250,14 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return this._backend.eventToPosition(x, y);
     };
+    /**
+     * @param {int} x
+     * @param {int} y
+     * @param {string || string[]} ch One or more chars (will be overlapping themselves)
+     * @param {string} [fg] foreground color
+     * @param {string} [bg] background color
+     */
+
 
     _proto8.draw = function draw(x, y, ch, fg, bg) {
       if (!fg) {
@@ -1702,14 +2273,25 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       if (this._dirty === true) {
         return;
-      }
+      } // will already redraw everything 
+
 
       if (!this._dirty) {
         this._dirty = {};
-      }
+      } // first!
+
 
       this._dirty[key] = true;
     };
+    /**
+     * Draws a text at given position. Optionally wraps at a maximum length. Currently does not work with hex layout.
+     * @param {int} x
+     * @param {int} y
+     * @param {string} text May contain color/background format specifiers, %c{name}/%b{name}, both optional. %c{}/%b{} resets to default.
+     * @param {int} [maxWidth] wrap at what width?
+     * @returns {int} lines drawn
+     */
+
 
     _proto8.drawText = function drawText(x, y, text, maxWidth) {
       var fg = null;
@@ -1725,6 +2307,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       var tokens = tokenize(text, maxWidth);
 
       while (tokens.length) {
+        // interpret tokenized opcode stream
         var token = tokens.shift();
 
         switch (token.type) {
@@ -1736,17 +2319,24 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
             for (var i = 0; i < token.value.length; i++) {
               var cc = token.value.charCodeAt(i);
-              var c = token.value.charAt(i);
-              isFullWidth = cc > 0xff00 && cc < 0xff61 || cc > 0xffdc && cc < 0xffe8 || cc > 0xffee;
-              isSpace = c.charCodeAt(0) == 0x20 || c.charCodeAt(0) == 0x3000;
+              var c = token.value.charAt(i); // Assign to `true` when the current char is full-width.
+
+              isFullWidth = cc > 0xff00 && cc < 0xff61 || cc > 0xffdc && cc < 0xffe8 || cc > 0xffee; // Current char is space, whatever full-width or half-width both are OK.
+
+              isSpace = c.charCodeAt(0) == 0x20 || c.charCodeAt(0) == 0x3000; // The previous char is full-width and
+              // current char is nether half-width nor a space.
 
               if (isPrevFullWidth && !isFullWidth && !isSpace) {
                 cx++;
-              }
+              } // add an extra position
+              // The current char is full-width and
+              // the previous char is not a space.
+
 
               if (isFullWidth && !isPrevSpace) {
                 cx++;
-              }
+              } // add an extra position
+
 
               this.draw(cx++, cy, c, fg, bg);
               isPrevSpace = isSpace;
@@ -1773,6 +2363,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return lines;
     };
+    /**
+     * Timer tick: update dirty parts
+     */
+
 
     _proto8._tick = function _tick() {
       this._backend.schedule(this._tick);
@@ -1782,12 +2376,15 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
 
       if (this._dirty === true) {
+        // draw all
         this._backend.clear();
 
         for (var id in this._data) {
           this._draw(id, false);
-        }
+        } // redraw cached data 
+
       } else {
+        // draw only dirty 
         for (var key in this._dirty) {
           this._draw(key, true);
         }
@@ -1795,6 +2392,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       this._dirty = false;
     };
+    /**
+     * @param {string} key What to draw
+     * @param {bool} clearBefore Is it necessary to clean before?
+     */
+
 
     _proto8._draw = function _draw(key, clearBefore) {
       var data = this._data[key];
@@ -1813,6 +2415,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
   Display.Hex = Hex;
   Display.Tile = Tile;
   Display.Term = Term;
+  /**
+   * @class (Markov process)-based string generator.
+   * Copied from a <a href="http://www.roguebasin.roguelikedevelopment.org/index.php?title=Names_from_a_high_order_Markov_Process_and_a_simplified_Katz_back-off_scheme">RogueBasin article</a>.
+   * Offers configurable order and prior.
+   */
 
   var StringGenerator =
   /*#__PURE__*/
@@ -1836,6 +2443,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       this._priorValues[this._boundary] = this._options.prior;
       this._data = {};
     }
+    /**
+     * Remove all learning data
+     */
+
 
     var _proto9 = StringGenerator.prototype;
 
@@ -1843,6 +2454,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       this._data = {};
       this._priorValues = {};
     };
+    /**
+     * @returns {string} Generated string
+     */
+
 
     _proto9.generate = function generate() {
       var result = [this._sample(this._prefix)];
@@ -1853,6 +2468,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return this._join(result.slice(0, -1));
     };
+    /**
+     * Observe (learn) a string from a training set
+     */
+
 
     _proto9.observe = function observe(string) {
       var tokens = this._split(string);
@@ -1862,6 +2481,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
 
       tokens = this._prefix.concat(tokens).concat(this._suffix);
+      /* add boundary symbols */
 
       for (var _i2 = this._options.order; _i2 < tokens.length; _i2++) {
         var context = tokens.slice(_i2 - this._options.order, _i2);
@@ -1878,7 +2498,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     _proto9.getStats = function getStats() {
       var parts = [];
       var priorCount = Object.keys(this._priorValues).length;
-      priorCount--;
+      priorCount--; // boundary
+
       parts.push("distinct samples: " + priorCount);
       var dataCount = Object.keys(this._data).length;
       var eventCount = 0;
@@ -1891,14 +2512,29 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       parts.push("dictionary size (events): " + eventCount);
       return parts.join(", ");
     };
+    /**
+     * @param {string}
+     * @returns {string[]}
+     */
+
 
     _proto9._split = function _split(str) {
       return str.split(this._options.words ? /\s+/ : "");
     };
+    /**
+     * @param {string[]}
+     * @returns {string}
+     */
+
 
     _proto9._join = function _join(arr) {
       return arr.join(this._options.words ? " " : "");
     };
+    /**
+     * @param {string[]} context
+     * @param {string} event
+     */
+
 
     _proto9._observeEvent = function _observeEvent(context, event) {
       var key = this._join(context);
@@ -1915,6 +2551,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       data[event]++;
     };
+    /**
+     * @param {string[]}
+     * @returns {string}
+     */
+
 
     _proto9._sample = function _sample(context) {
       context = this._backoff(context);
@@ -1938,6 +2579,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return RNG$1.getWeightedValue(available);
     };
+    /**
+     * @param {string[]}
+     * @returns {string[]}
+     */
+
 
     _proto9._backoff = function _backoff(context) {
       if (context.length > this._options.order) {
@@ -1959,23 +2605,39 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
   var EventQueue =
   /*#__PURE__*/
   function () {
+    /**
+     * @class Generic event queue: stores events and retrieves them based on their time
+     */
     function EventQueue() {
       this._time = 0;
       this._events = [];
       this._eventTimes = [];
     }
+    /**
+     * @returns {number} Elapsed time
+     */
+
 
     var _proto10 = EventQueue.prototype;
 
     _proto10.getTime = function getTime() {
       return this._time;
     };
+    /**
+     * Clear all scheduled events
+     */
+
 
     _proto10.clear = function clear() {
       this._events = [];
       this._eventTimes = [];
       return this;
     };
+    /**
+     * @param {?} event
+     * @param {number} time
+     */
+
 
     _proto10.add = function add(event, time) {
       var index = this._events.length;
@@ -1991,6 +2653,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       this._eventTimes.splice(index, 0, time);
     };
+    /**
+     * Locates the nearest event, advances time if necessary. Returns that event and removes it from the queue.
+     * @returns {? || null} The event previously added by addEvent, null if no event available
+     */
+
 
     _proto10.get = function get() {
       if (!this._events.length) {
@@ -2000,6 +2667,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       var time = this._eventTimes.splice(0, 1)[0];
 
       if (time > 0) {
+        /* advance */
         this._time += time;
 
         for (var i = 0; i < this._eventTimes.length; i++) {
@@ -2009,6 +2677,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return this._events.splice(0, 1)[0];
     };
+    /**
+     * Get the time associated with the given event
+     * @param {?} event
+     * @returns {number} time
+     */
+
 
     _proto10.getEventTime = function getEventTime(event) {
       var index = this._events.indexOf(event);
@@ -2019,6 +2693,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return this._eventTimes[index];
     };
+    /**
+     * Remove an event from the queue
+     * @param {?} event
+     * @returns {bool} success?
+     */
+
 
     _proto10.remove = function remove(event) {
       var index = this._events.indexOf(event);
@@ -2032,6 +2712,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return true;
     };
 
+    /**
+     * Remove an event from the queue
+     * @param {int} index
+     */
     _proto10._remove = function _remove(index) {
       this._events.splice(index, 1);
 
@@ -2044,17 +2728,29 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
   var Scheduler =
   /*#__PURE__*/
   function () {
+    /**
+     * @class Abstract scheduler
+     */
     function Scheduler() {
       this._queue = new EventQueue();
       this._repeat = [];
       this._current = null;
     }
+    /**
+     * @see ROT.EventQueue#getTime
+     */
+
 
     var _proto11 = Scheduler.prototype;
 
     _proto11.getTime = function getTime() {
       return this._queue.getTime();
     };
+    /**
+     * @param {?} item
+     * @param {bool} repeat
+     */
+
 
     _proto11.add = function add(item, repeat) {
       if (repeat) {
@@ -2063,10 +2759,20 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return this;
     };
+    /**
+     * Get the time the given item is scheduled for
+     * @param {?} item
+     * @returns {number} time
+     */
+
 
     _proto11.getTimeOf = function getTimeOf(item) {
       return this._queue.getEventTime(item);
     };
+    /**
+     * Clear all items
+     */
+
 
     _proto11.clear = function clear() {
       this._queue.clear();
@@ -2075,6 +2781,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       this._current = null;
       return this;
     };
+    /**
+     * Remove a previously added item
+     * @param {?} item
+     * @returns {bool} successful?
+     */
+
 
     _proto11.remove = function remove(item) {
       var result = this._queue.remove(item);
@@ -2091,6 +2803,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return result;
     };
+    /**
+     * Schedule next item
+     * @returns {?}
+     */
+
 
     _proto11.next = function next() {
       this._current = this._queue.get();
@@ -2099,6 +2816,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return Scheduler;
   }();
+  /**
+   * @class Simple fair scheduler (round-robin style)
+   */
+
 
   var Simple =
   /*#__PURE__*/
@@ -2127,6 +2848,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return Simple;
   }(Scheduler);
+  /**
+   * @class Speed-based scheduler
+   */
+
 
   var Speed =
   /*#__PURE__*/
@@ -2139,11 +2864,21 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     var _proto13 = Speed.prototype;
 
+    /**
+     * @param {object} item anything with "getSpeed" method
+     * @param {bool} repeat
+     * @param {number} [time=1/item.getSpeed()]
+     * @see ROT.Scheduler#add
+     */
     _proto13.add = function add(item, repeat, time) {
       this._queue.add(item, time !== undefined ? time : 1 / item.getSpeed());
 
       return _Scheduler2.prototype.add.call(this, item, repeat);
     };
+    /**
+     * @see ROT.Scheduler#next
+     */
+
 
     _proto13.next = function next() {
       if (this._current && this._repeat.indexOf(this._current) != -1) {
@@ -2155,6 +2890,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return Speed;
   }(Scheduler);
+  /**
+   * @class Action-based scheduler
+   * @augments ROT.Scheduler
+   */
+
 
   var Action =
   /*#__PURE__*/
@@ -2166,9 +2906,20 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       _this6 = _Scheduler3.call(this) || this;
       _this6._defaultDuration = 1;
+      /* for newly added */
+
       _this6._duration = _this6._defaultDuration;
+      /* for this._current */
+
       return _this6;
     }
+    /**
+     * @param {object} item
+     * @param {bool} repeat
+     * @param {number} [time=1]
+     * @see ROT.Scheduler#add
+     */
+
 
     var _proto14 = Action.prototype;
 
@@ -2190,6 +2941,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return _Scheduler3.prototype.remove.call(this, item);
     };
+    /**
+     * @see ROT.Scheduler#next
+     */
+
 
     _proto14.next = function next() {
       if (this._current && this._repeat.indexOf(this._current) != -1) {
@@ -2200,6 +2955,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return _Scheduler3.prototype.next.call(this);
     };
+    /**
+     * Set duration for the active item
+     */
+
 
     _proto14.setDuration = function setDuration(time) {
       if (this._current) {
@@ -2221,6 +2980,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
   var FOV =
   /*#__PURE__*/
   function () {
+    /**
+     * @class Abstract FOV algorithm
+     * @param {function} lightPassesCallback Does the light pass through x,y?
+     * @param {object} [options]
+     * @param {int} [options.topology=8] 4/6/8
+     */
     function FOV(lightPassesCallback, options) {
       if (options === void 0) {
         options = {};
@@ -2231,6 +2996,13 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         topology: 8
       }, options);
     }
+    /**
+     * Return all neighbors in a concentric ring
+     * @param {int} cx center-x
+     * @param {int} cy center-y
+     * @param {int} r range
+     */
+
 
     var _proto15 = FOV.prototype;
 
@@ -2261,9 +3033,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
           throw new Error("Incorrect topology for FOV computation");
           break;
       }
+      /* starting neighbor */
+
 
       var x = cx + startOffset[0] * r;
       var y = cy + startOffset[1] * r;
+      /* circle */
 
       for (var i = 0; i < dirs.length; i++) {
         for (var j = 0; j < r * countFactor; j++) {
@@ -2278,6 +3053,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return FOV;
   }();
+  /**
+   * @class Discrete shadowcasting algorithm. Obsoleted by Precise shadowcasting.
+   * @augments ROT.FOV
+   */
+
 
   var DiscreteShadowcasting =
   /*#__PURE__*/
@@ -2291,14 +3071,19 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     var _proto16 = DiscreteShadowcasting.prototype;
 
     _proto16.compute = function compute(x, y, R, callback) {
+      /* this place is always visible */
       callback(x, y, 0, 1);
+      /* standing in a dark place. FIXME is this a good idea?  */
 
       if (!this._lightPasses(x, y)) {
         return;
       }
+      /* start and end angles */
+
 
       var DATA = [];
       var A, B, cx, cy, blocks;
+      /* analyze surrounding cells in concentric rings, starting from the center */
 
       for (var r = 1; r <= R; r++) {
         var neighbors = this._getCircle(x, y, r);
@@ -2319,9 +3104,22 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
           if (DATA.length == 2 && DATA[0] == 0 && DATA[1] == 360) {
             return;
           }
+          /* cutoff? */
+
         }
+        /* for all cells in this ring */
+
       }
+      /* for all rings */
+
     };
+    /**
+     * @param {int} A start angle
+     * @param {int} B end angle
+     * @param {bool} blocks Does current cell block visibility?
+     * @param {int[][]} DATA shadowed angle pairs
+     */
+
 
     _proto16._visibleCoords = function _visibleCoords(A, B, blocks, DATA) {
       if (A < 0) {
@@ -2339,6 +3137,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
 
       if (index == DATA.length) {
+        /* completely new shadow */
         if (blocks) {
           DATA.push(A, B);
         }
@@ -2349,6 +3148,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       var count = 0;
 
       if (index % 2) {
+        /* this shadow starts in an existing shadow, or within its ending boundary */
         while (index < DATA.length && DATA[index] < B) {
           index++;
           count++;
@@ -2368,10 +3168,13 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
         return true;
       } else {
+        /* this shadow starts outside an existing shadow, or within a starting boundary */
         while (index < DATA.length && DATA[index] < B) {
           index++;
           count++;
         }
+        /* visible when outside an existing shadow, or when overlapping */
+
 
         if (A == DATA[index - count] && count == 1) {
           return false;
@@ -2391,6 +3194,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return DiscreteShadowcasting;
   }(FOV);
+  /**
+   * @class Precise shadowcasting algorithm
+   * @augments ROT.FOV
+   */
+
 
   var PreciseShadowcasting =
   /*#__PURE__*/
@@ -2404,14 +3212,19 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     var _proto17 = PreciseShadowcasting.prototype;
 
     _proto17.compute = function compute(x, y, R, callback) {
+      /* this place is always visible */
       callback(x, y, 0, 1);
+      /* standing in a dark place. FIXME is this a good idea?  */
 
       if (!this._lightPasses(x, y)) {
         return;
       }
+      /* list of all shadows */
+
 
       var SHADOWS = [];
       var cx, cy, blocks, A1, A2, visibility;
+      /* analyze surrounding cells in concentric rings, starting from the center */
 
       for (var r = 1; r <= R; r++) {
         var neighbors = this._getCircle(x, y, r);
@@ -2421,6 +3234,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         for (var i = 0; i < neighborCount; i++) {
           cx = neighbors[i][0];
           cy = neighbors[i][1];
+          /* shift half-an-angle backwards to maintain consistency of 0-th cells */
+
           A1 = [i ? 2 * i - 1 : 2 * neighborCount - 1, 2 * neighborCount];
           A2 = [2 * i + 1, 2 * neighborCount];
           blocks = !this._lightPasses(cx, cy);
@@ -2433,18 +3248,34 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
           if (SHADOWS.length == 2 && SHADOWS[0][0] == 0 && SHADOWS[1][0] == SHADOWS[1][1]) {
             return;
           }
+          /* cutoff? */
+
         }
+        /* for all cells in this ring */
+
       }
+      /* for all rings */
+
     };
+    /**
+     * @param {int[2]} A1 arc start
+     * @param {int[2]} A2 arc end
+     * @param {bool} blocks Does current arc block visibility?
+     * @param {int[][]} SHADOWS list of active shadows
+     */
+
 
     _proto17._checkVisibility = function _checkVisibility(A1, A2, blocks, SHADOWS) {
       if (A1[0] > A2[0]) {
+        /* split into two sub-arcs */
         var v1 = this._checkVisibility(A1, [A1[1], A1[1]], blocks, SHADOWS);
 
         var v2 = this._checkVisibility([0, 1], A2, blocks, SHADOWS);
 
         return (v1 + v2) / 2;
       }
+      /* index1: first shadow >= A1 */
+
 
       var index1 = 0,
           edge1 = false;
@@ -2454,6 +3285,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         var diff = old[0] * A1[1] - A1[0] * old[1];
 
         if (diff >= 0) {
+          /* old >= A1 */
           if (diff == 0 && !(index1 % 2)) {
             edge1 = true;
           }
@@ -2463,6 +3295,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
         index1++;
       }
+      /* index2: last shadow <= A2 */
+
 
       var index2 = SHADOWS.length,
           edge2 = false;
@@ -2473,6 +3307,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         var _diff = A2[0] * _old[1] - _old[0] * A2[1];
 
         if (_diff >= 0) {
+          /* old <= A2 */
           if (_diff == 0 && index2 % 2) {
             edge2 = true;
           }
@@ -2484,22 +3319,30 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       var visible = true;
 
       if (index1 == index2 && (edge1 || edge2)) {
+        /* subset of existing shadow, one of the edges match */
         visible = false;
       } else if (edge1 && edge2 && index1 + 1 == index2 && index2 % 2) {
+        /* completely equivalent with existing shadow */
         visible = false;
       } else if (index1 > index2 && index1 % 2) {
+        /* subset of existing shadow, not touching */
         visible = false;
       }
 
       if (!visible) {
         return 0;
       }
+      /* fast case: not visible */
+
 
       var visibleLength;
+      /* compute the length of visible arc, adjust list of shadows (if blocking) */
+
       var remove = index2 - index1 + 1;
 
       if (remove % 2) {
         if (index1 % 2) {
+          /* first edge within existing shadow, second outside */
           var P = SHADOWS[index1];
           visibleLength = (A2[0] * P[1] - P[0] * A2[1]) / (P[1] * A2[1]);
 
@@ -2507,6 +3350,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
             SHADOWS.splice(index1, remove, A2);
           }
         } else {
+          /* second edge within existing shadow, first outside */
           var _P = SHADOWS[index2];
           visibleLength = (_P[0] * A1[1] - A1[0] * _P[1]) / (A1[1] * _P[1]);
 
@@ -2516,6 +3360,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         }
       } else {
         if (index1 % 2) {
+          /* both edges within existing shadows */
           var P1 = SHADOWS[index1];
           var P2 = SHADOWS[index2];
           visibleLength = (P2[0] * P1[1] - P1[0] * P2[1]) / (P1[1] * P2[1]);
@@ -2524,11 +3369,13 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
             SHADOWS.splice(index1, remove);
           }
         } else {
+          /* both edges outside existing shadows */
           if (blocks) {
             SHADOWS.splice(index1, remove, A1, A2);
           }
 
           return 1;
+          /* whole arc visible! */
         }
       }
 
@@ -2538,8 +3385,16 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return PreciseShadowcasting;
   }(FOV);
+  /** Octants used for translating recursive shadowcasting offsets */
+
 
   var OCTANTS = [[-1, 0, 0, 1], [0, -1, 1, 0], [0, -1, -1, 0], [-1, 0, 0, -1], [1, 0, 0, -1], [0, 1, -1, 0], [0, 1, 1, 0], [1, 0, 0, 1]];
+  /**
+   * @class Recursive shadowcasting algorithm
+   * Currently only supports 4/8 topologies, not hexagonal.
+   * Based on Peter Harkins' implementation of Björn Bergström's algorithm described here: http://www.roguebasin.com/index.php?title=FOV_using_recursive_shadowcasting
+   * @augments ROT.FOV
+   */
 
   var RecursiveShadowcasting =
   /*#__PURE__*/
@@ -2552,19 +3407,39 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     var _proto18 = RecursiveShadowcasting.prototype;
 
+    /**
+     * Compute visibility for a 360-degree circle
+     * @param {int} x
+     * @param {int} y
+     * @param {int} R Maximum visibility radius
+     * @param {function} callback
+     */
     _proto18.compute = function compute(x, y, R, callback) {
+      //You can always see your own tile
       callback(x, y, 0, 1);
 
       for (var i = 0; i < OCTANTS.length; i++) {
         this._renderOctant(x, y, OCTANTS[i], R, callback);
       }
     };
+    /**
+     * Compute visibility for a 180-degree arc
+     * @param {int} x
+     * @param {int} y
+     * @param {int} R Maximum visibility radius
+     * @param {int} dir Direction to look in (expressed in a ROT.DIRS value);
+     * @param {function} callback
+     */
+
 
     _proto18.compute180 = function compute180(x, y, R, dir, callback) {
+      //You can always see your own tile
       callback(x, y, 0, 1);
-      var previousOctant = (dir - 1 + 8) % 8;
-      var nextPreviousOctant = (dir - 2 + 8) % 8;
-      var nextOctant = (dir + 1 + 8) % 8;
+      var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 180 degrees
+
+      var nextPreviousOctant = (dir - 2 + 8) % 8; //Need to retrieve the previous two octants to render a full 180 degrees
+
+      var nextOctant = (dir + 1 + 8) % 8; //Need to grab to next octant to render a full 180 degrees
 
       this._renderOctant(x, y, OCTANTS[nextPreviousOctant], R, callback);
 
@@ -2575,18 +3450,52 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       this._renderOctant(x, y, OCTANTS[nextOctant], R, callback);
     };
 
+    /**
+     * Compute visibility for a 90-degree arc
+     * @param {int} x
+     * @param {int} y
+     * @param {int} R Maximum visibility radius
+     * @param {int} dir Direction to look in (expressed in a ROT.DIRS value);
+     * @param {function} callback
+     */
     _proto18.compute90 = function compute90(x, y, R, dir, callback) {
+      //You can always see your own tile
       callback(x, y, 0, 1);
-      var previousOctant = (dir - 1 + 8) % 8;
+      var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 90 degrees
 
       this._renderOctant(x, y, OCTANTS[dir], R, callback);
 
       this._renderOctant(x, y, OCTANTS[previousOctant], R, callback);
     };
+    /**
+     * Render one octant (45-degree arc) of the viewshed
+     * @param {int} x
+     * @param {int} y
+     * @param {int} octant Octant to be rendered
+     * @param {int} R Maximum visibility radius
+     * @param {function} callback
+     */
+
 
     _proto18._renderOctant = function _renderOctant(x, y, octant, R, callback) {
+      //Radius incremented by 1 to provide same coverage area as other shadowcasting radiuses
       this._castVisibility(x, y, 1, 1.0, 0.0, R + 1, octant[0], octant[1], octant[2], octant[3], callback);
     };
+    /**
+     * Actually calculates the visibility
+     * @param {int} startX The starting X coordinate
+     * @param {int} startY The starting Y coordinate
+     * @param {int} row The row to render
+     * @param {float} visSlopeStart The slope to start at
+     * @param {float} visSlopeEnd The slope to end at
+     * @param {int} radius The radius to reach out to
+     * @param {int} xx
+     * @param {int} xy
+     * @param {int} yx
+     * @param {int} yy
+     * @param {function} callback The callback to use when we hit a block that is visible
+     */
+
 
     _proto18._castVisibility = function _castVisibility(startX, startY, row, visSlopeStart, visSlopeEnd, radius, xx, xy, yx, yy, callback) {
       if (visSlopeStart < visSlopeEnd) {
@@ -2597,28 +3506,33 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         var dx = -i - 1;
         var dy = -i;
         var blocked = false;
-        var newStart = 0;
+        var newStart = 0; //'Row' could be column, names here assume octant 0 and would be flipped for half the octants
 
         while (dx <= 0) {
-          dx += 1;
+          dx += 1; //Translate from relative coordinates to map coordinates
+
           var mapX = startX + dx * xx + dy * xy;
-          var mapY = startY + dx * yx + dy * yy;
+          var mapY = startY + dx * yx + dy * yy; //Range of the row
+
           var slopeStart = (dx - 0.5) / (dy + 0.5);
-          var slopeEnd = (dx + 0.5) / (dy - 0.5);
+          var slopeEnd = (dx + 0.5) / (dy - 0.5); //Ignore if not yet at left edge of Octant
 
           if (slopeEnd > visSlopeStart) {
             continue;
-          }
+          } //Done if past right edge
+
 
           if (slopeStart < visSlopeEnd) {
             break;
-          }
+          } //If it's in range, it's visible
+
 
           if (dx * dx + dy * dy < radius * radius) {
             callback(mapX, mapY, i, 1);
           }
 
           if (!blocked) {
+            //If tile is a blocking tile, cast around it
             if (!this._lightPasses(mapX, mapY) && i < radius) {
               blocked = true;
 
@@ -2627,10 +3541,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
               newStart = slopeEnd;
             }
           } else {
+            //Keep narrowing if scanning across a block
             if (!this._lightPasses(mapX, mapY)) {
               newStart = slopeEnd;
               continue;
-            }
+            } //Block has ended
+
 
             blocked = false;
             visSlopeStart = newStart;
@@ -2655,6 +3571,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
   var Map =
   /*#__PURE__*/
   function () {
+    /**
+     * @class Base map generator
+     * @param {int} [width=ROT.DEFAULT_WIDTH]
+     * @param {int} [height=ROT.DEFAULT_HEIGHT]
+     */
     function Map(width, height) {
       if (width === void 0) {
         width = DEFAULT_WIDTH;
@@ -2686,6 +3607,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return Map;
   }();
+  /**
+   * @class Simple empty rectangular room
+   * @augments ROT.Map
+   */
+
 
   var Arena =
   /*#__PURE__*/
@@ -2714,6 +3640,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return Arena;
   }(Map);
+  /**
+   * @class Dungeon map: has rooms and corridors
+   * @augments ROT.Map
+   */
+
 
   var Dungeon =
   /*#__PURE__*/
@@ -2728,12 +3659,22 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       _this7._corridors = [];
       return _this7;
     }
+    /**
+     * Get all generated rooms
+     * @returns {ROT.Map.Feature.Room[]}
+     */
+
 
     var _proto21 = Dungeon.prototype;
 
     _proto21.getRooms = function getRooms() {
       return this._rooms;
     };
+    /**
+     * Get all generated corridors
+     * @returns {ROT.Map.Feature.Corridor[]}
+     */
+
 
     _proto21.getCorridors = function getCorridors() {
       return this._corridors;
@@ -2741,8 +3682,23 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return Dungeon;
   }(Map);
+  /**
+   * @class Dungeon feature; has own .create() method
+   */
+
 
   var Feature = function Feature() {};
+  /**
+   * @class Room
+   * @augments ROT.Map.Feature
+   * @param {int} x1
+   * @param {int} y1
+   * @param {int} x2
+   * @param {int} y2
+   * @param {int} [doorX]
+   * @param {int} [doorY]
+   */
+
 
   var Room =
   /*#__PURE__*/
@@ -2766,6 +3722,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return _this8;
     }
 
+    /**
+     * Room of random size, with a given doors and direction
+     */
     Room.createRandomAt = function createRandomAt(x, y, dx, dy, options) {
       var min = options.roomWidth[0];
       var max = options.roomWidth[1];
@@ -2775,22 +3734,26 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       var height = RNG$1.getUniformInt(min, max);
 
       if (dx == 1) {
+        /* to the right */
         var y2 = y - Math.floor(RNG$1.getUniform() * height);
         return new this(x + 1, y2, x + width, y2 + height - 1, x, y);
       }
 
       if (dx == -1) {
+        /* to the left */
         var _y = y - Math.floor(RNG$1.getUniform() * height);
 
         return new this(x - width, _y, x - 1, _y + height - 1, x, y);
       }
 
       if (dy == 1) {
+        /* to the bottom */
         var x2 = x - Math.floor(RNG$1.getUniform() * width);
         return new this(x2, y + 1, x2 + width - 1, y + height, x, y);
       }
 
       if (dy == -1) {
+        /* to the top */
         var _x = x - Math.floor(RNG$1.getUniform() * width);
 
         return new this(_x, y - height, _x + width - 1, y - 1, x, y);
@@ -2798,6 +3761,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       throw new Error("dx or dy must be 1 or -1");
     };
+    /**
+     * Room of random size, positioned around center coords
+     */
+
 
     Room.createRandomCenter = function createRandomCenter(cx, cy, options) {
       var min = options.roomWidth[0];
@@ -2812,6 +3779,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       var y2 = y1 + height - 1;
       return new this(x1, y1, x2, y2);
     };
+    /**
+     * Room of random size within a given dimensions
+     */
+
 
     Room.createRandom = function createRandom(availWidth, availHeight, options) {
       var min = options.roomWidth[0];
@@ -2835,6 +3806,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       this._doors[x + "," + y] = 1;
       return this;
     };
+    /**
+     * @param {function}
+     */
+
 
     _proto22.getDoors = function getDoors(cb) {
       for (var key in this._doors) {
@@ -2899,6 +3874,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return true;
     };
+    /**
+     * @param {function} digCallback Dig callback with a signature (x, y, value). Values: 0 = empty, 1 = wall, 2 = door. Multiple doors are allowed.
+     */
+
 
     _proto22.create = function create(digCallback) {
       var left = this._x1 - 1;
@@ -2944,6 +3923,15 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return Room;
   }(Feature);
+  /**
+   * @class Corridor
+   * @augments ROT.Map.Feature
+   * @param {int} startX
+   * @param {int} startY
+   * @param {int} endX
+   * @param {int} endY
+   */
+
 
   var Corridor =
   /*#__PURE__*/
@@ -3017,14 +4005,35 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
           break;
         }
       }
+      /**
+       * If the length degenerated, this corridor might be invalid
+       */
+
+      /* not supported */
+
 
       if (length == 0) {
         return false;
       }
+      /* length 1 allowed only if the next space is empty */
+
 
       if (length == 1 && isWallCallback(this._endX + dx, this._endY + dy)) {
         return false;
       }
+      /**
+       * We do not want the corridor to crash into a corner of a room;
+       * if any of the ending corners is empty, the N+1th cell of this corridor must be empty too.
+       *
+       * Situation:
+       * #######1
+       * .......?
+       * #######2
+       *
+       * The corridor was dug from left to right.
+       * 1, 2 - problematic corners, ? = N+1th cell (not dug)
+       */
+
 
       var firstCornerBad = !isWallCallback(this._endX + dx + nx, this._endY + dy + ny);
       var secondCornerBad = !isWallCallback(this._endX + dx - nx, this._endY + dy - ny);
@@ -3036,6 +4045,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return true;
     };
+    /**
+     * @param {function} digCallback Dig callback with a signature (x, y, value). Values: 0 = empty.
+     */
+
 
     _proto23.create = function create(digCallback) {
       var sx = this._startX;
@@ -3088,6 +4101,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return Corridor;
   }(Feature);
+  /**
+   * @class Dungeon generator which tries to fill the space evenly. Generates independent rooms and tries to connect them.
+   * @augments ROT.Map.Dungeon
+   */
+
 
   var Uniform =
   /*#__PURE__*/
@@ -3103,19 +4121,34 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         roomHeight: [3, 5],
         roomDugPercentage: 0.1,
         timeLimit: 1000
+        /* we stop after this much time has passed (msec) */
+
       };
       Object.assign(_this10._options, options);
       _this10._map = [];
       _this10._dug = 0;
       _this10._roomAttempts = 20;
+      /* new room is created N-times until is considered as impossible to generate */
+
       _this10._corridorAttempts = 20;
+      /* corridors are tried N-times until the level is considered as impossible to connect */
+
       _this10._connected = [];
+      /* list of already connected rooms */
+
       _this10._unconnected = [];
+      /* list of remaining unconnected rooms */
+
       _this10._digCallback = _this10._digCallback.bind(_assertThisInitialized(_assertThisInitialized(_this10)));
       _this10._canBeDugCallback = _this10._canBeDugCallback.bind(_assertThisInitialized(_assertThisInitialized(_this10)));
       _this10._isWallCallback = _this10._isWallCallback.bind(_assertThisInitialized(_assertThisInitialized(_this10)));
       return _this10;
     }
+    /**
+     * Create a map. If the time limit has been hit, returns null.
+     * @see ROT.Map#create
+     */
+
 
     var _proto24 = Uniform.prototype;
 
@@ -3128,6 +4161,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         if (t2 - t1 > this._options.timeLimit) {
           return null;
         }
+        /* time limit! */
+
 
         this._map = this._fillMap(1);
         this._dug = 0;
@@ -3155,6 +4190,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return this;
     };
+    /**
+     * Generates a suitable amount of rooms
+     */
+
 
     _proto24._generateRooms = function _generateRooms() {
       var w = this._width - 2;
@@ -3167,8 +4206,16 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         if (this._dug / (w * h) > this._options.roomDugPercentage) {
           break;
         }
+        /* achieved requested amount of free space */
+
       } while (room);
+      /* either enough rooms, or not able to generate more of them :) */
+
     };
+    /**
+     * Try to generate one room
+     */
+
 
     _proto24._generateRoom = function _generateRoom() {
       var count = 0;
@@ -3187,9 +4234,16 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
         return room;
       }
+      /* no room was generated in a given number of attempts */
+
 
       return null;
     };
+    /**
+     * Generates connectors beween rooms
+     * @returns {bool} success Was this attempt successfull?
+     */
+
 
     _proto24._generateCorridors = function _generateCorridors() {
       var cnt = 0;
@@ -3197,6 +4251,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       while (cnt < this._corridorAttempts) {
         cnt++;
         this._corridors = [];
+        /* dig rooms into a clear map */
+
         this._map = this._fillMap(1);
 
         for (var i = 0; i < this._rooms.length; i++) {
@@ -3211,19 +4267,26 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         if (this._unconnected.length) {
           this._connected.push(this._unconnected.pop());
         }
+        /* first one is always connected */
+
 
         while (1) {
+          /* 1. pick random connected room */
           var connected = RNG$1.getItem(this._connected);
 
           if (!connected) {
             break;
           }
+          /* 2. find closest unconnected */
+
 
           var room1 = this._closestRoom(this._unconnected, connected);
 
           if (!room1) {
             break;
           }
+          /* 3. connect it to closest connected */
+
 
           var room2 = this._closestRoom(this._connected, room1);
 
@@ -3236,16 +4299,23 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
           if (!ok) {
             break;
           }
+          /* stop connecting, re-shuffle */
+
 
           if (!this._unconnected.length) {
             return true;
           }
+          /* done; no rooms remain */
+
         }
       }
 
       return false;
     };
 
+    /**
+     * For a given room, find the closest one from the list
+     */
     _proto24._closestRoom = function _closestRoom(rooms, room) {
       var dist = Infinity;
       var center = room.getCenter();
@@ -3268,6 +4338,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     };
 
     _proto24._connectRooms = function _connectRooms(room1, room2) {
+      /*
+          room1.debug();
+          room2.debug();
+      */
       var center1 = room1.getCenter();
       var center2 = room2.getCenter();
       var diffX = center2[0] - center1[0];
@@ -3277,12 +4351,14 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       var dirIndex1, dirIndex2, min, max, index;
 
       if (Math.abs(diffX) < Math.abs(diffY)) {
+        /* first try connecting north-south walls */
         dirIndex1 = diffY > 0 ? 2 : 0;
         dirIndex2 = (dirIndex1 + 2) % 4;
         min = room2.getLeft();
         max = room2.getRight();
         index = 0;
       } else {
+        /* first try connecting east-west walls */
         dirIndex1 = diffX > 0 ? 1 : 3;
         dirIndex2 = (dirIndex1 + 2) % 4;
         min = room2.getTop();
@@ -3291,12 +4367,14 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
 
       start = this._placeInWall(room1, dirIndex1);
+      /* corridor will start here */
 
       if (!start) {
         return false;
       }
 
       if (start[index] >= min && start[index] <= max) {
+        /* possible to connect with straight line (I-like) */
         end = start.slice();
         var value = 0;
 
@@ -3322,6 +4400,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
         this._digLine([start, end]);
       } else if (start[index] < min - 1 || start[index] > max + 1) {
+        /* need to switch target wall (L-like) */
         var diff = start[index] - center2[index];
         var rotation = 0;
 
@@ -3351,6 +4430,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
         this._digLine([start, mid, end]);
       } else {
+        /* use current wall pair, but adjust the line in the middle (S-like) */
         var _index4 = (index + 1) % 2;
 
         end = this._placeInWall(room2, dirIndex2);
@@ -3453,6 +4533,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return avail.length ? RNG$1.getItem(avail) : null;
     };
+    /**
+     * Dig a polyline.
+     */
+
 
     _proto24._digLine = function _digLine(points) {
       for (var i = 1; i < points.length; i++) {
@@ -3491,6 +4575,17 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return Uniform;
   }(Dungeon);
+  /**
+   * @class Cellular automaton map generator
+   * @augments ROT.Map
+   * @param {int} [width=ROT.DEFAULT_WIDTH]
+   * @param {int} [height=ROT.DEFAULT_HEIGHT]
+   * @param {object} [options] Options
+   * @param {int[]} [options.born] List of neighbor counts for a new cell to be born in empty space
+   * @param {int[]} [options.survive] List of neighbor counts for an existing  cell to survive
+   * @param {int} [options.topology] Topology 4 or 6 or 8
+   */
+
 
   var Cellular =
   /*#__PURE__*/
@@ -3517,6 +4612,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       _this11._map = _this11._fillMap(0);
       return _this11;
     }
+    /**
+     * Fill the map with random values
+     * @param {float} probability Probability for a cell to become alive; 0 = all empty, 1 = all full
+     */
+
 
     var _proto25 = Cellular.prototype;
 
@@ -3529,6 +4629,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return this;
     };
+    /**
+     * Change options.
+     * @see ROT.Map.Cellular
+     */
+
 
     _proto25.setOptions = function setOptions(options) {
       Object.assign(this._options, options);
@@ -3559,8 +4664,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
           var ncount = this._getNeighbors(i, j);
 
           if (cur && survive.indexOf(ncount) != -1) {
+            /* survive */
             newMap[i][j] = 1;
           } else if (!cur && born.indexOf(ncount) != -1) {
+            /* born */
             newMap[i][j] = 1;
           }
         }
@@ -3585,6 +4692,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         }
       }
     };
+    /**
+     * Get neighbor count at [i,j] in this._map
+     */
+
 
     _proto25._getNeighbors = function _getNeighbors(cx, cy) {
       var result = 0;
@@ -3603,11 +4714,19 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return result;
     };
+    /**
+     * Make sure every non-wall space is accessible.
+     * @param {function} callback to call to display map when do
+     * @param {int} value to consider empty space - defaults to 0
+     * @param {function} callback to call when a new connection is made
+     */
+
 
     _proto25.connect = function connect(callback, value, connectionCallback) {
       if (!value) value = 0;
       var allFreeSpace = [];
-      var notConnected = {};
+      var notConnected = {}; // find all free space
+
       var widthStep = 1;
       var widthStarts = [0, 0];
 
@@ -3632,22 +4751,27 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       var connected = {};
       connected[key] = start;
-      delete notConnected[key];
+      delete notConnected[key]; // find what's connected to the starting point
 
       this._findConnected(connected, notConnected, [start], false, value);
 
       while (Object.keys(notConnected).length > 0) {
+        // find two points from notConnected to connected
         var _p = this._getFromTo(connected, notConnected);
 
-        var from = _p[0];
-        var to = _p[1];
+        var from = _p[0]; // notConnected
+
+        var to = _p[1]; // connected
+        // find everything connected to the starting point
+
         var local = {};
         local[this._pointKey(from)] = from;
 
-        this._findConnected(local, notConnected, [from], true, value);
+        this._findConnected(local, notConnected, [from], true, value); // connect to a connected cell
+
 
         var tunnelFn = this._options.topology == 6 ? this._tunnelToConnected6 : this._tunnelToConnected;
-        tunnelFn.call(this, to, from, connected, notConnected, value, connectionCallback);
+        tunnelFn.call(this, to, from, connected, notConnected, value, connectionCallback); // now all of local is connected
 
         for (var k in local) {
           var pp = local[k];
@@ -3659,6 +4783,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       callback && this._serviceCallback(callback);
     };
+    /**
+     * Find random points to connect. Search for the closest point in the larger space.
+     * This is to minimize the length of the passage while maintaining good performance.
+     */
+
 
     _proto25._getFromTo = function _getFromTo(connected, notConnected) {
       var from = [0, 0],
@@ -3683,7 +4812,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         if (d < 64) {
           break;
         }
-      }
+      } // console.log(">>> connected=" + to + " notConnected=" + from + " dist=" + d);
+
 
       return [from, to];
     };
@@ -3755,7 +4885,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       if (connectionCallback && a[0] < b[0]) {
         connectionCallback(a, [b[0], a[1]]);
-      }
+      } // x is now fixed
+
 
       var x = b[0];
 
@@ -3791,7 +4922,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       } else {
         a = to;
         b = from;
-      }
+      } // tunnel diagonally until horizontally level
+
 
       var xx = a[0];
       var yy = a[1];
@@ -3812,8 +4944,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         } else if (xx > b[0]) {
           xx -= stepWidth;
         } else if (b[1] % 2) {
+          // Won't step outside map if destination on is map's right edge
           xx -= stepWidth;
         } else {
+          // ditto for left edge
           xx += stepWidth;
         }
 
@@ -3846,6 +4980,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     "room": Room,
     "corridor": Corridor
   };
+  /**
+   * Random dungeon generator using human-like digging patterns.
+   * Heavily based on Mike Anderson's ideas from the "Tyrant" algo, mentioned at
+   * http://www.roguebasin.roguelikedevelopment.org/index.php?title=Dungeon-Building_Algorithm.
+   */
 
   var Digger =
   /*#__PURE__*/
@@ -3866,6 +5005,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         corridorLength: [3, 10],
         dugPercentage: 0.2,
         timeLimit: 1000
+        /* we stop after this much time has passed (msec) */
+
       }, options);
       _this12._features = {
         "room": 4,
@@ -3873,7 +5014,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       };
       _this12._map = [];
       _this12._featureAttempts = 20;
+      /* how many times do we try to create a feature on a suitable wall */
+
       _this12._walls = {};
+      /* these are available for digging */
+
       _this12._dug = 0;
       _this12._digCallback = _this12._digCallback.bind(_assertThisInitialized(_assertThisInitialized(_this12)));
       _this12._canBeDugCallback = _this12._canBeDugCallback.bind(_assertThisInitialized(_assertThisInitialized(_this12)));
@@ -3904,12 +5049,16 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         if (t2 - t1 > this._options.timeLimit) {
           break;
         }
+        /* find a good wall */
+
 
         var wall = this._findWall();
 
         if (!wall) {
           break;
         }
+        /* no more walls */
+
 
         var parts = wall.split(",");
         var x = parseInt(parts[0]);
@@ -3920,6 +5069,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         if (!dir) {
           continue;
         }
+        /* this wall is not suitable */
+        //		console.log("wall", x, y);
+
+        /* try adding a feature */
+
 
         var featureAttempts = 0;
 
@@ -3927,6 +5081,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
           featureAttempts++;
 
           if (this._tryFeature(x, y, dir[0], dir[1])) {
+            /* feature added */
+            //if (this._rooms.length + this._corridors.length == 2) { this._rooms[0].addDoor(x, y); } /* first room oficially has doors */
             this._removeSurroundingWalls(x, y);
 
             this._removeSurroundingWalls(x - dir[0], y - dir[1]);
@@ -3941,6 +5097,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
           }
         }
       } while (this._dug / area < this._options.dugPercentage || priorityWalls);
+      /* fixme number of priority walls */
+
 
       this._addDoors();
 
@@ -3959,9 +5117,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     _proto26._digCallback = function _digCallback(x, y, value) {
       if (value == 0 || value == 2) {
+        /* empty */
         this._map[x][y] = 0;
         this._dug++;
       } else {
+        /* wall */
         this._walls[x + "," + y] = 1;
       }
     };
@@ -3995,6 +5155,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       room.create(this._digCallback);
     };
+    /**
+     * Get a suitable wall
+     */
+
 
     _proto26._findWall = function _findWall() {
       var prio1 = [];
@@ -4015,11 +5179,19 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       if (!arr.length) {
         return null;
       }
+      /* no walls :/ */
 
-      var id = RNG$1.getItem(arr.sort());
+
+      var id = RNG$1.getItem(arr.sort()); // sort to make the order deterministic
+
       delete this._walls[id];
       return id;
     };
+    /**
+     * Tries adding a feature
+     * @returns {bool} was this a successful try?
+     */
+
 
     _proto26._tryFeature = function _tryFeature(x, y, dx, dy) {
       var featureName = RNG$1.getWeightedValue(this._features);
@@ -4027,10 +5199,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       var feature = ctor.createRandomAt(x, y, dx, dy, this._options);
 
       if (!feature.isValid(this._isWallCallback, this._canBeDugCallback)) {
+        //		console.log("not valid");
+        //		feature.debug();
         return false;
       }
 
-      feature.create(this._digCallback);
+      feature.create(this._digCallback); //	feature.debug();
 
       if (feature instanceof Room) {
         this._rooms.push(feature);
@@ -4058,6 +5232,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         delete this._walls[x + "," + y];
       }
     };
+    /**
+     * Returns vector in "digging" direction, or false, if this does not exist (or is not unique)
+     */
+
 
     _proto26._getDiggingDirection = function _getDiggingDirection(cx, cy) {
       if (cx <= 0 || cy <= 0 || cx >= this._width - 1 || cy >= this._height - 1) {
@@ -4073,6 +5251,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         var y = cy + delta[1];
 
         if (!this._map[x][y]) {
+          /* there already is another empty neighbor! */
           if (result) {
             return null;
           }
@@ -4080,6 +5259,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
           result = delta;
         }
       }
+      /* no empty neighbor */
+
 
       if (!result) {
         return null;
@@ -4087,6 +5268,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return [-result[0], -result[1]];
     };
+    /**
+     * Find empty spaces surrounding rooms, and apply doors.
+     */
+
 
     _proto26._addDoors = function _addDoors() {
       var data = this._map;
@@ -4104,6 +5289,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return Digger;
   }(Dungeon);
+  /**
+   * Join lists with "i" and "i+1"
+   */
+
 
   function addToList(i, L, R) {
     R[L[i + 1]] = R[i];
@@ -4111,6 +5300,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     R[i] = i + 1;
     L[i + 1] = i;
   }
+  /**
+   * Remove "i" from its list
+   */
+
 
   function removeFromList(i, L, R) {
     R[L[i]] = R[i];
@@ -4118,6 +5311,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     R[i] = i;
     L[i] = i;
   }
+  /**
+   * Maze generator - Eller's algorithm
+   * See http://homepages.cwi.nl/~tromp/maze.html for explanation
+   */
+
 
   var EllerMaze =
   /*#__PURE__*/
@@ -4144,34 +5342,48 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
 
       L.push(w - 1);
+      /* fake stop-block at the right side */
+
       var j;
 
       for (j = 1; j + 3 < this._height; j += 2) {
+        /* one row */
         for (var _i4 = 0; _i4 < w; _i4++) {
+          /* cell coords (will be always empty) */
           var x = 2 * _i4 + 1;
           var y = j;
           map[x][y] = 0;
+          /* right connection */
 
           if (_i4 != L[_i4 + 1] && RNG$1.getUniform() > rand) {
             addToList(_i4, L, R);
             map[x + 1][y] = 0;
           }
+          /* bottom connection */
+
 
           if (_i4 != L[_i4] && RNG$1.getUniform() > rand) {
+            /* remove connection */
             removeFromList(_i4, L, R);
           } else {
+            /* create connection */
             map[x][y + 1] = 0;
           }
         }
       }
+      /* last row */
+
 
       for (var _i5 = 0; _i5 < w; _i5++) {
+        /* cell coords (will be always empty) */
         var _x2 = 2 * _i5 + 1;
 
         var _y2 = j;
         map[_x2][_y2] = 0;
+        /* right connection */
 
         if (_i5 != L[_i5 + 1] && (_i5 == L[_i5] || RNG$1.getUniform() > rand)) {
+          /* dig right also if the cell is separated, so it gets connected to the rest of maze */
           addToList(_i5, L, R);
           map[_x2 + 1][_y2] = 0;
         }
@@ -4190,6 +5402,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return EllerMaze;
   }(Map);
+  /**
+   * @class Recursively divided maze, http://en.wikipedia.org/wiki/Maze_generation_algorithm#Recursive_division_method
+   * @augments ROT.Map
+   */
+
 
   var DividedMaze =
   /*#__PURE__*/
@@ -4239,6 +5456,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     _proto28._process = function _process() {
       while (this._stack.length) {
         var room = this._stack.shift();
+        /* [left, top, right, bottom] */
+
 
         this._partitionRoom(room);
       }
@@ -4276,6 +5495,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       var walls = [];
       var w = [];
       walls.push(w);
+      /* left part */
 
       for (var _i8 = room[0]; _i8 < x; _i8++) {
         this._map[_i8][y] = 1;
@@ -4284,6 +5504,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       w = [];
       walls.push(w);
+      /* right part */
 
       for (var _i9 = x + 1; _i9 <= room[2]; _i9++) {
         this._map[_i9][y] = 1;
@@ -4292,6 +5513,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       w = [];
       walls.push(w);
+      /* top part */
 
       for (var _j3 = room[1]; _j3 < y; _j3++) {
         this._map[x][_j3] = 1;
@@ -4300,6 +5522,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       w = [];
       walls.push(w);
+      /* bottom part */
 
       for (var _j4 = y + 1; _j4 <= room[3]; _j4++) {
         this._map[x][_j4] = 1;
@@ -4320,16 +5543,29 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
 
       this._stack.push([room[0], room[1], x - 1, y - 1]);
+      /* left top */
+
 
       this._stack.push([x + 1, room[1], room[2], y - 1]);
+      /* right top */
+
 
       this._stack.push([room[0], y + 1, x - 1, room[3]]);
+      /* left bottom */
+
 
       this._stack.push([x + 1, y + 1, room[2], room[3]]);
+      /* right bottom */
+
     };
 
     return DividedMaze;
   }(Map);
+  /**
+   * Icey's Maze generator
+   * See http://www.roguebasin.roguelikedevelopment.org/index.php?title=Simple_maze for explanation
+   */
+
 
   var IceyMaze =
   /*#__PURE__*/
@@ -4460,6 +5696,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return IceyMaze;
   }(Map);
+  /**
+   * Dungeon generator which uses the "orginal" Rogue dungeon generation algorithm. See http://kuoi.com/~kamikaze/GameDesign/art07_rogue_dungeon.php
+   * @author hyakugei
+   */
+
 
   var Rogue =
   /*#__PURE__*/
@@ -4475,8 +5716,13 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       _this15.connectedCells = [];
       options = Object.assign({
         cellWidth: 3,
-        cellHeight: 3
+        cellHeight: 3 //     ie. as an array with min-max values for each direction....
+
       }, options);
+      /*
+      Set the room sizes according to the over-all width of the map,
+      and the cell sizes.
+      */
 
       if (!options.hasOwnProperty("roomWidth")) {
         options["roomWidth"] = _this15._calculateRoomSize(_this15._width, options["cellWidth"]);
@@ -4536,6 +5782,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     };
 
     _proto30._initRooms = function _initRooms() {
+      // create rooms array. This is the "grid" list from the algo.
       for (var i = 0; i < this._options.cellWidth; i++) {
         this.rooms.push([]);
 
@@ -4554,6 +5801,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     };
 
     _proto30._connectRooms = function _connectRooms() {
+      //pick random starting grid
       var cgx = RNG$1.getUniformInt(0, this._options.cellWidth - 1);
       var cgy = RNG$1.getUniformInt(0, this._options.cellHeight - 1);
       var idx;
@@ -4562,9 +5810,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       var found = false;
       var room;
       var otherRoom;
-      var dirToCheck;
+      var dirToCheck; // find  unconnected neighbour cells
 
       do {
+        //dirToCheck = [0, 1, 2, 3, 4, 5, 6, 7];
         dirToCheck = [0, 2, 4, 6];
         dirToCheck = RNG$1.shuffle(dirToCheck);
 
@@ -4585,6 +5834,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
           room = this.rooms[cgx][cgy];
 
           if (room["connections"].length > 0) {
+            // as long as this room doesn't already coonect to me, we are ok with it.
             if (room["connections"][0][0] == ncgx && room["connections"][0][1] == ncgy) {
               break;
             }
@@ -4604,6 +5854,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     };
 
     _proto30._connectUnconnectedRooms = function _connectUnconnectedRooms() {
+      //While there are unconnected rooms, try to connect them to a random connected neighbor
+      //(if a room has no connected neighbors yet, just keep cycling, you'll fill out to it eventually).
       var cw = this._options.cellWidth;
       var ch = this._options.cellHeight;
       this.connectedCells = RNG$1.shuffle(this.connectedCells);
@@ -4658,7 +5910,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto30._createRandomRoomConnections = function _createRandomRoomConnections() {};
+    _proto30._createRandomRoomConnections = function _createRandomRoomConnections() {// Empty for now.
+    };
 
     _proto30._createRooms = function _createRooms() {
       var w = this._width;
@@ -4758,7 +6011,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
           door = ry - 1;
         }
 
-        this.map[rx][door] = 0;
+        this.map[rx][door] = 0; // i'm not setting a specific 'door' tile value right now, just empty space.
       } else {
         ry = RNG$1.getUniformInt(aRoom["y"] + 1, aRoom["y"] + aRoom["height"] - 2);
 
@@ -4770,7 +6023,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
           door = rx + 1;
         }
 
-        this.map[door][ry] = 0;
+        this.map[door][ry] = 0; // i'm not setting a specific 'door' tile value right now, just empty space.
       }
 
       return [rx, ry];
@@ -4784,26 +6037,35 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       var tempDist;
       var xDir;
       var yDir;
-      var move;
-      var moves = [];
+      var move; // 2 element array, element 0 is the direction, element 1 is the total value to move.
+
+      var moves = []; // a list of 2 element arrays
+
       var xAbs = Math.abs(xOffset);
       var yAbs = Math.abs(yOffset);
-      var percent = RNG$1.getUniform();
+      var percent = RNG$1.getUniform(); // used to split the move at different places along the long axis
+
       var firstHalf = percent;
       var secondHalf = 1 - percent;
       xDir = xOffset > 0 ? 2 : 6;
       yDir = yOffset > 0 ? 4 : 0;
 
       if (xAbs < yAbs) {
+        // move firstHalf of the y offset
         tempDist = Math.ceil(yAbs * firstHalf);
-        moves.push([yDir, tempDist]);
-        moves.push([xDir, xAbs]);
+        moves.push([yDir, tempDist]); // move all the x offset
+
+        moves.push([xDir, xAbs]); // move sendHalf of the  y offset
+
         tempDist = Math.floor(yAbs * secondHalf);
         moves.push([yDir, tempDist]);
       } else {
+        //  move firstHalf of the x offset
         tempDist = Math.ceil(xAbs * firstHalf);
-        moves.push([xDir, tempDist]);
-        moves.push([yDir, yAbs]);
+        moves.push([xDir, tempDist]); // move all the y offset
+
+        moves.push([yDir, yAbs]); // move secondHalf of the x offset.
+
         tempDist = Math.floor(xAbs * secondHalf);
         moves.push([xDir, tempDist]);
       }
@@ -4823,6 +6085,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     };
 
     _proto30._createCorridors = function _createCorridors() {
+      // Draw Corridors between connected rooms
       var cw = this._options.cellWidth;
       var ch = this._options.cellHeight;
       var room;
@@ -4837,7 +6100,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
           for (var k = 0; k < room["connections"].length; k++) {
             connection = room["connections"][k];
-            otherRoom = this.rooms[connection[0]][connection[1]];
+            otherRoom = this.rooms[connection[0]][connection[1]]; // figure out what wall our corridor will start one.
+            // figure out what wall our corridor will end on.
 
             if (otherRoom["cellx"] > room["cellx"]) {
               wall = 2;
@@ -4872,17 +6136,31 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     IceyMaze: IceyMaze,
     Rogue: Rogue
   };
+  /**
+   * Base noise generator
+   */
 
   var Noise = function Noise() {};
 
   var F2 = 0.5 * (Math.sqrt(3) - 1);
   var G2 = (3 - Math.sqrt(3)) / 6;
+  /**
+   * A simple 2d implementation of simplex noise by Ondrej Zara
+   *
+   * Based on a speed-improved simplex noise algorithm for 2D, 3D and 4D in Java.
+   * Which is based on example code by Stefan Gustavson (stegu@itn.liu.se).
+   * With Optimisations by Peter Eastman (peastman@drizzle.stanford.edu).
+   * Better rank ordering method by Stefan Gustavson in 2012.
+   */
 
   var Simplex =
   /*#__PURE__*/
   function (_Noise) {
     _inheritsLoose(Simplex, _Noise);
 
+    /**
+     * @param gradients Random gradients
+     */
     function Simplex(gradients) {
       var _this16;
 
@@ -4920,31 +6198,47 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       var n0 = 0,
           n1 = 0,
           n2 = 0,
-          gi;
-      var s = (xin + yin) * F2;
+          gi; // Noise contributions from the three corners
+      // Skew the input space to determine which simplex cell we're in
+
+      var s = (xin + yin) * F2; // Hairy factor for 2D
+
       var i = Math.floor(xin + s);
       var j = Math.floor(yin + s);
       var t = (i + j) * G2;
-      var X0 = i - t;
+      var X0 = i - t; // Unskew the cell origin back to (x,y) space
+
       var Y0 = j - t;
-      var x0 = xin - X0;
-      var y0 = yin - Y0;
-      var i1, j1;
+      var x0 = xin - X0; // The x,y distances from the cell origin
+
+      var y0 = yin - Y0; // For the 2D case, the simplex shape is an equilateral triangle.
+      // Determine which simplex we are in.
+
+      var i1, j1; // Offsets for second (middle) corner of simplex in (i,j) coords
 
       if (x0 > y0) {
         i1 = 1;
         j1 = 0;
       } else {
+        // lower triangle, XY order: (0,0)->(1,0)->(1,1)
         i1 = 0;
         j1 = 1;
-      }
+      } // upper triangle, YX order: (0,0)->(0,1)->(1,1)
+      // A step of (1,0) in (i,j) means a step of (1-c,-c) in (x,y), and
+      // a step of (0,1) in (i,j) means a step of (-c,1-c) in (x,y), where
+      // c = (3-sqrt(3))/6
 
-      var x1 = x0 - i1 + G2;
+
+      var x1 = x0 - i1 + G2; // Offsets for middle corner in (x,y) unskewed coords
+
       var y1 = y0 - j1 + G2;
-      var x2 = x0 - 1 + 2 * G2;
-      var y2 = y0 - 1 + 2 * G2;
+      var x2 = x0 - 1 + 2 * G2; // Offsets for last corner in (x,y) unskewed coords
+
+      var y2 = y0 - 1 + 2 * G2; // Work out the hashed gradient indices of the three simplex corners
+
       var ii = mod(i, count);
-      var jj = mod(j, count);
+      var jj = mod(j, count); // Calculate the contribution from the three corners
+
       var t0 = 0.5 - x0 * x0 - y0 * y0;
 
       if (t0 >= 0) {
@@ -4970,7 +6264,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         gi = indexes[ii + 1 + perms[jj + 1]];
         var _grad2 = this._gradients[gi];
         n2 = t2 * t2 * (_grad2[0] * x2 + _grad2[1] * y2);
-      }
+      } // Add contributions from each corner to get the final noise value.
+      // The result is scaled to return values in the interval [-1,1].
+
 
       return 70 * (n0 + n1 + n2);
     };
@@ -4981,6 +6277,14 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
   var index$3 = {
     Simplex: Simplex
   };
+  /**
+   * @class Abstract pathfinder
+   * @param {int} toX Target X coord
+   * @param {int} toY Target Y coord
+   * @param {function} passableCallback Callback to determine map passability
+   * @param {object} [options]
+   * @param {int} [options.topology=8]
+   */
 
   var Path =
   /*#__PURE__*/
@@ -4999,6 +6303,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       this._dirs = DIRS[this._options.topology];
 
       if (this._options.topology == 8) {
+        /* reorder dirs for more aesthetic result (vertical/horizontal first) */
         this._dirs = [this._dirs[0], this._dirs[2], this._dirs[4], this._dirs[6], this._dirs[1], this._dirs[3], this._dirs[5], this._dirs[7]];
       }
     }
@@ -5025,6 +6330,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return Path;
   }();
+  /**
+   * @class Simplified Dijkstra's algorithm: all edges have a value of 1
+   * @augments ROT.Path
+   * @see ROT.Path
+   */
+
 
   var Dijkstra =
   /*#__PURE__*/
@@ -5042,6 +6353,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return _this17;
     }
+    /**
+     * Compute a path from a given point
+     * @see ROT.Path#compute
+     */
+
 
     var _proto33 = Dijkstra.prototype;
 
@@ -5063,6 +6379,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         item = item.prev;
       }
     };
+    /**
+     * Compute a non-cached value
+     */
+
 
     _proto33._compute = function _compute(fromX, fromY) {
       while (this._todo.length) {
@@ -5083,6 +6403,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
           if (id in this._computed) {
             continue;
           }
+          /* already done */
+
 
           this._add(x, y, item);
         }
@@ -5102,6 +6424,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return Dijkstra;
   }(Path);
+  /**
+   * @class Simplified A* algorithm: all edges have a value of 1
+   * @augments ROT.Path
+   * @see ROT.Path
+   */
+
 
   var AStar =
   /*#__PURE__*/
@@ -5120,6 +6448,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       _this18._done = {};
       return _this18;
     }
+    /**
+     * Compute a path from a given point
+     * @see ROT.Path#compute
+     */
+
 
     var _proto34 = AStar.prototype;
 
@@ -5185,6 +6518,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         g: prev ? prev.g + 1 : 0,
         h: h
       };
+      /* insert into priority queue */
+
       var f = obj.g + obj.h;
 
       for (var i = 0; i < this._todo.length; i++) {
@@ -5226,6 +6561,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     Dijkstra: Dijkstra,
     AStar: AStar
   };
+  /**
+   * @class Asynchronous main loop
+   * @param {ROT.Scheduler} scheduler
+   */
 
   var Engine =
   /*#__PURE__*/
@@ -5234,17 +6573,29 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       this._scheduler = scheduler;
       this._lock = 1;
     }
+    /**
+     * Start the main loop. When this call returns, the loop is locked.
+     */
+
 
     var _proto35 = Engine.prototype;
 
     _proto35.start = function start() {
       return this.unlock();
     };
+    /**
+     * Interrupt the engine by an asynchronous action
+     */
+
 
     _proto35.lock = function lock() {
       this._lock++;
       return this;
     };
+    /**
+     * Resume execution (paused by a previous lock)
+     */
+
 
     _proto35.unlock = function unlock() {
       if (!this._lock) {
@@ -5259,10 +6610,13 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         if (!actor) {
           return this.lock();
         }
+        /* no actors */
+
 
         var result = actor.act();
 
         if (result && result.then) {
+          /* actor returned a "thenable", looks like a Promise */
           this.lock();
           result.then(this.unlock.bind(this));
         }
@@ -5273,6 +6627,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     return Engine;
   }();
+  /**
+   * Lighting computation, based on a traditional FOV for multiple light sources and multiple passes.
+   */
+
 
   var Lighting =
   /*#__PURE__*/
@@ -5294,6 +6652,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       this._fovCache = {};
       this.setOptions(options);
     }
+    /**
+     * Adjust options at runtime
+     */
+
 
     var _proto36 = Lighting.prototype;
 
@@ -5306,12 +6668,20 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return this;
     };
+    /**
+     * Set the used Field-Of-View algo
+     */
+
 
     _proto36.setFOV = function setFOV(fov) {
       this._fov = fov;
       this._fovCache = {};
       return this;
     };
+    /**
+     * Set (or remove) a light source
+     */
+
 
     _proto36.setLight = function setLight(x, y, color) {
       var key = x + "," + y;
@@ -5324,16 +6694,28 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return this;
     };
+    /**
+     * Remove all light sources
+     */
+
 
     _proto36.clearLights = function clearLights() {
       this._lights = {};
     };
+    /**
+     * Reset the pre-computed topology values. Call whenever the underlying map changes its light-passability.
+     */
+
 
     _proto36.reset = function reset() {
       this._reflectivityCache = {};
       this._fovCache = {};
       return this;
     };
+    /**
+     * Compute the lighting
+     */
+
 
     _proto36.compute = function compute(lightingCallback) {
       var doneCells = {};
@@ -5341,22 +6723,27 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       var litCells = {};
 
       for (var key in this._lights) {
+        /* prepare emitters for first pass */
         var light = this._lights[key];
         emittingCells[key] = [0, 0, 0];
         add_(emittingCells[key], light);
       }
 
       for (var i = 0; i < this._options.passes; i++) {
+        /* main loop */
         this._emitLight(emittingCells, litCells, doneCells);
 
         if (i + 1 == this._options.passes) {
           continue;
         }
+        /* not for the last pass */
+
 
         emittingCells = this._computeEmitters(litCells, doneCells);
       }
 
       for (var litKey in litCells) {
+        /* let the user know what and how is lit */
         var parts = litKey.split(",");
         var x = parseInt(parts[0]);
         var y = parseInt(parts[1]);
@@ -5365,6 +6752,13 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return this;
     };
+    /**
+     * Compute one iteration from all emitting cells
+     * @param emittingCells These emit light
+     * @param litCells Add projected light to these
+     * @param doneCells These already emitted, forbid them from further calculations
+     */
+
 
     _proto36._emitLight = function _emitLight(emittingCells, litCells, doneCells) {
       for (var key in emittingCells) {
@@ -5379,6 +6773,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return this;
     };
+    /**
+     * Prepare a list of emitters for next pass
+     */
+
 
     _proto36._computeEmitters = function _computeEmitters(litCells, doneCells) {
       var result = {};
@@ -5387,6 +6785,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         if (key in doneCells) {
           continue;
         }
+        /* already emitted */
+
 
         var _color = litCells[key];
         var reflectivity = void 0;
@@ -5404,6 +6804,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         if (reflectivity == 0) {
           continue;
         }
+        /* will not reflect at all */
+
+        /* compute emission color */
+
 
         var emission = [0, 0, 0];
         var intensity = 0;
@@ -5421,6 +6825,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       return result;
     };
+    /**
+     * Compute one iteration from one cell
+     */
+
 
     _proto36._emitLightFromCell = function _emitLightFromCell(x, y, color, litCells) {
       var key = x + "," + y;
@@ -5437,8 +6845,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         var result = void 0;
 
         if (fovKey in litCells) {
+          /* already lit */
           result = litCells[fovKey];
         } else {
+          /* newly lit */
           result = [0, 0, 0];
           litCells[fovKey] = result;
         }
@@ -5446,10 +6856,16 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         for (var i = 0; i < 3; i++) {
           result[i] += Math.round(color[i] * formFactor);
         }
+        /* add light color */
+
       }
 
       return this;
     };
+    /**
+     * Compute FOV ("form factor") for a potential light source at [x,y]
+     */
+
 
     _proto36._updateFOV = function _updateFOV(x, y) {
       var key1 = x + "," + y;

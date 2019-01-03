@@ -1,5 +1,9 @@
 import Canvas from "./canvas.js";
 import { DisplayOptions, DisplayData } from "./types.js";
+/**
+ * @class Rectangular backend
+ * @private
+ */
 export default class Rect extends Canvas {
     _spacingX: number;
     _spacingY: number;

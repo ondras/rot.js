@@ -1,10 +1,6 @@
 import { clamp } from "./util.js";
 import RNG from "./rng.js";
 
-/**
- * @namespace Color operations
- */
-
 type Color = [number, number, number];
 
 export function	fromString(str: string) {
@@ -40,12 +36,9 @@ export function	fromString(str: string) {
 
 /**
  * Add two or more colors
- * @param {number[]} color1
- * @param {number[]} color2
- * @returns {number[]}
  */
-export function add(color1: Color, ...colors: Color[]) {
-	let result = color1.slice();
+export function add(color1: Color, ...colors: Color[]): Color {
+	let result = color1.slice() as Color;
 	for (let i=0;i<3;i++) {
 		for (let j=0;j<colors.length;j++) {
 			result[i] += colors[j][i];
@@ -56,11 +49,8 @@ export function add(color1: Color, ...colors: Color[]) {
 
 /**
  * Add two or more colors, MODIFIES FIRST ARGUMENT
- * @param {number[]} color1
- * @param {number[]} color2
- * @returns {number[]}
  */
-export function add_(color1: Color, ...colors: Color[]) {
+export function add_(color1: Color, ...colors: Color[]): Color {
 	for (let i=0;i<3;i++) {
 		for (let j=0;j<colors.length;j++) {
 			color1[i] += colors[j][i];
@@ -71,12 +61,9 @@ export function add_(color1: Color, ...colors: Color[]) {
 
 /**
  * Multiply (mix) two or more colors
- * @param {number[]} color1
- * @param {number[]} color2
- * @returns {number[]}
  */
-export function multiply(color1: Color, ...colors: Color[]) {
-	let result = color1.slice();
+export function multiply(color1: Color, ...colors: Color[]): Color {
+	let result = color1.slice() as Color;
 	for (let i=0;i<3;i++) {
 		for (let j=0;j<colors.length;j++) {
 			result[i] *= colors[j][i] / 255;
@@ -88,11 +75,8 @@ export function multiply(color1: Color, ...colors: Color[]) {
 
 /**
  * Multiply (mix) two or more colors, MODIFIES FIRST ARGUMENT
- * @param {number[]} color1
- * @param {number[]} color2
- * @returns {number[]}
  */
-export function multiply_(color1: Color, ...colors: Color[]) {
+export function multiply_(color1: Color, ...colors: Color[]): Color {
 	for (let i=0;i<3;i++) {
 		for (let j=0;j<colors.length;j++) {
 			color1[i] *= colors[j][i] / 255;
@@ -104,13 +88,9 @@ export function multiply_(color1: Color, ...colors: Color[]) {
 
 /**
  * Interpolate (blend) two colors with a given factor
- * @param {number[]} color1
- * @param {number[]} color2
- * @param {float} [factor=0.5] 0..1
- * @returns {number[]}
  */
-export function interpolate(color1: Color, color2: Color, factor = 0.5) {
-	let result = color1.slice();
+export function interpolate(color1: Color, color2: Color, factor = 0.5): Color {
+	let result = color1.slice() as Color;
 	for (let i=0;i<3;i++) {
 		result[i] = Math.round(result[i] + factor*(color2[i]-color1[i]));
 	}
@@ -120,12 +100,8 @@ export const lerp = interpolate;
 
 /**
  * Interpolate (blend) two colors with a given factor in HSL mode
- * @param {number[]} color1
- * @param {number[]} color2
- * @param {float} [factor=0.5] 0..1
- * @returns {number[]}
  */
-export function interpolateHSL(color1: Color, color2: Color, factor = 0.5) {
+export function interpolateHSL(color1: Color, color2: Color, factor = 0.5): Color {
 	let hsl1 = rgb2hsl(color1);
 	let hsl2 = rgb2hsl(color2);
 	for (let i=0;i<3;i++) {
@@ -137,13 +113,12 @@ export const lerpHSL = interpolateHSL;
 
 /**
  * Create a new random color based on this one
- * @param {number[]} color
- * @param {number[]} diff Set of standard deviations
- * @returns {number[]}
+ * @param color
+ * @param diff Set of standard deviations
  */
-export function randomize(color: Color, diff: number | number[]) {
+export function randomize(color: Color, diff: number | Color): Color {
 	if (!(diff instanceof Array)) { diff = Math.round(RNG.getNormal(0, diff)); }
-	let result = color.slice();
+	let result = color.slice() as Color;
 	for (let i=0;i<3;i++) {
 		result[i] += (diff instanceof Array ? Math.round(RNG.getNormal(0, diff[i])) : diff);
 	}
@@ -152,8 +127,6 @@ export function randomize(color: Color, diff: number | number[]) {
 
 /**
  * Converts an RGB color value to HSL. Expects 0..255 inputs, produces 0..1 outputs.
- * @param {number[]} color
- * @returns {number[]}
  */
 export function rgb2hsl(color: Color): Color {
 	let r = color[0]/255;
@@ -190,10 +163,8 @@ function hue2rgb(p: number, q: number, t: number) {
 
 /**
  * Converts an HSL color value to RGB. Expects 0..1 inputs, produces 0..255 outputs.
- * @param {number[]} color
- * @returns {number[]}
  */
-export function hsl2rgb(color: Color) {
+export function hsl2rgb(color: Color): Color {
 	let l = color[2];
 
 	if (color[1] == 0) {
