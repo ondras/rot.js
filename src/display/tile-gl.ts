@@ -27,11 +27,7 @@ export default class TileGL extends Backend {
 	setOptions(opts: DisplayOptions) {
 		super.setOptions(opts);
 	
-		let bg = parseColor(this._options.bg);
-		this._gl.clearColor(...bg);
-
 		this._updateSize();
-		this.clear();
 
 		let tileSet = this._options.tileSet;
 		if (tileSet && "complete" in tileSet && !tileSet.complete) {
@@ -42,11 +38,23 @@ export default class TileGL extends Backend {
 	}
 
 
-	draw(data: DisplayData) {
+	draw(data: DisplayData, clearBefore: boolean) {
 		const gl = this._gl;
 		const opts = this._options;
-
 		let [x, y, ch, fg, bg] = data;
+
+		let scissorY = gl.canvas.height - (y+1)*opts.tileHeight;
+		gl.scissor(x*opts.tileWidth, scissorY, opts.tileWidth, opts.tileHeight);
+
+		if (clearBefore) {
+			if (opts.tileColorize) {
+				gl.clearColor(0, 0, 0, 0);
+			} else {
+				gl.clearColor(...parseColor(bg));
+			}
+			gl.clear(gl.COLOR_BUFFER_BIT);
+		}
+
 		if (!ch) { return; }
 
 		let chars = ([] as string[]).concat(ch);
@@ -60,14 +68,12 @@ export default class TileGL extends Backend {
 			if (!tile) { throw new Error(`Char "${chars[i]}" not found in tileMap`); }
 
 			gl.uniform1f(this._uniforms["colorize"], opts.tileColorize ? 1 : 0);
-
-			if (opts.tileColorize) {
-				gl.uniform4fv(this._uniforms["bg"], parseColor(fgs[i] || ""));
-				gl.uniform4fv(this._uniforms["bg"], parseColor(bgs[i] || ""));
-			}
-
 			gl.uniform2fv(this._uniforms["tilesetPosAbs"], tile);
 
+			if (opts.tileColorize) {
+				gl.uniform4fv(this._uniforms["tint"], parseColor(fgs[i]));
+				gl.uniform4fv(this._uniforms["bg"], parseColor(bgs[i]));
+			}
 
 			gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 		}
@@ -120,7 +126,10 @@ export default class TileGL extends Backend {
 
 	clear() {
 		const gl = this._gl;
-		gl.clear(gl.COLOR_BUFFER_BIT);		
+
+		gl.clearColor(...parseColor(this._options.bg));
+		gl.scissor(0, 0, gl.canvas.width, gl.canvas.height);
+		gl.clear(gl.COLOR_BUFFER_BIT);
 	}
 
 	computeSize(availWidth: number, availHeight: number): [number, number] {
@@ -158,8 +167,9 @@ export default class TileGL extends Backend {
 		this._program = program;
 
 		gl.enable(gl.BLEND);
-  		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-
+  //		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  		gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+  		gl.enable(gl.SCISSOR_TEST)
 		return gl;
 	}
 
@@ -185,7 +195,7 @@ export default class TileGL extends Backend {
   	}
 }
 
-const UNIFORMS = ["targetPosRel", "tilesetPosAbs", "tileSize", "targetSize", "colorize", "bg"];
+const UNIFORMS = ["targetPosRel", "tilesetPosAbs", "tileSize", "targetSize", "colorize", "bg", "tint"];
 
 const VS = `
 #version 300 es
@@ -216,15 +226,18 @@ out vec4 fragColor;
 uniform sampler2D image;
 uniform bool colorize;
 uniform vec4 bg;
+uniform vec4 tint;
 
 void main() {
 	fragColor = vec4(0, 0, 0, 1);
-	vec4 tint = vec4(0.0, 1.0, 0.0, 0.5);
 
 	vec4 texel = texelFetch(image, ivec2(tilesetPosPx), 0);
 	if (texel.a > 0.0) {
-		if (colorize) { texel.rgb = tint.a * tint.rgb + (1.0-tint.a) * texel.rgb; }
-//		fragColor.rgb = texel.a * texel.rgb + (1.0-texel.a) * fragColor.rgb;
+		if (colorize) {
+			texel.rgb = tint.a * tint.rgb + (1.0-tint.a) * texel.rgb;
+			texel.rgb = texel.a * texel.rgb + (1.0-texel.a) * bg.rgb;
+			texel.a = 1.0;
+		}    
 		fragColor = texel;
 	} else {
 		fragColor = colorize ? bg : vec4(0, 0, 0, 0);
@@ -280,10 +293,12 @@ function parseColor(color: string) {
 		let parsed: GLColor;
 		if (color == "transparent") {
 			parsed = [0, 0, 0, 0];
+		} else if (color.indexOf("rgba") > -1) {
+			parsed = (color.match(/[\d.]+/g) || []).map(Number) as GLColor;
+			for (let i=0;i<3;i++) { parsed[i] = parsed[i]/255; }
 		} else {
 			parsed = Color.fromString(color).map($ => $/255) as GLColor;
 			parsed.push(1);
-
 		}
 		colorCache[color] = parsed;
 	}

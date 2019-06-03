@@ -111,7 +111,7 @@
 					<div class="tsd-signature tsd-kind-icon">GLColor<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in display/tile-gl.ts:275</li>
+							<li>Defined in <a href="https://github.com/ondras/rot.js/blob/5ce8dcf/src/display/tile-gl.ts#L288">display/tile-gl.ts:288</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -121,20 +121,20 @@
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="fs" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> FS</h3>
-					<div class="tsd-signature tsd-kind-icon">FS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&#x60;#version 300 esprecision highp float;in vec2 tilesetPosPx;out vec4 fragColor;uniform sampler2D image;uniform bool colorize;uniform vec4 bg;void main() {fragColor &#x3D; vec4(0, 0, 0, 1);vec4 tint &#x3D; vec4(0.0, 1.0, 0.0, 0.5);vec4 texel &#x3D; texelFetch(image, ivec2(tilesetPosPx), 0);if (texel.a &gt; 0.0) {if (colorize) { texel.rgb &#x3D; tint.a * tint.rgb + (1.0-tint.a) * texel.rgb; }//		fragColor.rgb &#x3D; texel.a * texel.rgb + (1.0-texel.a) * fragColor.rgb;fragColor &#x3D; texel;} else {fragColor &#x3D; colorize ? bg : vec4(0, 0, 0, 0);}}&#x60;.trim()</span></div>
+					<div class="tsd-signature tsd-kind-icon">FS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&#x60;#version 300 esprecision highp float;in vec2 tilesetPosPx;out vec4 fragColor;uniform sampler2D image;uniform bool colorize;uniform vec4 bg;uniform vec4 tint;void main() {fragColor &#x3D; vec4(0, 0, 0, 1);vec4 texel &#x3D; texelFetch(image, ivec2(tilesetPosPx), 0);if (texel.a &gt; 0.0) {if (colorize) {texel.rgb &#x3D; tint.a * tint.rgb + (1.0-tint.a) * texel.rgb;texel.rgb &#x3D; texel.a * texel.rgb + (1.0-texel.a) * bg.rgb;texel.a &#x3D; 1.0;}fragColor &#x3D; texel;} else {fragColor &#x3D; colorize ? bg : vec4(0, 0, 0, 0);}}&#x60;.trim()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in display/tile-gl.ts:210</li>
+							<li>Defined in <a href="https://github.com/ondras/rot.js/blob/5ce8dcf/src/display/tile-gl.ts#L220">display/tile-gl.ts:220</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="uniforms" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> UNIFORMS</h3>
-					<div class="tsd-signature tsd-kind-icon">UNIFORMS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&quot;targetPosRel&quot;, &quot;tilesetPosAbs&quot;, &quot;tileSize&quot;, &quot;targetSize&quot;, &quot;colorize&quot;, &quot;bg&quot;]</span></div>
+					<div class="tsd-signature tsd-kind-icon">UNIFORMS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&quot;targetPosRel&quot;, &quot;tilesetPosAbs&quot;, &quot;tileSize&quot;, &quot;targetSize&quot;, &quot;colorize&quot;, &quot;bg&quot;, &quot;tint&quot;]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in display/tile-gl.ts:188</li>
+							<li>Defined in <a href="https://github.com/ondras/rot.js/blob/5ce8dcf/src/display/tile-gl.ts#L198">display/tile-gl.ts:198</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -144,7 +144,7 @@
 					<div class="tsd-signature tsd-kind-icon">VS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&#x60;#version 300 esin vec2 tilePosRel;out vec2 tilesetPosPx;uniform vec2 tilesetPosAbs;uniform vec2 tileSize;uniform vec2 targetSize;uniform vec2 targetPosRel;void main() {vec2 targetPosPx &#x3D; (targetPosRel + tilePosRel) * tileSize;vec2 targetPosNdc &#x3D; ((targetPosPx / targetSize)-0.5)*2.0;targetPosNdc.y *&#x3D; -1.0;gl_Position &#x3D; vec4(targetPosNdc, 0.0, 1.0);tilesetPosPx &#x3D; tilesetPosAbs + tilePosRel * tileSize;}&#x60;.trim()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in display/tile-gl.ts:190</li>
+							<li>Defined in <a href="https://github.com/ondras/rot.js/blob/5ce8dcf/src/display/tile-gl.ts#L200">display/tile-gl.ts:200</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -154,7 +154,7 @@
 					<div class="tsd-signature tsd-kind-icon">color<wbr>Cache<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in display/tile-gl.ts:276</li>
+							<li>Defined in <a href="https://github.com/ondras/rot.js/blob/5ce8dcf/src/display/tile-gl.ts#L289">display/tile-gl.ts:289</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -179,7 +179,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in display/tile-gl.ts:234</li>
+									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/5ce8dcf/src/display/tile-gl.ts#L247">display/tile-gl.ts:247</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -208,7 +208,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in display/tile-gl.ts:254</li>
+									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/5ce8dcf/src/display/tile-gl.ts#L267">display/tile-gl.ts:267</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -231,7 +231,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in display/tile-gl.ts:263</li>
+									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/5ce8dcf/src/display/tile-gl.ts#L276">display/tile-gl.ts:276</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -260,7 +260,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in display/tile-gl.ts:278</li>
+									<li>Defined in <a href="https://github.com/ondras/rot.js/blob/5ce8dcf/src/display/tile-gl.ts#L291">display/tile-gl.ts:291</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>

@@ -14,7 +14,7 @@ export default class TileGL extends Backend {
     schedule(cb: () => void): void;
     getContainer(): HTMLCanvasElement;
     setOptions(opts: DisplayOptions): void;
-    draw(data: DisplayData): void;
+    draw(data: DisplayData, clearBefore: boolean): void;
     clear(): void;
     computeSize(availWidth: number, availHeight: number): [number, number];
     computeFontSize(): number;

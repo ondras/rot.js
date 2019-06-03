@@ -1261,18 +1261,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     };
 
     _proto7.setOptions = function setOptions(opts) {
-      var _this$_gl,
-          _this6 = this;
+      var _this6 = this;
 
       _Backend2.prototype.setOptions.call(this, opts);
 
-      var bg = parseColor(this._options.bg);
-
-      (_this$_gl = this._gl).clearColor.apply(_this$_gl, bg);
-
       this._updateSize();
 
-      this.clear();
       var tileSet = this._options.tileSet;
 
       if (tileSet && "complete" in tileSet && !tileSet.complete) {
@@ -1284,7 +1278,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto7.draw = function draw(data) {
+    _proto7.draw = function draw(data, clearBefore) {
       var gl = this._gl;
       var opts = this._options;
       var x = data[0],
@@ -1292,6 +1286,18 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
           ch = data[2],
           fg = data[3],
           bg = data[4];
+      var scissorY = gl.canvas.height - (y + 1) * opts.tileHeight;
+      gl.scissor(x * opts.tileWidth, scissorY, opts.tileWidth, opts.tileHeight);
+
+      if (clearBefore) {
+        if (opts.tileColorize) {
+          gl.clearColor(0, 0, 0, 0);
+        } else {
+          gl.clearColor.apply(gl, parseColor(bg));
+        }
+
+        gl.clear(gl.COLOR_BUFFER_BIT);
+      }
 
       if (!ch) {
         return;
@@ -1310,13 +1316,13 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         }
 
         gl.uniform1f(this._uniforms["colorize"], opts.tileColorize ? 1 : 0);
+        gl.uniform2fv(this._uniforms["tilesetPosAbs"], tile);
 
         if (opts.tileColorize) {
-          gl.uniform4fv(this._uniforms["bg"], parseColor(fgs[i] || ""));
-          gl.uniform4fv(this._uniforms["bg"], parseColor(bgs[i] || ""));
+          gl.uniform4fv(this._uniforms["tint"], parseColor(fgs[i]));
+          gl.uniform4fv(this._uniforms["bg"], parseColor(bgs[i]));
         }
 
-        gl.uniform2fv(this._uniforms["tilesetPosAbs"], tile);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       }
       /*
@@ -1367,6 +1373,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
     _proto7.clear = function clear() {
       var gl = this._gl;
+      gl.clearColor.apply(gl, parseColor(this._options.bg));
+      gl.scissor(0, 0, gl.canvas.width, gl.canvas.height);
       gl.clear(gl.COLOR_BUFFER_BIT);
     };
 
@@ -1411,8 +1419,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         return _this7._uniforms[name] = gl.getUniformLocation(program, name);
       });
       this._program = program;
-      gl.enable(gl.BLEND);
-      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      gl.enable(gl.BLEND); //		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+      gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+      gl.enable(gl.SCISSOR_TEST);
       return gl;
     };
 
@@ -1438,9 +1448,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     return TileGL;
   }(Backend);
 
-  var UNIFORMS = ["targetPosRel", "tilesetPosAbs", "tileSize", "targetSize", "colorize", "bg"];
+  var UNIFORMS = ["targetPosRel", "tilesetPosAbs", "tileSize", "targetSize", "colorize", "bg", "tint"];
   var VS = "\n#version 300 es\n\nin vec2 tilePosRel;\nout vec2 tilesetPosPx;\n\nuniform vec2 tilesetPosAbs;\nuniform vec2 tileSize;\nuniform vec2 targetSize;\nuniform vec2 targetPosRel;\n\nvoid main() {\n\tvec2 targetPosPx = (targetPosRel + tilePosRel) * tileSize;\n\tvec2 targetPosNdc = ((targetPosPx / targetSize)-0.5)*2.0;\n\ttargetPosNdc.y *= -1.0;\n\n\tgl_Position = vec4(targetPosNdc, 0.0, 1.0);\n\ttilesetPosPx = tilesetPosAbs + tilePosRel * tileSize;\n}".trim();
-  var FS = "\n#version 300 es\nprecision highp float;\n\nin vec2 tilesetPosPx;\nout vec4 fragColor;\nuniform sampler2D image;\nuniform bool colorize;\nuniform vec4 bg;\n\nvoid main() {\n\tfragColor = vec4(0, 0, 0, 1);\n\tvec4 tint = vec4(0.0, 1.0, 0.0, 0.5);\n\n\tvec4 texel = texelFetch(image, ivec2(tilesetPosPx), 0);\n\tif (texel.a > 0.0) {\n\t\tif (colorize) { texel.rgb = tint.a * tint.rgb + (1.0-tint.a) * texel.rgb; }\n//\t\tfragColor.rgb = texel.a * texel.rgb + (1.0-texel.a) * fragColor.rgb;\n\t\tfragColor = texel;\n\t} else {\n\t\tfragColor = colorize ? bg : vec4(0, 0, 0, 0);\n\t}\n}".trim();
+  var FS = "\n#version 300 es\nprecision highp float;\n\nin vec2 tilesetPosPx;\nout vec4 fragColor;\nuniform sampler2D image;\nuniform bool colorize;\nuniform vec4 bg;\nuniform vec4 tint;\n\nvoid main() {\n\tfragColor = vec4(0, 0, 0, 1);\n\n\tvec4 texel = texelFetch(image, ivec2(tilesetPosPx), 0);\n\tif (texel.a > 0.0) {\n\t\tif (colorize) {\n\t\t\ttexel.rgb = tint.a * tint.rgb + (1.0-tint.a) * texel.rgb;\n\t\t\ttexel.rgb = texel.a * texel.rgb + (1.0-texel.a) * bg.rgb;\n\t\t\ttexel.a = 1.0;\n\t\t}    \n\t\tfragColor = texel;\n\t} else {\n\t\tfragColor = colorize ? bg : vec4(0, 0, 0, 0);\n\t}\n}".trim();
 
   function createProgram(gl, vss, fss) {
     var vs = gl.createShader(gl.VERTEX_SHADER);
@@ -1500,6 +1510,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
       if (color == "transparent") {
         parsed = [0, 0, 0, 0];
+      } else if (color.indexOf("rgba") > -1) {
+        parsed = (color.match(/[\d.]+/g) || []).map(Number);
+
+        for (var i = 0; i < 3; i++) {
+          parsed[i] = parsed[i] / 255;
+        }
       } else {
         parsed = fromString(color).map(function ($) {
           return $ / 255;
