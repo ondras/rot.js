@@ -1,4 +1,4 @@
-type LayoutType = "hex" | "rect" | "tile" | "term";
+type LayoutType = "hex" | "rect" | "tile" | "tile-gl" | "term";
 
 export interface DisplayOptions {
 	width: number;

@@ -2,6 +2,7 @@ import Backend from "./backend.js";
 import Hex from "./hex.js";
 import Rect from "./rect.js";
 import Tile from "./tile.js";
+import TileGL from "./tile-gl.js";
 import Term from "./term.js";
 import { DisplayOptions, DisplayData } from "./types.js";
 /**
@@ -19,6 +20,7 @@ export default class Display {
     static Rect: typeof Rect;
     static Hex: typeof Hex;
     static Tile: typeof Tile;
+    static TileGL: typeof TileGL;
     static Term: typeof Term;
     constructor(options?: Partial<DisplayOptions>);
     /**

@@ -1225,6 +1225,293 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     toRGB: toRGB,
     toHex: toHex
   });
+  /**
+   * @class Tile backend
+   * @private
+   */
+
+  var TileGL =
+  /*#__PURE__*/
+  function (_Backend2) {
+    _inheritsLoose(TileGL, _Backend2);
+
+    function TileGL() {
+      var _this5;
+
+      _this5 = _Backend2.call(this) || this;
+      _this5._uniforms = {};
+
+      try {
+        _this5._gl = _this5._initWebGL();
+      } catch (e) {
+        alert(e.message);
+      }
+
+      return _this5;
+    }
+
+    var _proto7 = TileGL.prototype;
+
+    _proto7.schedule = function schedule(cb) {
+      requestAnimationFrame(cb);
+    };
+
+    _proto7.getContainer = function getContainer() {
+      return this._gl.canvas;
+    };
+
+    _proto7.setOptions = function setOptions(opts) {
+      var _this$_gl,
+          _this6 = this;
+
+      _Backend2.prototype.setOptions.call(this, opts);
+
+      var bg = parseColor(this._options.bg);
+
+      (_this$_gl = this._gl).clearColor.apply(_this$_gl, bg);
+
+      this._updateSize();
+
+      this.clear();
+      var tileSet = this._options.tileSet;
+
+      if (tileSet && "complete" in tileSet && !tileSet.complete) {
+        tileSet.addEventListener("load", function () {
+          return _this6._updateTexture(tileSet);
+        });
+      } else {
+        this._updateTexture(tileSet);
+      }
+    };
+
+    _proto7.draw = function draw(data) {
+      var gl = this._gl;
+      var opts = this._options;
+      var x = data[0],
+          y = data[1],
+          ch = data[2],
+          fg = data[3],
+          bg = data[4];
+
+      if (!ch) {
+        return;
+      }
+
+      var chars = [].concat(ch);
+      var bgs = [].concat(bg);
+      var fgs = [].concat(fg);
+      gl.uniform2fv(this._uniforms["targetPosRel"], [x, y]);
+
+      for (var i = 0; i < chars.length; i++) {
+        var tile = this._options.tileMap[chars[i]];
+
+        if (!tile) {
+          throw new Error("Char \"" + chars[i] + "\" not found in tileMap");
+        }
+
+        gl.uniform1f(this._uniforms["colorize"], opts.tileColorize ? 1 : 0);
+
+        if (opts.tileColorize) {
+          gl.uniform4fv(this._uniforms["bg"], parseColor(fgs[i] || ""));
+          gl.uniform4fv(this._uniforms["bg"], parseColor(bgs[i] || ""));
+        }
+
+        gl.uniform2fv(this._uniforms["tilesetPosAbs"], tile);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      }
+      /*
+      
+      
+              for (let i=0;i<chars.length;i++) {
+                  
+                  if (this._options.tileColorize) { // apply colorization
+                      let canvas = this._colorCanvas;
+                      let context = canvas.getContext("2d") as CanvasRenderingContext2D;
+                      context.globalCompositeOperation = "source-over";
+                      context.clearRect(0, 0, tileWidth, tileHeight);
+      
+                      let fg = fgs[i];
+                      let bg = bgs[i];
+      
+                      context.drawImage(
+                          this._options.tileSet!,
+                          tile[0], tile[1], tileWidth, tileHeight,
+                          0, 0, tileWidth, tileHeight
+                      );
+      
+                      if (fg != "transparent") {
+                          context.fillStyle = fg;
+                          context.globalCompositeOperation = "source-atop";
+                          context.fillRect(0, 0, tileWidth, tileHeight);
+                      }
+      
+                      if (bg != "transparent") {
+                          context.fillStyle = bg;
+                          context.globalCompositeOperation = "destination-over";
+                          context.fillRect(0, 0, tileWidth, tileHeight);
+                      }
+      
+                      this._ctx.drawImage(canvas, x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+                  } else { // no colorizing, easy
+                      this._ctx.drawImage(
+                          this._options.tileSet!,
+                          tile[0], tile[1], tileWidth, tileHeight,
+                          x*tileWidth, y*tileHeight, tileWidth, tileHeight
+                      );
+                  }
+              }
+      
+      */
+
+    };
+
+    _proto7.clear = function clear() {
+      var gl = this._gl;
+      gl.clear(gl.COLOR_BUFFER_BIT);
+    };
+
+    _proto7.computeSize = function computeSize(availWidth, availHeight) {
+      var width = Math.floor(availWidth / this._options.tileWidth);
+      var height = Math.floor(availHeight / this._options.tileHeight);
+      return [width, height];
+    };
+
+    _proto7.computeFontSize = function computeFontSize() {
+      throw new Error("Tile backend does not understand font size");
+    };
+
+    _proto7.eventToPosition = function eventToPosition(x, y) {
+      var canvas = this._gl.canvas;
+      var rect = canvas.getBoundingClientRect();
+      x -= rect.left;
+      y -= rect.top;
+      x *= canvas.width / rect.width;
+      y *= canvas.height / rect.height;
+
+      if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) {
+        return [-1, -1];
+      }
+
+      return this._normalizedEventToPosition(x, y);
+    };
+
+    _proto7._initWebGL = function _initWebGL() {
+      var _this7 = this;
+
+      var gl = document.createElement("canvas").getContext("webgl2", {
+        alpha: true,
+        premultipliedAlpha: false,
+        preserveDrawingBuffer: true
+      });
+      window.gl = gl;
+      var program = createProgram(gl, VS, FS);
+      gl.useProgram(program);
+      createQuad(gl);
+      UNIFORMS.forEach(function (name) {
+        return _this7._uniforms[name] = gl.getUniformLocation(program, name);
+      });
+      this._program = program;
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      return gl;
+    };
+
+    _proto7._normalizedEventToPosition = function _normalizedEventToPosition(x, y) {
+      return [Math.floor(x / this._options.tileWidth), Math.floor(y / this._options.tileHeight)];
+    };
+
+    _proto7._updateSize = function _updateSize() {
+      var gl = this._gl;
+      var opts = this._options;
+      var canvasSize = [opts.width * opts.tileWidth, opts.height * opts.tileHeight];
+      gl.canvas.width = canvasSize[0];
+      gl.canvas.height = canvasSize[1];
+      gl.viewport(0, 0, canvasSize[0], canvasSize[1]);
+      gl.uniform2fv(this._uniforms["tileSize"], [opts.tileWidth, opts.tileHeight]);
+      gl.uniform2fv(this._uniforms["targetSize"], canvasSize);
+    };
+
+    _proto7._updateTexture = function _updateTexture(tileSet) {
+      createTexture(this._gl, tileSet);
+    };
+
+    return TileGL;
+  }(Backend);
+
+  var UNIFORMS = ["targetPosRel", "tilesetPosAbs", "tileSize", "targetSize", "colorize", "bg"];
+  var VS = "\n#version 300 es\n\nin vec2 tilePosRel;\nout vec2 tilesetPosPx;\n\nuniform vec2 tilesetPosAbs;\nuniform vec2 tileSize;\nuniform vec2 targetSize;\nuniform vec2 targetPosRel;\n\nvoid main() {\n\tvec2 targetPosPx = (targetPosRel + tilePosRel) * tileSize;\n\tvec2 targetPosNdc = ((targetPosPx / targetSize)-0.5)*2.0;\n\ttargetPosNdc.y *= -1.0;\n\n\tgl_Position = vec4(targetPosNdc, 0.0, 1.0);\n\ttilesetPosPx = tilesetPosAbs + tilePosRel * tileSize;\n}".trim();
+  var FS = "\n#version 300 es\nprecision highp float;\n\nin vec2 tilesetPosPx;\nout vec4 fragColor;\nuniform sampler2D image;\nuniform bool colorize;\nuniform vec4 bg;\n\nvoid main() {\n\tfragColor = vec4(0, 0, 0, 1);\n\tvec4 tint = vec4(0.0, 1.0, 0.0, 0.5);\n\n\tvec4 texel = texelFetch(image, ivec2(tilesetPosPx), 0);\n\tif (texel.a > 0.0) {\n\t\tif (colorize) { texel.rgb = tint.a * tint.rgb + (1.0-tint.a) * texel.rgb; }\n//\t\tfragColor.rgb = texel.a * texel.rgb + (1.0-texel.a) * fragColor.rgb;\n\t\tfragColor = texel;\n\t} else {\n\t\tfragColor = colorize ? bg : vec4(0, 0, 0, 0);\n\t}\n}".trim();
+
+  function createProgram(gl, vss, fss) {
+    var vs = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vs, vss);
+    gl.compileShader(vs);
+
+    if (!gl.getShaderParameter(vs, gl.COMPILE_STATUS)) {
+      throw new Error(gl.getShaderInfoLog(vs) || "");
+    }
+
+    var fs = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fs, fss);
+    gl.compileShader(fs);
+
+    if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) {
+      throw new Error(gl.getShaderInfoLog(fs) || "");
+    }
+
+    var p = gl.createProgram();
+    gl.attachShader(p, vs);
+    gl.attachShader(p, fs);
+    gl.linkProgram(p);
+
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) {
+      throw new Error(gl.getProgramInfoLog(p) || "");
+    }
+
+    return p;
+  }
+
+  function createQuad(gl) {
+    var pos = new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]);
+    var buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, pos, gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+  }
+
+  function createTexture(gl, data) {
+    var t = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, t);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, data);
+    return t;
+  }
+
+  var colorCache = {};
+
+  function parseColor(color) {
+    if (!(color in colorCache)) {
+      var parsed;
+
+      if (color == "transparent") {
+        parsed = [0, 0, 0, 0];
+      } else {
+        parsed = fromString(color).map(function ($) {
+          return $ / 255;
+        });
+        parsed.push(1);
+      }
+
+      colorCache[color] = parsed;
+    }
+
+    return colorCache[color];
+  }
 
   function clearToAnsi(bg) {
     return "\x1B[0;48;5;" + termcolor(bg) + "m\x1B[2J";
@@ -1251,27 +1538,27 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
   var Term =
   /*#__PURE__*/
-  function (_Backend2) {
-    _inheritsLoose(Term, _Backend2);
+  function (_Backend3) {
+    _inheritsLoose(Term, _Backend3);
 
     function Term() {
-      var _this5;
+      var _this8;
 
-      _this5 = _Backend2.call(this) || this;
-      _this5._offset = [0, 0];
-      _this5._cursor = [-1, -1];
-      _this5._lastColor = "";
-      return _this5;
+      _this8 = _Backend3.call(this) || this;
+      _this8._offset = [0, 0];
+      _this8._cursor = [-1, -1];
+      _this8._lastColor = "";
+      return _this8;
     }
 
-    var _proto7 = Term.prototype;
+    var _proto8 = Term.prototype;
 
-    _proto7.schedule = function schedule(cb) {
+    _proto8.schedule = function schedule(cb) {
       setTimeout(cb, 1000 / 60);
     };
 
-    _proto7.setOptions = function setOptions(options) {
-      _Backend2.prototype.setOptions.call(this, options);
+    _proto8.setOptions = function setOptions(options) {
+      _Backend3.prototype.setOptions.call(this, options);
 
       var size = [options.width, options.height];
       var avail = this.computeSize();
@@ -1280,11 +1567,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       });
     };
 
-    _proto7.clear = function clear() {
+    _proto8.clear = function clear() {
       process.stdout.write(clearToAnsi(this._options.bg));
     };
 
-    _proto7.draw = function draw(data, clearBefore) {
+    _proto8.draw = function draw(data, clearBefore) {
       // determine where to draw what with what colors
       var x = data[0],
           y = data[1],
@@ -1343,15 +1630,15 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto7.computeFontSize = function computeFontSize() {
+    _proto8.computeFontSize = function computeFontSize() {
       throw new Error("Terminal backend has no notion of font size");
     };
 
-    _proto7.eventToPosition = function eventToPosition(x, y) {
+    _proto8.eventToPosition = function eventToPosition(x, y) {
       return [x, y];
     };
 
-    _proto7.computeSize = function computeSize() {
+    _proto8.computeSize = function computeSize() {
       return [process.stdout.columns, process.stdout.rows];
     };
 
@@ -2098,6 +2385,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     "hex": Hex,
     "rect": Rect,
     "tile": Tile,
+    "tile-gl": TileGL,
     "term": Term
   };
   var DEFAULT_OPTIONS = {
@@ -2150,9 +2438,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    var _proto8 = Display.prototype;
+    var _proto9 = Display.prototype;
 
-    _proto8.DEBUG = function DEBUG(x, y, what) {
+    _proto9.DEBUG = function DEBUG(x, y, what) {
       var colors = [this._options.bg, this._options.fg];
       this.draw(x, y, null, null, colors[what % colors.length]);
     };
@@ -2161,7 +2449,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto8.clear = function clear() {
+    _proto9.clear = function clear() {
       this._data = {};
       this._dirty = true;
     };
@@ -2170,7 +2458,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto8.setOptions = function setOptions(options) {
+    _proto9.setOptions = function setOptions(options) {
       Object.assign(this._options, options);
 
       if (options.width || options.height || options.fontSize || options.fontFamily || options.spacing || options.layout) {
@@ -2191,7 +2479,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto8.getOptions = function getOptions() {
+    _proto9.getOptions = function getOptions() {
       return this._options;
     };
     /**
@@ -2199,7 +2487,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto8.getContainer = function getContainer() {
+    _proto9.getContainer = function getContainer() {
       return this._backend.getContainer();
     };
     /**
@@ -2210,7 +2498,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto8.computeSize = function computeSize(availWidth, availHeight) {
+    _proto9.computeSize = function computeSize(availWidth, availHeight) {
       return this._backend.computeSize(availWidth, availHeight);
     };
     /**
@@ -2221,11 +2509,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto8.computeFontSize = function computeFontSize(availWidth, availHeight) {
+    _proto9.computeFontSize = function computeFontSize(availWidth, availHeight) {
       return this._backend.computeFontSize(availWidth, availHeight);
     };
 
-    _proto8.computeTileSize = function computeTileSize(availWidth, availHeight) {
+    _proto9.computeTileSize = function computeTileSize(availWidth, availHeight) {
       var width = Math.floor(availWidth / this._options.width);
       var height = Math.floor(availHeight / this._options.height);
       return [width, height];
@@ -2237,7 +2525,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto8.eventToPosition = function eventToPosition(e) {
+    _proto9.eventToPosition = function eventToPosition(e) {
       var x, y;
 
       if ("touches" in e) {
@@ -2259,7 +2547,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto8.draw = function draw(x, y, ch, fg, bg) {
+    _proto9.draw = function draw(x, y, ch, fg, bg) {
       if (!fg) {
         fg = this._options.fg;
       }
@@ -2293,7 +2581,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto8.drawText = function drawText(x, y, text, maxWidth) {
+    _proto9.drawText = function drawText(x, y, text, maxWidth) {
       var fg = null;
       var bg = null;
       var cx = x;
@@ -2368,7 +2656,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto8._tick = function _tick() {
+    _proto9._tick = function _tick() {
       this._backend.schedule(this._tick);
 
       if (!this._dirty) {
@@ -2398,7 +2686,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto8._draw = function _draw(key, clearBefore) {
+    _proto9._draw = function _draw(key, clearBefore) {
       var data = this._data[key];
 
       if (data[4] != this._options.bg) {
@@ -2414,6 +2702,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
   Display.Rect = Rect;
   Display.Hex = Hex;
   Display.Tile = Tile;
+  Display.TileGL = TileGL;
   Display.Term = Term;
   /**
    * @class (Markov process)-based string generator.
@@ -2448,9 +2737,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    var _proto9 = StringGenerator.prototype;
+    var _proto10 = StringGenerator.prototype;
 
-    _proto9.clear = function clear() {
+    _proto10.clear = function clear() {
       this._data = {};
       this._priorValues = {};
     };
@@ -2459,7 +2748,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto9.generate = function generate() {
+    _proto10.generate = function generate() {
       var result = [this._sample(this._prefix)];
 
       while (result[result.length - 1] != this._boundary) {
@@ -2473,7 +2762,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto9.observe = function observe(string) {
+    _proto10.observe = function observe(string) {
       var tokens = this._split(string);
 
       for (var i = 0; i < tokens.length; i++) {
@@ -2495,7 +2784,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto9.getStats = function getStats() {
+    _proto10.getStats = function getStats() {
       var parts = [];
       var priorCount = Object.keys(this._priorValues).length;
       priorCount--; // boundary
@@ -2518,7 +2807,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto9._split = function _split(str) {
+    _proto10._split = function _split(str) {
       return str.split(this._options.words ? /\s+/ : "");
     };
     /**
@@ -2527,7 +2816,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto9._join = function _join(arr) {
+    _proto10._join = function _join(arr) {
       return arr.join(this._options.words ? " " : "");
     };
     /**
@@ -2536,7 +2825,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto9._observeEvent = function _observeEvent(context, event) {
+    _proto10._observeEvent = function _observeEvent(context, event) {
       var key = this._join(context);
 
       if (!(key in this._data)) {
@@ -2557,7 +2846,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto9._sample = function _sample(context) {
+    _proto10._sample = function _sample(context) {
       context = this._backoff(context);
 
       var key = this._join(context);
@@ -2585,7 +2874,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto9._backoff = function _backoff(context) {
+    _proto10._backoff = function _backoff(context) {
       if (context.length > this._options.order) {
         context = context.slice(-this._options.order);
       } else if (context.length < this._options.order) {
@@ -2618,9 +2907,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    var _proto10 = EventQueue.prototype;
+    var _proto11 = EventQueue.prototype;
 
-    _proto10.getTime = function getTime() {
+    _proto11.getTime = function getTime() {
       return this._time;
     };
     /**
@@ -2628,7 +2917,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto10.clear = function clear() {
+    _proto11.clear = function clear() {
       this._events = [];
       this._eventTimes = [];
       return this;
@@ -2639,7 +2928,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto10.add = function add(event, time) {
+    _proto11.add = function add(event, time) {
       var index = this._events.length;
 
       for (var i = 0; i < this._eventTimes.length; i++) {
@@ -2659,7 +2948,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto10.get = function get() {
+    _proto11.get = function get() {
       if (!this._events.length) {
         return null;
       }
@@ -2684,7 +2973,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto10.getEventTime = function getEventTime(event) {
+    _proto11.getEventTime = function getEventTime(event) {
       var index = this._events.indexOf(event);
 
       if (index == -1) {
@@ -2700,7 +2989,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto10.remove = function remove(event) {
+    _proto11.remove = function remove(event) {
       var index = this._events.indexOf(event);
 
       if (index == -1) {
@@ -2716,7 +3005,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      * Remove an event from the queue
      * @param {int} index
      */
-    _proto10._remove = function _remove(index) {
+    _proto11._remove = function _remove(index) {
       this._events.splice(index, 1);
 
       this._eventTimes.splice(index, 1);
@@ -2741,9 +3030,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    var _proto11 = Scheduler.prototype;
+    var _proto12 = Scheduler.prototype;
 
-    _proto11.getTime = function getTime() {
+    _proto12.getTime = function getTime() {
       return this._queue.getTime();
     };
     /**
@@ -2752,7 +3041,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto11.add = function add(item, repeat) {
+    _proto12.add = function add(item, repeat) {
       if (repeat) {
         this._repeat.push(item);
       }
@@ -2766,7 +3055,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto11.getTimeOf = function getTimeOf(item) {
+    _proto12.getTimeOf = function getTimeOf(item) {
       return this._queue.getEventTime(item);
     };
     /**
@@ -2774,7 +3063,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto11.clear = function clear() {
+    _proto12.clear = function clear() {
       this._queue.clear();
 
       this._repeat = [];
@@ -2788,7 +3077,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto11.remove = function remove(item) {
+    _proto12.remove = function remove(item) {
       var result = this._queue.remove(item);
 
       var index = this._repeat.indexOf(item);
@@ -2809,7 +3098,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto11.next = function next() {
+    _proto12.next = function next() {
       this._current = this._queue.get();
       return this._current;
     };
@@ -2830,15 +3119,15 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return _Scheduler.apply(this, arguments) || this;
     }
 
-    var _proto12 = Simple.prototype;
+    var _proto13 = Simple.prototype;
 
-    _proto12.add = function add(item, repeat) {
+    _proto13.add = function add(item, repeat) {
       this._queue.add(item, 0);
 
       return _Scheduler.prototype.add.call(this, item, repeat);
     };
 
-    _proto12.next = function next() {
+    _proto13.next = function next() {
       if (this._current && this._repeat.indexOf(this._current) != -1) {
         this._queue.add(this._current, 0);
       }
@@ -2862,7 +3151,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return _Scheduler2.apply(this, arguments) || this;
     }
 
-    var _proto13 = Speed.prototype;
+    var _proto14 = Speed.prototype;
 
     /**
      * @param {object} item anything with "getSpeed" method
@@ -2870,7 +3159,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      * @param {number} [time=1/item.getSpeed()]
      * @see ROT.Scheduler#add
      */
-    _proto13.add = function add(item, repeat, time) {
+    _proto14.add = function add(item, repeat, time) {
       this._queue.add(item, time !== undefined ? time : 1 / item.getSpeed());
 
       return _Scheduler2.prototype.add.call(this, item, repeat);
@@ -2880,7 +3169,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto13.next = function next() {
+    _proto14.next = function next() {
       if (this._current && this._repeat.indexOf(this._current) != -1) {
         this._queue.add(this._current, 1 / this._current.getSpeed());
       }
@@ -2902,16 +3191,16 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     _inheritsLoose(Action, _Scheduler3);
 
     function Action() {
-      var _this6;
+      var _this9;
 
-      _this6 = _Scheduler3.call(this) || this;
-      _this6._defaultDuration = 1;
+      _this9 = _Scheduler3.call(this) || this;
+      _this9._defaultDuration = 1;
       /* for newly added */
 
-      _this6._duration = _this6._defaultDuration;
+      _this9._duration = _this9._defaultDuration;
       /* for this._current */
 
-      return _this6;
+      return _this9;
     }
     /**
      * @param {object} item
@@ -2921,20 +3210,20 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    var _proto14 = Action.prototype;
+    var _proto15 = Action.prototype;
 
-    _proto14.add = function add(item, repeat, time) {
+    _proto15.add = function add(item, repeat, time) {
       this._queue.add(item, time || this._defaultDuration);
 
       return _Scheduler3.prototype.add.call(this, item, repeat);
     };
 
-    _proto14.clear = function clear() {
+    _proto15.clear = function clear() {
       this._duration = this._defaultDuration;
       return _Scheduler3.prototype.clear.call(this);
     };
 
-    _proto14.remove = function remove(item) {
+    _proto15.remove = function remove(item) {
       if (item == this._current) {
         this._duration = this._defaultDuration;
       }
@@ -2946,7 +3235,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto14.next = function next() {
+    _proto15.next = function next() {
       if (this._current && this._repeat.indexOf(this._current) != -1) {
         this._queue.add(this._current, this._duration || this._defaultDuration);
 
@@ -2960,7 +3249,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto14.setDuration = function setDuration(time) {
+    _proto15.setDuration = function setDuration(time) {
       if (this._current) {
         this._duration = time;
       }
@@ -3004,9 +3293,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    var _proto15 = FOV.prototype;
+    var _proto16 = FOV.prototype;
 
-    _proto15._getCircle = function _getCircle(cx, cy, r) {
+    _proto16._getCircle = function _getCircle(cx, cy, r) {
       var result = [];
       var dirs, countFactor, startOffset;
 
@@ -3068,9 +3357,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return _FOV.apply(this, arguments) || this;
     }
 
-    var _proto16 = DiscreteShadowcasting.prototype;
+    var _proto17 = DiscreteShadowcasting.prototype;
 
-    _proto16.compute = function compute(x, y, R, callback) {
+    _proto17.compute = function compute(x, y, R, callback) {
       /* this place is always visible */
       callback(x, y, 0, 1);
       /* standing in a dark place. FIXME is this a good idea?  */
@@ -3121,7 +3410,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto16._visibleCoords = function _visibleCoords(A, B, blocks, DATA) {
+    _proto17._visibleCoords = function _visibleCoords(A, B, blocks, DATA) {
       if (A < 0) {
         var v1 = this._visibleCoords(0, B, blocks, DATA);
 
@@ -3209,9 +3498,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return _FOV2.apply(this, arguments) || this;
     }
 
-    var _proto17 = PreciseShadowcasting.prototype;
+    var _proto18 = PreciseShadowcasting.prototype;
 
-    _proto17.compute = function compute(x, y, R, callback) {
+    _proto18.compute = function compute(x, y, R, callback) {
       /* this place is always visible */
       callback(x, y, 0, 1);
       /* standing in a dark place. FIXME is this a good idea?  */
@@ -3265,7 +3554,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto17._checkVisibility = function _checkVisibility(A1, A2, blocks, SHADOWS) {
+    _proto18._checkVisibility = function _checkVisibility(A1, A2, blocks, SHADOWS) {
       if (A1[0] > A2[0]) {
         /* split into two sub-arcs */
         var v1 = this._checkVisibility(A1, [A1[1], A1[1]], blocks, SHADOWS);
@@ -3405,7 +3694,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return _FOV3.apply(this, arguments) || this;
     }
 
-    var _proto18 = RecursiveShadowcasting.prototype;
+    var _proto19 = RecursiveShadowcasting.prototype;
 
     /**
      * Compute visibility for a 360-degree circle
@@ -3414,7 +3703,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      * @param {int} R Maximum visibility radius
      * @param {function} callback
      */
-    _proto18.compute = function compute(x, y, R, callback) {
+    _proto19.compute = function compute(x, y, R, callback) {
       //You can always see your own tile
       callback(x, y, 0, 1);
 
@@ -3432,7 +3721,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto18.compute180 = function compute180(x, y, R, dir, callback) {
+    _proto19.compute180 = function compute180(x, y, R, dir, callback) {
       //You can always see your own tile
       callback(x, y, 0, 1);
       var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 180 degrees
@@ -3458,7 +3747,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      * @param {int} dir Direction to look in (expressed in a ROT.DIRS value);
      * @param {function} callback
      */
-    _proto18.compute90 = function compute90(x, y, R, dir, callback) {
+    _proto19.compute90 = function compute90(x, y, R, dir, callback) {
       //You can always see your own tile
       callback(x, y, 0, 1);
       var previousOctant = (dir - 1 + 8) % 8; //Need to retrieve the previous octant to render a full 90 degrees
@@ -3477,7 +3766,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto18._renderOctant = function _renderOctant(x, y, octant, R, callback) {
+    _proto19._renderOctant = function _renderOctant(x, y, octant, R, callback) {
       //Radius incremented by 1 to provide same coverage area as other shadowcasting radiuses
       this._castVisibility(x, y, 1, 1.0, 0.0, R + 1, octant[0], octant[1], octant[2], octant[3], callback);
     };
@@ -3497,7 +3786,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto18._castVisibility = function _castVisibility(startX, startY, row, visSlopeStart, visSlopeEnd, radius, xx, xy, yx, yy, callback) {
+    _proto19._castVisibility = function _castVisibility(startX, startY, row, visSlopeStart, visSlopeEnd, radius, xx, xy, yx, yy, callback) {
       if (visSlopeStart < visSlopeEnd) {
         return;
       }
@@ -3589,9 +3878,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       this._height = height;
     }
 
-    var _proto19 = Map.prototype;
+    var _proto20 = Map.prototype;
 
-    _proto19._fillMap = function _fillMap(value) {
+    _proto20._fillMap = function _fillMap(value) {
       var map = [];
 
       for (var i = 0; i < this._width; i++) {
@@ -3622,9 +3911,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return _Map.apply(this, arguments) || this;
     }
 
-    var _proto20 = Arena.prototype;
+    var _proto21 = Arena.prototype;
 
-    _proto20.create = function create(callback) {
+    _proto21.create = function create(callback) {
       var w = this._width - 1;
       var h = this._height - 1;
 
@@ -3652,12 +3941,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     _inheritsLoose(Dungeon, _Map2);
 
     function Dungeon(width, height) {
-      var _this7;
+      var _this10;
 
-      _this7 = _Map2.call(this, width, height) || this;
-      _this7._rooms = [];
-      _this7._corridors = [];
-      return _this7;
+      _this10 = _Map2.call(this, width, height) || this;
+      _this10._rooms = [];
+      _this10._corridors = [];
+      return _this10;
     }
     /**
      * Get all generated rooms
@@ -3665,9 +3954,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    var _proto21 = Dungeon.prototype;
+    var _proto22 = Dungeon.prototype;
 
-    _proto21.getRooms = function getRooms() {
+    _proto22.getRooms = function getRooms() {
       return this._rooms;
     };
     /**
@@ -3676,7 +3965,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto21.getCorridors = function getCorridors() {
+    _proto22.getCorridors = function getCorridors() {
       return this._corridors;
     };
 
@@ -3706,20 +3995,20 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     _inheritsLoose(Room, _Feature);
 
     function Room(x1, y1, x2, y2, doorX, doorY) {
-      var _this8;
+      var _this11;
 
-      _this8 = _Feature.call(this) || this;
-      _this8._x1 = x1;
-      _this8._y1 = y1;
-      _this8._x2 = x2;
-      _this8._y2 = y2;
-      _this8._doors = {};
+      _this11 = _Feature.call(this) || this;
+      _this11._x1 = x1;
+      _this11._y1 = y1;
+      _this11._x2 = x2;
+      _this11._y2 = y2;
+      _this11._doors = {};
 
       if (doorX !== undefined && doorY !== undefined) {
-        _this8.addDoor(doorX, doorY);
+        _this11.addDoor(doorX, doorY);
       }
 
-      return _this8;
+      return _this11;
     }
 
     /**
@@ -3800,9 +4089,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return new this(x1, y1, x2, y2);
     };
 
-    var _proto22 = Room.prototype;
+    var _proto23 = Room.prototype;
 
-    _proto22.addDoor = function addDoor(x, y) {
+    _proto23.addDoor = function addDoor(x, y) {
       this._doors[x + "," + y] = 1;
       return this;
     };
@@ -3811,7 +4100,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto22.getDoors = function getDoors(cb) {
+    _proto23.getDoors = function getDoors(cb) {
       for (var key in this._doors) {
         var parts = key.split(",");
         cb(parseInt(parts[0]), parseInt(parts[1]));
@@ -3820,12 +4109,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return this;
     };
 
-    _proto22.clearDoors = function clearDoors() {
+    _proto23.clearDoors = function clearDoors() {
       this._doors = {};
       return this;
     };
 
-    _proto22.addDoors = function addDoors(isWallCallback) {
+    _proto23.addDoors = function addDoors(isWallCallback) {
       var left = this._x1 - 1;
       var right = this._x2 + 1;
       var top = this._y1 - 1;
@@ -3848,11 +4137,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return this;
     };
 
-    _proto22.debug = function debug() {
+    _proto23.debug = function debug() {
       console.log("room", this._x1, this._y1, this._x2, this._y2);
     };
 
-    _proto22.isValid = function isValid(isWallCallback, canBeDugCallback) {
+    _proto23.isValid = function isValid(isWallCallback, canBeDugCallback) {
       var left = this._x1 - 1;
       var right = this._x2 + 1;
       var top = this._y1 - 1;
@@ -3879,7 +4168,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto22.create = function create(digCallback) {
+    _proto23.create = function create(digCallback) {
       var left = this._x1 - 1;
       var right = this._x2 + 1;
       var top = this._y1 - 1;
@@ -3901,23 +4190,23 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto22.getCenter = function getCenter() {
+    _proto23.getCenter = function getCenter() {
       return [Math.round((this._x1 + this._x2) / 2), Math.round((this._y1 + this._y2) / 2)];
     };
 
-    _proto22.getLeft = function getLeft() {
+    _proto23.getLeft = function getLeft() {
       return this._x1;
     };
 
-    _proto22.getRight = function getRight() {
+    _proto23.getRight = function getRight() {
       return this._x2;
     };
 
-    _proto22.getTop = function getTop() {
+    _proto23.getTop = function getTop() {
       return this._y1;
     };
 
-    _proto22.getBottom = function getBottom() {
+    _proto23.getBottom = function getBottom() {
       return this._y2;
     };
 
@@ -3939,15 +4228,15 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     _inheritsLoose(Corridor, _Feature2);
 
     function Corridor(startX, startY, endX, endY) {
-      var _this9;
+      var _this12;
 
-      _this9 = _Feature2.call(this) || this;
-      _this9._startX = startX;
-      _this9._startY = startY;
-      _this9._endX = endX;
-      _this9._endY = endY;
-      _this9._endsWithAWall = true;
-      return _this9;
+      _this12 = _Feature2.call(this) || this;
+      _this12._startX = startX;
+      _this12._startY = startY;
+      _this12._endX = endX;
+      _this12._endY = endY;
+      _this12._endsWithAWall = true;
+      return _this12;
     }
 
     Corridor.createRandomAt = function createRandomAt(x, y, dx, dy, options) {
@@ -3957,13 +4246,13 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return new this(x, y, x + dx * length, y + dy * length);
     };
 
-    var _proto23 = Corridor.prototype;
+    var _proto24 = Corridor.prototype;
 
-    _proto23.debug = function debug() {
+    _proto24.debug = function debug() {
       console.log("corridor", this._startX, this._startY, this._endX, this._endY);
     };
 
-    _proto23.isValid = function isValid(isWallCallback, canBeDugCallback) {
+    _proto24.isValid = function isValid(isWallCallback, canBeDugCallback) {
       var sx = this._startX;
       var sy = this._startY;
       var dx = this._endX - sx;
@@ -4050,7 +4339,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto23.create = function create(digCallback) {
+    _proto24.create = function create(digCallback) {
       var sx = this._startX;
       var sy = this._startY;
       var dx = this._endX - sx;
@@ -4074,7 +4363,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return true;
     };
 
-    _proto23.createPriorityWalls = function createPriorityWalls(priorityWallCallback) {
+    _proto24.createPriorityWalls = function createPriorityWalls(priorityWallCallback) {
       if (!this._endsWithAWall) {
         return;
       }
@@ -4113,10 +4402,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     _inheritsLoose(Uniform, _Dungeon);
 
     function Uniform(width, height, options) {
-      var _this10;
+      var _this13;
 
-      _this10 = _Dungeon.call(this, width, height) || this;
-      _this10._options = {
+      _this13 = _Dungeon.call(this, width, height) || this;
+      _this13._options = {
         roomWidth: [3, 9],
         roomHeight: [3, 5],
         roomDugPercentage: 0.1,
@@ -4124,25 +4413,25 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         /* we stop after this much time has passed (msec) */
 
       };
-      Object.assign(_this10._options, options);
-      _this10._map = [];
-      _this10._dug = 0;
-      _this10._roomAttempts = 20;
+      Object.assign(_this13._options, options);
+      _this13._map = [];
+      _this13._dug = 0;
+      _this13._roomAttempts = 20;
       /* new room is created N-times until is considered as impossible to generate */
 
-      _this10._corridorAttempts = 20;
+      _this13._corridorAttempts = 20;
       /* corridors are tried N-times until the level is considered as impossible to connect */
 
-      _this10._connected = [];
+      _this13._connected = [];
       /* list of already connected rooms */
 
-      _this10._unconnected = [];
+      _this13._unconnected = [];
       /* list of remaining unconnected rooms */
 
-      _this10._digCallback = _this10._digCallback.bind(_assertThisInitialized(_assertThisInitialized(_this10)));
-      _this10._canBeDugCallback = _this10._canBeDugCallback.bind(_assertThisInitialized(_assertThisInitialized(_this10)));
-      _this10._isWallCallback = _this10._isWallCallback.bind(_assertThisInitialized(_assertThisInitialized(_this10)));
-      return _this10;
+      _this13._digCallback = _this13._digCallback.bind(_assertThisInitialized(_assertThisInitialized(_this13)));
+      _this13._canBeDugCallback = _this13._canBeDugCallback.bind(_assertThisInitialized(_assertThisInitialized(_this13)));
+      _this13._isWallCallback = _this13._isWallCallback.bind(_assertThisInitialized(_assertThisInitialized(_this13)));
+      return _this13;
     }
     /**
      * Create a map. If the time limit has been hit, returns null.
@@ -4150,9 +4439,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    var _proto24 = Uniform.prototype;
+    var _proto25 = Uniform.prototype;
 
-    _proto24.create = function create(callback) {
+    _proto25.create = function create(callback) {
       var t1 = Date.now();
 
       while (1) {
@@ -4195,7 +4484,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto24._generateRooms = function _generateRooms() {
+    _proto25._generateRooms = function _generateRooms() {
       var w = this._width - 2;
       var h = this._height - 2;
       var room;
@@ -4217,7 +4506,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto24._generateRoom = function _generateRoom() {
+    _proto25._generateRoom = function _generateRoom() {
       var count = 0;
 
       while (count < this._roomAttempts) {
@@ -4245,7 +4534,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto24._generateCorridors = function _generateCorridors() {
+    _proto25._generateCorridors = function _generateCorridors() {
       var cnt = 0;
 
       while (cnt < this._corridorAttempts) {
@@ -4316,7 +4605,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     /**
      * For a given room, find the closest one from the list
      */
-    _proto24._closestRoom = function _closestRoom(rooms, room) {
+    _proto25._closestRoom = function _closestRoom(rooms, room) {
       var dist = Infinity;
       var center = room.getCenter();
       var result = null;
@@ -4337,7 +4626,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return result;
     };
 
-    _proto24._connectRooms = function _connectRooms(room1, room2) {
+    _proto25._connectRooms = function _connectRooms(room1, room2) {
       /*
           room1.debug();
           room2.debug();
@@ -4472,7 +4761,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return true;
     };
 
-    _proto24._placeInWall = function _placeInWall(room, dirIndex) {
+    _proto25._placeInWall = function _placeInWall(room, dirIndex) {
       var start = [0, 0];
       var dir = [0, 0];
       var length = 0;
@@ -4538,7 +4827,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto24._digLine = function _digLine(points) {
+    _proto25._digLine = function _digLine(points) {
       for (var i = 1; i < points.length; i++) {
         var start = points[i - 1];
         var end = points[i];
@@ -4549,7 +4838,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto24._digCallback = function _digCallback(x, y, value) {
+    _proto25._digCallback = function _digCallback(x, y, value) {
       this._map[x][y] = value;
 
       if (value == 0) {
@@ -4557,7 +4846,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto24._isWallCallback = function _isWallCallback(x, y) {
+    _proto25._isWallCallback = function _isWallCallback(x, y) {
       if (x < 0 || y < 0 || x >= this._width || y >= this._height) {
         return false;
       }
@@ -4565,7 +4854,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return this._map[x][y] == 1;
     };
 
-    _proto24._canBeDugCallback = function _canBeDugCallback(x, y) {
+    _proto25._canBeDugCallback = function _canBeDugCallback(x, y) {
       if (x < 1 || y < 1 || x + 1 >= this._width || y + 1 >= this._height) {
         return false;
       }
@@ -4593,24 +4882,24 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     _inheritsLoose(Cellular, _Map3);
 
     function Cellular(width, height, options) {
-      var _this11;
+      var _this14;
 
       if (options === void 0) {
         options = {};
       }
 
-      _this11 = _Map3.call(this, width, height) || this;
-      _this11._options = {
+      _this14 = _Map3.call(this, width, height) || this;
+      _this14._options = {
         born: [5, 6, 7, 8],
         survive: [4, 5, 6, 7, 8],
         topology: 8
       };
 
-      _this11.setOptions(options);
+      _this14.setOptions(options);
 
-      _this11._dirs = DIRS[_this11._options.topology];
-      _this11._map = _this11._fillMap(0);
-      return _this11;
+      _this14._dirs = DIRS[_this14._options.topology];
+      _this14._map = _this14._fillMap(0);
+      return _this14;
     }
     /**
      * Fill the map with random values
@@ -4618,9 +4907,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    var _proto25 = Cellular.prototype;
+    var _proto26 = Cellular.prototype;
 
-    _proto25.randomize = function randomize(probability) {
+    _proto26.randomize = function randomize(probability) {
       for (var i = 0; i < this._width; i++) {
         for (var j = 0; j < this._height; j++) {
           this._map[i][j] = RNG$1.getUniform() < probability ? 1 : 0;
@@ -4635,15 +4924,15 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto25.setOptions = function setOptions(options) {
+    _proto26.setOptions = function setOptions(options) {
       Object.assign(this._options, options);
     };
 
-    _proto25.set = function set(x, y, value) {
+    _proto26.set = function set(x, y, value) {
       this._map[x][y] = value;
     };
 
-    _proto25.create = function create(callback) {
+    _proto26.create = function create(callback) {
       var newMap = this._fillMap(0);
 
       var born = this._options.born;
@@ -4677,7 +4966,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       callback && this._serviceCallback(callback);
     };
 
-    _proto25._serviceCallback = function _serviceCallback(callback) {
+    _proto26._serviceCallback = function _serviceCallback(callback) {
       for (var j = 0; j < this._height; j++) {
         var widthStep = 1;
         var widthStart = 0;
@@ -4697,7 +4986,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto25._getNeighbors = function _getNeighbors(cx, cy) {
+    _proto26._getNeighbors = function _getNeighbors(cx, cy) {
       var result = 0;
 
       for (var i = 0; i < this._dirs.length; i++) {
@@ -4722,7 +5011,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto25.connect = function connect(callback, value, connectionCallback) {
+    _proto26.connect = function connect(callback, value, connectionCallback) {
       if (!value) value = 0;
       var allFreeSpace = [];
       var notConnected = {}; // find all free space
@@ -4789,7 +5078,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto25._getFromTo = function _getFromTo(connected, notConnected) {
+    _proto26._getFromTo = function _getFromTo(connected, notConnected) {
       var from = [0, 0],
           to = [0, 0],
           d;
@@ -4818,7 +5107,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return [from, to];
     };
 
-    _proto25._getClosest = function _getClosest(point, space) {
+    _proto26._getClosest = function _getClosest(point, space) {
       var minPoint = null;
       var minDist = null;
 
@@ -4835,7 +5124,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return minPoint;
     };
 
-    _proto25._findConnected = function _findConnected(connected, notConnected, stack, keepNotConnected, value) {
+    _proto26._findConnected = function _findConnected(connected, notConnected, stack, keepNotConnected, value) {
       while (stack.length > 0) {
         var p = stack.splice(0, 1)[0];
         var tests = void 0;
@@ -4862,7 +5151,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto25._tunnelToConnected = function _tunnelToConnected(to, from, connected, notConnected, value, connectionCallback) {
+    _proto26._tunnelToConnected = function _tunnelToConnected(to, from, connected, notConnected, value, connectionCallback) {
       var a, b;
 
       if (from[0] < to[0]) {
@@ -4913,7 +5202,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto25._tunnelToConnected6 = function _tunnelToConnected6(to, from, connected, notConnected, value, connectionCallback) {
+    _proto26._tunnelToConnected6 = function _tunnelToConnected6(to, from, connected, notConnected, value, connectionCallback) {
       var a, b;
 
       if (from[0] < to[0]) {
@@ -4965,11 +5254,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto25._freeSpace = function _freeSpace(x, y, value) {
+    _proto26._freeSpace = function _freeSpace(x, y, value) {
       return x >= 0 && x < this._width && y >= 0 && y < this._height && this._map[x][y] == value;
     };
 
-    _proto25._pointKey = function _pointKey(p) {
+    _proto26._pointKey = function _pointKey(p) {
       return p[0] + "." + p[1];
     };
 
@@ -4992,14 +5281,14 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     _inheritsLoose(Digger, _Dungeon2);
 
     function Digger(width, height, options) {
-      var _this12;
+      var _this15;
 
       if (options === void 0) {
         options = {};
       }
 
-      _this12 = _Dungeon2.call(this, width, height) || this;
-      _this12._options = Object.assign({
+      _this15 = _Dungeon2.call(this, width, height) || this;
+      _this15._options = Object.assign({
         roomWidth: [3, 9],
         roomHeight: [3, 5],
         corridorLength: [3, 10],
@@ -5008,28 +5297,28 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         /* we stop after this much time has passed (msec) */
 
       }, options);
-      _this12._features = {
+      _this15._features = {
         "room": 4,
         "corridor": 4
       };
-      _this12._map = [];
-      _this12._featureAttempts = 20;
+      _this15._map = [];
+      _this15._featureAttempts = 20;
       /* how many times do we try to create a feature on a suitable wall */
 
-      _this12._walls = {};
+      _this15._walls = {};
       /* these are available for digging */
 
-      _this12._dug = 0;
-      _this12._digCallback = _this12._digCallback.bind(_assertThisInitialized(_assertThisInitialized(_this12)));
-      _this12._canBeDugCallback = _this12._canBeDugCallback.bind(_assertThisInitialized(_assertThisInitialized(_this12)));
-      _this12._isWallCallback = _this12._isWallCallback.bind(_assertThisInitialized(_assertThisInitialized(_this12)));
-      _this12._priorityWallCallback = _this12._priorityWallCallback.bind(_assertThisInitialized(_assertThisInitialized(_this12)));
-      return _this12;
+      _this15._dug = 0;
+      _this15._digCallback = _this15._digCallback.bind(_assertThisInitialized(_assertThisInitialized(_this15)));
+      _this15._canBeDugCallback = _this15._canBeDugCallback.bind(_assertThisInitialized(_assertThisInitialized(_this15)));
+      _this15._isWallCallback = _this15._isWallCallback.bind(_assertThisInitialized(_assertThisInitialized(_this15)));
+      _this15._priorityWallCallback = _this15._priorityWallCallback.bind(_assertThisInitialized(_assertThisInitialized(_this15)));
+      return _this15;
     }
 
-    var _proto26 = Digger.prototype;
+    var _proto27 = Digger.prototype;
 
-    _proto26.create = function create(callback) {
+    _proto27.create = function create(callback) {
       this._rooms = [];
       this._corridors = [];
       this._map = this._fillMap(1);
@@ -5115,7 +5404,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return this;
     };
 
-    _proto26._digCallback = function _digCallback(x, y, value) {
+    _proto27._digCallback = function _digCallback(x, y, value) {
       if (value == 0 || value == 2) {
         /* empty */
         this._map[x][y] = 0;
@@ -5126,7 +5415,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto26._isWallCallback = function _isWallCallback(x, y) {
+    _proto27._isWallCallback = function _isWallCallback(x, y) {
       if (x < 0 || y < 0 || x >= this._width || y >= this._height) {
         return false;
       }
@@ -5134,7 +5423,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return this._map[x][y] == 1;
     };
 
-    _proto26._canBeDugCallback = function _canBeDugCallback(x, y) {
+    _proto27._canBeDugCallback = function _canBeDugCallback(x, y) {
       if (x < 1 || y < 1 || x + 1 >= this._width || y + 1 >= this._height) {
         return false;
       }
@@ -5142,11 +5431,11 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return this._map[x][y] == 1;
     };
 
-    _proto26._priorityWallCallback = function _priorityWallCallback(x, y) {
+    _proto27._priorityWallCallback = function _priorityWallCallback(x, y) {
       this._walls[x + "," + y] = 2;
     };
 
-    _proto26._firstRoom = function _firstRoom() {
+    _proto27._firstRoom = function _firstRoom() {
       var cx = Math.floor(this._width / 2);
       var cy = Math.floor(this._height / 2);
       var room = Room.createRandomCenter(cx, cy, this._options);
@@ -5160,7 +5449,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto26._findWall = function _findWall() {
+    _proto27._findWall = function _findWall() {
       var prio1 = [];
       var prio2 = [];
 
@@ -5193,7 +5482,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto26._tryFeature = function _tryFeature(x, y, dx, dy) {
+    _proto27._tryFeature = function _tryFeature(x, y, dx, dy) {
       var featureName = RNG$1.getWeightedValue(this._features);
       var ctor = FEATURES[featureName];
       var feature = ctor.createRandomAt(x, y, dx, dy, this._options);
@@ -5219,7 +5508,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return true;
     };
 
-    _proto26._removeSurroundingWalls = function _removeSurroundingWalls(cx, cy) {
+    _proto27._removeSurroundingWalls = function _removeSurroundingWalls(cx, cy) {
       var deltas = DIRS[4];
 
       for (var i = 0; i < deltas.length; i++) {
@@ -5237,7 +5526,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto26._getDiggingDirection = function _getDiggingDirection(cx, cy) {
+    _proto27._getDiggingDirection = function _getDiggingDirection(cx, cy) {
       if (cx <= 0 || cy <= 0 || cx >= this._width - 1 || cy >= this._height - 1) {
         return null;
       }
@@ -5273,7 +5562,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto26._addDoors = function _addDoors() {
+    _proto27._addDoors = function _addDoors() {
       var data = this._map;
 
       function isWallCallback(x, y) {
@@ -5326,9 +5615,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return _Map4.apply(this, arguments) || this;
     }
 
-    var _proto27 = EllerMaze.prototype;
+    var _proto28 = EllerMaze.prototype;
 
-    _proto27.create = function create(callback) {
+    _proto28.create = function create(callback) {
       var map = this._fillMap(1);
 
       var w = Math.ceil((this._width - 2) / 2);
@@ -5414,17 +5703,17 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     _inheritsLoose(DividedMaze, _Map5);
 
     function DividedMaze() {
-      var _this13;
+      var _this16;
 
-      _this13 = _Map5.apply(this, arguments) || this;
-      _this13._stack = [];
-      _this13._map = [];
-      return _this13;
+      _this16 = _Map5.apply(this, arguments) || this;
+      _this16._stack = [];
+      _this16._map = [];
+      return _this16;
     }
 
-    var _proto28 = DividedMaze.prototype;
+    var _proto29 = DividedMaze.prototype;
 
-    _proto28.create = function create(callback) {
+    _proto29.create = function create(callback) {
       var w = this._width;
       var h = this._height;
       this._map = [];
@@ -5453,7 +5742,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return this;
     };
 
-    _proto28._process = function _process() {
+    _proto29._process = function _process() {
       while (this._stack.length) {
         var room = this._stack.shift();
         /* [left, top, right, bottom] */
@@ -5463,7 +5752,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto28._partitionRoom = function _partitionRoom(room) {
+    _proto29._partitionRoom = function _partitionRoom(room) {
       var availX = [];
       var availY = [];
 
@@ -5573,21 +5862,21 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     _inheritsLoose(IceyMaze, _Map6);
 
     function IceyMaze(width, height, regularity) {
-      var _this14;
+      var _this17;
 
       if (regularity === void 0) {
         regularity = 0;
       }
 
-      _this14 = _Map6.call(this, width, height) || this;
-      _this14._regularity = regularity;
-      _this14._map = [];
-      return _this14;
+      _this17 = _Map6.call(this, width, height) || this;
+      _this17._regularity = regularity;
+      _this17._map = [];
+      return _this17;
     }
 
-    var _proto29 = IceyMaze.prototype;
+    var _proto30 = IceyMaze.prototype;
 
-    _proto29.create = function create(callback) {
+    _proto30.create = function create(callback) {
       var width = this._width;
       var height = this._height;
 
@@ -5649,7 +5938,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return this;
     };
 
-    _proto29._randomize = function _randomize(dirs) {
+    _proto30._randomize = function _randomize(dirs) {
       for (var i = 0; i < 4; i++) {
         dirs[i][0] = 0;
         dirs[i][1] = 0;
@@ -5686,7 +5975,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto29._isFree = function _isFree(map, x, y, width, height) {
+    _proto30._isFree = function _isFree(map, x, y, width, height) {
       if (x < 1 || y < 1 || x >= width || y >= height) {
         return false;
       }
@@ -5708,12 +5997,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     _inheritsLoose(Rogue, _Map7);
 
     function Rogue(width, height, options) {
-      var _this15;
+      var _this18;
 
-      _this15 = _Map7.call(this, width, height) || this;
-      _this15.map = [];
-      _this15.rooms = [];
-      _this15.connectedCells = [];
+      _this18 = _Map7.call(this, width, height) || this;
+      _this18.map = [];
+      _this18.rooms = [];
+      _this18.connectedCells = [];
       options = Object.assign({
         cellWidth: 3,
         cellHeight: 3 //     ie. as an array with min-max values for each direction....
@@ -5725,20 +6014,20 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       */
 
       if (!options.hasOwnProperty("roomWidth")) {
-        options["roomWidth"] = _this15._calculateRoomSize(_this15._width, options["cellWidth"]);
+        options["roomWidth"] = _this18._calculateRoomSize(_this18._width, options["cellWidth"]);
       }
 
       if (!options.hasOwnProperty("roomHeight")) {
-        options["roomHeight"] = _this15._calculateRoomSize(_this15._height, options["cellHeight"]);
+        options["roomHeight"] = _this18._calculateRoomSize(_this18._height, options["cellHeight"]);
       }
 
-      _this15._options = options;
-      return _this15;
+      _this18._options = options;
+      return _this18;
     }
 
-    var _proto30 = Rogue.prototype;
+    var _proto31 = Rogue.prototype;
 
-    _proto30.create = function create(callback) {
+    _proto31.create = function create(callback) {
       this.map = this._fillMap(1);
       this.rooms = [];
       this.connectedCells = [];
@@ -5766,7 +6055,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return this;
     };
 
-    _proto30._calculateRoomSize = function _calculateRoomSize(size, cell) {
+    _proto31._calculateRoomSize = function _calculateRoomSize(size, cell) {
       var max = Math.floor(size / cell * 0.8);
       var min = Math.floor(size / cell * 0.25);
 
@@ -5781,7 +6070,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return [min, max];
     };
 
-    _proto30._initRooms = function _initRooms() {
+    _proto31._initRooms = function _initRooms() {
       // create rooms array. This is the "grid" list from the algo.
       for (var i = 0; i < this._options.cellWidth; i++) {
         this.rooms.push([]);
@@ -5800,7 +6089,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto30._connectRooms = function _connectRooms() {
+    _proto31._connectRooms = function _connectRooms() {
       //pick random starting grid
       var cgx = RNG$1.getUniformInt(0, this._options.cellWidth - 1);
       var cgy = RNG$1.getUniformInt(0, this._options.cellHeight - 1);
@@ -5853,7 +6142,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       } while (dirToCheck.length > 0);
     };
 
-    _proto30._connectUnconnectedRooms = function _connectUnconnectedRooms() {
+    _proto31._connectUnconnectedRooms = function _connectUnconnectedRooms() {
       //While there are unconnected rooms, try to connect them to a random connected neighbor
       //(if a room has no connected neighbors yet, just keep cycling, you'll fill out to it eventually).
       var cw = this._options.cellWidth;
@@ -5910,10 +6199,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto30._createRandomRoomConnections = function _createRandomRoomConnections() {// Empty for now.
+    _proto31._createRandomRoomConnections = function _createRandomRoomConnections() {// Empty for now.
     };
 
-    _proto30._createRooms = function _createRooms() {
+    _proto31._createRooms = function _createRooms() {
       var w = this._width;
       var h = this._height;
       var cw = this._options.cellWidth;
@@ -5995,7 +6284,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto30._getWallPosition = function _getWallPosition(aRoom, aDirection) {
+    _proto31._getWallPosition = function _getWallPosition(aRoom, aDirection) {
       var rx;
       var ry;
       var door;
@@ -6029,7 +6318,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       return [rx, ry];
     };
 
-    _proto30._drawCorridor = function _drawCorridor(startPosition, endPosition) {
+    _proto31._drawCorridor = function _drawCorridor(startPosition, endPosition) {
       var xOffset = endPosition[0] - startPosition[0];
       var yOffset = endPosition[1] - startPosition[1];
       var xpos = startPosition[0];
@@ -6084,7 +6373,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto30._createCorridors = function _createCorridors() {
+    _proto31._createCorridors = function _createCorridors() {
       // Draw Corridors between connected rooms
       var cw = this._options.cellWidth;
       var ch = this._options.cellHeight;
@@ -6162,14 +6451,14 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      * @param gradients Random gradients
      */
     function Simplex(gradients) {
-      var _this16;
+      var _this19;
 
       if (gradients === void 0) {
         gradients = 256;
       }
 
-      _this16 = _Noise.call(this) || this;
-      _this16._gradients = [[0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1]];
+      _this19 = _Noise.call(this) || this;
+      _this19._gradients = [[0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1]];
       var permutations = [];
 
       for (var i = 0; i < gradients; i++) {
@@ -6177,21 +6466,21 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
 
       permutations = RNG$1.shuffle(permutations);
-      _this16._perms = [];
-      _this16._indexes = [];
+      _this19._perms = [];
+      _this19._indexes = [];
 
       for (var _i12 = 0; _i12 < 2 * gradients; _i12++) {
-        _this16._perms.push(permutations[_i12 % gradients]);
+        _this19._perms.push(permutations[_i12 % gradients]);
 
-        _this16._indexes.push(_this16._perms[_i12] % _this16._gradients.length);
+        _this19._indexes.push(_this19._perms[_i12] % _this19._gradients.length);
       }
 
-      return _this16;
+      return _this19;
     }
 
-    var _proto31 = Simplex.prototype;
+    var _proto32 = Simplex.prototype;
 
-    _proto31.get = function get(xin, yin) {
+    _proto32.get = function get(xin, yin) {
       var perms = this._perms;
       var indexes = this._indexes;
       var count = perms.length / 2;
@@ -6308,9 +6597,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     }
 
-    var _proto32 = Path.prototype;
+    var _proto33 = Path.prototype;
 
-    _proto32._getNeighbors = function _getNeighbors(cx, cy) {
+    _proto33._getNeighbors = function _getNeighbors(cx, cy) {
       var result = [];
 
       for (var i = 0; i < this._dirs.length; i++) {
@@ -6343,15 +6632,15 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     _inheritsLoose(Dijkstra, _Path);
 
     function Dijkstra(toX, toY, passableCallback, options) {
-      var _this17;
+      var _this20;
 
-      _this17 = _Path.call(this, toX, toY, passableCallback, options) || this;
-      _this17._computed = {};
-      _this17._todo = [];
+      _this20 = _Path.call(this, toX, toY, passableCallback, options) || this;
+      _this20._computed = {};
+      _this20._todo = [];
 
-      _this17._add(toX, toY, null);
+      _this20._add(toX, toY, null);
 
-      return _this17;
+      return _this20;
     }
     /**
      * Compute a path from a given point
@@ -6359,9 +6648,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    var _proto33 = Dijkstra.prototype;
+    var _proto34 = Dijkstra.prototype;
 
-    _proto33.compute = function compute(fromX, fromY, callback) {
+    _proto34.compute = function compute(fromX, fromY, callback) {
       var key = fromX + "," + fromY;
 
       if (!(key in this._computed)) {
@@ -6384,7 +6673,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto33._compute = function _compute(fromX, fromY) {
+    _proto34._compute = function _compute(fromX, fromY) {
       while (this._todo.length) {
         var item = this._todo.shift();
 
@@ -6411,7 +6700,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto33._add = function _add(x, y, prev) {
+    _proto34._add = function _add(x, y, prev) {
       var obj = {
         x: x,
         y: y,
@@ -6437,16 +6726,16 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     _inheritsLoose(AStar, _Path2);
 
     function AStar(toX, toY, passableCallback, options) {
-      var _this18;
+      var _this21;
 
       if (options === void 0) {
         options = {};
       }
 
-      _this18 = _Path2.call(this, toX, toY, passableCallback, options) || this;
-      _this18._todo = [];
-      _this18._done = {};
-      return _this18;
+      _this21 = _Path2.call(this, toX, toY, passableCallback, options) || this;
+      _this21._todo = [];
+      _this21._done = {};
+      return _this21;
     }
     /**
      * Compute a path from a given point
@@ -6454,9 +6743,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    var _proto34 = AStar.prototype;
+    var _proto35 = AStar.prototype;
 
-    _proto34.compute = function compute(fromX, fromY, callback) {
+    _proto35.compute = function compute(fromX, fromY, callback) {
       this._todo = [];
       this._done = {};
       this._fromX = fromX;
@@ -6508,7 +6797,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       }
     };
 
-    _proto34._add = function _add(x, y, prev) {
+    _proto35._add = function _add(x, y, prev) {
       var h = this._distance(x, y);
 
       var obj = {
@@ -6536,7 +6825,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       this._todo.push(obj);
     };
 
-    _proto34._distance = function _distance(x, y) {
+    _proto35._distance = function _distance(x, y) {
       switch (this._options.topology) {
         case 4:
           return Math.abs(x - this._fromX) + Math.abs(y - this._fromY);
@@ -6578,9 +6867,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    var _proto35 = Engine.prototype;
+    var _proto36 = Engine.prototype;
 
-    _proto35.start = function start() {
+    _proto36.start = function start() {
       return this.unlock();
     };
     /**
@@ -6588,7 +6877,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto35.lock = function lock() {
+    _proto36.lock = function lock() {
       this._lock++;
       return this;
     };
@@ -6597,7 +6886,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto35.unlock = function unlock() {
+    _proto36.unlock = function unlock() {
       if (!this._lock) {
         throw new Error("Cannot unlock unlocked engine");
       }
@@ -6657,9 +6946,9 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    var _proto36 = Lighting.prototype;
+    var _proto37 = Lighting.prototype;
 
-    _proto36.setOptions = function setOptions(options) {
+    _proto37.setOptions = function setOptions(options) {
       Object.assign(this._options, options);
 
       if (options && options.range) {
@@ -6673,7 +6962,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto36.setFOV = function setFOV(fov) {
+    _proto37.setFOV = function setFOV(fov) {
       this._fov = fov;
       this._fovCache = {};
       return this;
@@ -6683,7 +6972,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto36.setLight = function setLight(x, y, color) {
+    _proto37.setLight = function setLight(x, y, color) {
       var key = x + "," + y;
 
       if (color) {
@@ -6699,7 +6988,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto36.clearLights = function clearLights() {
+    _proto37.clearLights = function clearLights() {
       this._lights = {};
     };
     /**
@@ -6707,7 +6996,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto36.reset = function reset() {
+    _proto37.reset = function reset() {
       this._reflectivityCache = {};
       this._fovCache = {};
       return this;
@@ -6717,7 +7006,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto36.compute = function compute(lightingCallback) {
+    _proto37.compute = function compute(lightingCallback) {
       var doneCells = {};
       var emittingCells = {};
       var litCells = {};
@@ -6760,7 +7049,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto36._emitLight = function _emitLight(emittingCells, litCells, doneCells) {
+    _proto37._emitLight = function _emitLight(emittingCells, litCells, doneCells) {
       for (var key in emittingCells) {
         var parts = key.split(",");
         var x = parseInt(parts[0]);
@@ -6778,7 +7067,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto36._computeEmitters = function _computeEmitters(litCells, doneCells) {
+    _proto37._computeEmitters = function _computeEmitters(litCells, doneCells) {
       var result = {};
 
       for (var key in litCells) {
@@ -6830,7 +7119,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto36._emitLightFromCell = function _emitLightFromCell(x, y, color, litCells) {
+    _proto37._emitLightFromCell = function _emitLightFromCell(x, y, color, litCells) {
       var key = x + "," + y;
       var fov;
 
@@ -6867,7 +7156,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
      */
 
 
-    _proto36._updateFOV = function _updateFOV(x, y) {
+    _proto37._updateFOV = function _updateFOV(x, y) {
       var key1 = x + "," + y;
       var cache = {};
       this._fovCache[key1] = cache;

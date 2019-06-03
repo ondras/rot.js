@@ -4,7 +4,7 @@ declare type LightColor = [number, number, number];
 interface ReflectivityCallback {
     (x: number, y: number): number;
 }
-/** Will be called  for every lit cell */
+/** Will be called for every lit cell */
 interface LightingCallback {
     (x: number, y: number, color: LightColor): void;
 }

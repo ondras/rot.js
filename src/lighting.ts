@@ -6,7 +6,7 @@ type LightColor = [number, number, number];
 /** Callback to retrieve cell reflectivity (0..1) */
 interface ReflectivityCallback { (x:number, y:number ): number };
 
-/** Will be called  for every lit cell */
+/** Will be called for every lit cell */
 interface LightingCallback { (x:number, y:number, color: LightColor ): void };
 
 interface LightingMap { [key:string]: LightColor };

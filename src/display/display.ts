@@ -2,6 +2,7 @@ import Backend from "./backend.js";
 import Hex from "./hex.js";
 import Rect from "./rect.js";
 import Tile from "./tile.js";
+import TileGL from "./tile-gl.js";
 import Term from "./term.js";
 
 import * as Text from "../text.js";
@@ -12,6 +13,7 @@ const BACKENDS = {
 	"hex": Hex,
 	"rect": Rect,
 	"tile": Tile,
+	"tile-gl": TileGL,
 	"term": Term
 }
 
@@ -47,6 +49,7 @@ export default class Display {
 	static Rect = Rect;
 	static Hex = Hex;
 	static Tile = Tile;
+	static TileGL = TileGL;
 	static Term = Term;
 
 	constructor(options: Partial<DisplayOptions> = {}) {
@@ -102,7 +105,7 @@ export default class Display {
 	/**
 	 * Returns currently set options
 	 */
-	getOptions () { return this._options; }
+	getOptions() { return this._options; }
 
 	/**
 	 * Returns the DOM node of this display
@@ -165,7 +168,7 @@ export default class Display {
 		if (!bg) { bg = this._options.bg; }
 		let key = `${x},${y}`;
 		this._data[key] = [x, y, ch, fg, bg];
-		
+
 		if (this._dirty === true) { return; } // will already redraw everything 
 		if (!this._dirty) { this._dirty = {}; } // first!
 		this._dirty[key] = true;
