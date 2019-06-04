@@ -1235,6 +1235,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
   function (_Backend2) {
     _inheritsLoose(TileGL, _Backend2);
 
+    TileGL.isSupported = function isSupported() {
+      return !!document.createElement("canvas").getContext("webgl2", {
+        preserveDrawingBuffer: true
+      });
+    };
+
     function TileGL() {
       var _this5;
 
@@ -1407,8 +1413,6 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       var _this7 = this;
 
       var gl = document.createElement("canvas").getContext("webgl2", {
-        alpha: true,
-        premultipliedAlpha: false,
         preserveDrawingBuffer: true
       });
       window.gl = gl;
@@ -1419,9 +1423,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         return _this7._uniforms[name] = gl.getUniformLocation(program, name);
       });
       this._program = program;
-      gl.enable(gl.BLEND); //		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-
-      gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+      gl.enable(gl.BLEND);
+      gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       gl.enable(gl.SCISSOR_TEST);
       return gl;
     };
@@ -1450,7 +1453,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 
   var UNIFORMS = ["targetPosRel", "tilesetPosAbs", "tileSize", "targetSize", "colorize", "bg", "tint"];
   var VS = "\n#version 300 es\n\nin vec2 tilePosRel;\nout vec2 tilesetPosPx;\n\nuniform vec2 tilesetPosAbs;\nuniform vec2 tileSize;\nuniform vec2 targetSize;\nuniform vec2 targetPosRel;\n\nvoid main() {\n\tvec2 targetPosPx = (targetPosRel + tilePosRel) * tileSize;\n\tvec2 targetPosNdc = ((targetPosPx / targetSize)-0.5)*2.0;\n\ttargetPosNdc.y *= -1.0;\n\n\tgl_Position = vec4(targetPosNdc, 0.0, 1.0);\n\ttilesetPosPx = tilesetPosAbs + tilePosRel * tileSize;\n}".trim();
-  var FS = "\n#version 300 es\nprecision highp float;\n\nin vec2 tilesetPosPx;\nout vec4 fragColor;\nuniform sampler2D image;\nuniform bool colorize;\nuniform vec4 bg;\nuniform vec4 tint;\n\nvoid main() {\n\tfragColor = vec4(0, 0, 0, 1);\n\n\tvec4 texel = texelFetch(image, ivec2(tilesetPosPx), 0);\n\tif (texel.a > 0.0) {\n\t\tif (colorize) {\n\t\t\ttexel.rgb = tint.a * tint.rgb + (1.0-tint.a) * texel.rgb;\n\t\t\ttexel.rgb = texel.a * texel.rgb + (1.0-texel.a) * bg.rgb;\n\t\t\ttexel.a = 1.0;\n\t\t}    \n\t\tfragColor = texel;\n\t} else {\n\t\tfragColor = colorize ? bg : vec4(0, 0, 0, 0);\n\t}\n}".trim();
+  var FS = "\n#version 300 es\nprecision highp float;\n\nin vec2 tilesetPosPx;\nout vec4 fragColor;\nuniform sampler2D image;\nuniform bool colorize;\nuniform vec4 bg;\nuniform vec4 tint;\n\nvoid main() {\n\tfragColor = vec4(0, 0, 0, 1);\n\n\tvec4 texel = texelFetch(image, ivec2(tilesetPosPx), 0);\n\n\tif (colorize) {\n\t\ttexel.rgb = tint.a * tint.rgb + (1.0-tint.a) * texel.rgb;\n\t\tfragColor.rgb = texel.a*texel.rgb + (1.0-texel.a)*bg.rgb;\n\t\tfragColor.a = texel.a + (1.0-texel.a)*bg.a;\n\t} else {\n\t\tfragColor = texel;\n\t}\n}".trim();
 
   function createProgram(gl, vss, fss) {
     var vs = gl.createShader(gl.VERTEX_SHADER);

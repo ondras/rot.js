@@ -7,7 +7,7 @@ var tileSet = document.createElement("img");
 tileSet.src = "tiles.png";
 
 var options = {
-	layout: "tile-gl",
+	layout: "tile",
 	bg: "transparent",
 	tileWidth: 64,
 	tileHeight: 64,
@@ -45,7 +45,7 @@ var tileSet = document.createElement("img");
 tileSet.src = "tiles.png";
 
 var options = {
-	layout: "tile-gl",
+	layout: "tile",
 	bg: "transparent",
 	tileWidth: 64,
 	tileHeight: 64,
@@ -74,7 +74,7 @@ var tileSet = document.createElement("img");
 tileSet.src = "tiles.png";
 
 var options = {
-	layout: "tile-gl",
+	layout: "tile",
 	tileWidth: 64,
 	tileHeight: 64,
 	tileSet: tileSet,
@@ -110,7 +110,7 @@ var tileSet = document.createElement("img");
 tileSet.src = "tiles.png";
 
 var options = {
-	layout: "tile-gl",
+	layout: "tile",
 	bg: "transparent",
 	tileWidth: 64,
 	tileHeight: 64,
@@ -131,5 +131,54 @@ tileSet.onload = function() {
 	var fg = ["rgba(255, 0, 0, 0.5)", "rgba(0, 0, 255, 0.5)"];
 	var bg = ["transparent", "transparent"];
 	display.draw(0, 0, ch, fg, bg);
+}
+</div>
+
+<h2>WebGL tiles</h2>
+
+<p>If you need better performance with (colorized) tiles, you can try the WebGL-based tile renderer. It uses the same API as other rendering backends; just pass `"tile-gl"` as the `layout` configuration option. Also please note that your tile images must be either loaded from the page's domain, or use the <a href="https://hacks.mozilla.org/2011/11/using-cors-to-load-webgl-textures-from-cross-domain-images/">proper CORS headers</a>.
+
+<p>To use this feature, the browser must support the WebGL2 API. Support can be detected using the `ROT.Display.TileGL.isSupported()` test.
+
+<div class="example">
+SHOW(ROT.Display.TileGL.isSupported());
+
+var tileSet = document.createElement("img");
+tileSet.src = "tiles.png";
+
+var options = {
+	layout: "tile-gl",
+	bg: "transparent",
+	tileWidth: 64,
+	tileHeight: 64,
+	tileSet: tileSet,
+	tileColorize: true,
+	tileMap: {
+		"@": [0, 0],
+		"#": [0, 64],
+		"a": [64, 0],
+		"!": [64, 64]
+	},
+	width: 10,
+	height: 10
+}
+var display = new ROT.Display(options);
+SHOW(display.getContainer());
+let chars = ["#", "#", "@", "@", "a", "a", "!", "!", "@"];
+
+function change() {
+	for (let i=0; i&lt;options.width; i++) {
+		for (let j=0; j&lt;options.height; j++) {
+			let ch = chars.pop();
+			chars.unshift(ch);
+			display.draw(i, j, ch, "rgba(255, 0, 255, 0.4)");
+		}
+	}
+
+	requestAnimationFrame(change);
+}
+
+tileSet.onload = function() {
+	change();
 }
 </div>

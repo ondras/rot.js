@@ -11,6 +11,10 @@ export default class TileGL extends Backend {
 	_program!: WebGLProgram;
 	_uniforms: {[key:string]: WebGLUniformLocation | null};
 
+	static isSupported() {
+		return !!document.createElement("canvas").getContext("webgl2", {preserveDrawingBuffer:true});
+	}
+
 	constructor() {
 		super();
 		this._uniforms = {};
@@ -157,7 +161,7 @@ export default class TileGL extends Backend {
 	}
 
 	_initWebGL() {
-		let gl = document.createElement("canvas").getContext("webgl2", {alpha:true, premultipliedAlpha:false, preserveDrawingBuffer: true}) as WebGLRenderingContext;
+		let gl = document.createElement("canvas").getContext("webgl2", {preserveDrawingBuffer:true}) as WebGLRenderingContext;
 		(window as any).gl = gl;
 		let program = createProgram(gl, VS, FS);
 		gl.useProgram(program);
@@ -167,8 +171,10 @@ export default class TileGL extends Backend {
 		this._program = program;
 
 		gl.enable(gl.BLEND);
-  //		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-  		gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+  		gl.blendFuncSeparate(
+  			gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA,
+  			gl.ONE, gl.ONE_MINUS_SRC_ALPHA
+  		);
   		gl.enable(gl.SCISSOR_TEST)
 		return gl;
 	}
@@ -232,15 +238,13 @@ void main() {
 	fragColor = vec4(0, 0, 0, 1);
 
 	vec4 texel = texelFetch(image, ivec2(tilesetPosPx), 0);
-	if (texel.a > 0.0) {
-		if (colorize) {
-			texel.rgb = tint.a * tint.rgb + (1.0-tint.a) * texel.rgb;
-			texel.rgb = texel.a * texel.rgb + (1.0-texel.a) * bg.rgb;
-			texel.a = 1.0;
-		}    
-		fragColor = texel;
+
+	if (colorize) {
+		texel.rgb = tint.a * tint.rgb + (1.0-tint.a) * texel.rgb;
+		fragColor.rgb = texel.a*texel.rgb + (1.0-texel.a)*bg.rgb;
+		fragColor.a = texel.a + (1.0-texel.a)*bg.a;
 	} else {
-		fragColor = colorize ? bg : vec4(0, 0, 0, 0);
+		fragColor = texel;
 	}
 }`.trim()
 

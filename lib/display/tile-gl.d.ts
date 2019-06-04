@@ -10,6 +10,7 @@ export default class TileGL extends Backend {
     _uniforms: {
         [key: string]: WebGLUniformLocation | null;
     };
+    static isSupported(): boolean;
     constructor();
     schedule(cb: () => void): void;
     getContainer(): HTMLCanvasElement;
