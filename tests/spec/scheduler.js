@@ -162,4 +162,19 @@ describe("Scheduler", function() {
 			expect(result).toSchedule([A1, A2, A3, A3, A2, A1]);
 		});
 	});
+
+	describe("Zero-ID actor", function() {
+		let schedulers = [ROT.Scheduler.Simple, ROT.Scheduler.Action];
+		schedulers.forEach((schedulerCtor, i) => describe(`scheduler ${i}`, function() {
+			let s = new schedulerCtor();
+			var A1 = 0;
+
+			it("should schedule the zero-id actor", function() {
+				s.add(A1, true);
+				var result = [];
+				for (var i=0;i<6;i++) { result.push(s.next()); }
+				expect(result).toSchedule([A1, A1, A1, A1, A1, A1]);
+			});
+		}));
+	});
 });
