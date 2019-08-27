@@ -83,9 +83,11 @@ export default class Term extends Backend {
 			this._lastColor = newColor;
 		}
 
-		// write the provided symbol to the display
-		let chars = ([] as string[]).concat(ch);
-		process.stdout.write(chars[0]);
+		if (ch != '\t') {
+			// write the provided symbol to the display
+			let chars = ([] as string[]).concat(ch);
+			process.stdout.write(chars[0]);
+		}
 
 		// update our position, given that we wrote a character
 		this._cursor[0]++;
