@@ -200,6 +200,17 @@ export default class Display {
 					for (let i=0;i<token.value.length;i++) {
 						let cc = token.value.charCodeAt(i);
 						let c = token.value.charAt(i);
+						if (this._options.layout === "term") {
+							let cch = cc >> 8;
+							let isCJK = cch === 0x11 || (cch >= 0x2e && cch <= 0x9f) || (cch >= 0xac && cch <= 0xd7) || (cc >= 0xA960 && cc <= 0xA97F);
+							if (isCJK) {
+								this.draw(cx + 0, cy, c, fg, bg);
+								this.draw(cx + 1, cy, "\t", fg, bg);
+								cx += 2;
+								continue;
+							}
+						}
+
 						// Assign to `true` when the current char is full-width.
 						isFullWidth = (cc > 0xff00 && cc < 0xff61) || (cc > 0xffdc && cc < 0xffe8) || cc > 0xffee;
 						// Current char is space, whatever full-width or half-width both are OK.
