@@ -75,25 +75,25 @@ export default class DividedMaze extends Map {
 		let w: Point[] = []; walls.push(w); /* left part */
 		for (let i=room[0]; i<x; i++) { 
 			this._map[i][y] = 1;
-			w.push([i, y]); 
+      if (i % 2) w.push([i, y]); 
 		}
 		
 		w = []; walls.push(w); /* right part */
 		for (let i=x+1; i<=room[2]; i++) { 
 			this._map[i][y] = 1;
-			w.push([i, y]); 
+      if (i % 2) w.push([i, y]); 
 		}
 
 		w = []; walls.push(w); /* top part */
 		for (let j=room[1]; j<y; j++) { 
 			this._map[x][j] = 1;
-			w.push([x, j]); 
+      if (j % 2) w.push([x, j]); 
 		}
 		
 		w = []; walls.push(w); /* bottom part */
 		for (let j=y+1; j<=room[3]; j++) { 
 			this._map[x][j] = 1;
-			w.push([x, j]); 
+      if (j % 2) w.push([x, j]); 
 		}
 			
 		let solid = RNG.getItem(walls);
