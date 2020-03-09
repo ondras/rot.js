@@ -134,6 +134,19 @@ tileSet.onload = function() {
 }
 </div>
 
+<h2>Raster fonts</h2>
+
+<p>Graphic tiles can be used to render raster fonts. You need the font image organized as a <code>tileSet</code>; you will also need to create a corresponding <code>tileMap</code> by mapping individual characters to their position inside of the tile set.</p>
+
+<p>If you are using high-DPI screens (also known as Retina) that have a <code>devicePixelRatio > 1</code>, the canvas will get scaled. In order to get a perfect <em>crisp</em> scaling, you will need to apply the following CSS to your canvas:</p>
+
+<pre><code>
+canvas {
+	image-rendering: -webkit-optimize-contrast; /* historic fallback */
+	image-rendering: crisp-edges; /* standard property */
+}
+</code></pre>
+
 <h2>WebGL tiles</h2>
 
 <p>If you need better performance with (colorized) tiles, you can try the WebGL-based tile renderer. It uses the same API as other rendering backends; just pass `"tile-gl"` as the `layout` configuration option. Also please note that your tile images must be either loaded from the page's domain, or use the <a href="https://hacks.mozilla.org/2011/11/using-cors-to-load-webgl-textures-from-cross-domain-images/">proper CORS headers</a>.
