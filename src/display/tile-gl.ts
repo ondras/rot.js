@@ -26,11 +26,11 @@ export default class TileGL extends Backend {
 	}
 
 	schedule(cb: () => void) { requestAnimationFrame(cb); }
-	getContainer() { return this._gl.canvas; }
+	getContainer() { return this._gl.canvas as HTMLCanvasElement; }
 
 	setOptions(opts: DisplayOptions) {
 		super.setOptions(opts);
-	
+
 		this._updateSize();
 
 		let tileSet = this._options.tileSet;
@@ -87,7 +87,7 @@ export default class TileGL extends Backend {
 
 
 		for (let i=0;i<chars.length;i++) {
-			
+
 			if (this._options.tileColorize) { // apply colorization
 				let canvas = this._colorCanvas;
 				let context = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -147,11 +147,11 @@ export default class TileGL extends Backend {
 	}
 
 	eventToPosition(x: number, y: number): [number, number] {
-		let canvas = this._gl.canvas;
+		let canvas = this._gl.canvas as HTMLCanvasElement;
 		let rect = canvas.getBoundingClientRect();
 		x -= rect.left;
 		y -= rect.top;
-		
+
 		x *= canvas.width / rect.width;
 		y *= canvas.height / rect.height;
 
@@ -275,7 +275,7 @@ function createQuad(gl: WebGLRenderingContext) {
 	gl.bufferData(gl.ARRAY_BUFFER, pos, gl.STATIC_DRAW);
 	gl.enableVertexAttribArray(0);
 	gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-} 
+}
 
 function createTexture(gl: WebGLRenderingContext, data: HTMLImageElement) {
 	let t = gl.createTexture();
@@ -284,10 +284,10 @@ function createTexture(gl: WebGLRenderingContext, data: HTMLImageElement) {
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0); 
+	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, data);
 	return t;
-}  
+}
 
 type GLColor = [number, number, number, number];
 let colorCache: {[key:string]: GLColor} = {};

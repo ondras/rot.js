@@ -55,7 +55,7 @@ export default class Cellular extends Map {
      * This is to minimize the length of the passage while maintaining good performance.
      */
     _getFromTo(connected: PointMap, notConnected: PointMap): Point[];
-    _getClosest(point: Point, space: PointMap): [number, number];
+    _getClosest(point: Point, space: PointMap): Point;
     _findConnected(connected: PointMap, notConnected: PointMap, stack: Point[], keepNotConnected: boolean, value: number): void;
     _tunnelToConnected(to: Point, from: Point, connected: PointMap, notConnected: PointMap, value: number, connectionCallback?: ConnectionCallback): void;
     _tunnelToConnected6(to: Point, from: Point, connected: PointMap, notConnected: PointMap, value: number, connectionCallback?: ConnectionCallback): void;

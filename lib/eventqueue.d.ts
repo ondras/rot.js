@@ -1,7 +1,7 @@
+import { MinHeap } from "./MinHeap";
 export default class EventQueue<T = any> {
     _time: number;
-    _eventTimes: number[];
-    _events: T[];
+    _events: MinHeap<T>;
     /**
      * @class Generic event queue: stores events and retrieves them based on their time
      */
@@ -35,10 +35,5 @@ export default class EventQueue<T = any> {
      * @param {?} event
      * @returns {bool} success?
      */
-    remove(event: T): boolean;
-    /**
-     * Remove an event from the queue
-     * @param {int} index
-     */
-    _remove(index: number): void;
+    remove(event: T): void;
 }

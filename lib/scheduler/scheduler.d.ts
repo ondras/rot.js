@@ -31,7 +31,7 @@ export default class Scheduler<T = any> {
      * @param {?} item
      * @returns {bool} successful?
      */
-    remove(item: any): boolean;
+    remove(item: any): void;
     /**
      * Schedule next item
      * @returns {?}
