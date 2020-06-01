@@ -30,7 +30,7 @@ export default class EventQueue<T = any> {
 	 * @param {number} time
 	 */
 	add(event: T, time: number) {
-		this._events.push({ key: time, value: event });
+		this._events.push(event,time);
 	}
 
 	/**
@@ -69,7 +69,7 @@ export default class EventQueue<T = any> {
 	 * @returns {bool} success?
 	 */
 	remove(event: T) {
-		this._events.remove(event);
+		return this._events.remove(event);
 	};
 }
 

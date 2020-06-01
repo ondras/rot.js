@@ -15,7 +15,7 @@ export default class Action<T = any> extends Scheduler<T> {
      */
     add(item: T, repeat: boolean, time?: number): this;
     clear(): this;
-    remove(item: T): void;
+    remove(item: T): boolean;
     /**
      * @see ROT.Scheduler#next
      */
