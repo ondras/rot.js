@@ -35,5 +35,5 @@ export default class EventQueue<T = any> {
      * @param {?} event
      * @returns {bool} success?
      */
-    remove(event: T): void;
+    remove(event: T): boolean;
 }

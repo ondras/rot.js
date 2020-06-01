@@ -1,22 +1,29 @@
 export interface HeapWrapper<T> {
 	key: number,
+	timestamp : number,
 	value: T
 }
 
 export class MinHeap<T> {
 	private heap: HeapWrapper<T>[];
+	private timestamp : number;
 	constructor() {
 		this.heap = [];
+		this.timestamp=0;
+	}
+	lessThan(a:HeapWrapper<T>,b:HeapWrapper<T>){
+		return a.key==b.key?a.timestamp<b.timestamp:a.key<b.key;
 	}
 	shift(v: number) {
-		this.heap = this.heap.map(({ key, value }) => ({ key: key + v, value }));
+		this.heap = this.heap.map(({ key, value,timestamp }) => ({ key: key + v, value,timestamp }));
 	}
 	len() {
 		return this.heap.length;
 	}
-	push(v: HeapWrapper<T>) {
+	push(value: T,key : number) {
+		this.timestamp+=1;
 		const loc = this.len();
-		this.heap.push(v);
+		this.heap.push({value,timestamp : this.timestamp,key});
 		this.updateUp(loc);
 	}
 	pop(): HeapWrapper<T> {
@@ -47,7 +54,7 @@ export class MinHeap<T> {
 				index = i;
 			}
 		}
-		if (index) {
+		if (index!=null) {
 			if (this.len() > 1) {
 				this.heap[index] = this.heap.pop() as HeapWrapper<T>;
 				this.updateDown(index);
@@ -80,7 +87,7 @@ export class MinHeap<T> {
 		const validnumbers = numbers.filter(this.existNode.bind(this));
 		let minimal = validnumbers[0];
 		for (const i of validnumbers) {
-			if (this.heap[i].key < this.heap[minimal].key) {
+			if (this.lessThan(this.heap[i],this.heap[minimal])) {
 				minimal = i;
 			}
 		}
@@ -91,7 +98,7 @@ export class MinHeap<T> {
 			return;
 		}
 		const parent = this.parentNode(x);
-		if (this.existNode(parent) && this.heap[x].key < this.heap[parent].key) {
+		if (this.existNode(parent) && this.lessThan(this.heap[x],this.heap[parent])) {
 			this.swap(x, parent);
 			this.updateUp(parent);
 		}
@@ -113,3 +120,4 @@ export class MinHeap<T> {
 	}
 
 }
+
