@@ -1,9 +1,9 @@
 import { clamp } from "./util.js";
 import RNG from "./rng.js";
 
-type Color = [number, number, number];
+export type Color = [number, number, number];
 
-export function	fromString(str: string) {
+export function	fromString(str: string): Color {
 	let cached:Color, r;
 	if (str in CACHE) {
 		cached = CACHE[str];
@@ -31,7 +31,7 @@ export function	fromString(str: string) {
 		CACHE[str] = cached;
 	}
 
-	return cached.slice();
+	return cached.slice() as Color;
 }
 
 /**
@@ -191,9 +191,7 @@ export function toHex(color: Color) {
 	return `#${clamped.join("")}`;
 }
 
-const CACHE : {
-	[key:string]: Color
-} = {
+const CACHE: Record<string, Color> = {
 	"black": [0,0,0],
 	"navy": [0,0,128],
 	"darkblue": [0,0,139],
