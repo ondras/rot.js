@@ -65,6 +65,15 @@ describe("Scheduler", function() {
 			expect(result).toSchedule([A1, A3, A3, A3]);
 		});
 
+		it("should remove properly (issue #187)", function() {
+			S.add(A1, true);
+			S.add(A2, true);
+			S.remove(A2);
+
+			var result = [];
+			for (var i=0;i<4;i++) { result.push(S.next()); }
+			expect(result).toSchedule([A1, A1, A1, A1]);
+		});
 	});
 
 	describe("Speed", function() {
@@ -154,8 +163,8 @@ describe("Scheduler", function() {
 			S.setDuration(1);
 			expect(S.getTime()).toEqual(1);
 
-			for (var i=0;i<3;i++) { 
-				result.push(S.next()); 
+			for (var i=0;i<3;i++) {
+				result.push(S.next());
 				S.setDuration(100); /* somewhere in the future */
 			}
 

@@ -54,17 +54,20 @@ export class MinHeap<T> {
 				index = i;
 			}
 		}
-		if (index!=null) {
-			if (this.len() > 1) {
-				this.heap[index] = this.heap.pop() as HeapWrapper<T>;
+		if (index === null) { return false; }
+
+		if (this.len() > 1) {
+			let last = this.heap.pop() as HeapWrapper<T>;
+			if (last.value != v) { // if the last one is being removed, do nothing
+				this.heap[index] = last;
 				this.updateDown(index);
-				return true;
-			} else {
-				this.heap.pop();
-				return true;
 			}
+			return true;
+		} else {
+			this.heap.pop();
 		}
-		return false;
+
+		return true;
 	}
 	private parentNode(x: number): number {
 		return Math.floor((x - 1) / 2);
