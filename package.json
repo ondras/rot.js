@@ -29,6 +29,9 @@
   "author": "Ondřej Žára <ondrej.zara@gmail.com> (http://ondras.zarovi.cz/)",
   "main": "dist/rot.js",
   "module": "lib/index.js",
+  "browser": "dist/rot.min.js",
+  "unpkg": "dist/rot.min.js",
+  "jsdelivr": "dist/rot.min.js",
   "scripts": {
     "test": "make test",
     "build": "rollup -c",
