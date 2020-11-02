@@ -1,7 +1,7 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
     typeof define === 'function' && define.amd ? define(['exports'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.ROT = {}));
+    (factory((global.ROT = {})));
 }(this, (function (exports) { 'use strict';
 
     /**
@@ -241,7 +241,6 @@
     };
 
     var util = /*#__PURE__*/Object.freeze({
-        __proto__: null,
         mod: mod,
         clamp: clamp,
         capitalize: capitalize,
@@ -905,7 +904,6 @@
     };
 
     var color = /*#__PURE__*/Object.freeze({
-        __proto__: null,
         fromString: fromString,
         add: add,
         add_: add_,
@@ -1174,25 +1172,25 @@ void main() {
         return t;
     }
     let colorCache = {};
-    function parseColor(color$1) {
-        if (!(color$1 in colorCache)) {
+    function parseColor(color) {
+        if (!(color in colorCache)) {
             let parsed;
-            if (color$1 == "transparent") {
+            if (color == "transparent") {
                 parsed = [0, 0, 0, 0];
             }
-            else if (color$1.indexOf("rgba") > -1) {
-                parsed = (color$1.match(/[\d.]+/g) || []).map(Number);
+            else if (color.indexOf("rgba") > -1) {
+                parsed = (color.match(/[\d.]+/g) || []).map(Number);
                 for (let i = 0; i < 3; i++) {
                     parsed[i] = parsed[i] / 255;
                 }
             }
             else {
-                parsed = fromString(color$1).map($ => $ / 255);
+                parsed = fromString(color).map($ => $ / 255);
                 parsed.push(1);
             }
-            colorCache[color$1] = parsed;
+            colorCache[color] = parsed;
         }
-        return colorCache[color$1];
+        return colorCache[color];
     }
 
     function clearToAnsi(bg) {
@@ -1204,11 +1202,11 @@ void main() {
     function positionToAnsi(x, y) {
         return `\x1b[${y + 1};${x + 1}H`;
     }
-    function termcolor(color$1) {
+    function termcolor(color) {
         const SRC_COLORS = 256.0;
         const DST_COLORS = 6.0;
         const COLOR_RATIO = DST_COLORS / SRC_COLORS;
-        let rgb = fromString(color$1);
+        let rgb = fromString(color);
         let r = Math.floor(rgb[0] * COLOR_RATIO);
         let g = Math.floor(rgb[1] * COLOR_RATIO);
         let b = Math.floor(rgb[2] * COLOR_RATIO);
@@ -1467,7 +1465,6 @@ void main() {
     }
 
     var text = /*#__PURE__*/Object.freeze({
-        __proto__: null,
         TYPE_TEXT: TYPE_TEXT,
         TYPE_NEWLINE: TYPE_NEWLINE,
         TYPE_FG: TYPE_FG,
@@ -1949,7 +1946,7 @@ void main() {
              * @param {int} [maxWidth] wrap at what width?
              * @returns {int} lines drawn
              */
-            drawText(x, y, text$1, maxWidth) {
+            drawText(x, y, text, maxWidth) {
                 let fg = null;
                 let bg = null;
                 let cx = x;
@@ -1958,7 +1955,7 @@ void main() {
                 if (!maxWidth) {
                     maxWidth = this._options.width - x;
                 }
-                let tokens = tokenize(text$1, maxWidth);
+                let tokens = tokenize(text, maxWidth);
                 while (tokens.length) { // interpret tokenized opcode stream
                     let token = tokens.shift();
                     switch (token.type) {
@@ -2580,6 +2577,7 @@ void main() {
                     break;
                 default:
                     throw new Error("Incorrect topology for FOV computation");
+                    break;
             }
             /* starting neighbor */
             let x = cx + startOffset[0] * r;
@@ -5172,12 +5170,15 @@ void main() {
             switch (this._options.topology) {
                 case 4:
                     return (Math.abs(x - this._fromX) + Math.abs(y - this._fromY));
+                    break;
                 case 6:
                     let dx = Math.abs(x - this._fromX);
                     let dy = Math.abs(y - this._fromY);
                     return dy + Math.max(0, (dx - dy) / 2);
+                    break;
                 case 8:
                     return Math.max(Math.abs(x - this._fromX), Math.abs(y - this._fromY));
+                    break;
             }
         }
     }
@@ -5265,10 +5266,10 @@ void main() {
         /**
          * Set (or remove) a light source
          */
-        setLight(x, y, color$1) {
+        setLight(x, y, color) {
             let key = x + "," + y;
-            if (color$1) {
-                this._lights[key] = (typeof (color$1) == "string" ? fromString(color$1) : color$1);
+            if (color) {
+                this._lights[key] = (typeof (color) == "string" ? fromString(color) : color);
             }
             else {
                 delete this._lights[key];
@@ -5421,24 +5422,24 @@ void main() {
     const Color = color;
     const Text = text;
 
+    exports.Util = Util;
     exports.Color = Color;
-    exports.DEFAULT_HEIGHT = DEFAULT_HEIGHT;
-    exports.DEFAULT_WIDTH = DEFAULT_WIDTH;
-    exports.DIRS = DIRS;
+    exports.Text = Text;
+    exports.RNG = RNG$1;
     exports.Display = Display;
-    exports.Engine = Engine;
+    exports.StringGenerator = StringGenerator;
     exports.EventQueue = EventQueue;
+    exports.Scheduler = index;
     exports.FOV = index$1;
-    exports.KEYS = KEYS;
-    exports.Lighting = Lighting;
     exports.Map = index$2;
     exports.Noise = index$3;
     exports.Path = index$4;
-    exports.RNG = RNG$1;
-    exports.Scheduler = index;
-    exports.StringGenerator = StringGenerator;
-    exports.Text = Text;
-    exports.Util = Util;
+    exports.Engine = Engine;
+    exports.Lighting = Lighting;
+    exports.DEFAULT_WIDTH = DEFAULT_WIDTH;
+    exports.DEFAULT_HEIGHT = DEFAULT_HEIGHT;
+    exports.DIRS = DIRS;
+    exports.KEYS = KEYS;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

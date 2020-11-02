@@ -30,7 +30,9 @@
   "main": "dist/rot.js",
   "module": "lib/index.js",
   "scripts": {
-    "test": "make test"
+    "test": "make test",
+    "build": "rollup -c",
+    "prepublishOnly": "rollup -c"
   },
   "repository": {
     "type": "git",
