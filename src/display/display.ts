@@ -175,6 +175,31 @@ export default class Display {
 	}
 
 	/**
+	 * @param {int} x
+	 * @param {int} y
+	 * @param {string || string[]} ch One or more chars (will be overlapping themselves)
+	 * @param {string || null} [fg] foreground color
+	 * @param {string || null} [bg] background color
+	 */
+	drawOver(
+		x: number,
+		y: number,
+		ch: string | null,
+		fg: string | null,
+		bg: string | null
+	) {
+		const key = `${x},${y}`;
+		const existing = this._data[key];
+		if (existing) {
+			existing[2] = ch || existing[2];
+			existing[3] = fg || existing[3];
+			existing[4] = bg || existing[4];
+		} else {
+			this.draw(x, y, ch, fg, bg);
+		}
+	}
+
+	/**
 	 * Draws a text at given position. Optionally wraps at a maximum length. Currently does not work with hex layout.
 	 * @param {int} x
 	 * @param {int} y

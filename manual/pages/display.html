@@ -94,3 +94,28 @@ SHOW(display.getContainer());
 var str = "Using a regular grid\n@....%b{blue}#%b{}##.%b{red}.%b{}.$$$";
 display.drawText(2,  2, str);
 </div>
+
+
+<h3>Using drawOver</h3>
+<p>You can use drawOver to partially draw over existing data, for example if you wanted to preserve the map's background color without having to look it up when drawing a character.</p>
+
+<div class="example">
+	var options = {
+		width: 20,
+		height: 4,
+		fontSize: 18,
+	}
+	var display = new ROT.Display(options);
+	SHOW(display.getContainer());
+	
+	display.draw(1, 1, ".", "#0f0", "#00A");
+	/* Keep the previous background */
+	display.drawOver(1, 1, "@", "#fff", null); 
+
+	display.draw(3, 1, "g", "#fff", null); 
+	/* Apply a new background */
+	display.drawOver(3, 1, null, null, "#060"); 
+
+	/* If nothing has been drawn, this behaves like draw */
+	display.drawOver(5, 1, "g", "#0f0", null); 
+	</div>

@@ -76,6 +76,14 @@ export default class Display {
      */
     draw(x: number, y: number, ch: string | string[] | null, fg: string | null, bg: string | null): void;
     /**
+     * @param {int} x
+     * @param {int} y
+     * @param {string || string[]} ch One or more chars (will be overlapping themselves)
+     * @param {string || null} [fg] foreground color
+     * @param {string || null} [bg] background color
+     */
+    drawOver(x: number, y: number, ch: string | null, fg: string | null, bg: string | null): void;
+    /**
      * Draws a text at given position. Optionally wraps at a maximum length. Currently does not work with hex layout.
      * @param {int} x
      * @param {int} y
