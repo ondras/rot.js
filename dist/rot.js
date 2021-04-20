@@ -361,14 +361,12 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
   format.map = {
     "s": "toString"
   };
-  var util =
-  /*#__PURE__*/
-  Object.freeze({
+  var util = {
     mod: mod,
     clamp: clamp,
     capitalize: capitalize,
     format: format
-  });
+  };
   /**
    * @class Hexagonal backend
    * @private
@@ -1213,9 +1211,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     "ivory": [255, 255, 240],
     "white": [255, 255, 255]
   };
-  var color =
-  /*#__PURE__*/
-  Object.freeze({
+  var color = {
     fromString: fromString,
     add: add,
     add_: add_,
@@ -1230,7 +1226,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     hsl2rgb: hsl2rgb,
     toRGB: toRGB,
     toHex: toHex
-  });
+  };
   /**
    * @class Tile backend
    * @private
@@ -1925,16 +1921,14 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     return tokens[tokenIndex].value.substring(0, breakIndex);
   }
 
-  var text =
-  /*#__PURE__*/
-  Object.freeze({
+  var text = {
     TYPE_TEXT: TYPE_TEXT,
     TYPE_NEWLINE: TYPE_NEWLINE,
     TYPE_FG: TYPE_FG,
     TYPE_BG: TYPE_BG,
     measure: measure,
     tokenize: tokenize
-  });
+  };
   /** Default with for display and map generators */
 
   var DEFAULT_WIDTH = 80;
