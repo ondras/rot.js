@@ -1,6 +1,6 @@
 # rot.js
 
-ROguelike Toolkit in JavaScript. For more info, see http://ondras.github.com/rot.js.
+ROguelike Toolkit in JavaScript. For more info, see <https://ondras.github.io/rot.js/hp>.
 
 ## Library
 
