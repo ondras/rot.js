@@ -1,0 +1,20 @@
+name: "Check devDependencies"
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Project
+      uses: actions/checkout@v2
+
+    - name: Setup Node
+      uses: actions/setup-node@v2
+
+    - name: Check devDependencies
+      run: "./tools/check-dev-dependencies.js"
