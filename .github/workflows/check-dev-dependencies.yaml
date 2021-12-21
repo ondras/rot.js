@@ -17,4 +17,4 @@ jobs:
       uses: actions/setup-node@v2
 
     - name: Check devDependencies
-      run: "./tools/check-dev-dependencies.js"
+      run: "node ./tools/check-dev-dependencies.js"
