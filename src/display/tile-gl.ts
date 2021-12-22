@@ -20,8 +20,12 @@ export default class TileGL extends Backend {
 		this._uniforms = {};
 		try {
 			this._gl = this._initWebGL();
-		} catch (e) {
-			alert(e.message);
+		} catch (e: unknown) {
+			if (typeof e === "string") {
+				alert(e);
+			} else if (e instanceof Error) {
+				alert(e.message);
+			}
 		}
 	}
 
