@@ -43,4 +43,4 @@ The pre-bundled rot.js package can be loaded as a CommonJS module. There is an [
 
 ## Misc
 
-RogueBasin page (with links to some rot.js-based games): http://www.roguebasin.roguelikedevelopment.org/index.php?title=Rot.js
+RogueBasin page (with links to some rot.js-based games): http://roguebasin.com/index.php/Rot.js
