@@ -27,7 +27,7 @@ var links = {
 	"ondrej zara": "https://ondras.zarovi.cz/",
 	"libtcod": "http://doryen.eptalys.net/libtcod/",
 	"tests": "../tests/",
-	"tutorial": "http://www.roguebasin.roguelikedevelopment.org/index.php?title=Rot.js_tutorial",
+	"tutorial": "http://roguebasin.com/index.php/Rot.js_tutorial",
 	"twitter": "https://twitter.com/rot_js",
 	"$$$": "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7WXVKF3ZJ9FZE"
 };
