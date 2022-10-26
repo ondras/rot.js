@@ -20,7 +20,7 @@ Rot.js is written in TypeScript, but its code is available in multiple formats. 
 
   1. The `lib/` directory contains the code in [ES2015 modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import). These can be used in modern browsers directly, without any transpilation/bundling step. An [example](examples/native-modules/) shows how to do that.
 
-  1. For practical reasons, individual modules should be bundled to make your application more compact. You are free to use any bundler that understands ES2015 modules. If you want tu support older browsers, you should also transpile your code -- there is [an example using babel and rollup](examples/bundled-modules/) that shows how to do that. This is the recommended way of using rot.js.
+  1. For practical reasons, individual modules should be bundled to make your application more compact. You are free to use any bundler that understands ES2015 modules. If you want to support older browsers, you should also transpile your code -- there is [an example using babel and rollup](examples/bundled-modules/) that shows how to do that. This is the recommended way of using rot.js.
 
   1. If you do not fancy modern modules and/or transpilation, you can grab a [pre-built bundle](dist/rot.js) and include it in your page using traditional `<script>` tag. This bundle puts rot.js into a global `ROT` namespace and uses ES5 (supported even by older browsers). See an [example](examples/dist/) of this approach.
 
