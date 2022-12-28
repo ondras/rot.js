@@ -65,8 +65,8 @@ for (var i=49; i&gt;=0; i--) {
 
 <div class="example">
 var w = 80, h = 40;
-/* create a connected map where the player can reach all non-wall sections */
-var map = new ROT.Map.Cellular(w, h, { connected: true });
+/* create a map */
+var map = new ROT.Map.Cellular(w, h);
 
 /* cells with 1/2 probability */
 map.randomize(0.5);
@@ -79,7 +79,7 @@ var display = new ROT.Display({width:w, height:h, fontSize:4});
 SHOW(display.getContainer());	
 map.create(display.DEBUG);
 
-/* now connect the maze */
+/* now connect the maze so the player can reach all non-wall sections */
 var display = new ROT.Display({width:w, height:h, fontSize:4});
 SHOW(display.getContainer());	
 map.connect(display.DEBUG);
@@ -90,8 +90,8 @@ map.connect(display.DEBUG);
 
 <div class="example">
 var w = 80, h = 40;
-/* create a connected map where the player can reach all non-wall sections */
-var map = new ROT.Map.Cellular(w, h, { connected: true });
+/* create a map */
+var map = new ROT.Map.Cellular(w, h);
 
 /* cells with 1/2 probability */
 map.randomize(0.5);
@@ -104,7 +104,7 @@ var display = new ROT.Display({width:w, height:h, fontSize:4});
 SHOW(display.getContainer());	
 map.create(display.DEBUG);
 
-/* now connect the maze */
+/* now connect the maze so the player can reach all non-wall sections */
 var display = new ROT.Display({width:w, height:h, fontSize:4});
 SHOW(display.getContainer());	
 map.connect(display.DEBUG, 1);
@@ -116,8 +116,8 @@ map.connect(display.DEBUG, 1);
 
 <div class="example">
 var w = 80, h = 40;
-/* create a connected map where the player can reach all non-wall sections */
-var map = new ROT.Map.Cellular(w, h, { connected: true });
+/* create a map */
+var map = new ROT.Map.Cellular(w, h);
 
 /* cells with 1/2 probability */
 map.randomize(0.5);
