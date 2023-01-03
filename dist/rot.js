@@ -6207,7 +6207,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
     return IceyMaze;
   }(Map);
   /**
-   * Dungeon generator which uses the "orginal" Rogue dungeon generation algorithm. See http://kuoi.com/~kamikaze/GameDesign/art07_rogue_dungeon.php
+   * Dungeon generator which uses the "orginal" Rogue dungeon generation algorithm. See https://github.com/Davidslv/rogue-like/blob/master/docs/references/Mark_Damon_Hughes/07_Roguelike_Dungeon_Generation.md
    * @author hyakugei
    */
 
