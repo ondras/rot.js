@@ -41,6 +41,19 @@ display.draw(25, 4, "#", "#f00", "#009");  // and background color
 
 The pre-bundled rot.js package can be loaded as a CommonJS module. There is an [example](examples/node/) that shows basic usage.
 
+## Contributing
+
+ROguelike Toolkit is largely considered "feature-complete", but bugfixes, documentation, and some new features are welcomed. Development should happen in the `/src` folder, and then the build process creates the `/lib`, `/dist`, and `/doc` folders before serving the project.
+
+![Visual layout of the build process](./build.png)
+
+The command to rebuild everything:
+
+```sh
+npm install
+make all
+```
+
 ## Misc
 
 RogueBasin page (with links to some rot.js-based games): http://roguebasin.com/index.php/Rot.js
