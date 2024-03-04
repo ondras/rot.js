@@ -10,7 +10,7 @@ interface Options {
 /**
  * Random dungeon generator using human-like digging patterns.
  * Heavily based on Mike Anderson's ideas from the "Tyrant" algo, mentioned at
- * http://www.roguebasin.roguelikedevelopment.org/index.php?title=Dungeon-Building_Algorithm.
+ * http://roguebasin.com/index.php/Dungeon-Building_Algorithm
  */
 export default class Digger extends Dungeon {
     _options: Options;
