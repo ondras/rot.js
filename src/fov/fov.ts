@@ -1,4 +1,4 @@
-import { DIRS } from "../constants.js";
+import { DIRS } from "../constants";
 
 export interface LightPassesCallback { (x: number, y: number): boolean };
 
@@ -8,9 +8,9 @@ export interface Options {
 	topology: 4 | 6 | 8
 }
 
-export default abstract class FOV {
-	_lightPasses: LightPassesCallback;
-	_options: Options;
+export abstract class FOV {
+	protected _lightPasses: LightPassesCallback;
+	protected _options: Options;
 
 	/**
 	 * @class Abstract FOV algorithm
