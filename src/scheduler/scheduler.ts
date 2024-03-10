@@ -3,7 +3,7 @@ import EventQueue from "../eventqueue.js";
 export default class Scheduler<T = any> {
 	_queue: EventQueue<T>;
 	_repeat: T[];
-	_current: any;
+	_current: T | null;
 
 	/**
 	 * @class Abstract scheduler
@@ -52,7 +52,7 @@ export default class Scheduler<T = any> {
 	 * @param {?} item
 	 * @returns {bool} successful?
 	 */
-	remove(item: any) {
+	remove(item: T) {
 		let result = this._queue.remove(item);
 
 		let index = this._repeat.indexOf(item);
