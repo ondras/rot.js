@@ -51,7 +51,9 @@ The command to rebuild everything:
 
 ```sh
 npm install
-make all
+npm run build
+# Or, if you have make installed, you can replace the second command with:
+# make all
 ```
 
 ## Misc

@@ -18,7 +18,7 @@ const puppeteer = require("puppeteer-core");
 		browser.close();
 	}
 
-	const browser = await puppeteer.launch({executablePath: "/usr/bin/google-chrome"});
+	const browser = await puppeteer.launch({executablePath: process.platform === "win32" ? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" : "/usr/bin/google-chrome"});
 	const page = await browser.newPage();
 	let url = `file://${path.dirname(module.filename)}/index.html`;
 

@@ -30,7 +30,16 @@
   "main": "dist/rot.js",
   "module": "lib/index.js",
   "scripts": {
-    "test": "make test"
+    "build": "npx gulp build",
+    "doc": "npx gulp doc",
+    "es5": "npx gulp es5",
+    "es5_min": "npx gulp es5_min",
+    "es5_all": "npx gulp es5_all",
+    "tsc": "npx gulp tsc",
+    "dot": "npx gulp dot",
+    "clean": "npx gulp clean",
+    "watch": "npx gulp watch",
+    "test": "npx gulp testt"
   },
   "repository": {
     "type": "git",
@@ -40,13 +49,23 @@
     "@babel/cli": "7.16.0",
     "@babel/core": "7.16.5",
     "@babel/preset-env": "7.16.5",
+    "@rollup/stream": "^3.0.1",
+    "@types/google-closure-compiler": "^0.0.22",
     "@types/node": "17.0.2",
+    "esm": "^3.2.25",
     "google-closure-compiler": "20211201.0.0",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-typedoc": "^3.0.2",
+    "gulp-typescript": "^6.0.0-alpha.1",
     "jasmine": "3.10.0",
     "puppeteer-core": "13.0.0",
     "rollup": "2.61.1",
     "typedoc": "0.22.10",
-    "typescript": "4.5.4"
+    "typescript": "4.5.4",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0"
   },
   "babel": {
     "sourceType": "unambiguous",
