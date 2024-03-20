@@ -2,6 +2,22 @@ import Backend from "./backend.js";
 import { DisplayData, DisplayOptions } from "./types.js";
 import * as Color from "../color.js";
 
+// Explicitly declaring this so that including projects don't need to import node types
+declare global {
+	namespace NodeJS {
+		interface WriteStream 
+		{
+			rows: number;
+			columns: number;
+			write(data: string): any;
+		}
+		interface Process {
+			stdout: WriteStream & { fd: 1; } 
+		}
+	}
+	var process: NodeJS.Process;
+}
+
 function clearToAnsi(bg: string) {
 	return `\x1b[0;48;5;${termcolor(bg)}m\x1b[2J`;
 }
