@@ -23,8 +23,14 @@ export default class Tile extends Canvas {
 			if (this._options.tileColorize) {
 				this._ctx.clearRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
 			} else {
+                this._ctx.save();
+                this._ctx.globalCompositeOperation = "copy";
 				this._ctx.fillStyle = bg;
-				this._ctx.fillRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+                this._ctx.beginPath();
+                this._ctx.rect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+                this._ctx.clip();
+                this._ctx.fill();
+                this._ctx.restore();
 			}
 		}
 

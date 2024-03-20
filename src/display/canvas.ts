@@ -26,11 +26,11 @@ export default abstract class Canvas extends Backend {
 	}
 
 	clear() {
-		const oldComposite = this._ctx.globalCompositeOperation;
+		this._ctx.save();
 		this._ctx.globalCompositeOperation = "copy"
 		this._ctx.fillStyle = this._options.bg;
 		this._ctx.fillRect(0, 0, this._ctx.canvas.width, this._ctx.canvas.height);
-		this._ctx.globalCompositeOperation = oldComposite;
+		this._ctx.restore();
 	}
 
 	eventToPosition(x: number, y: number): [number, number] {
