@@ -365,8 +365,11 @@ export interface Display<TLayout extends LayoutType = LayoutType, TChar = Layout
 }
 
 type LayoutFor<TOptions extends DisplayOptions> = TOptions extends {layout: infer L} ? NonNullable<L> : typeof DisplayImpl["DEFAULT_LAYOUT"];
-type BackendFor<TOptions extends DisplayOptions> = LayoutBackend<LayoutFor<TOptions>>;
-type TCharFromOptions<TOptions extends DisplayOptions> = BackendChars<BackendFor<TOptions>>;
+type BackendFor<TOptions extends DisplayOptions> = LayoutBackend<LayoutFor<TOptions>, TOptions>;
+type TCharFromOptions<TOptions extends DisplayOptions> =
+	TOptions extends {tileMap: Record<infer TKey, any>} ? TKey[]
+	: TOptions extends {tileMap: readonly any[]} ? number[]
+	: BackendChars<BackendFor<TOptions>>;
 type TFGColorFromOptions<TOptions extends DisplayOptions> = BackendFGColor<BackendFor<TOptions>>;
 type TBGColorFromOptions<TOptions extends DisplayOptions> = BackendBGColor<BackendFor<TOptions>>;
 
@@ -384,6 +387,6 @@ export interface DisplayConstructor {
 }
 
 export const Display = class Display<TLayout extends LayoutType, TChar, TFGColor, TBGColor> extends DisplayImpl<TLayout, TChar, TFGColor, TBGColor> {
-} as any;
+} as unknown as DisplayConstructor;
 
 export default Display;

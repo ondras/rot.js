@@ -3,7 +3,7 @@ import { TextDisplayOptions, DefaultsFor, DisplayOptions } from "./types.js";
 import { mod } from "../util.js";
 
 declare module "./types.js" {
-	interface LayoutTypeBackendMap {
+	interface LayoutTypeBackendMap<TOptions extends DisplayOptions> {
 		hex: Hex;
 	}
 }

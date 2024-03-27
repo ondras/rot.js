@@ -1,23 +1,23 @@
 import { BaseCanvas } from "./canvas.js";
-import { TileDisplayOptions, DisplayData, UnknownBackend, DefaultsFor, DisplayOptions } from "./types.js";
+import { TileDisplayOptions, DisplayData, UnknownBackend, TileMapKey, DefaultsFor, DisplayOptions } from "./types.js";
 
 declare module "./types.js" {
-	interface LayoutTypeBackendMap {
-		"tile": Tile;
+	interface LayoutTypeBackendMap<TOptions extends DisplayOptions> {
+		"tile": Tile<TOptions extends {tileMap: Record<infer TKey, any>} ? TKey : string>;
 	}
 }
 
-export interface TileOptions extends TileDisplayOptions {
+export interface TileOptions<TChar extends TileMapKey = string> extends TileDisplayOptions<TChar> {
 	layout: "tile";
 }
-export interface TileData extends DisplayData<string[], string[], string[]> {
+export interface TileData<TChar extends TileMapKey> extends DisplayData<TChar[], string[], string[]> {
 }
 
 /**
  * @class Tile backend
  * @private
  */
-export default class Tile extends BaseCanvas<TileOptions, TileData, string[], string[], string[]> {
+export default class Tile<TChar extends TileMapKey = string> extends BaseCanvas<TileOptions<TChar>, TileData<TChar>, TChar[], string[], string[]> {
 	_colorCanvas: HTMLCanvasElement;
 
 	protected get DEFAULTS() {
@@ -26,7 +26,7 @@ export default class Tile extends BaseCanvas<TileOptions, TileData, string[], st
 			tileWidth: 32,
 			tileHeight: 32,
 			tileColorize: false,
-		} satisfies DefaultsFor<TileOptions>;
+		} satisfies DefaultsFor<TileOptions<never>>;
 	}
 
 	constructor(oldBackend?: UnknownBackend) {
@@ -34,18 +34,18 @@ export default class Tile extends BaseCanvas<TileOptions, TileData, string[], st
 		this._colorCanvas = oldBackend instanceof Tile ? oldBackend._colorCanvas : document.createElement("canvas");
 	}
 
-	checkOptions(options: DisplayOptions): options is TileOptions {
+	checkOptions(options: DisplayOptions): options is TileOptions<TChar> {
 		return options.layout === "tile";
 	}
 
-	protected defaultedOptions(options: TileOptions): Required<TileOptions> {
+	protected defaultedOptions(options: TileOptions<TChar>): Required<TileOptions<TChar>> {
 		return {
 			...this.DEFAULTS,
 			...options,
 		}
 	}
 
-	draw(data: TileData, clearBefore: boolean) {
+	draw(data: TileData<TChar>, clearBefore: boolean) {
 		const {x, y, chars, fgs, bgs} = data;
 
 		let tileWidth = this._options.tileWidth;
@@ -70,7 +70,7 @@ export default class Tile extends BaseCanvas<TileOptions, TileData, string[], st
 
 		for (let i=0;i<chars.length;i++) {
 			let tile = this._options.tileMap[chars[i]];
-			if (!tile) { throw new Error(`Char "${chars[i]}" not found in tileMap`); }
+			if (!tile) { throw new Error(`Char "${String(chars[i])}" not found in tileMap`); }
 			
 			if (this._options.tileColorize) { // apply colorization
 				let canvas = this._colorCanvas;

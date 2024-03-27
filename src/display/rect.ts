@@ -2,7 +2,7 @@ import Canvas, { CanvasDisplayData } from "./canvas.js";
 import { DefaultsFor, DisplayOptions, TextDisplayOptions } from "./types.js";
 
 declare module "./types.js" {
-	interface LayoutTypeBackendMap {
+	interface LayoutTypeBackendMap<TOptions extends DisplayOptions> {
 		rect: Rect;
 	}
 }

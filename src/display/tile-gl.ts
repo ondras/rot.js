@@ -1,24 +1,24 @@
 import Backend from "./backend.js";
-import { TileDisplayOptions, DisplayData, DefaultsFor, DisplayOptions } from "./types.js";
+import { TileDisplayOptions, DisplayData, TileMapKey, DefaultsFor, DisplayOptions } from "./types.js";
 import * as Color from "../color.js";
 
 declare module "./types.js" {
-	interface LayoutTypeBackendMap {
-		"tile-gl": TileGL;
+	interface LayoutTypeBackendMap<TOptions extends DisplayOptions> {
+		"tile-gl": TileGL<TOptions extends {tileMap: Record<infer TKey, any>} ? TKey : string>;
 	}
 }
 
-export interface TileGLOptions extends TileDisplayOptions {
+export interface TileGLOptions<TChar extends TileMapKey = string> extends TileDisplayOptions<TChar> {
 	layout: "tile-gl";
 }
-export interface TileGLData extends DisplayData<string[], string[], string[]> {
+export interface TileGLData<TChar extends TileMapKey> extends DisplayData<TChar[], string[], string[]> {
 }
 
 /**
  * @class Tile backend
  * @private
  */
-export default class TileGL extends Backend<TileGLOptions, string[], string[], string[], TileGLData> {
+export default class TileGL<TChar extends TileMapKey = string> extends Backend<TileGLOptions<TChar>, TChar[], string[], string[], TileGLData<TChar>> {
 	_gl!: WebGLRenderingContext;
 	_program!: WebGLProgram;
 	_uniforms: {[key:string]: WebGLUniformLocation | null};
@@ -29,7 +29,7 @@ export default class TileGL extends Backend<TileGLOptions, string[], string[], s
 			tileWidth: 32,
 			tileHeight: 32,
 			tileColorize: false,
-		} satisfies DefaultsFor<TileGLOptions>;
+		} satisfies DefaultsFor<TileGLOptions<never>>;
 	}
 	static isSupported() {
 		return !!document.createElement("canvas").getContext("webgl2", {preserveDrawingBuffer:true});
@@ -52,11 +52,11 @@ export default class TileGL extends Backend<TileGLOptions, string[], string[], s
 	schedule(cb: () => void) { requestAnimationFrame(cb); }
 	getContainer() { return this._gl.canvas as HTMLCanvasElement; }
 
-	checkOptions(options: DisplayOptions): options is TileGLOptions {
+	checkOptions(options: DisplayOptions): options is TileGLOptions<TChar> {
 		return options.layout === "tile-gl";
 	}
 
-	setOptions(opts: TileGLOptions) {
+	setOptions(opts: TileGLOptions<TChar>) {
 		let needsRepaint = super.setOptions(opts);
 
 		this._updateSize();
@@ -71,14 +71,14 @@ export default class TileGL extends Backend<TileGLOptions, string[], string[], s
 		return needsRepaint;
 	}
 
-	protected defaultedOptions(options: TileGLOptions): Required<TileGLOptions> {
+	protected defaultedOptions(options: TileGLOptions<TChar>): Required<TileGLOptions<TChar>> {
 		return {
 			...this.DEFAULTS,
 			...options,
 		}
 	}
 
-	draw(data: TileGLData, clearBefore: boolean) {
+	draw(data: TileGLData<TChar>, clearBefore: boolean) {
 		const gl = this._gl;
 		const opts = this._options;
 		const {x, y, chars, fgs, bgs} = data;
@@ -101,7 +101,7 @@ export default class TileGL extends Backend<TileGLOptions, string[], string[], s
 
 		for (let i=0;i<chars.length;i++) {
 			let tile = this._options.tileMap[chars[i]];
-			if (!tile) { throw new Error(`Char "${chars[i]}" not found in tileMap`); }
+			if (!tile) { throw new Error(`Char "${String(chars[i])}" not found in tileMap`); }
 
 			gl.uniform1f(this._uniforms["colorize"], opts.tileColorize ? 1 : 0);
 			gl.uniform2fv(this._uniforms["tilesetPosAbs"], tile);

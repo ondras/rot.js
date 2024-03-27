@@ -3,7 +3,7 @@ import { BaseDisplayOptions, DisplayData, DisplayOptions } from "./types.js";
 import * as Color from "../color.js";
 
 declare module "./types.js" {
-	interface LayoutTypeBackendMap {
+	interface LayoutTypeBackendMap<TOptions extends DisplayOptions> {
 		term: Term;
 	}
 }

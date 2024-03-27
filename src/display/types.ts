@@ -1,8 +1,8 @@
-export interface LayoutTypeBackendMap {
+export interface LayoutTypeBackendMap<TOptions extends DisplayOptions> {
 	// Entries in this map are added via declaration merging, see the top of e.g. rect.ts
 }
 
-export type LayoutType = {[TLayout in keyof LayoutTypeBackendMap]: TLayout}[keyof LayoutTypeBackendMap];
+export type LayoutType = {[TLayout in keyof LayoutTypeBackendMap<any>]: TLayout}[keyof LayoutTypeBackendMap<any>];
 export type AnyBackend = IDisplayBackend<any, any>;
 export type UnknownBackend = IDisplayBackend<BaseDisplayOptions, DisplayData>;
 
@@ -11,11 +11,11 @@ export type BackendChars<TBackend extends AnyBackend> = TBackend extends IDispla
 export type BackendFGColor<TBackend extends AnyBackend> = TBackend extends IDisplayBackend<any, infer TData> ? TData["fg"] : never;
 export type BackendBGColor<TBackend extends AnyBackend> = TBackend extends IDisplayBackend<any, infer TData> ? TData["bg"] : never;
 
-export type LayoutBackend<TLayout extends LayoutType> = LayoutTypeBackendMap[TLayout];
-export type LayoutOptions<TLayout extends LayoutType> = BackendOptions<LayoutBackend<TLayout>>
-export type LayoutChars<TLayout extends LayoutType> = BackendChars<LayoutBackend<TLayout>>
-export type LayoutFGColor<TLayout extends LayoutType> = BackendFGColor<LayoutBackend<TLayout>>
-export type LayoutBGColor<TLayout extends LayoutType> = BackendBGColor<LayoutBackend<TLayout>>
+export type LayoutBackend<TLayout extends LayoutType, TOptions extends DisplayOptions> = LayoutTypeBackendMap<TOptions>[TLayout];
+export type LayoutOptions<TLayout extends LayoutType> = BackendOptions<LayoutBackend<TLayout, any>>
+export type LayoutChars<TLayout extends LayoutType, TOptions extends DisplayOptions = {}> = BackendChars<LayoutBackend<TLayout, TOptions>>
+export type LayoutFGColor<TLayout extends LayoutType, TOptions extends DisplayOptions = {}> = BackendFGColor<LayoutBackend<TLayout, TOptions>>
+export type LayoutBGColor<TLayout extends LayoutType, TOptions extends DisplayOptions = {}> = BackendBGColor<LayoutBackend<TLayout, TOptions>>
 
 export interface BaseDisplayOptions {
 	width?: number;
@@ -33,10 +33,11 @@ export interface TextDisplayOptions extends BaseDisplayOptions {
 	fontStyle?: string;
 }
 
-export interface TileDisplayOptions extends BaseDisplayOptions {
+export type TileMapKey = string | number | symbol;
+export interface TileDisplayOptions<TChar extends TileMapKey = string> extends BaseDisplayOptions {
 	tileWidth?: number;
 	tileHeight?: number;
-	tileMap: { [key: string]: [number, number] };
+	tileMap: { [K in TChar]: [number, number] };
 	tileSet: null | HTMLCanvasElement | HTMLImageElement | HTMLVideoElement | ImageBitmap;
 	tileColorize?: boolean;
 }
