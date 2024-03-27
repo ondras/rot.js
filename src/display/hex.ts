@@ -1,25 +1,28 @@
 import Canvas from "./canvas.js";
-import { DisplayData } from "./types.js";
+import { DisplayOptions, DisplayData } from "./types.js";
 import { mod } from "../util.js";
+
+declare module "./types.js" {
+	interface LayoutTypeBackendMap {
+		hex: Hex;
+	}
+}
 
 /**
  * @class Hexagonal backend
  * @private
  */
 export default class Hex extends Canvas {
-	_spacingX: number;
-	_spacingY: number;
-	_hexSize: number;
+	_spacingX = 0;
+	_spacingY = 0;
+	_hexSize = 0;
 
-	constructor() {
-		super();
-		this._spacingX = 0;
-		this._spacingY = 0;
-		this._hexSize = 0;
+	checkOptions(options: DisplayOptions): boolean {
+		return options.layout === "hex";
 	}
 
 	draw(data: DisplayData, clearBefore: boolean) {
-		let [x, y, ch, fg, bg] = data;
+		const {x, y, chars, fg, bg} = data;
 
 		let px = [
 			(x+1) * this._spacingX,
@@ -32,11 +35,10 @@ export default class Hex extends Canvas {
 			this._fill(px[0], px[1]);
 		}
 
-		if (!ch) { return; }
+		if (!chars.length) { return; }
 
 		this._ctx.fillStyle = fg;
 
-		let chars = ([] as string[]).concat(ch);
 		for (let i=0;i<chars.length;i++) {
 			this._ctx.fillText(chars[i], px[0], Math.ceil(px[1]));
 		}

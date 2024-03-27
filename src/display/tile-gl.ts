@@ -2,6 +2,12 @@ import Backend from "./backend.js";
 import { DisplayOptions, DisplayData } from "./types.js";
 import * as Color from "../color.js";
 
+declare module "./types.js" {
+	interface LayoutTypeBackendMap {
+		"tile-gl": TileGL;
+	}
+}
+
 /**
  * @class Tile backend
  * @private
@@ -32,8 +38,12 @@ export default class TileGL extends Backend {
 	schedule(cb: () => void) { requestAnimationFrame(cb); }
 	getContainer() { return this._gl.canvas as HTMLCanvasElement; }
 
+	checkOptions(options: DisplayOptions): boolean {
+		return options.layout === "tile-gl";
+	}
+
 	setOptions(opts: DisplayOptions) {
-		super.setOptions(opts);
+		let needsRepaint = super.setOptions(opts);
 
 		this._updateSize();
 
@@ -43,13 +53,14 @@ export default class TileGL extends Backend {
 		} else {
 			this._updateTexture(tileSet as HTMLImageElement);
 		}
-	}
 
+		return needsRepaint;
+	}
 
 	draw(data: DisplayData, clearBefore: boolean) {
 		const gl = this._gl;
 		const opts = this._options;
-		let [x, y, ch, fg, bg] = data;
+		const {x, y, chars, fgs, bgs} = data;
 
 		let scissorY = gl.canvas.height - (y+1)*opts.tileHeight;
 		gl.scissor(x*opts.tileWidth, scissorY, opts.tileWidth, opts.tileHeight);
@@ -58,16 +69,12 @@ export default class TileGL extends Backend {
 			if (opts.tileColorize) {
 				gl.clearColor(0, 0, 0, 0);
 			} else {
-				gl.clearColor(...parseColor(bg));
+				gl.clearColor(...parseColor(bgs[0] ?? this._options.bg));
 			}
 			gl.clear(gl.COLOR_BUFFER_BIT);
 		}
 
-		if (!ch) { return; }
-
-		let chars = ([] as string[]).concat(ch);
-		let bgs = ([] as string[]).concat(bg);
-		let fgs = ([] as string[]).concat(fg);
+		if (!chars.length) { return; }
 
 		gl.uniform2fv(this._uniforms["targetPosRel"], [x, y]);
 

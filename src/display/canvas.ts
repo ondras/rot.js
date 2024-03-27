@@ -1,28 +1,28 @@
 import Backend from "./backend.js";
-import { DisplayOptions } from "./types.js";
+import { DisplayOptions, UnknownBackend } from "./types.js";
 
-export default abstract class Canvas extends Backend {
+/**
+ * Base class for any backend that uses a `<canvas>` element as its display surface
+ */
+export abstract class BaseCanvas extends Backend {
 	_ctx: CanvasRenderingContext2D;
 
-	constructor() {
+	constructor(oldBackend?: UnknownBackend) {
 		super();
-		this._ctx = document.createElement("canvas").getContext("2d") as CanvasRenderingContext2D;
+		this._ctx = oldBackend instanceof BaseCanvas ? oldBackend._ctx : document.createElement("canvas").getContext("2d")!;
 	}
 
 	schedule(cb: () => void) { requestAnimationFrame(cb); }
 	getContainer() { return this._ctx.canvas; }
 
 	setOptions(opts: DisplayOptions) {
-		super.setOptions(opts);
+		let needsRepaint = super.setOptions(opts);
 
-		const style = (opts.fontStyle ? `${opts.fontStyle} ` : ``);
-		const font = `${style} ${opts.fontSize}px ${opts.fontFamily}`;
-		this._ctx.font = font;
-		this._updateSize();
+		if (needsRepaint) {
+			this._updateSize();
+		}
 
-		this._ctx.font = font;
-		this._ctx.textAlign = "center";
-		this._ctx.textBaseline = "middle";
+		return needsRepaint;
 	}
 
 	clear() {
@@ -49,4 +49,28 @@ export default abstract class Canvas extends Backend {
 
 	abstract _normalizedEventToPosition(x: number, y: number): [number, number];
 	abstract _updateSize(): void;
+}
+
+/**
+ * Base class for text canvases, which can display one or more text characters with a single foreground and a background color in each cell.
+ */
+export default abstract class Canvas extends BaseCanvas {
+	setOptions(opts: DisplayOptions) {
+		const { fontSize, fontFamily, spacing } = this._options;
+		let needsRepaint = super.setOptions(opts) || fontSize !== opts.fontSize || fontFamily !== opts.fontFamily || spacing !== opts.spacing;
+
+		if (needsRepaint) {
+			opts = this._options;
+			const style = (opts.fontStyle ? `${opts.fontStyle} ` : ``);
+			const font = `${style} ${opts.fontSize}px ${opts.fontFamily}`;
+			this._ctx.font = font;
+			this._updateSize();
+
+			this._ctx.font = font;
+			this._ctx.textAlign = "center";
+			this._ctx.textBaseline = "middle";
+		}
+
+		return needsRepaint;
+	}
 }

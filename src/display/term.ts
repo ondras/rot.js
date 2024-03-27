@@ -1,6 +1,12 @@
 import Backend from "./backend.js";
-import { DisplayData, DisplayOptions } from "./types.js";
+import { DisplayOptions, DisplayData } from "./types.js";
 import * as Color from "../color.js";
+
+declare module "./types.js" {
+	interface LayoutTypeBackendMap {
+		term: Term;
+	}
+}
 
 // Explicitly declaring this so that including projects don't need to import node types
 declare global {
@@ -56,11 +62,15 @@ export default class Term extends Backend {
 
 	schedule(cb: ()=>void) { setTimeout(cb, 1000/60); }
 
+	checkOptions(options: DisplayOptions): boolean {
+		return options.layout === "term";
+	}
 	setOptions(options: DisplayOptions) {
-		super.setOptions(options);
-		let size = [options.width, options.height];
+		let needsRepaint = super.setOptions(options);
+		let size = [this._options.width, this._options.height];
 		let avail = this.computeSize();
 		this._offset = avail.map((val, index) => Math.floor((val as number - size[index])/2)) as [number, number];
+		return needsRepaint;
 	}
 
 	clear() {
@@ -69,7 +79,7 @@ export default class Term extends Backend {
 
 	draw(data: DisplayData, clearBefore: boolean) {
 		// determine where to draw what with what colors
-		let [x, y, ch, fg, bg] = data;
+		let {x, y, ch, fg, bg} = data;
 
 		// determine if we need to move the terminal cursor
 		let dx = this._offset[0] + x;

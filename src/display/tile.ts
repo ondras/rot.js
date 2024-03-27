@@ -1,20 +1,30 @@
-import Canvas from "./canvas.js";
-import { DisplayData } from "./types.js";
+import { BaseCanvas } from "./canvas.js";
+import { DisplayOptions, DisplayData, UnknownBackend } from "./types.js";
+
+declare module "./types.js" {
+	interface LayoutTypeBackendMap {
+		"tile": Tile;
+	}
+}
 
 /**
  * @class Tile backend
  * @private
  */
-export default class Tile extends Canvas {
+export default class Tile extends BaseCanvas {
 	_colorCanvas: HTMLCanvasElement;
 
-	constructor() {
-		super();
-		this._colorCanvas = document.createElement("canvas");
+	constructor(oldBackend?: UnknownBackend) {
+		super(oldBackend);
+		this._colorCanvas = oldBackend instanceof Tile ? oldBackend._colorCanvas : document.createElement("canvas");
+	}
+
+	checkOptions(options: DisplayOptions): boolean {
+		return options.layout === "tile";
 	}
 
 	draw(data: DisplayData, clearBefore: boolean) {
-		let [x, y, ch, fg, bg] = data;
+		const {x, y, chars, fgs, bgs} = data;
 
 		let tileWidth = this._options.tileWidth;
 		let tileHeight = this._options.tileHeight;
@@ -25,7 +35,7 @@ export default class Tile extends Canvas {
 			} else {
                 this._ctx.save();
                 this._ctx.globalCompositeOperation = "copy";
-				this._ctx.fillStyle = bg;
+				this._ctx.fillStyle = bgs[0] ?? this._options.bg;
                 this._ctx.beginPath();
                 this._ctx.rect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
                 this._ctx.clip();
@@ -34,11 +44,7 @@ export default class Tile extends Canvas {
 			}
 		}
 
-		if (!ch) { return; }
-
-		let chars = ([] as string[]).concat(ch);
-		let fgs = ([] as string[]).concat(fg);
-		let bgs = ([] as string[]).concat(bg);
+		if (!chars.length) { return; }
 
 		for (let i=0;i<chars.length;i++) {
 			let tile = this._options.tileMap[chars[i]];

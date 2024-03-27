@@ -1,4 +1,3 @@
-import Backend from "./backend.js";
 import Hex from "./hex.js";
 import Rect from "./rect.js";
 import Tile from "./tile.js";
@@ -6,10 +5,10 @@ import TileGL from "./tile-gl.js";
 import Term from "./term.js";
 
 import * as Text from "../text.js";
-import { DisplayOptions, DisplayData } from "./types.js";
+import { DisplayOptions, DisplayData, IDisplayBackend, LayoutType, UnknownBackend } from "./types.js";
 import { DEFAULT_WIDTH, DEFAULT_HEIGHT } from "../constants.js";
 
-const BACKENDS = {
+export const BACKENDS: {[TLayout in LayoutType]: new(oldBackend?: UnknownBackend) => IDisplayBackend} = {
 	"hex": Hex,
 	"rect": Rect,
 	"tile": Tile,
@@ -44,7 +43,7 @@ export default class Display {
 	_data: { [pos:string] : DisplayData };
 	_dirty: boolean | { [pos: string]: boolean };
 	_options!: DisplayOptions;
-	_backend!: Backend;
+	_backend!: IDisplayBackend;
 
 	static Rect = Rect;
 	static Hex = Hex;
@@ -55,9 +54,8 @@ export default class Display {
 	constructor(options: Partial<DisplayOptions> = {}) {
 		this._data = {};
 		this._dirty = false; // false = nothing, true = all, object = dirty cells
-		this._options = {} as DisplayOptions;
 
-		options = Object.assign({}, DEFAULT_OPTIONS, options);
+		options = {...DEFAULT_OPTIONS, ...options};
 		this.setOptions(options);
 		this.DEBUG = this.DEBUG.bind(this);
 
@@ -88,15 +86,19 @@ export default class Display {
 	 * @see ROT.Display
 	 */
 	setOptions(options: Partial<DisplayOptions>) {
-		Object.assign(this._options, options);
+		this._options = Object.assign(this._options ?? {}, options);
 
-		if (options.width || options.height || options.fontSize || options.fontFamily || options.spacing || options.layout) {
-			if (options.layout) {
-				let ctor = BACKENDS[options.layout];
-				this._backend = new ctor();
+		if (!this._backend?.checkOptions(this._options)) {
+			// This is either the initial backend or a backend switch
+			const ctor = BACKENDS[this._options.layout];
+			this._backend = new ctor(this._backend);
+			if (!this._backend.checkOptions(this._options)) {
+				console.error("checkOptions returned false on a newly-constructed backend! This is probably a bug in rot.js.", options, this._backend, this._options);
+				throw new Error("could not construct display backend");
 			}
+		}
 
-			this._backend.setOptions(this._options);
+		if (this._backend.setOptions(this._options)) {
 			this._dirty = true;
 		}
 		return this;
@@ -157,43 +159,49 @@ export default class Display {
 	}
 
 	/**
-	 * @param {int} x
-	 * @param {int} y
-	 * @param {string || string[]} ch One or more chars (will be overlapping themselves)
-	 * @param {string} [fg] foreground color
-	 * @param {string} [bg] background color
+	 * @param x
+	 * @param y
+	 * @param ch One or more chars (will be overlapping themselves)
+	 * @param fg foreground color
+	 * @param bg background color
 	 */
-	draw(x: number, y: number, ch: string | string[] | null, fg: string | null, bg: string | null) {
-		if (!fg) { fg = this._options.fg; }
-		if (!bg) { bg = this._options.bg; }
+	draw(x: number, y: number, ch: string | string[] | null, fg: string | null = null, bg: string | null = null) {
 		let key = `${x},${y}`;
-		this._data[key] = [x, y, ch, fg, bg];
+		const data = this._data[key] ??= {x, y, chars: [], fgs: [], bgs: [], ch: null!, fg: null!, bg: null!};
+		if (this._setData(data, ch, fg ?? this._options.fg, bg ?? this._options.bg)) {
+			this._setDirty(key);
+		}
+	}
 
+	_setDirty(key: string) {
 		if (this._dirty === true) { return; } // will already redraw everything 
 		if (!this._dirty) { this._dirty = {}; } // first!
 		this._dirty[key] = true;
 	}
 
 	/**
-	 * @param {int} x
-	 * @param {int} y
-	 * @param {string || string[]} ch One or more chars (will be overlapping themselves)
-	 * @param {string || null} [fg] foreground color
-	 * @param {string || null} [bg] background color
+	 * @param x
+	 * @param y
+	 * @param ch One or more chars (will be overlapping themselves), or null to leave unchanged
+	 * @param fg foreground color, or null to leave unchanged
+	 * @param bg background color, or null to leave unchanged
 	 */
 	drawOver(
 		x: number,
 		y: number,
-		ch: string | null,
-		fg: string | null,
-		bg: string | null
+		ch: string | string[] | null = null,
+		fg: string | null = null,
+		bg: string | null = null,
 	) {
 		const key = `${x},${y}`;
 		const existing = this._data[key];
 		if (existing) {
-			existing[2] = ch || existing[2];
-			existing[3] = fg || existing[3];
-			existing[4] = bg || existing[4];
+			ch ??= existing.ch;
+			fg ??= existing.fg;
+			bg ??= existing.bg;
+			if (this._setData(existing, ch, fg, bg)) {
+				this._setDirty(key);
+			}
 		} else {
 			this.draw(x, y, ch, fg, bg);
 		}
@@ -295,8 +303,55 @@ export default class Display {
 	 */
 	_draw(key: string, clearBefore: boolean) {
 		let data = this._data[key];
-		if (data[4] != this._options.bg) { clearBefore = true; }
+		if (data.bg !== this._options.bg) { clearBefore = true; }
 
 		this._backend.draw(data, clearBefore);
 	}
+
+	_setData(data: DisplayData, ch: string | string[] | null, fg: string, bg: string) {
+		let changed = false;
+		if (data.ch !== ch) {
+			changed = true;
+			data.ch = ch;
+		}
+		if (data.fg !== fg) {
+			changed = true;
+			data.fg = fg;
+		}
+		if (data.bg !== bg) {
+			changed = true;
+			data.bg = bg;
+		}
+		changed = setArrayValue(data.chars, ch) || changed;
+		changed = setArrayValue(data.fgs, fg) || changed;
+		changed = setArrayValue(data.bgs, bg) || changed;
+
+		return changed;
+	}
+}
+
+function setArrayValue<T>(array: T[], value: T | T[] | null) {
+	let changed = false;
+	if (Array.isArray(value)) {
+		for (let i = 0; i < value.length; i++) {
+			if (array.length <= i || array[i] !== value[i]) {
+				array[i] = value[i];
+				changed = true;
+			}
+		}
+		if (value.length !== array.length) {
+			array.length = value.length;
+			changed = true;
+		}
+	} else if (value == null) {
+		changed = array.length !== 0;
+		array.length = 0;
+	} else {
+		if (array.length !== 1 || array[0] !== value) {
+			// order is important here! setting length before value means that the JS engine might degrade this to a sparse array with worse performance
+			array[0] = value;
+			array.length = 1;
+		}
+	}
+	return changed;
 }
