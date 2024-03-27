@@ -3,13 +3,19 @@ export interface LayoutTypeBackendMap {
 }
 
 export type LayoutType = {[TLayout in keyof LayoutTypeBackendMap]: TLayout}[keyof LayoutTypeBackendMap];
-export type AnyBackend = IDisplayBackend<any>;
-export type UnknownBackend = IDisplayBackend<BaseDisplayOptions>;
+export type AnyBackend = IDisplayBackend<any, any>;
+export type UnknownBackend = IDisplayBackend<BaseDisplayOptions, DisplayData>;
 
 export type BackendOptions<TBackend extends AnyBackend> = TBackend extends {setOptions(options: infer TOptions extends BaseDisplayOptions): any} ? TOptions : BaseDisplayOptions;
+export type BackendChars<TBackend extends AnyBackend> = TBackend extends IDisplayBackend<any, infer TData> ? TData["ch"] : never
+export type BackendFGColor<TBackend extends AnyBackend> = TBackend extends IDisplayBackend<any, infer TData> ? TData["fg"] : never;
+export type BackendBGColor<TBackend extends AnyBackend> = TBackend extends IDisplayBackend<any, infer TData> ? TData["bg"] : never;
 
 export type LayoutBackend<TLayout extends LayoutType> = LayoutTypeBackendMap[TLayout];
 export type LayoutOptions<TLayout extends LayoutType> = BackendOptions<LayoutBackend<TLayout>>
+export type LayoutChars<TLayout extends LayoutType> = BackendChars<LayoutBackend<TLayout>>
+export type LayoutFGColor<TLayout extends LayoutType> = BackendFGColor<LayoutBackend<TLayout>>
+export type LayoutBGColor<TLayout extends LayoutType> = BackendBGColor<LayoutBackend<TLayout>>
 
 export interface BaseDisplayOptions {
 	width?: number;
@@ -37,6 +43,7 @@ export interface TileDisplayOptions extends BaseDisplayOptions {
 
 export type DisplayOptions = LayoutOptions<LayoutType>;
 
+export type Unwrapped<T> = T extends readonly (infer I)[] ? I : T;
 export type DefaultsFor<T> = {[K in keyof T as undefined extends T[K] ? K : never]-?: T[K]}
 export type Frozen<T> = {readonly [K in keyof T]-?: NonNullable<T[K]> | (null extends T[K] ? null : never)}
 
@@ -66,28 +73,29 @@ import type Display from "./display.js"; // for jsdoc only
  * draw() method, as object destructuring assignment does not require instantiating an Iterator the way that array
  * destructuring does.
  */
-export interface DisplayData {
+export interface DisplayData<TChar = unknown, TFGColor = TChar, TBGColor = TFGColor> {
 	/** X coordinate of display cell. */
 	readonly x: number;
 	/** Y coordinate of display cell. */
 	readonly y: number;
 
 	// Normalized array forms of data
-	readonly chars: string[];
-	readonly fgs: string[];
-	readonly bgs: string[];
+	readonly chars: Unwrapped<TChar>[];
+	readonly fgs: Unwrapped<TFGColor>[];
+	readonly bgs: Unwrapped<TBGColor>[];
 
 	// User-passed data
-	ch: string | string[] | null;
-	fg: string;
-	bg: string;
+	ch: TChar;
+	fg: TFGColor;
+	bg: TBGColor;
 }
 
 /**
  * This is the contract a Backend must satisfy for it to be used by a Display.
  * @template TOptions   The full set of options appropriate to this Backend.
+ * @template TData      The type that must be passed to the `draw` method.
  */
-export interface IDisplayBackend<TOptions extends BaseDisplayOptions> {
+export interface IDisplayBackend<TOptions extends BaseDisplayOptions, TData extends DisplayData> {
 	/**
 	 * Get the root-level HTMLElement containing this display, or null if this backend is unrelated to HTML
 	 */
@@ -124,7 +132,7 @@ export interface IDisplayBackend<TOptions extends BaseDisplayOptions> {
 	 * 					  `data.bg` is not equal to {@link BaseDisplayOptions.bg}, and also if this cell
 	 * 					  has been drawn since the last call to {@link clear()}.
 	 */
-	draw(data: DisplayData, clearBefore: boolean): void;
+	draw(data: TData, clearBefore: boolean): void;
 	/**
 	 * Compute the maximum width/height to fit into a set of given constraints. See {@link Display.computeSize()}.
 	 */

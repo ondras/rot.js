@@ -11,12 +11,14 @@ declare module "./types.js" {
 export interface TileGLOptions extends TileDisplayOptions {
 	layout: "tile-gl";
 }
+export interface TileGLData extends DisplayData<string[], string[], string[]> {
+}
 
 /**
  * @class Tile backend
  * @private
  */
-export default class TileGL extends Backend<TileGLOptions> {
+export default class TileGL extends Backend<TileGLOptions, string[], string[], string[], TileGLData> {
 	_gl!: WebGLRenderingContext;
 	_program!: WebGLProgram;
 	_uniforms: {[key:string]: WebGLUniformLocation | null};
@@ -76,7 +78,7 @@ export default class TileGL extends Backend<TileGLOptions> {
 		}
 	}
 
-	draw(data: DisplayData, clearBefore: boolean) {
+	draw(data: TileGLData, clearBefore: boolean) {
 		const gl = this._gl;
 		const opts = this._options;
 		const {x, y, chars, fgs, bgs} = data;

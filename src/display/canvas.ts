@@ -1,10 +1,14 @@
 import Backend from "./backend.js";
-import { BaseDisplayOptions, TextDisplayOptions, UnknownBackend, DefaultsFor } from "./types.js";
+import { BaseDisplayOptions, DisplayData, TextDisplayOptions, UnknownBackend, DefaultsFor } from "./types.js";
 
 /**
  * Base class for any backend that uses a `<canvas>` element as its display surface
  */
-export abstract class BaseCanvas<TOptions extends BaseDisplayOptions> extends Backend<TOptions> {
+export abstract class BaseCanvas<TOptions extends BaseDisplayOptions,
+								 TData extends DisplayData = DisplayData<string[], string, string>,
+								 TChar = string[], TFGColor = string, TBGColor = string,
+								>
+						extends Backend<TOptions, TChar, TFGColor, TBGColor, TData extends DisplayData<TChar, TFGColor, TBGColor> ? TData : never> {
 	_ctx: CanvasRenderingContext2D;
 
 	constructor(oldBackend?: UnknownBackend) {
@@ -51,10 +55,15 @@ export abstract class BaseCanvas<TOptions extends BaseDisplayOptions> extends Ba
 	abstract _updateSize(): void;
 }
 
+export type CanvasDisplayData = DisplayData<string[], string, string>;
 /**
  * Base class for text canvases, which can display one or more text characters with a single foreground and a background color in each cell.
  */
-export default abstract class Canvas<TOptions extends TextDisplayOptions> extends BaseCanvas<TOptions> {
+export default abstract class Canvas<TOptions extends TextDisplayOptions,
+									 TData extends DisplayData = CanvasDisplayData,
+									 TChar = string[], TFGColor = string, TBGColor = string,
+									>
+							extends BaseCanvas<TOptions, TData, TChar, TFGColor, TBGColor> {
 	protected get DEFAULTS() {
 		return {
 			...super.DEFAULTS,

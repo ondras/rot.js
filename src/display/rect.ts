@@ -1,5 +1,5 @@
-import Canvas from "./canvas.js";
-import { DefaultsFor, DisplayData, DisplayOptions, TextDisplayOptions } from "./types.js";
+import Canvas, { CanvasDisplayData } from "./canvas.js";
+import { DefaultsFor, DisplayOptions, TextDisplayOptions } from "./types.js";
 
 declare module "./types.js" {
 	interface LayoutTypeBackendMap {
@@ -12,11 +12,14 @@ export interface RectOptions extends TextDisplayOptions {
 	forceSquareRatio?: boolean;
 }
 
+export interface RectData extends CanvasDisplayData {
+}
+
 /**
  * @class Rectangular backend
  * @private
  */
-export default class Rect extends Canvas<RectOptions> {
+export default class Rect extends Canvas<RectOptions, RectData> {
 	protected get DEFAULTS() {
 		return {
 			...super.DEFAULTS,
@@ -44,7 +47,7 @@ export default class Rect extends Canvas<RectOptions> {
 		}
 	}
 
-	draw(data: DisplayData, clearBefore: boolean) {
+	draw(data: RectData, clearBefore: boolean) {
 		if (Rect.cache) {
 			this._drawWithCache(data);
 		} else {
@@ -52,7 +55,7 @@ export default class Rect extends Canvas<RectOptions> {
 		}
 	}
 
-	_drawWithCache(data: DisplayData) {
+	_drawWithCache(data: RectData) {
 		const {x, y, ch, chars, fg, bg} = data;
 
 		let hash = ""+ch+fg+bg;
@@ -84,7 +87,7 @@ export default class Rect extends Canvas<RectOptions> {
 		this._ctx.drawImage(canvas, x*this._spacingX, y*this._spacingY);
 	}
 
-	_drawNoCache(data: DisplayData, clearBefore: boolean) {
+	_drawNoCache(data: RectData, clearBefore: boolean) {
 		const {x, y, chars, fg, bg} = data;
 
 		if (clearBefore) { 

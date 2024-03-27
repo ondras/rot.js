@@ -1,5 +1,5 @@
-import Canvas from "./canvas.js";
-import { TextDisplayOptions, DisplayData, DefaultsFor, DisplayOptions } from "./types.js";
+import Canvas, { CanvasDisplayData } from "./canvas.js";
+import { TextDisplayOptions, DefaultsFor, DisplayOptions } from "./types.js";
 import { mod } from "../util.js";
 
 declare module "./types.js" {
@@ -12,12 +12,14 @@ export interface HexOptions extends TextDisplayOptions {
 	layout: "hex";
 	transpose?: boolean;
 }
+export interface HexData extends CanvasDisplayData {
+}
 
 /**
  * @class Hexagonal backend
  * @private
  */
-export default class Hex extends Canvas<HexOptions> {
+export default class Hex extends Canvas<HexOptions, HexData> {
 	protected get DEFAULTS() {
 		return {
 			...super.DEFAULTS,
@@ -38,7 +40,7 @@ export default class Hex extends Canvas<HexOptions> {
 			...options,
 		}
 	}
-	draw(data: DisplayData, clearBefore: boolean) {
+	draw(data: HexData, clearBefore: boolean) {
 		const {x, y, chars, fg, bg} = data;
 
 		let px = [

@@ -5,8 +5,11 @@ import { DisplayOptions, DisplayData, IDisplayBackend, DefaultsFor, Frozen, Base
  * @class Abstract display backend module
  * @private
  */
-export default abstract class Backend<TOptions extends BaseDisplayOptions = BaseDisplayOptions>
-							implements IDisplayBackend<TOptions> {
+export default abstract class Backend<TOptions extends BaseDisplayOptions = BaseDisplayOptions,
+									  TChar = string, TFGColor = string, TBGColor = string,
+									  TData extends DisplayData<TChar, TFGColor, TBGColor> = DisplayData<TChar, TFGColor, TBGColor>,
+									 >
+							implements IDisplayBackend<TOptions, TData> {
 	protected get DEFAULTS() {
 		return {
 			width: DEFAULT_WIDTH,
@@ -34,7 +37,7 @@ export default abstract class Backend<TOptions extends BaseDisplayOptions = Base
 
 	abstract schedule(cb: ()=>void): void;
 	abstract clear(): void;
-	abstract draw(data: DisplayData, clearBefore: boolean): void;
+	abstract draw(data: TData, clearBefore: boolean): void;
 	abstract computeSize(availWidth: number, availHeight: number): [number, number];
 	abstract computeFontSize(availWidth: number, availHeight: number): number;
 	abstract eventToPosition(x:number, y:number): [number, number];

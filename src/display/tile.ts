@@ -10,12 +10,14 @@ declare module "./types.js" {
 export interface TileOptions extends TileDisplayOptions {
 	layout: "tile";
 }
+export interface TileData extends DisplayData<string[], string[], string[]> {
+}
 
 /**
  * @class Tile backend
  * @private
  */
-export default class Tile extends BaseCanvas<TileOptions> {
+export default class Tile extends BaseCanvas<TileOptions, TileData, string[], string[], string[]> {
 	_colorCanvas: HTMLCanvasElement;
 
 	protected get DEFAULTS() {
@@ -43,7 +45,7 @@ export default class Tile extends BaseCanvas<TileOptions> {
 		}
 	}
 
-	draw(data: DisplayData, clearBefore: boolean) {
+	draw(data: TileData, clearBefore: boolean) {
 		const {x, y, chars, fgs, bgs} = data;
 
 		let tileWidth = this._options.tileWidth;

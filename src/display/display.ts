@@ -5,9 +5,14 @@ import TileGL from "./tile-gl.js";
 import Term from "./term.js";
 
 import * as Text from "../text.js";
-import { DisplayOptions, DisplayData, LayoutType, IDisplayBackend, UnknownBackend, LayoutOptions, BaseDisplayOptions, Frozen } from "./types.js";
+import {
+	DisplayOptions, DisplayData, BaseDisplayOptions,
+	LayoutType, LayoutBackend, LayoutOptions, LayoutChars, LayoutFGColor, LayoutBGColor,
+	IDisplayBackend, UnknownBackend, BackendChars, BackendFGColor, BackendBGColor,
+	Unwrapped, Frozen,
+} from "./types.js";
 
-export const BACKENDS: {[TLayout in LayoutType]: new(oldBackend?: UnknownBackend) => IDisplayBackend<LayoutOptions<TLayout>>} = {
+export const BACKENDS: {[TLayout in LayoutType]: new(oldBackend?: UnknownBackend) => IDisplayBackend<LayoutOptions<TLayout>, any>} = {
 	"hex": Hex,
 	"rect": Rect,
 	"tile": Tile,
@@ -18,13 +23,13 @@ export const BACKENDS: {[TLayout in LayoutType]: new(oldBackend?: UnknownBackend
 /**
  * @class Visual map display
  */
-class DisplayImpl<TLayout extends LayoutType> {
+class DisplayImpl<TLayout extends LayoutType, TChar, TFGColor, TBGColor> {
 	static readonly DEFAULT_LAYOUT = "rect" satisfies LayoutType;
 
-	_data: { [pos:string] : DisplayData };
+	_data: { [pos:string] : DisplayData<TChar, TFGColor, TBGColor> };
 	_dirty: boolean | { [pos: string]: boolean };
 	_options!: LayoutOptions<TLayout> & Required<BaseDisplayOptions>;
-	_backend!: IDisplayBackend<LayoutOptions<TLayout>>;
+	_backend!: IDisplayBackend<LayoutOptions<TLayout>, DisplayData<TChar, TFGColor, TBGColor>>;
 
 	static Rect = Rect;
 	static Hex = Hex;
@@ -52,7 +57,7 @@ class DisplayImpl<TLayout extends LayoutType> {
 	 */
 	DEBUG(x: number, y: number, what: number) {
 		let colors = [this._options.bg, this._options.fg];
-		this.draw(x, y, null, null, colors[what % colors.length]);
+		this.draw(x, y, null, null, colors[what % colors.length] as TBGColor);
 	}
 
 	/**
@@ -151,10 +156,10 @@ class DisplayImpl<TLayout extends LayoutType> {
 	 * @param fg foreground color
 	 * @param bg background color
 	 */
-	draw(x: number, y: number, ch: string | string[] | null, fg: string | null = null, bg: string | null = null) {
+	draw(x: number, y: number, ch: TChar | Unwrapped<TChar> | null, fg: TFGColor | Unwrapped<TFGColor> | null = null, bg: TBGColor | Unwrapped<TBGColor> | null = null) {
 		let key = `${x},${y}`;
 		const data = this._data[key] ??= {x, y, chars: [], fgs: [], bgs: [], ch: null!, fg: null!, bg: null!};
-		if (this._setData(data, ch, fg ?? this._options.fg, bg ?? this._options.bg)) {
+		if (this._setData(data, ch, fg ?? (this._options.fg as TFGColor), bg ?? (this._options.bg as TBGColor))) {
 			this._setDirty(key);
 		}
 	}
@@ -175,9 +180,9 @@ class DisplayImpl<TLayout extends LayoutType> {
 	drawOver(
 		x: number,
 		y: number,
-		ch: string | string[] | null = null,
-		fg: string | null = null,
-		bg: string | null = null,
+		ch: TChar | Unwrapped<TChar> | null = null,
+		fg: TFGColor | Unwrapped<TFGColor> | null = null,
+		bg: TBGColor | Unwrapped<TBGColor> | null = null,
 	) {
 		const key = `${x},${y}`;
 		const existing = this._data[key];
@@ -224,7 +229,7 @@ class DisplayImpl<TLayout extends LayoutType> {
 							let isCJK = cch === 0x11 || (cch >= 0x2e && cch <= 0x9f) || (cch >= 0xac && cch <= 0xd7) || (cc >= 0xA960 && cc <= 0xA97F);
 							if (isCJK) {
 								this.draw(cx + 0, cy, c, fg, bg);
-								this.draw(cx + 1, cy, "\t", fg, bg);
+								this.draw(cx + 1, cy, "\t" as TChar, fg, bg);
 								cx += 2;
 								continue;
 							}
@@ -294,19 +299,19 @@ class DisplayImpl<TLayout extends LayoutType> {
 		this._backend.draw(data, clearBefore);
 	}
 
-	_setData(data: DisplayData, ch: string | string[] | null, fg: string, bg: string) {
+	_setData(data: DisplayData<TChar, TFGColor, TBGColor>, ch: TChar | Unwrapped<TChar> | null, fg: TFGColor | Unwrapped<TFGColor>, bg: TBGColor | Unwrapped<TBGColor>) {
 		let changed = false;
 		if (data.ch !== ch) {
 			changed = true;
-			data.ch = ch;
+			data.ch = ch as TChar;
 		}
 		if (data.fg !== fg) {
 			changed = true;
-			data.fg = fg;
+			data.fg = fg as TFGColor;
 		}
 		if (data.bg !== bg) {
 			changed = true;
-			data.bg = bg;
+			data.bg = bg as TBGColor;
 		}
 		changed = setArrayValue(data.chars, ch) || changed;
 		changed = setArrayValue(data.fgs, fg) || changed;
@@ -343,7 +348,7 @@ function setArrayValue<T>(array: T[], value: T | T[] | null) {
 }
 
 // Redeclaring all public API in the Display interface so that hovers etc show the right name
-export interface Display<TLayout extends LayoutType = LayoutType> extends DisplayImpl<TLayout> {
+export interface Display<TLayout extends LayoutType = LayoutType, TChar = LayoutChars<TLayout>, TFGColor = LayoutFGColor<TLayout>, TBGColor = LayoutBGColor<TLayout>> extends DisplayImpl<TLayout, TChar, TFGColor, TBGColor> {
 	DEBUG(x: number, y: number, what: number): void;
 	clear(): void;
 	setOptions(options: LayoutOptions<TLayout>): this;
@@ -354,22 +359,31 @@ export interface Display<TLayout extends LayoutType = LayoutType> extends Displa
 	computeFontSize(availWidth: number, availHeight: number): number;
 	computeTileSize(availWidth: number, availHeight: number): [w: number, h: number];
 	eventToPosition(e: TouchEvent | MouseEvent): [x: number, y: number];
-	draw(x: number, y: number, ch: string | string[] | null, fg?: string | null, bg?: string | null): void;
-	drawOver(x: number, y: number, ch?: string | string[] | null, fg?: string | null, bg?: string | null): void;
+	draw(x: number, y: number, ch: TChar | Unwrapped<TChar> | null, fg?: TFGColor | Unwrapped<TFGColor> | null, bg?: TBGColor | Unwrapped<TBGColor> | null): void;
+	drawOver(x: number, y: number, ch?: TChar | Unwrapped<TChar> | null, fg?: TFGColor | Unwrapped<TFGColor> | null, bg?: TBGColor | Unwrapped<TBGColor> | null): void;
 	drawText(x:number, y:number, text:string, maxWidth?:number): number;
 }
 
 type LayoutFor<TOptions extends DisplayOptions> = TOptions extends {layout: infer L} ? NonNullable<L> : typeof DisplayImpl["DEFAULT_LAYOUT"];
+type BackendFor<TOptions extends DisplayOptions> = LayoutBackend<LayoutFor<TOptions>>;
+type TCharFromOptions<TOptions extends DisplayOptions> = BackendChars<BackendFor<TOptions>>;
+type TFGColorFromOptions<TOptions extends DisplayOptions> = BackendFGColor<BackendFor<TOptions>>;
+type TBGColorFromOptions<TOptions extends DisplayOptions> = BackendBGColor<BackendFor<TOptions>>;
 
-// This is, sadly, the only way to be able to explicitly declare the type arguments of the returned Display instance
 export interface DisplayConstructor {
 	DEFAULT_LAYOUT: LayoutType;
 	new<TLayout extends LayoutType = LayoutType,
-		TOptions extends LayoutOptions<TLayout> = LayoutOptions<TLayout>>
-			(options?: TOptions): Display<LayoutFor<TOptions>>;
+	    TChar extends LayoutChars<TLayout> = LayoutChars<TLayout>,
+		TFGColor extends LayoutFGColor<TLayout> = LayoutFGColor<TLayout>,
+		TBGColor extends LayoutBGColor<TLayout> = LayoutBGColor<TLayout>,
+		TOptions extends LayoutOptions<TLayout> = LayoutOptions<TLayout>>(options?: TOptions):
+			Display<LayoutFor<TOptions>,
+					TChar extends TCharFromOptions<TOptions> ? TChar : TCharFromOptions<TOptions>,
+					TFGColor extends TFGColorFromOptions<TOptions> ? TFGColor : TFGColorFromOptions<TOptions>,
+					TBGColor extends TBGColorFromOptions<TOptions> ? TBGColor : TBGColorFromOptions<TOptions>>;
 }
 
-export const Display: DisplayConstructor = class Display<TLayout extends LayoutType> extends DisplayImpl<TLayout> {
+export const Display = class Display<TLayout extends LayoutType, TChar, TFGColor, TBGColor> extends DisplayImpl<TLayout, TChar, TFGColor, TBGColor> {
 } as any;
 
 export default Display;

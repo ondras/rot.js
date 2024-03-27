@@ -1,5 +1,5 @@
 import Backend from "./backend.js";
-import { DisplayOptions, DisplayData, BaseDisplayOptions } from "./types.js";
+import { BaseDisplayOptions, DisplayData, DisplayOptions } from "./types.js";
 import * as Color from "../color.js";
 
 declare module "./types.js" {
@@ -50,8 +50,10 @@ function termcolor(color: string) {
 export interface TermOptions extends BaseDisplayOptions {
 	layout: "term";
 }
+export interface TermData extends DisplayData<string, string, string> {
+}
 
-export default class Term extends Backend<TermOptions> {
+export default class Term extends Backend<TermOptions, string, string, string, TermData> {
 	_offset: [number, number];
 	_cursor: [number, number];
 	_lastColor: string;
@@ -89,7 +91,7 @@ export default class Term extends Backend<TermOptions> {
 		process.stdout.write(clearToAnsi(this._options.bg));
 	}
 
-	draw(data: DisplayData, clearBefore: boolean) {
+	draw(data: TermData, clearBefore: boolean) {
 		// determine where to draw what with what colors
 		let {x, y, ch, fg, bg} = data;
 
