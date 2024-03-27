@@ -1,10 +1,10 @@
 import Backend from "./backend.js";
-import { DisplayOptions, UnknownBackend } from "./types.js";
+import { BaseDisplayOptions, TextDisplayOptions, UnknownBackend, DefaultsFor } from "./types.js";
 
 /**
  * Base class for any backend that uses a `<canvas>` element as its display surface
  */
-export abstract class BaseCanvas extends Backend {
+export abstract class BaseCanvas<TOptions extends BaseDisplayOptions> extends Backend<TOptions> {
 	_ctx: CanvasRenderingContext2D;
 
 	constructor(oldBackend?: UnknownBackend) {
@@ -15,7 +15,7 @@ export abstract class BaseCanvas extends Backend {
 	schedule(cb: () => void) { requestAnimationFrame(cb); }
 	getContainer() { return this._ctx.canvas; }
 
-	setOptions(opts: DisplayOptions) {
+	setOptions(opts: TOptions) {
 		let needsRepaint = super.setOptions(opts);
 
 		if (needsRepaint) {
@@ -54,8 +54,18 @@ export abstract class BaseCanvas extends Backend {
 /**
  * Base class for text canvases, which can display one or more text characters with a single foreground and a background color in each cell.
  */
-export default abstract class Canvas extends BaseCanvas {
-	setOptions(opts: DisplayOptions) {
+export default abstract class Canvas<TOptions extends TextDisplayOptions> extends BaseCanvas<TOptions> {
+	protected get DEFAULTS() {
+		return {
+			...super.DEFAULTS,
+			fontSize: 15,
+			spacing: 1,
+			border: 0,
+			fontFamily: "monospace",
+			fontStyle: "",
+		} satisfies DefaultsFor<TextDisplayOptions>;
+	}
+	setOptions(opts: TOptions) {
 		const { fontSize, fontFamily, spacing } = this._options;
 		let needsRepaint = super.setOptions(opts) || fontSize !== opts.fontSize || fontFamily !== opts.fontFamily || spacing !== opts.spacing;
 

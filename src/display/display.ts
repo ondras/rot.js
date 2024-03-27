@@ -5,10 +5,9 @@ import TileGL from "./tile-gl.js";
 import Term from "./term.js";
 
 import * as Text from "../text.js";
-import { DisplayOptions, DisplayData, IDisplayBackend, LayoutType, UnknownBackend } from "./types.js";
-import { DEFAULT_WIDTH, DEFAULT_HEIGHT } from "../constants.js";
+import { DisplayOptions, DisplayData, LayoutType, IDisplayBackend, UnknownBackend, LayoutOptions, BaseDisplayOptions, Frozen } from "./types.js";
 
-export const BACKENDS: {[TLayout in LayoutType]: new(oldBackend?: UnknownBackend) => IDisplayBackend} = {
+export const BACKENDS: {[TLayout in LayoutType]: new(oldBackend?: UnknownBackend) => IDisplayBackend<LayoutOptions<TLayout>>} = {
 	"hex": Hex,
 	"rect": Rect,
 	"tile": Tile,
@@ -16,34 +15,16 @@ export const BACKENDS: {[TLayout in LayoutType]: new(oldBackend?: UnknownBackend
 	"term": Term
 }
 
-const DEFAULT_OPTIONS: DisplayOptions = {
-	width: DEFAULT_WIDTH,
-	height: DEFAULT_HEIGHT,
-	transpose: false,
-	layout: "rect",
-	fontSize: 15,
-	spacing: 1,
-	border: 0,
-	forceSquareRatio: false,
-	fontFamily: "monospace",
-	fontStyle: "",
-	fg: "#ccc",
-	bg: "#000",
-	tileWidth: 32,
-	tileHeight: 32,
-	tileMap: {},
-	tileSet: null,
-	tileColorize: false
-}
-
 /**
  * @class Visual map display
  */
-export default class Display {
+class DisplayImpl<TLayout extends LayoutType> {
+	static readonly DEFAULT_LAYOUT = "rect" satisfies LayoutType;
+
 	_data: { [pos:string] : DisplayData };
 	_dirty: boolean | { [pos: string]: boolean };
-	_options!: DisplayOptions;
-	_backend!: IDisplayBackend;
+	_options!: LayoutOptions<TLayout> & Required<BaseDisplayOptions>;
+	_backend!: IDisplayBackend<LayoutOptions<TLayout>>;
 
 	static Rect = Rect;
 	static Hex = Hex;
@@ -51,11 +32,11 @@ export default class Display {
 	static TileGL = TileGL;
 	static Term = Term;
 
-	constructor(options: Partial<DisplayOptions> = {}) {
+	constructor(options?: DisplayOptions) {
 		this._data = {};
 		this._dirty = false; // false = nothing, true = all, object = dirty cells
 
-		options = {...DEFAULT_OPTIONS, ...options};
+		options = {layout: Display.DEFAULT_LAYOUT, ...options} as DisplayOptions;
 		this.setOptions(options);
 		this.DEBUG = this.DEBUG.bind(this);
 
@@ -85,13 +66,13 @@ export default class Display {
 	/**
 	 * @see ROT.Display
 	 */
-	setOptions(options: Partial<DisplayOptions>) {
+	setOptions(options: Omit<LayoutOptions<TLayout>, "layout"> | DisplayOptions) {
 		this._options = Object.assign(this._options ?? {}, options);
 
 		if (!this._backend?.checkOptions(this._options)) {
 			// This is either the initial backend or a backend switch
 			const ctor = BACKENDS[this._options.layout];
-			this._backend = new ctor(this._backend);
+			this._backend = new ctor(this._backend) as any;
 			if (!this._backend.checkOptions(this._options)) {
 				console.error("checkOptions returned false on a newly-constructed backend! This is probably a bug in rot.js.", options, this._backend, this._options);
 				throw new Error("could not construct display backend");
@@ -106,8 +87,13 @@ export default class Display {
 
 	/**
 	 * Returns currently set options
+	 * @param getEffectiveOptions When true or omitted, returns the set of active options in use by the backend. When false,
+	 * 							  returns the options that were passed to the Display constructor or to {@link setOptions()}.
 	 */
-	getOptions() { return this._options; }
+	getOptions(getEffectiveOptions?: true): Frozen<LayoutOptions<TLayout>>;
+	getOptions(getEffectiveOptions: false): DisplayOptions;
+	getOptions(getEffectiveOptions: boolean): Frozen<LayoutOptions<TLayout>> | DisplayOptions;
+	getOptions(getEffectiveOptions = true): Frozen<LayoutOptions<TLayout>> | DisplayOptions { return getEffectiveOptions ? this._backend.getOptions() : this._options; }
 
 	/**
 	 * Returns the DOM node of this display
@@ -355,3 +341,35 @@ function setArrayValue<T>(array: T[], value: T | T[] | null) {
 	}
 	return changed;
 }
+
+// Redeclaring all public API in the Display interface so that hovers etc show the right name
+export interface Display<TLayout extends LayoutType = LayoutType> extends DisplayImpl<TLayout> {
+	DEBUG(x: number, y: number, what: number): void;
+	clear(): void;
+	setOptions(options: LayoutOptions<TLayout>): this;
+	getOptions(getEffectiveOptions?: true): Frozen<LayoutOptions<TLayout>>;
+	getOptions(getEffectiveOptions: false): DisplayOptions;
+	getOptions(getEffectiveOptions: boolean): Frozen<LayoutOptions<TLayout>> | DisplayOptions;
+	computeSize(availWidth: number, availHeight: number): [w: number, h: number];
+	computeFontSize(availWidth: number, availHeight: number): number;
+	computeTileSize(availWidth: number, availHeight: number): [w: number, h: number];
+	eventToPosition(e: TouchEvent | MouseEvent): [x: number, y: number];
+	draw(x: number, y: number, ch: string | string[] | null, fg?: string | null, bg?: string | null): void;
+	drawOver(x: number, y: number, ch?: string | string[] | null, fg?: string | null, bg?: string | null): void;
+	drawText(x:number, y:number, text:string, maxWidth?:number): number;
+}
+
+type LayoutFor<TOptions extends DisplayOptions> = TOptions extends {layout: infer L} ? NonNullable<L> : typeof DisplayImpl["DEFAULT_LAYOUT"];
+
+// This is, sadly, the only way to be able to explicitly declare the type arguments of the returned Display instance
+export interface DisplayConstructor {
+	DEFAULT_LAYOUT: LayoutType;
+	new<TLayout extends LayoutType = LayoutType,
+		TOptions extends LayoutOptions<TLayout> = LayoutOptions<TLayout>>
+			(options?: TOptions): Display<LayoutFor<TOptions>>;
+}
+
+export const Display: DisplayConstructor = class Display<TLayout extends LayoutType> extends DisplayImpl<TLayout> {
+} as any;
+
+export default Display;

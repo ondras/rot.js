@@ -1,5 +1,5 @@
 import Backend from "./backend.js";
-import { DisplayOptions, DisplayData } from "./types.js";
+import { TileDisplayOptions, DisplayData, DefaultsFor, DisplayOptions } from "./types.js";
 import * as Color from "../color.js";
 
 declare module "./types.js" {
@@ -8,15 +8,27 @@ declare module "./types.js" {
 	}
 }
 
+export interface TileGLOptions extends TileDisplayOptions {
+	layout: "tile-gl";
+}
+
 /**
  * @class Tile backend
  * @private
  */
-export default class TileGL extends Backend {
+export default class TileGL extends Backend<TileGLOptions> {
 	_gl!: WebGLRenderingContext;
 	_program!: WebGLProgram;
 	_uniforms: {[key:string]: WebGLUniformLocation | null};
 
+	protected get DEFAULTS() {
+		return {
+			...super.DEFAULTS,
+			tileWidth: 32,
+			tileHeight: 32,
+			tileColorize: false,
+		} satisfies DefaultsFor<TileGLOptions>;
+	}
 	static isSupported() {
 		return !!document.createElement("canvas").getContext("webgl2", {preserveDrawingBuffer:true});
 	}
@@ -38,11 +50,11 @@ export default class TileGL extends Backend {
 	schedule(cb: () => void) { requestAnimationFrame(cb); }
 	getContainer() { return this._gl.canvas as HTMLCanvasElement; }
 
-	checkOptions(options: DisplayOptions): boolean {
+	checkOptions(options: DisplayOptions): options is TileGLOptions {
 		return options.layout === "tile-gl";
 	}
 
-	setOptions(opts: DisplayOptions) {
+	setOptions(opts: TileGLOptions) {
 		let needsRepaint = super.setOptions(opts);
 
 		this._updateSize();
@@ -55,6 +67,13 @@ export default class TileGL extends Backend {
 		}
 
 		return needsRepaint;
+	}
+
+	protected defaultedOptions(options: TileGLOptions): Required<TileGLOptions> {
+		return {
+			...this.DEFAULTS,
+			...options,
+		}
 	}
 
 	draw(data: DisplayData, clearBefore: boolean) {

@@ -1,5 +1,5 @@
 import Backend from "./backend.js";
-import { DisplayOptions, DisplayData } from "./types.js";
+import { DisplayOptions, DisplayData, BaseDisplayOptions } from "./types.js";
 import * as Color from "../color.js";
 
 declare module "./types.js" {
@@ -47,8 +47,11 @@ function termcolor(color: string) {
 	return r*36 + g*6 + b*1 + 16;
 }
 
+export interface TermOptions extends BaseDisplayOptions {
+	layout: "term";
+}
 
-export default class Term extends Backend {
+export default class Term extends Backend<TermOptions> {
 	_offset: [number, number];
 	_cursor: [number, number];
 	_lastColor: string;
@@ -62,15 +65,24 @@ export default class Term extends Backend {
 
 	schedule(cb: ()=>void) { setTimeout(cb, 1000/60); }
 
-	checkOptions(options: DisplayOptions): boolean {
+	checkOptions(options: DisplayOptions): options is TermOptions {
 		return options.layout === "term";
 	}
-	setOptions(options: DisplayOptions) {
+	setOptions(options: TermOptions) {
 		let needsRepaint = super.setOptions(options);
 		let size = [this._options.width, this._options.height];
 		let avail = this.computeSize();
 		this._offset = avail.map((val, index) => Math.floor((val as number - size[index])/2)) as [number, number];
 		return needsRepaint;
+	}
+
+	protected defaultedOptions(options: TermOptions): Required<TermOptions> {
+		const [width, height] = this.computeSize();
+		return {
+			...this.DEFAULTS,
+			width, height,
+			...options,
+		};
 	}
 
 	clear() {

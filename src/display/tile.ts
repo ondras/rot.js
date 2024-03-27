@@ -1,5 +1,5 @@
 import { BaseCanvas } from "./canvas.js";
-import { DisplayOptions, DisplayData, UnknownBackend } from "./types.js";
+import { TileDisplayOptions, DisplayData, UnknownBackend, DefaultsFor, DisplayOptions } from "./types.js";
 
 declare module "./types.js" {
 	interface LayoutTypeBackendMap {
@@ -7,20 +7,40 @@ declare module "./types.js" {
 	}
 }
 
+export interface TileOptions extends TileDisplayOptions {
+	layout: "tile";
+}
+
 /**
  * @class Tile backend
  * @private
  */
-export default class Tile extends BaseCanvas {
+export default class Tile extends BaseCanvas<TileOptions> {
 	_colorCanvas: HTMLCanvasElement;
+
+	protected get DEFAULTS() {
+		return {
+			...super.DEFAULTS,
+			tileWidth: 32,
+			tileHeight: 32,
+			tileColorize: false,
+		} satisfies DefaultsFor<TileOptions>;
+	}
 
 	constructor(oldBackend?: UnknownBackend) {
 		super(oldBackend);
 		this._colorCanvas = oldBackend instanceof Tile ? oldBackend._colorCanvas : document.createElement("canvas");
 	}
 
-	checkOptions(options: DisplayOptions): boolean {
+	checkOptions(options: DisplayOptions): options is TileOptions {
 		return options.layout === "tile";
+	}
+
+	protected defaultedOptions(options: TileOptions): Required<TileOptions> {
+		return {
+			...this.DEFAULTS,
+			...options,
+		}
 	}
 
 	draw(data: DisplayData, clearBefore: boolean) {

@@ -3,27 +3,42 @@ export interface LayoutTypeBackendMap {
 }
 
 export type LayoutType = {[TLayout in keyof LayoutTypeBackendMap]: TLayout}[keyof LayoutTypeBackendMap];
-export type UnknownBackend = IDisplayBackend;
+export type AnyBackend = IDisplayBackend<any>;
+export type UnknownBackend = IDisplayBackend<BaseDisplayOptions>;
 
-export interface DisplayOptions {
-	width: number;
-	height: number;
-	transpose: boolean;
-	layout: LayoutType;
-	fontSize: number;
-	spacing: number;
-	border: number;
-	forceSquareRatio: boolean;
-	fontFamily: string;
-	fontStyle: string;
-	fg: string;
-	bg: string;
-	tileWidth: number;
-	tileHeight: number;
+export type BackendOptions<TBackend extends AnyBackend> = TBackend extends {setOptions(options: infer TOptions extends BaseDisplayOptions): any} ? TOptions : BaseDisplayOptions;
+
+export type LayoutBackend<TLayout extends LayoutType> = LayoutTypeBackendMap[TLayout];
+export type LayoutOptions<TLayout extends LayoutType> = BackendOptions<LayoutBackend<TLayout>>
+
+export interface BaseDisplayOptions {
+	width?: number;
+	height?: number;
+	layout?: LayoutType;
+	fg?: string;
+	bg?: string;
+}
+
+export interface TextDisplayOptions extends BaseDisplayOptions {
+	fontSize?: number;
+	spacing?: number;
+	border?: number;
+	fontFamily?: string;
+	fontStyle?: string;
+}
+
+export interface TileDisplayOptions extends BaseDisplayOptions {
+	tileWidth?: number;
+	tileHeight?: number;
 	tileMap: { [key: string]: [number, number] };
 	tileSet: null | HTMLCanvasElement | HTMLImageElement | HTMLVideoElement | ImageBitmap;
-	tileColorize: Boolean;
+	tileColorize?: boolean;
 }
+
+export type DisplayOptions = LayoutOptions<LayoutType>;
+
+export type DefaultsFor<T> = {[K in keyof T as undefined extends T[K] ? K : never]-?: T[K]}
+export type Frozen<T> = {readonly [K in keyof T]-?: NonNullable<T[K]> | (null extends T[K] ? null : never)}
 
 import type Display from "./display.js"; // for jsdoc only
 
@@ -70,8 +85,9 @@ export interface DisplayData {
 
 /**
  * This is the contract a Backend must satisfy for it to be used by a Display.
+ * @template TOptions   The full set of options appropriate to this Backend.
  */
-export interface IDisplayBackend {
+export interface IDisplayBackend<TOptions extends BaseDisplayOptions> {
 	/**
 	 * Get the root-level HTMLElement containing this display, or null if this backend is unrelated to HTML
 	 */
@@ -81,27 +97,31 @@ export interface IDisplayBackend {
 	 * @param options The full (defaulted) set of options from the Display
 	 * @returns `true` if setOptions() can be called with this argument
 	 */
-	checkOptions(options: DisplayOptions): boolean;
+	checkOptions(options: BaseDisplayOptions): options is TOptions;
 	/**
 	 * Set the options for this backend, and report whether a full repaint is needed.
 	 * @param options The full (defaulted) set of options from the Display
 	 * @returns `true` if the Display must do a full repaint after this
 	 */
-	setOptions(options: DisplayOptions): boolean;
+	setOptions(options: TOptions): boolean;
+	/**
+	 * Returns the currently-effective options for this backend (the options set by setOptions along with applicable defaults)
+	 */
+	getOptions(): Frozen<TOptions>;
 	/**
 	 * Schedule a callback at the next appropriate time to perform drawing updates.
 	 * @param cb The callback to schedule.
 	 */
 	schedule(cb: ()=>void): void;
 	/**
-	 * Clear the entire display, resetting it to the color specified by {@link DisplayOptions.bg}.
+	 * Clear the entire display, resetting it to the color specified by {@link BaseDisplayOptions.bg}.
 	 */
 	clear(): void;
 	/**
 	 * Draw the specified cell.
 	 * @param data The data to draw.
 	 * @param clearBefore Whether to clear the cell to transparent prior to drawing. This will always be set if
-	 * 					  `data.bg` is not equal to {@link DisplayOptions.bg}, and also if this cell
+	 * 					  `data.bg` is not equal to {@link BaseDisplayOptions.bg}, and also if this cell
 	 * 					  has been drawn since the last call to {@link clear()}.
 	 */
 	draw(data: DisplayData, clearBefore: boolean): void;

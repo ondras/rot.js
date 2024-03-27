@@ -1,5 +1,5 @@
 import Canvas from "./canvas.js";
-import { DisplayOptions, DisplayData } from "./types.js";
+import { DefaultsFor, DisplayData, DisplayOptions, TextDisplayOptions } from "./types.js";
 
 declare module "./types.js" {
 	interface LayoutTypeBackendMap {
@@ -7,23 +7,41 @@ declare module "./types.js" {
 	}
 }
 
+export interface RectOptions extends TextDisplayOptions {
+	layout?: "rect";
+	forceSquareRatio?: boolean;
+}
+
 /**
  * @class Rectangular backend
  * @private
  */
-export default class Rect extends Canvas {
+export default class Rect extends Canvas<RectOptions> {
+	protected get DEFAULTS() {
+		return {
+			...super.DEFAULTS,
+			forceSquareRatio: false,
+		} satisfies DefaultsFor<RectOptions>;
+	}
 	_spacingX: number = 0;
 	_spacingY: number = 0;
 	_canvasCache: {[key:string]: HTMLCanvasElement} = {};
 
 	static cache = false;
 
-	checkOptions(options: DisplayOptions): boolean {
+	checkOptions(options: DisplayOptions): options is RectOptions {
 		return options.layout === "rect" || !options.layout;
 	}
-	setOptions(options: DisplayOptions) {
+	setOptions(options: RectOptions) {
 		this._canvasCache = {};
 		return super.setOptions(options);
+	}
+
+	protected defaultedOptions(options: RectOptions): Required<RectOptions> {
+		return {
+			...this.DEFAULTS,
+			...options,
+		}
 	}
 
 	draw(data: DisplayData, clearBefore: boolean) {
