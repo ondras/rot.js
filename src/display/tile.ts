@@ -10,14 +10,15 @@ declare module "./types.js" {
 export interface TileOptions<TChar extends TileMapKey = string> extends TileDisplayOptions<TChar> {
 	layout: "tile";
 }
-export interface TileData<TChar extends TileMapKey> extends DisplayData<TChar[], string[], string[]> {
+type TileFGColor = string | number; // string = color, number = opacity
+export interface TileData<TChar extends TileMapKey> extends DisplayData<TChar[], TileFGColor[], string[]> {
 }
 
 /**
  * @class Tile backend
  * @private
  */
-export default class Tile<TChar extends TileMapKey = string> extends BaseCanvas<TileOptions<TChar>, TileData<TChar>, TChar[], string[], string[]> {
+export default class Tile<TChar extends TileMapKey = string> extends BaseCanvas<TileOptions<TChar>, TileData<TChar>, TChar[], TileFGColor[], string[]> {
 	_colorCanvas: HTMLCanvasElement;
 
 	protected get DEFAULTS() {
@@ -87,7 +88,7 @@ export default class Tile<TChar extends TileMapKey = string> extends BaseCanvas<
 					0, 0, tileWidth, tileHeight
 				);
 
-				if (fg != "transparent") {
+				if (typeof fg === "string" && fg != "transparent") {
 					context.fillStyle = fg;
 					context.globalCompositeOperation = "source-atop";
 					context.fillRect(0, 0, tileWidth, tileHeight);
@@ -99,8 +100,15 @@ export default class Tile<TChar extends TileMapKey = string> extends BaseCanvas<
 					context.fillRect(0, 0, tileWidth, tileHeight);
 				}
 
+				if (typeof fg === "number") {
+					this._ctx.globalAlpha = fg;
+				}
 				this._ctx.drawImage(canvas, x*tileWidth, y*tileHeight, tileWidth, tileHeight);
 			} else { // no colorizing, easy
+				let fg = fgs[i];
+				if (typeof fg === "number") {
+					this._ctx.globalAlpha = fg;
+				}
 				this._ctx.drawImage(
 					this._options.tileSet!,
 					tile[0], tile[1], tileWidth, tileHeight,
@@ -108,6 +116,7 @@ export default class Tile<TChar extends TileMapKey = string> extends BaseCanvas<
 				);
 			}
 		}
+		this._ctx.globalAlpha = 1;
 	}
 
 	computeSize(availWidth: number, availHeight: number): [number, number] {
