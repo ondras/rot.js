@@ -1,31 +1,53 @@
-import Canvas from "./canvas.js";
-import { DisplayOptions, DisplayData } from "./types.js";
+import Canvas, { CanvasDisplayData } from "./canvas.js";
+import { DefaultsFor, DisplayOptions, TextDisplayOptions } from "./types.js";
+
+declare module "./types.js" {
+	interface LayoutTypeBackendMap<TOptions extends DisplayOptions> {
+		rect: Rect;
+	}
+}
+
+export interface RectOptions extends TextDisplayOptions {
+	layout?: "rect";
+	forceSquareRatio?: boolean;
+}
+
+export interface RectData extends CanvasDisplayData {
+}
 
 /**
  * @class Rectangular backend
  * @private
  */
-export default class Rect extends Canvas {
-	_spacingX: number;
-	_spacingY: number;
-	_canvasCache: {[key:string]: HTMLCanvasElement};
-	_options!: DisplayOptions;
+export default class Rect extends Canvas<RectOptions, RectData> {
+	protected get DEFAULTS() {
+		return {
+			...super.DEFAULTS,
+			forceSquareRatio: false,
+		} satisfies DefaultsFor<RectOptions>;
+	}
+	_spacingX: number = 0;
+	_spacingY: number = 0;
+	_canvasCache: {[key:string]: HTMLCanvasElement} = {};
 
 	static cache = false;
 
-	constructor() {
-		super();
-		this._spacingX = 0;
-		this._spacingY = 0;
+	checkOptions(options: DisplayOptions): options is RectOptions {
+		return options.layout === "rect" || !options.layout;
+	}
+	setOptions(options: RectOptions) {
 		this._canvasCache = {};
+		return super.setOptions(options);
 	}
 
-	setOptions(options: DisplayOptions) {
-		super.setOptions(options);
-		this._canvasCache = {};
+	protected defaultedOptions(options: RectOptions): Required<RectOptions> {
+		return {
+			...this.DEFAULTS,
+			...options,
+		}
 	}
 
-	draw(data: DisplayData, clearBefore: boolean) {
+	draw(data: RectData, clearBefore: boolean) {
 		if (Rect.cache) {
 			this._drawWithCache(data);
 		} else {
@@ -33,8 +55,8 @@ export default class Rect extends Canvas {
 		}
 	}
 
-	_drawWithCache(data: DisplayData) {
-		let [x, y, ch, fg, bg] = data;
+	_drawWithCache(data: RectData) {
+		const {x, y, ch, chars, fg, bg} = data;
 
 		let hash = ""+ch+fg+bg;
 		let canvas;
@@ -49,13 +71,12 @@ export default class Rect extends Canvas {
 			ctx.fillStyle = bg;
 			ctx.fillRect(b, b, canvas.width-b, canvas.height-b);
 			
-			if (ch) {
+			if (chars.length) {
 				ctx.fillStyle = fg;
 				ctx.font = this._ctx.font;
 				ctx.textAlign = "center";
 				ctx.textBaseline = "middle";
 
-				let chars = ([] as string[]).concat(ch);
 				for (let i=0;i<chars.length;i++) {
 					ctx.fillText(chars[i], this._spacingX/2, Math.ceil(this._spacingY/2));
 				}
@@ -66,8 +87,8 @@ export default class Rect extends Canvas {
 		this._ctx.drawImage(canvas, x*this._spacingX, y*this._spacingY);
 	}
 
-	_drawNoCache(data: DisplayData, clearBefore: boolean) {
-		let [x, y, ch, fg, bg] = data;
+	_drawNoCache(data: RectData, clearBefore: boolean) {
+		const {x, y, chars, fg, bg} = data;
 
 		if (clearBefore) { 
 			let b = this._options.border;
@@ -75,11 +96,10 @@ export default class Rect extends Canvas {
 			this._ctx.fillRect(x*this._spacingX + b, y*this._spacingY + b, this._spacingX - b, this._spacingY - b);
 		}
 		
-		if (!ch) { return; }
+		if (!chars.length) { return; }
 
 		this._ctx.fillStyle = fg;
 
-		let chars = ([] as string[]).concat(ch);
 		for (let i=0;i<chars.length;i++) {
 			this._ctx.fillText(chars[i], (x+0.5) * this._spacingX, Math.ceil((y+0.5) * this._spacingY));
 		}

@@ -3,12 +3,18 @@
 		"strict": true,
 		"noImplicitReturns": true,
 		"noImplicitThis": true,
+		"exactOptionalPropertyTypes": true,
 		"target": "es2017",
 		"declaration": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"outDir": "lib"
+		"rootDir": "./src",
+		"outDir": "lib",
+		"composite": true,
+		"newLine": "lf",
+		"sourceMap": true,
 	},
 
+	"include": ["src/**/*.ts"],
 	"files": ["src/index.ts"]
 }

@@ -1,20 +1,53 @@
-import Canvas from "./canvas.js";
-import { DisplayData } from "./types.js";
+import { BaseCanvas } from "./canvas.js";
+import { TileDisplayOptions, DisplayData, UnknownBackend, TileMapKey, DefaultsFor, DisplayOptions } from "./types.js";
+
+declare module "./types.js" {
+	interface LayoutTypeBackendMap<TOptions extends DisplayOptions> {
+		"tile": Tile<TOptions extends {tileMap: Record<infer TKey, any>} ? TKey : string>;
+	}
+}
+
+export interface TileOptions<TChar extends TileMapKey = string> extends TileDisplayOptions<TChar> {
+	layout: "tile";
+}
+type TileFGColor = string | number; // string = color, number = opacity
+export interface TileData<TChar extends TileMapKey> extends DisplayData<TChar[], TileFGColor[], string[]> {
+}
 
 /**
  * @class Tile backend
  * @private
  */
-export default class Tile extends Canvas {
+export default class Tile<TChar extends TileMapKey = string> extends BaseCanvas<TileOptions<TChar>, TileData<TChar>, TChar[], TileFGColor[], string[]> {
 	_colorCanvas: HTMLCanvasElement;
 
-	constructor() {
-		super();
-		this._colorCanvas = document.createElement("canvas");
+	protected get DEFAULTS() {
+		return {
+			...super.DEFAULTS,
+			tileWidth: 32,
+			tileHeight: 32,
+			tileColorize: false,
+		} satisfies DefaultsFor<TileOptions<never>>;
 	}
 
-	draw(data: DisplayData, clearBefore: boolean) {
-		let [x, y, ch, fg, bg] = data;
+	constructor(oldBackend?: UnknownBackend) {
+		super(oldBackend);
+		this._colorCanvas = oldBackend instanceof Tile ? oldBackend._colorCanvas : document.createElement("canvas");
+	}
+
+	checkOptions(options: DisplayOptions): options is TileOptions<TChar> {
+		return options.layout === "tile";
+	}
+
+	protected defaultedOptions(options: TileOptions<TChar>): Required<TileOptions<TChar>> {
+		return {
+			...this.DEFAULTS,
+			...options,
+		}
+	}
+
+	draw(data: TileData<TChar>, clearBefore: boolean) {
+		const {x, y, chars, fgs, bgs} = data;
 
 		let tileWidth = this._options.tileWidth;
 		let tileHeight = this._options.tileHeight;
@@ -23,20 +56,22 @@ export default class Tile extends Canvas {
 			if (this._options.tileColorize) {
 				this._ctx.clearRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
 			} else {
-				this._ctx.fillStyle = bg;
-				this._ctx.fillRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+                this._ctx.save();
+                this._ctx.globalCompositeOperation = "copy";
+				this._ctx.fillStyle = bgs[0] ?? this._options.bg;
+                this._ctx.beginPath();
+                this._ctx.rect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+                this._ctx.clip();
+                this._ctx.fill();
+                this._ctx.restore();
 			}
 		}
 
-		if (!ch) { return; }
-
-		let chars = ([] as string[]).concat(ch);
-		let fgs = ([] as string[]).concat(fg);
-		let bgs = ([] as string[]).concat(bg);
+		if (!chars.length) { return; }
 
 		for (let i=0;i<chars.length;i++) {
 			let tile = this._options.tileMap[chars[i]];
-			if (!tile) { throw new Error(`Char "${chars[i]}" not found in tileMap`); }
+			if (!tile) { throw new Error(`Char "${String(chars[i])}" not found in tileMap`); }
 			
 			if (this._options.tileColorize) { // apply colorization
 				let canvas = this._colorCanvas;
@@ -53,7 +88,7 @@ export default class Tile extends Canvas {
 					0, 0, tileWidth, tileHeight
 				);
 
-				if (fg != "transparent") {
+				if (typeof fg === "string" && fg != "transparent") {
 					context.fillStyle = fg;
 					context.globalCompositeOperation = "source-atop";
 					context.fillRect(0, 0, tileWidth, tileHeight);
@@ -65,8 +100,15 @@ export default class Tile extends Canvas {
 					context.fillRect(0, 0, tileWidth, tileHeight);
 				}
 
+				if (typeof fg === "number") {
+					this._ctx.globalAlpha = fg;
+				}
 				this._ctx.drawImage(canvas, x*tileWidth, y*tileHeight, tileWidth, tileHeight);
 			} else { // no colorizing, easy
+				let fg = fgs[i];
+				if (typeof fg === "number") {
+					this._ctx.globalAlpha = fg;
+				}
 				this._ctx.drawImage(
 					this._options.tileSet!,
 					tile[0], tile[1], tileWidth, tileHeight,
@@ -74,6 +116,7 @@ export default class Tile extends Canvas {
 				);
 			}
 		}
+		this._ctx.globalAlpha = 1;
 	}
 
 	computeSize(availWidth: number, availHeight: number): [number, number] {

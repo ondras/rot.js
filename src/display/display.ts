@@ -1,4 +1,3 @@
-import Backend from "./backend.js";
 import Hex from "./hex.js";
 import Rect from "./rect.js";
 import Tile from "./tile.js";
@@ -6,10 +5,14 @@ import TileGL from "./tile-gl.js";
 import Term from "./term.js";
 
 import * as Text from "../text.js";
-import { DisplayOptions, DisplayData } from "./types.js";
-import { DEFAULT_WIDTH, DEFAULT_HEIGHT } from "../constants.js";
+import {
+	DisplayOptions, DisplayData, BaseDisplayOptions,
+	LayoutType, LayoutBackend, LayoutOptions, LayoutChars, LayoutFGColor, LayoutBGColor,
+	IDisplayBackend, UnknownBackend, BackendChars, BackendFGColor, BackendBGColor,
+	Unwrapped, Frozen,
+} from "./types.js";
 
-const BACKENDS = {
+export const BACKENDS: {[TLayout in LayoutType]: new(oldBackend?: UnknownBackend) => IDisplayBackend<LayoutOptions<TLayout>, any>} = {
 	"hex": Hex,
 	"rect": Rect,
 	"tile": Tile,
@@ -17,34 +20,16 @@ const BACKENDS = {
 	"term": Term
 }
 
-const DEFAULT_OPTIONS: DisplayOptions = {
-	width: DEFAULT_WIDTH,
-	height: DEFAULT_HEIGHT,
-	transpose: false,
-	layout: "rect",
-	fontSize: 15,
-	spacing: 1,
-	border: 0,
-	forceSquareRatio: false,
-	fontFamily: "monospace",
-	fontStyle: "",
-	fg: "#ccc",
-	bg: "#000",
-	tileWidth: 32,
-	tileHeight: 32,
-	tileMap: {},
-	tileSet: null,
-	tileColorize: false
-}
-
 /**
  * @class Visual map display
  */
-export default class Display {
-	_data: { [pos:string] : DisplayData };
+class DisplayImpl<TLayout extends LayoutType, TChar, TFGColor, TBGColor> {
+	static readonly DEFAULT_LAYOUT = "rect" satisfies LayoutType;
+
+	_data: { [pos:string] : DisplayData<TChar, TFGColor, TBGColor> };
 	_dirty: boolean | { [pos: string]: boolean };
-	_options!: DisplayOptions;
-	_backend!: Backend;
+	_options!: LayoutOptions<TLayout> & Required<BaseDisplayOptions>;
+	_backend!: IDisplayBackend<LayoutOptions<TLayout>, DisplayData<TChar, TFGColor, TBGColor>>;
 
 	static Rect = Rect;
 	static Hex = Hex;
@@ -52,12 +37,11 @@ export default class Display {
 	static TileGL = TileGL;
 	static Term = Term;
 
-	constructor(options: Partial<DisplayOptions> = {}) {
+	constructor(options?: DisplayOptions) {
 		this._data = {};
 		this._dirty = false; // false = nothing, true = all, object = dirty cells
-		this._options = {} as DisplayOptions;
 
-		options = Object.assign({}, DEFAULT_OPTIONS, options);
+		options = {layout: Display.DEFAULT_LAYOUT, ...options} as DisplayOptions;
 		this.setOptions(options);
 		this.DEBUG = this.DEBUG.bind(this);
 
@@ -73,7 +57,7 @@ export default class Display {
 	 */
 	DEBUG(x: number, y: number, what: number) {
 		let colors = [this._options.bg, this._options.fg];
-		this.draw(x, y, null, null, colors[what % colors.length]);
+		this.draw(x, y, null, null, colors[what % colors.length] as TBGColor);
 	}
 
 	/**
@@ -87,16 +71,20 @@ export default class Display {
 	/**
 	 * @see ROT.Display
 	 */
-	setOptions(options: Partial<DisplayOptions>) {
-		Object.assign(this._options, options);
+	setOptions(options: Omit<LayoutOptions<TLayout>, "layout"> | DisplayOptions) {
+		this._options = Object.assign(this._options ?? {}, options);
 
-		if (options.width || options.height || options.fontSize || options.fontFamily || options.spacing || options.layout) {
-			if (options.layout) {
-				let ctor = BACKENDS[options.layout];
-				this._backend = new ctor();
+		if (!this._backend?.checkOptions(this._options)) {
+			// This is either the initial backend or a backend switch
+			const ctor = BACKENDS[this._options.layout];
+			this._backend = new ctor(this._backend) as any;
+			if (!this._backend.checkOptions(this._options)) {
+				console.error("checkOptions returned false on a newly-constructed backend! This is probably a bug in rot.js.", options, this._backend, this._options);
+				throw new Error("could not construct display backend");
 			}
+		}
 
-			this._backend.setOptions(this._options);
+		if (this._backend.setOptions(this._options)) {
 			this._dirty = true;
 		}
 		return this;
@@ -104,8 +92,13 @@ export default class Display {
 
 	/**
 	 * Returns currently set options
+	 * @param getEffectiveOptions When true or omitted, returns the set of active options in use by the backend. When false,
+	 * 							  returns the options that were passed to the Display constructor or to {@link setOptions()}.
 	 */
-	getOptions() { return this._options; }
+	getOptions(getEffectiveOptions?: true): Frozen<LayoutOptions<TLayout>>;
+	getOptions(getEffectiveOptions: false): DisplayOptions;
+	getOptions(getEffectiveOptions: boolean): Frozen<LayoutOptions<TLayout>> | DisplayOptions;
+	getOptions(getEffectiveOptions = true): Frozen<LayoutOptions<TLayout>> | DisplayOptions { return getEffectiveOptions ? this._backend.getOptions() : this._options; }
 
 	/**
 	 * Returns the DOM node of this display
@@ -157,43 +150,49 @@ export default class Display {
 	}
 
 	/**
-	 * @param {int} x
-	 * @param {int} y
-	 * @param {string || string[]} ch One or more chars (will be overlapping themselves)
-	 * @param {string} [fg] foreground color
-	 * @param {string} [bg] background color
+	 * @param x
+	 * @param y
+	 * @param ch One or more chars (will be overlapping themselves)
+	 * @param fg foreground color
+	 * @param bg background color
 	 */
-	draw(x: number, y: number, ch: string | string[] | null, fg: string | null, bg: string | null) {
-		if (!fg) { fg = this._options.fg; }
-		if (!bg) { bg = this._options.bg; }
+	draw(x: number, y: number, ch: TChar | Unwrapped<TChar> | null, fg: TFGColor | Unwrapped<TFGColor> | null = null, bg: TBGColor | Unwrapped<TBGColor> | null = null) {
 		let key = `${x},${y}`;
-		this._data[key] = [x, y, ch, fg, bg];
+		const data = this._data[key] ??= {x, y, chars: [], fgs: [], bgs: [], ch: null!, fg: null!, bg: null!};
+		if (this._setData(data, ch, fg ?? (this._options.fg as TFGColor), bg ?? (this._options.bg as TBGColor))) {
+			this._setDirty(key);
+		}
+	}
 
+	_setDirty(key: string) {
 		if (this._dirty === true) { return; } // will already redraw everything 
 		if (!this._dirty) { this._dirty = {}; } // first!
 		this._dirty[key] = true;
 	}
 
 	/**
-	 * @param {int} x
-	 * @param {int} y
-	 * @param {string || string[]} ch One or more chars (will be overlapping themselves)
-	 * @param {string || null} [fg] foreground color
-	 * @param {string || null} [bg] background color
+	 * @param x
+	 * @param y
+	 * @param ch One or more chars (will be overlapping themselves), or null to leave unchanged
+	 * @param fg foreground color, or null to leave unchanged
+	 * @param bg background color, or null to leave unchanged
 	 */
 	drawOver(
 		x: number,
 		y: number,
-		ch: string | null,
-		fg: string | null,
-		bg: string | null
+		ch: TChar | Unwrapped<TChar> | null = null,
+		fg: TFGColor | Unwrapped<TFGColor> | null = null,
+		bg: TBGColor | Unwrapped<TBGColor> | null = null,
 	) {
 		const key = `${x},${y}`;
 		const existing = this._data[key];
 		if (existing) {
-			existing[2] = ch || existing[2];
-			existing[3] = fg || existing[3];
-			existing[4] = bg || existing[4];
+			ch ??= existing.ch;
+			fg ??= existing.fg;
+			bg ??= existing.bg;
+			if (this._setData(existing, ch, fg, bg)) {
+				this._setDirty(key);
+			}
 		} else {
 			this.draw(x, y, ch, fg, bg);
 		}
@@ -230,7 +229,7 @@ export default class Display {
 							let isCJK = cch === 0x11 || (cch >= 0x2e && cch <= 0x9f) || (cch >= 0xac && cch <= 0xd7) || (cc >= 0xA960 && cc <= 0xA97F);
 							if (isCJK) {
 								this.draw(cx + 0, cy, c, fg, bg);
-								this.draw(cx + 1, cy, "\t", fg, bg);
+								this.draw(cx + 1, cy, "\t" as TChar, fg, bg);
 								cx += 2;
 								continue;
 							}
@@ -295,8 +294,99 @@ export default class Display {
 	 */
 	_draw(key: string, clearBefore: boolean) {
 		let data = this._data[key];
-		if (data[4] != this._options.bg) { clearBefore = true; }
+		if (data.bg !== this._options.bg) { clearBefore = true; }
 
 		this._backend.draw(data, clearBefore);
 	}
+
+	_setData(data: DisplayData<TChar, TFGColor, TBGColor>, ch: TChar | Unwrapped<TChar> | null, fg: TFGColor | Unwrapped<TFGColor>, bg: TBGColor | Unwrapped<TBGColor>) {
+		let changed = false;
+		if (data.ch !== ch) {
+			changed = true;
+			data.ch = ch as TChar;
+		}
+		if (data.fg !== fg) {
+			changed = true;
+			data.fg = fg as TFGColor;
+		}
+		if (data.bg !== bg) {
+			changed = true;
+			data.bg = bg as TBGColor;
+		}
+		changed = setArrayValue(data.chars, ch) || changed;
+		changed = setArrayValue(data.fgs, fg) || changed;
+		changed = setArrayValue(data.bgs, bg) || changed;
+
+		return changed;
+	}
 }
+
+function setArrayValue<T>(array: T[], value: T | T[] | null) {
+	let changed = false;
+	if (Array.isArray(value)) {
+		for (let i = 0; i < value.length; i++) {
+			if (array.length <= i || array[i] !== value[i]) {
+				array[i] = value[i];
+				changed = true;
+			}
+		}
+		if (value.length !== array.length) {
+			array.length = value.length;
+			changed = true;
+		}
+	} else if (value == null) {
+		changed = array.length !== 0;
+		array.length = 0;
+	} else {
+		if (array.length !== 1 || array[0] !== value) {
+			// order is important here! setting length before value means that the JS engine might degrade this to a sparse array with worse performance
+			array[0] = value;
+			array.length = 1;
+		}
+	}
+	return changed;
+}
+
+// Redeclaring all public API in the Display interface so that hovers etc show the right name
+export interface Display<TLayout extends LayoutType = LayoutType, TChar = LayoutChars<TLayout>, TFGColor = LayoutFGColor<TLayout>, TBGColor = LayoutBGColor<TLayout>> extends DisplayImpl<TLayout, TChar, TFGColor, TBGColor> {
+	DEBUG(x: number, y: number, what: number): void;
+	clear(): void;
+	setOptions(options: LayoutOptions<TLayout>): this;
+	getOptions(getEffectiveOptions?: true): Frozen<LayoutOptions<TLayout>>;
+	getOptions(getEffectiveOptions: false): DisplayOptions;
+	getOptions(getEffectiveOptions: boolean): Frozen<LayoutOptions<TLayout>> | DisplayOptions;
+	computeSize(availWidth: number, availHeight: number): [w: number, h: number];
+	computeFontSize(availWidth: number, availHeight: number): number;
+	computeTileSize(availWidth: number, availHeight: number): [w: number, h: number];
+	eventToPosition(e: TouchEvent | MouseEvent): [x: number, y: number];
+	draw(x: number, y: number, ch: TChar | Unwrapped<TChar> | null, fg?: TFGColor | Unwrapped<TFGColor> | null, bg?: TBGColor | Unwrapped<TBGColor> | null): void;
+	drawOver(x: number, y: number, ch?: TChar | Unwrapped<TChar> | null, fg?: TFGColor | Unwrapped<TFGColor> | null, bg?: TBGColor | Unwrapped<TBGColor> | null): void;
+	drawText(x:number, y:number, text:string, maxWidth?:number): number;
+}
+
+type LayoutFor<TOptions extends DisplayOptions> = TOptions extends {layout: infer L} ? NonNullable<L> : typeof DisplayImpl["DEFAULT_LAYOUT"];
+type BackendFor<TOptions extends DisplayOptions> = LayoutBackend<LayoutFor<TOptions>, TOptions>;
+type TCharFromOptions<TOptions extends DisplayOptions> =
+	TOptions extends {tileMap: Record<infer TKey, any>} ? TKey[]
+	: TOptions extends {tileMap: readonly any[]} ? number[]
+	: BackendChars<BackendFor<TOptions>>;
+type TFGColorFromOptions<TOptions extends DisplayOptions> = BackendFGColor<BackendFor<TOptions>>;
+type TBGColorFromOptions<TOptions extends DisplayOptions> = BackendBGColor<BackendFor<TOptions>>;
+
+export interface DisplayConstructor {
+	DEFAULT_LAYOUT: LayoutType;
+	new<TLayout extends LayoutType = LayoutType,
+	    TChar extends LayoutChars<TLayout> = LayoutChars<TLayout>,
+		TFGColor extends LayoutFGColor<TLayout> = LayoutFGColor<TLayout>,
+		TBGColor extends LayoutBGColor<TLayout> = LayoutBGColor<TLayout>,
+		TOptions extends LayoutOptions<TLayout> = LayoutOptions<TLayout>>(options?: TOptions):
+			Display<LayoutFor<TOptions>,
+					TChar extends TCharFromOptions<TOptions> ? TChar : TCharFromOptions<TOptions>,
+					TFGColor extends TFGColorFromOptions<TOptions> ? TFGColor : TFGColorFromOptions<TOptions>,
+					TBGColor extends TBGColorFromOptions<TOptions> ? TBGColor : TBGColorFromOptions<TOptions>>;
+}
+
+export const Display = class Display<TLayout extends LayoutType, TChar, TFGColor, TBGColor> extends DisplayImpl<TLayout, TChar, TFGColor, TBGColor> {
+} as unknown as DisplayConstructor;
+
+export default Display;
