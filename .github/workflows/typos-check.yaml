@@ -1,0 +1,34 @@
+name: Check Typos in Source Code
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+jobs:
+  run:
+    name: Spell Check with Typos
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout actions repository
+        uses: actions/checkout@v4
+      - name: Check spelling of src directory.
+        uses: crate-ci/typos@master
+        with: 
+          files: './src/*'
+      - name: Check spelling of tests directory.
+        uses: crate-ci/typos@master
+        with: 
+          files: './tests/*'
+      - name: Check spelling of tools directory.
+        uses: crate-ci/typos@master
+        with: 
+          files: './tools/*'
+      - name: Check spelling of addons directory.
+        uses: crate-ci/typos@master
+        with: 
+          files: './addons/*'
+      - name: Check spelling of examples directory.
+        uses: crate-ci/typos@master
+        with: 
+          files: './examples/*'
