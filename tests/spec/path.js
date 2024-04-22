@@ -85,7 +85,7 @@ describe("Path", function() {
 				expect(PATH.toString()).toEqual(PATH_B.toString());
 			});
 
-			it("should survive non-existant path X", function() {
+			it("should survive non-existent path X", function() {
 				dijkstra.compute(X[0], X[1], PATH_CALLBACK);
 				expect(PATH.length).toEqual(0);
 			});
@@ -106,7 +106,7 @@ describe("Path", function() {
 				expect(PATH.toString()).toEqual(PATH_B.toString());
 			});
 
-			it("should survive non-existant path X", function() {
+			it("should survive non-existent path X", function() {
 				dijkstra.compute(X[0], X[1], PATH_CALLBACK);
 				expect(PATH.length).toEqual(0);
 			});
@@ -127,7 +127,7 @@ describe("Path", function() {
 				expect(PATH.toString()).toEqual(PATH_B.toString());
 			});
 
-			it("should survive non-existant path X", function() {
+			it("should survive non-existent path X", function() {
 				dijkstra.compute(X6[0], X6[1], PATH_CALLBACK);
 				expect(PATH.length).toEqual(0);
 			});
@@ -151,7 +151,7 @@ describe("Path", function() {
 				expect(PATH.toString()).toEqual(PATH_B.toString());
 			});
 
-			it("should survive non-existant path X", function() {
+			it("should survive non-existent path X", function() {
 				astar.compute(X[0], X[1], PATH_CALLBACK);
 				expect(PATH.length).toEqual(0);
 			});
@@ -178,7 +178,7 @@ describe("Path", function() {
 				expect(PATH.toString()).toEqual(PATH_B.toString());
 			});
 
-			it("should survive non-existant path X", function() {
+			it("should survive non-existent path X", function() {
 				astar.compute(X[0], X[1], PATH_CALLBACK);
 				expect(PATH.length).toEqual(0);
 			});
@@ -199,7 +199,7 @@ describe("Path", function() {
 				expect(PATH.toString()).toEqual(PATH_B.toString());
 			});
 
-			it("should survive non-existant path X", function() {
+			it("should survive non-existent path X", function() {
 				astar.compute(X6[0], X6[1], PATH_CALLBACK);
 				expect(PATH.length).toEqual(0);
 			});
