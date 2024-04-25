@@ -104,7 +104,7 @@ describe("Color", function() {
 		it("should handle named colors", function() {
 			expect(ROT.Color.fromString("red")).toEqual([255, 0, 0]);
 		});
-		it("should not handle nonexistant colors", function() {
+		it("should not handle nonexistent colors", function() {
 			expect(ROT.Color.fromString("lol")).toEqual([0, 0, 0]);
 		});
 	});
@@ -128,7 +128,7 @@ describe("Color", function() {
 	});
 
 	describe("interpolate", function() {
-		it("should intepolate two colors", function() {
+		it("should interpolate two colors", function() {
 			expect(ROT.Color.interpolate([10, 20, 40], [100, 200, 300], 0.1)).toEqual([19, 38, 66]);
 		});
 		it("should round values", function() {
@@ -140,7 +140,7 @@ describe("Color", function() {
 	});
 
 	describe("interpolateHSL", function() {
-		it("should intepolate two colors", function() {
+		it("should interpolate two colors", function() {
 			expect(ROT.Color.interpolateHSL([10, 20, 40], [100, 200, 300], 0.1)).toEqual([12, 33, 73]);
 		});
 	});

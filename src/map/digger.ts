@@ -93,7 +93,7 @@ export default class Digger extends Dungeon {
 			do {
 				featureAttempts++;
 				if (this._tryFeature(x, y, dir[0], dir[1])) { /* feature added */
-					//if (this._rooms.length + this._corridors.length == 2) { this._rooms[0].addDoor(x, y); } /* first room oficially has doors */
+					//if (this._rooms.length + this._corridors.length == 2) { this._rooms[0].addDoor(x, y); } /* first room officially has doors */
 					this._removeSurroundingWalls(x, y);
 					this._removeSurroundingWalls(x-dir[0], y-dir[1]);
 					break; 

@@ -45,7 +45,7 @@ describe("EventQueue", function() {
 		expect(q.get()).toEqual(456);
 	});
 
-	it("should survive removal of non-existant events", function() {
+	it("should survive removal of non-existent events", function() {
 		var q = new ROT.EventQueue();
 		q.add(0, 0);
 		var result = q.remove(1);
