@@ -3,7 +3,7 @@ export {default as Display} from "./display/display.js";
 export {default as StringGenerator} from "./stringgenerator.js";
 export {default as EventQueue} from "./eventqueue.js";
 export {default as Scheduler, SpeedActor} from "./scheduler/index.js";
-export {default as FOV} from "./fov/index.js";
+export { FOV } from "./fov/index";
 export {default as Map} from "./map/index.js";
 export {default as Noise} from "./noise/index.js";
 export {default as Path} from "./path/index.js";
