@@ -1,6 +1,6 @@
 {
   "name": "rot-js",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "A roguelike toolkit in JavaScript",
   "keywords": [
     "ascii",
@@ -23,10 +23,10 @@
     "addons",
     "manual"
   ],
-  "homepage": "http://ondras.github.io/rot.js/hp/",
+  "homepage": "https://ondras.github.io/rot.js",
   "bugs": "https://github.com/ondras/rot.js/issues",
   "license": "BSD-3-Clause",
-  "author": "Ondřej Žára <ondrej.zara@gmail.com> (http://ondras.zarovi.cz/)",
+  "author": "Ondřej Žára <ondrej.zara@gmail.com> (https://ondras.zarovi.cz/)",
   "main": "dist/rot.js",
   "module": "lib/index.js",
   "scripts": {
